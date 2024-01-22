@@ -6,7 +6,7 @@ import {
   JoinColumn,
 } from "typeorm";
 import { IsDefined } from "class-validator";
-import { Eservice } from "./eservice.entity.js";
+import { EServiceEntity } from "./eservice.entity.js";
 
 @Entity({ name: "eservice_probing_requests" })
 export class EserviceProbingRequest {
@@ -17,7 +17,7 @@ export class EserviceProbingRequest {
   @Column({ name: "last_request", type: "timestamptz" })
   lastRequest!: Date;
 
-  @OneToOne(() => Eservice, { lazy: true })
+  @OneToOne(() => EServiceEntity, { lazy: true })
   @JoinColumn({ name: "eservices_record_id" })
-  eservice!: Eservice;
+  eservice!: EServiceEntity;
 }

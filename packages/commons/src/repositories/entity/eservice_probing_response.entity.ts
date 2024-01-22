@@ -6,7 +6,7 @@ import {
   JoinColumn,
 } from "typeorm";
 import { IsEnum, IsDefined } from "class-validator";
-import { Eservice } from "./eservice.entity.js";
+import { EServiceEntity } from "./eservice.entity.js";
 import { EserviceStatus } from "../../dtos/eservice.js";
 
 @Entity({ name: "eservice_probing_responses" })
@@ -23,7 +23,7 @@ export class EserviceProbingResponse {
   @Column({ name: "status" })
   responseStatus!: EserviceStatus;
 
-  @OneToOne(() => Eservice, { lazy: true })
+  @OneToOne(() => EServiceEntity, { lazy: true })
   @JoinColumn({ name: "eservices_record_id" })
-  eservice: Eservice;
+  eservice: EServiceEntity;
 }

@@ -64,3 +64,13 @@ export const EServiceMainData = z.object({
   eserviceId: z.string().uuid(),
 });
 export type EServiceMainData = z.infer<typeof EServiceMainData>;
+
+export const EServiceProbingData = z.object({
+  probingEnabled: z.boolean(),
+  state: EserviceInteropState,
+  responseReceived: z.string().datetime({ offset: true }),
+  lastRequest: z.string().datetime({ offset: true }),
+  responseStatus: EserviceStatus,
+  pollingFrequency: z.number().int(),
+});
+export type EServiceProbingData = z.infer<typeof EServiceProbingData>;

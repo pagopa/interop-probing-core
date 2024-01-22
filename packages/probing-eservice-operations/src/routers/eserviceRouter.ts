@@ -12,6 +12,7 @@ import {
   ListResult,
   EService,
   EServiceMainData,
+  EServiceProbingData,
 } from "pagopa-interop-probing-models";
 
 const readModelService = readModelServiceBuilder(
@@ -68,7 +69,38 @@ const eServiceRouter = (
           return res
             .status(404)
             .json(
-              makeApiProblem(eServiceNotFound(req.params.eserviceRecordId), () => 404)
+              makeApiProblem(
+                eServiceNotFound(req.params.eserviceRecordId),
+                () => 404
+              )
+            )
+            .end();
+        }
+      } catch (error) {
+        const errorRes = makeApiProblem(error, () => 500);
+        return res.status(errorRes.status).json(errorRes).end();
+      }
+    })
+    .get("/eservices/probingData/:eserviceRecordId", async (req, res) => {
+      try {
+        const eServiceProbingData =
+          await readModelService.getEserviceProbingDataByRecordId(
+            req.params.eserviceRecordId
+          );
+
+        if (eServiceProbingData) {
+          return res
+            .status(200)
+            .json(eServiceProbingData satisfies EServiceProbingData)
+            .end();
+        } else {
+          return res
+            .status(404)
+            .json(
+              makeApiProblem(
+                eServiceNotFound(req.params.eserviceRecordId),
+                () => 404
+              )
             )
             .end();
         }
@@ -90,7 +122,7 @@ const eServiceRouter = (
         return res
           .status(200)
           .json({
-            content: eservices.content
+            content: eservices.content,
           })
           .end();
       } catch (error) {

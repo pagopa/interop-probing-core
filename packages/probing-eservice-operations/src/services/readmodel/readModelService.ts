@@ -12,6 +12,7 @@ import {
   EService,
   EserviceMonitorState,
   EServiceMainData,
+  EServiceProbingData,
 } from "pagopa-interop-probing-models";
 import { P, match } from "ts-pattern";
 import { In, ILike } from "typeorm";
@@ -21,7 +22,7 @@ export type EServiceQueryFilters = {
   eserviceName: string | undefined;
   producerName: string | undefined;
   versionNumber: number | undefined;
-  state: EserviceMonitorState[];
+  state: EserviceMonitorState[] | undefined;
 };
 
 export type EServiceProducersQueryFilters = {
@@ -123,6 +124,26 @@ export function readModelServiceBuilder(
         return undefined;
       } else {
         const result = EServiceMainData.safeParse(data);
+        if (!result.success) {
+          logger.error(
+            `Unable to parse eservice item: result ${JSON.stringify(
+              result
+            )} - data ${JSON.stringify(data)} `
+          );
+          throw genericError("Unable to parse eservice item");
+        }
+        return result.data;
+      }
+    },
+
+    async getEserviceProbingDataByRecordId(
+      eserviceRecordId: number
+    ): Promise<EServiceProbingData | undefined> {
+      const data = await eservices.findOne({ where: { eserviceRecordId } });
+      if (!data) {
+        return undefined;
+      } else {
+        const result = EServiceProbingData.safeParse(data);
         if (!result.success) {
           logger.error(
             `Unable to parse eservice item: result ${JSON.stringify(
