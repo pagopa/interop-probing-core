@@ -1,9 +1,16 @@
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ZodiosRouter } from "@zodios/express";
-import { eServiceNotFound, makeApiProblem } from "../model/domain/errors.js";
-import { ExpressContext, ZodiosContext } from "pagopa-interop-probing-commons";
+import {
+  eServiceMainDataByRecordIdNotFound,
+  eServiceProbingDataByRecordIdNotFound,
+  makeApiProblem,
+} from "../model/domain/errors.js";
+import {
+  ExpressContext,
+  ZodiosContext,
+  ReadModelRepository,
+} from "pagopa-interop-probing-commons";
 import { config } from "../utilities/config.js";
-import { ReadModelRepository } from "pagopa-interop-probing-commons";
 import { readModelServiceBuilder } from "../services/readmodel/readModelService.js";
 import { eServiceServiceBuilder } from "../services/eServiceService.js";
 import { eserviceQueryBuilder } from "../services/readmodel/eserviceQuery.js";
@@ -70,7 +77,7 @@ const eServiceRouter = (
             .status(404)
             .json(
               makeApiProblem(
-                eServiceNotFound(req.params.eserviceRecordId),
+                eServiceMainDataByRecordIdNotFound(req.params.eserviceRecordId),
                 () => 404
               )
             )
@@ -98,12 +105,32 @@ const eServiceRouter = (
             .status(404)
             .json(
               makeApiProblem(
-                eServiceNotFound(req.params.eserviceRecordId),
+                eServiceProbingDataByRecordIdNotFound(
+                  req.params.eserviceRecordId
+                ),
                 () => 404
               )
             )
             .end();
         }
+      } catch (error) {
+        const errorRes = makeApiProblem(error, () => 500);
+        return res.status(errorRes.status).json(errorRes).end();
+      }
+    })
+    .get("/eservices/polling", async (req, res) => {
+      try {
+        const eservices = await eServiceService.getEservicesReadyForPolling(
+          req.query.limit,
+          req.query.offset
+        );
+
+        return res
+          .status(200)
+          .json({
+            content: eservices.content,
+          })
+          .end();
       } catch (error) {
         const errorRes = makeApiProblem(error, () => 500);
         return res.status(errorRes.status).json(errorRes).end();

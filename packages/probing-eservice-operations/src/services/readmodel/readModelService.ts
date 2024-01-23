@@ -126,11 +126,11 @@ export function readModelServiceBuilder(
         const result = EServiceMainData.safeParse(data);
         if (!result.success) {
           logger.error(
-            `Unable to parse eservice item: result ${JSON.stringify(
+            `Unable to parse eservice mainData item: result ${JSON.stringify(
               result
             )} - data ${JSON.stringify(data)} `
           );
-          throw genericError("Unable to parse eservice item");
+          throw genericError("Unable to parse eservice mainData item");
         }
         return result.data;
       }
@@ -146,14 +146,40 @@ export function readModelServiceBuilder(
         const result = EServiceProbingData.safeParse(data);
         if (!result.success) {
           logger.error(
-            `Unable to parse eservice item: result ${JSON.stringify(
+            `Unable to parse eservice probingData item: result ${JSON.stringify(
               result
             )} - data ${JSON.stringify(data)} `
           );
-          throw genericError("Unable to parse eservice item");
+          throw genericError("Unable to parse eservice probingData item");
         }
         return result.data;
       }
+    },
+
+    async getEservicesReadyForPolling(
+      limit: number,
+      offset: number
+    ): Promise<ListResult<EService>> {
+      const data = await eservices.find({
+        skip: offset,
+        take: limit,
+      } satisfies ReadModelFilter<EService>);
+
+      const result = z.array(EService).safeParse(data.map((d) => d));
+      if (!result.success) {
+        logger.error(
+          `Unable to parse eservices ready for polling items: result ${JSON.stringify(
+            result
+          )} - data ${JSON.stringify(data)} `
+        );
+
+        throw genericError("Unable to parse eservices ready for polling items");
+      }
+
+      return {
+        content: result.data,
+        totalElements: await eservices.count(),
+      };
     },
 
     async getEservicesProducers(

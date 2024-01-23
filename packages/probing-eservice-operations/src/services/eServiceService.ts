@@ -16,6 +16,13 @@ export function eServiceServiceBuilder(
       logger.info("Retrieving eServices");
       return await eserviceQuery.getEservices(filters, limit, offset);
     },
+    async getEservicesReadyForPolling(
+      limit: number,
+      offset: number
+    ): Promise<ListResult<EService>> {
+      logger.info("Retrieving eServicesReadyForPolling");
+      return await eserviceQuery.getEservicesReadyForPolling(limit, offset);
+    },
     async getEservicesProducers(
       filters: EServiceProducersQueryFilters,
       limit: number,
