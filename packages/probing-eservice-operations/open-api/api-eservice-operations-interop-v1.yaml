@@ -54,19 +54,26 @@ paths:
         '400':
           description: The provided input data is invalid
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
         '404':
-          description: The e-service hasn't been found
+          description: Resource Not Found
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
+              example:
+                type: string
+                status: 404
+                title: 'Resource Not Found'
+                detail: 'The requested resource could not be found on the server.'
+                traceId: 'string'
+                errors: [ { 'code': '000-1234', 'detail': 'The requested resource could not be found on the server.' } ]
         '500':
           description: A managed error has occured during the request elaboration
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
               example:
@@ -111,19 +118,26 @@ paths:
         '400':
           description: The provided input data is invalid
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
         '404':
-          description: The e-service hasn't been found
+          description: Resource Not Found
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
+              example:
+                type: string
+                status: 404
+                title: 'Resource Not Found'
+                detail: 'The requested resource could not be found on the server.'
+                traceId: 'string'
+                errors: [ { 'code': '000-1234', 'detail': 'The requested resource could not be found on the server.' } ]
         '500':
           description: A managed error has occured during the request elaboration
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
               example:
@@ -167,19 +181,26 @@ paths:
         '400':
           description: The provided input data is invalid
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
         '404':
-          description: The e-service hasn't been found
+          description: Resource Not Found
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
+              example:
+                type: string
+                status: 404
+                title: 'Resource Not Found'
+                detail: 'The requested resource could not be found on the server.'
+                traceId: 'string'
+                errors: [ { 'code': '000-1234', 'detail': 'The requested resource could not be found on the server.' } ]
         '500':
           description: A managed error has occured during the request elaboration
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
               example:
@@ -250,13 +271,13 @@ paths:
         '400':
           description: The provided input data is invalid
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
         '500':
           description: A managed error has occured during the request elaboration
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
               example:
@@ -294,14 +315,27 @@ paths:
           description: >-
             The provided input data is invalid
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
+        '404':
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              example:
+                type: string
+                status: 404
+                title: 'Resource Not Found'
+                detail: 'The requested resource could not be found on the server.'
+                traceId: 'string'
+                errors: [ { 'code': '000-1234', 'detail': 'The requested resource could not be found on the server.' } ]
         '500':                  
           description: >-
             A managed error has occured during the request elaboration
           content:                        
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
               example:
@@ -339,14 +373,27 @@ paths:
           description: >-
             The provided input data is invalid
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
+        '404':
+          description: Resource Not Found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+              example:
+                type: string
+                status: 404
+                title: 'Resource Not Found'
+                detail: 'The requested resource could not be found on the server.'
+                traceId: 'string'
+                errors: [ { 'code': '000-1234', 'detail': 'The requested resource could not be found on the server.' } ]
         '500':                  
           description: >-
             A managed error has occured during the request elaboration
           content:                        
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
               example:
@@ -396,13 +443,13 @@ paths:
         '400':
           description: The provided input data is invalid
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
         '500':
           description: A managed error has occured during the request elaboration
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
               example:
@@ -452,14 +499,14 @@ paths:
         '400':
           description: The provided input is invalid
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
         '500':
           description: >-
             A managed error has occured during the request elaboration
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
               example:
@@ -506,14 +553,14 @@ paths:
           description: >-
             The provided input data is invalid
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
         '500':
           description: >-
             A managed error has occured during the request elaboration
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
               example:
@@ -555,14 +602,14 @@ paths:
           description: >-
             The provided input data is invalid
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
         '500':
           description: >-
             A managed error has occured during the request elaboration
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
               example:
@@ -604,14 +651,14 @@ paths:
           description: >-
             The provided input data is invalid
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
         '500':
           description: >-
             A managed error has occured during the request elaboration
           content:
-            application/problem+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/Problem'
               example:
