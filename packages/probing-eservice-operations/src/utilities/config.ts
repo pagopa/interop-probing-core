@@ -1,8 +1,8 @@
 import { CommonConfig } from "pagopa-interop-probing-commons";
-import { ReadModelDbConfig } from "./readmodelDbConfig.js";
+import { DbConfig } from "./dbConfig.js";
 import { z } from "zod";
 
-const eServiceOperationsConfig = CommonConfig.and(ReadModelDbConfig);
+const eServiceOperationsConfig = CommonConfig.and(DbConfig);
 
 export type EServiceOperationsConfig = z.infer<typeof eServiceOperationsConfig>;
 
