@@ -9,8 +9,8 @@ import {
 import {
   EServiceQueryFilters,
   EServiceProducersQueryFilters,
-} from "./readmodel/readModelService.js";
-import { EserviceQuery } from "./readmodel/eserviceQuery.js";
+} from "./db/dbService.js";
+import { EserviceQuery } from "./db/eserviceQuery.js";
 import {
   ApiSaveEservicePayload,
   ApiUpdateEserviceFrequencyPayload,
@@ -103,18 +103,15 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       versionId: string,
       payload: ApiSaveEservicePayload
     ): Promise<void> {
-      const eServiceToBeUpdated =
-        (await eserviceQuery.getEServiceByIdAndVersion(
-          eserviceId,
-          versionId
-        )) || <EserviceSaveRequest>{};
-
-      eServiceToBeUpdated.eserviceName = payload.name;
-      eServiceToBeUpdated.producerName = payload.producerName;
-      eServiceToBeUpdated.basePath = payload.basePath;
-      eServiceToBeUpdated.technology = payload.technology;
-      eServiceToBeUpdated.versionNumber = payload.versionNumber;
-      eServiceToBeUpdated.audience = payload.audience;
+      const eServiceToBeUpdated: EserviceSaveRequest = {
+        state: payload.state,
+        eserviceName: payload.name,
+        producerName: payload.producerName,
+        basePath: payload.basePath,
+        technology: payload.technology,
+        versionNumber: payload.versionNumber,
+        audience: payload.audience,
+      };
 
       logger.info("Save eService");
       await eserviceQuery.saveEservice(
@@ -129,8 +126,8 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       payload: ApiUpdateLastRequestPayload
     ): Promise<void> {
       const eServiceToBeUpdated: EserviceProbingUpdateLastRequest = {
-        lastRequest: payload.lastRequest
-      }
+        lastRequest: payload.lastRequest,
+      };
 
       logger.info("Update eService probing last request");
       await eserviceQuery.updateEserviceLastRequest(
@@ -145,8 +142,8 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
     ): Promise<void> {
       const eServiceToBeUpdated: ChangeResponseReceived = {
         responseStatus: payload.status,
-        responseReceived: payload.responseReceived
-      }
+        responseReceived: payload.responseReceived,
+      };
 
       logger.info("Update eService probing response received");
       await eserviceQuery.updateResponseReceived(
