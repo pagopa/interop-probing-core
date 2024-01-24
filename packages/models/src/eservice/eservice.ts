@@ -38,7 +38,71 @@ export const EserviceTechnology = z.enum([
 ]);
 export type EserviceTechnology = z.infer<typeof EserviceTechnology>;
 
+export const ChangeEserviceProbingStateRequest = z.object({
+  probingEnabled: z.boolean(),
+});
+export type ChangeEserviceProbingStateRequest = z.infer<
+  typeof ChangeEserviceProbingStateRequest
+>;
+
+export const ChangeEserviceStateRequest = z.object({
+  state: EserviceInteropState,
+});
+
+export type ChangeEserviceStateRequest = z.infer<
+  typeof ChangeEserviceStateRequest
+>;
+
+export const ChangeProbingFrequencyRequest = z.object({
+  pollingFrequency: z.number().int().gte(1).default(5),
+});
+
+export type ChangeProbingFrequencyRequest = z.infer<
+  typeof ChangeProbingFrequencyRequest
+>;
+
+export const EserviceProbingUpdateLastRequest = z.object({
+  lastRequest: z.string().datetime({ offset: true })
+});
+export type EserviceProbingUpdateLastRequest = z.infer<typeof EserviceProbingUpdateLastRequest>;
+
+export const ChangeResponseReceived = z.object({
+  responseReceived: z.string().datetime({ offset: true }),
+  responseStatus: EserviceStatus,
+});
+export type ChangeResponseReceived = z.infer<typeof ChangeResponseReceived>;
+
+export const EserviceSaveRequest = z.object({
+  eserviceName: z.string(),
+  producerName: z.string(),
+  basePath: z.array(z.string()),
+  technology: EserviceTechnology,
+  state: EserviceInteropState,
+  versionNumber: z.number().int(),
+  audience: z.array(z.string()),
+});
+export type EserviceSaveRequest = z.infer<typeof EserviceSaveRequest>;
+
 export const EService = z.object({
+  eserviceRecordId: z.number().int(),
+  eserviceName: z.string(),
+  producerName: z.string(),
+  state: EserviceInteropState,
+  responseReceived: z.string().datetime({ offset: true }),
+  lastRequest: z.string().datetime({ offset: true }),
+  responseStatus: EserviceStatus,
+  versionNumber: z.number().int(),
+  basePath: z.array(z.string()),
+  technology: EserviceTechnology,
+  pollingFrequency: z.number().int().gte(1).default(5).optional(),
+  probingEnabled: z.boolean(),
+  audience: z.array(z.string()),
+  pollingStartTime: z.string(),
+  pollingEndTime: z.string(),
+});
+export type EService = z.infer<typeof EService>;
+
+export const EServiceContent = z.object({
   eserviceRecordId: z.number().int(),
   eserviceName: z.string(),
   producerName: z.string(),
@@ -53,7 +117,7 @@ export const EService = z.object({
   probingEnabled: z.boolean(),
   audience: z.array(z.string()),
 });
-export type EService = z.infer<typeof EService>;
+export type EServiceContent = z.infer<typeof EServiceContent>;
 
 export const EServiceMainData = z.object({
   eserviceName: z.string(),

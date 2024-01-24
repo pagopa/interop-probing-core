@@ -11,7 +11,7 @@ import {
   Min,
   IsNumber,
 } from "class-validator";
-import { EserviceInteropState, EserviceTechnology } from "../../dtos/eservice.js";
+import { EserviceInteropState, EserviceTechnology } from "../../model/dtos/eservice.js";
 import * as moment from "moment";
 
 @Entity({ name: "eservices" })
@@ -49,7 +49,7 @@ export class EServiceEntity {
   @Min(1)
   @IsNumber()
   @Column({ name: "polling_frequency", default: 5 })
-  pollingFrequency!: number;
+  pollingFrequency: number;
 
   @IsDefined()
   @IsDateString()

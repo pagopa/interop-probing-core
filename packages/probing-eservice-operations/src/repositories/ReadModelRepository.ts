@@ -1,7 +1,9 @@
 import { EServiceEntity } from "./entity/eservice.entity.js";
-import { ReadModelDbConfig } from "../config/readmodelDbConfig.js";
+import { ReadModelDbConfig } from "../utilities/readmodelDbConfig.js";
 import { Repository, EntityManager, DataSource } from "typeorm";
 import { FindManyOptions } from "typeorm";
+import { EserviceProbingRequest } from "./entity/eservice_probing_request.entity.js";
+import { EserviceProbingResponse } from "./entity/eservice_probing_response.entity.js";
 
 /**
  * Extracts keys of a given type T
@@ -24,13 +26,18 @@ export type ReadModelFilter<T> = {
 } & FindManyOptions<T>;
 
 type EServiceEntities = Repository<EServiceEntity>;
+type EserviceProbingRequestEntities = Repository<EserviceProbingRequest>;
+type EserviceProbingResponseEntities = Repository<EserviceProbingResponse>;
 
 export class ReadModelRepository {
   private static instance: ReadModelRepository;
-
-  public eservices: EServiceEntities;
-  private entityManager: EntityManager;
+ 
   private connection: DataSource;
+  private entityManager: EntityManager;
+  
+  public eservices: EServiceEntities;
+  public eservicesProbingRequest: EserviceProbingRequestEntities;
+  public eservicesProbingResponse: EserviceProbingResponseEntities;
 
   private constructor({
     readModelDbHost: host,
@@ -55,6 +62,8 @@ export class ReadModelRepository {
     this.connection.initialize();
     this.entityManager = this.connection.createEntityManager();
     this.eservices = this.entityManager.getRepository(EServiceEntity);
+    this.eservicesProbingRequest = this.entityManager.getRepository(EserviceProbingRequest);
+    this.eservicesProbingResponse = this.entityManager.getRepository(EserviceProbingResponse);
   }
 
   public static init(config: ReadModelDbConfig): ReadModelRepository {

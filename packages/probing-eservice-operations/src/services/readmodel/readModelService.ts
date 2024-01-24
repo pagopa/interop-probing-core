@@ -1,22 +1,30 @@
 /* eslint-disable no-constant-condition */
 /* eslint-disable functional/no-let */
-import {
-  logger,
-  ReadModelRepository,
-  TypeORMQueryKeys,
-  ReadModelFilter,
-} from "pagopa-interop-probing-commons";
+import { logger } from "pagopa-interop-probing-commons";
 import {
   genericError,
   ListResult,
   EService,
+  EServiceContent,
   EserviceMonitorState,
   EServiceMainData,
   EServiceProbingData,
+  ChangeEserviceProbingStateRequest,
+  ChangeEserviceStateRequest,
+  ChangeProbingFrequencyRequest,
+  EserviceSaveRequest,
+  EserviceProbingUpdateLastRequest,
+  ChangeResponseReceived,
 } from "pagopa-interop-probing-models";
 import { P, match } from "ts-pattern";
 import { In, ILike } from "typeorm";
 import { z } from "zod";
+import { eServiceCannotBeUpdated, eServiceCannotBeUpdatedByEserviceRecordId } from "../../model/domain/errors.js";
+import {
+  ReadModelRepository,
+  TypeORMQueryKeys,
+  ReadModelFilter,
+} from "../../repositories/ReadModelRepository.js";
 
 export type EServiceQueryFilters = {
   eserviceName: string | undefined;
@@ -85,19 +93,133 @@ export function readModelServiceBuilder(
   readModelRepository: ReadModelRepository
 ) {
   const eservices = readModelRepository.eservices;
+  const eservicesProbingRequest = readModelRepository.eservicesProbingRequest;
+  const eservicesProbingResponse = readModelRepository.eservicesProbingResponse;
+
   return {
+    async updateEserviceState(
+      eserviceId: string,
+      versionId: string,
+      eServiceUpdated: ChangeEserviceStateRequest
+    ): Promise<void> {
+      const data = await eservices.update(
+        { eserviceId, versionId },
+        eServiceUpdated
+      );
+      const result = ChangeEserviceStateRequest.safeParse(data);
+      if (!result.success) {
+        throw eServiceCannotBeUpdated(eserviceId, versionId);
+      }
+    },
+
+    async updateEserviceProbingState(
+      eserviceId: string,
+      versionId: string,
+      eServiceUpdated: ChangeEserviceProbingStateRequest
+    ): Promise<void> {
+      const data = await eservices.update(
+        { eserviceId, versionId },
+        eServiceUpdated
+      );
+      const result = ChangeEserviceProbingStateRequest.safeParse(data);
+      if (!result.success) {
+        throw eServiceCannotBeUpdated(eserviceId, versionId);
+      }
+    },
+
+    async updateEserviceFrequency(
+      eserviceId: string,
+      versionId: string,
+      eServiceUpdated: ChangeProbingFrequencyRequest
+    ): Promise<void> {
+      const data = await eservices.update(
+        { eserviceId, versionId },
+        eServiceUpdated
+      );
+      const result = ChangeProbingFrequencyRequest.safeParse(data);
+      if (!result.success) {
+        throw eServiceCannotBeUpdated(eserviceId, versionId);
+      }
+    },
+
+    async saveEservice(
+      eserviceId: string,
+      versionId: string,
+      eServiceUpdated: EserviceSaveRequest
+    ): Promise<void> {
+      const data = await eservices.upsert(
+        { eserviceId, versionId },
+        { eserviceId, versionId, ...eServiceUpdated }
+      );
+      const result = EserviceSaveRequest.safeParse(data);
+      if (!result.success) {
+        throw eServiceCannotBeUpdated(eserviceId, versionId);
+      }
+    },
+
+    async updateEserviceLastRequest(
+      eserviceRecordId: number,
+      eServiceUpdated: EserviceProbingUpdateLastRequest
+    ): Promise<void> {
+      const data = await eservicesProbingRequest.upsert(
+        { eserviceRecordId },
+        { eserviceRecordId, ...eServiceUpdated }
+      );
+      const result = EserviceProbingUpdateLastRequest.safeParse(data);
+      if (!result.success) {
+        throw eServiceCannotBeUpdatedByEserviceRecordId(eserviceRecordId);
+      }
+    },
+
+    async updateResponseReceived(
+      eserviceRecordId: number,
+      eServiceUpdated: ChangeResponseReceived
+    ): Promise<void> {
+      const data = await eservicesProbingResponse.upsert(
+        { eserviceRecordId },
+        { eserviceRecordId, ...eServiceUpdated }
+      );
+      const result = ChangeResponseReceived.safeParse(data);
+      if (!result.success) {
+        throw eServiceCannotBeUpdatedByEserviceRecordId(eserviceRecordId);
+      }
+    },
+
+    async getEServiceByIdAndVersion(
+      eserviceId: string,
+      versionId: string
+    ): Promise<EService | undefined> {
+      const data = await eservices.findOne({
+        where: { eserviceId, versionId },
+      });
+      if (!data) {
+        return undefined;
+      } else {
+        const result = EService.safeParse(data);
+        if (!result.success) {
+          logger.error(
+            `Unable to parse eservice item: result ${JSON.stringify(
+              result
+            )} - data ${JSON.stringify(data)} `
+          );
+          throw genericError("Unable to parse eservice item");
+        }
+        return result.data;
+      }
+    },
+
     async getEservices(
       filters: EServiceQueryFilters,
       limit: number,
       offset: number
-    ): Promise<ListResult<EService>> {
+    ): Promise<ListResult<EServiceContent>> {
       const data = await eservices.find({
         ...getEServicesFilters(filters),
         skip: offset,
         take: limit,
-      } satisfies ReadModelFilter<EService>);
+      } satisfies ReadModelFilter<EServiceContent>);
 
-      const result = z.array(EService).safeParse(data.map((d) => d));
+      const result = z.array(EServiceContent).safeParse(data.map((d) => d));
       if (!result.success) {
         logger.error(
           `Unable to parse eservices items: result ${JSON.stringify(
@@ -159,13 +281,13 @@ export function readModelServiceBuilder(
     async getEservicesReadyForPolling(
       limit: number,
       offset: number
-    ): Promise<ListResult<EService>> {
+    ): Promise<ListResult<EServiceContent>> {
       const data = await eservices.find({
         skip: offset,
         take: limit,
-      } satisfies ReadModelFilter<EService>);
+      } satisfies ReadModelFilter<EServiceContent>);
 
-      const result = z.array(EService).safeParse(data.map((d) => d));
+      const result = z.array(EServiceContent).safeParse(data.map((d) => d));
       if (!result.success) {
         logger.error(
           `Unable to parse eservices ready for polling items: result ${JSON.stringify(
@@ -194,10 +316,10 @@ export function readModelServiceBuilder(
       } satisfies ReadModelFilter<EService>);
 
       const checkSchema = z
-        .array(EService)
+        .array(EServiceContent)
         .safeParse(data.map((d) => d.producerName));
 
-      const parse = z.array(EService).safeParse(data.map((d) => d));
+      const parse = z.array(EServiceContent).safeParse(data.map((d) => d));
       const producers = data.map((d) => d.producerName);
       const result = parse.success
         ? z.array(z.string()).safeParse(producers)

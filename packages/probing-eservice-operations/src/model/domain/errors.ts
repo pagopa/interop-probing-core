@@ -1,28 +1,62 @@
-import { ApiError, makeApiProblemBuilder, } from "pagopa-interop-probing-models";
+import { ApiError, makeApiProblemBuilder } from "pagopa-interop-probing-models";
 
 export const errorCodes = {
-  eServiceNotFound: "0007",
+  eServiceNotFound: "0001",
+  eServiceCannotBeUpdated: "0002",
 };
 
 export type ErrorCodes = keyof typeof errorCodes;
 
 export const makeApiProblem = makeApiProblemBuilder(errorCodes);
- 
-export function eServiceMainDataByRecordIdNotFound(identifier: number): ApiError<ErrorCodes> {
+
+export function eServiceNotFound(
+  eserviceId: string,
+  versionId: string
+): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: `EService main data by record Id ${identifier} not found`,
+    detail: `EService ${eserviceId} version ${versionId} not found`,
     code: "eServiceNotFound",
     title: "EService not found",
   });
 }
 
-export function eServiceProbingDataByRecordIdNotFound(identifier: number): ApiError<ErrorCodes> {
+export function eServiceCannotBeUpdatedByEserviceRecordId(
+  eserviceRecordId: number,
+): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: `EService probing data by record Id ${identifier} not found`,
+    detail: `EService ${eserviceRecordId} cannot be updated`,
+    code: "eServiceCannotBeUpdated",
+    title: "EService cannot be updated",
+  });
+}
+
+export function eServiceCannotBeUpdated(
+  eserviceId: string,
+  versionId: string
+): ApiError<ErrorCodes> {
+  return new ApiError({
+    detail: `EService ${eserviceId} version ${versionId} cannot be updated`,
+    code: "eServiceCannotBeUpdated",
+    title: "EService cannot be updated",
+  });
+}
+
+export function eServiceMainDataByRecordIdNotFound(
+  eserviceRecordId: number
+): ApiError<ErrorCodes> {
+  return new ApiError({
+    detail: `EService main data by record Id ${eserviceRecordId} not found`,
     code: "eServiceNotFound",
     title: "EService not found",
   });
 }
 
-
-
+export function eServiceProbingDataByRecordIdNotFound(
+  eserviceRecordId: number
+): ApiError<ErrorCodes> {
+  return new ApiError({
+    detail: `EService probing data by record Id ${eserviceRecordId} not found`,
+    code: "eServiceNotFound",
+    title: "EService not found",
+  });
+}

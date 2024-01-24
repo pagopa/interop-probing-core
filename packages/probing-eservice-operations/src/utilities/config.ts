@@ -1,7 +1,5 @@
-import {
-  CommonConfig,
-  ReadModelDbConfig,
-} from "pagopa-interop-probing-commons";
+import { CommonConfig } from "pagopa-interop-probing-commons";
+import { ReadModelDbConfig } from "./readmodelDbConfig.js";
 import { z } from "zod";
 
 const eServiceOperationsConfig = CommonConfig.and(ReadModelDbConfig);
