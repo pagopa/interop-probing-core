@@ -14,7 +14,7 @@ export function eServiceNotFound(
   versionId: string
 ): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: `EService ${eserviceId} version ${versionId} not found`,
+    detail: `EService by ${eserviceId} version ${versionId} not found`,
     code: "eServiceNotFound",
     title: "EService not found",
   });
@@ -24,7 +24,7 @@ export function eServiceCannotBeUpdatedByEserviceRecordId(
   eserviceRecordId: number,
 ): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: `EService ${eserviceRecordId} cannot be updated`,
+    detail: `EService by eserviceRecordId ${eserviceRecordId} cannot be updated`,
     code: "eServiceCannotBeUpdated",
     title: "EService cannot be updated",
   });
@@ -35,7 +35,7 @@ export function eServiceCannotBeUpdated(
   versionId: string
 ): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: `EService ${eserviceId} version ${versionId} cannot be updated`,
+    detail: `EService by eserviceId ${eserviceId} versionId ${versionId} cannot be updated`,
     code: "eServiceCannotBeUpdated",
     title: "EService cannot be updated",
   });
@@ -45,7 +45,7 @@ export function eServiceMainDataByRecordIdNotFound(
   eserviceRecordId: number
 ): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: `EService main data by record Id ${eserviceRecordId} not found`,
+    detail: `EService main data by eserviceRecordId ${eserviceRecordId} not found`,
     code: "eServiceNotFound",
     title: "EService not found",
   });
@@ -55,7 +55,7 @@ export function eServiceProbingDataByRecordIdNotFound(
   eserviceRecordId: number
 ): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: `EService probing data by record Id ${eserviceRecordId} not found`,
+    detail: `EService probing data by eserviceRecordId ${eserviceRecordId} not found`,
     code: "eServiceNotFound",
     title: "EService not found",
   });

@@ -7,9 +7,9 @@ import {
 } from "../model/domain/errors.js";
 import { ExpressContext, ZodiosContext } from "pagopa-interop-probing-commons";
 import { config } from "../utilities/config.js";
-import { readModelServiceBuilder } from "../services/readmodel/readModelService.js";
+import { readModelServiceBuilder } from "../services/db/dbService.js";
 import { eServiceServiceBuilder } from "../services/eServiceService.js";
-import { eserviceQueryBuilder } from "../services/readmodel/eserviceQuery.js";
+import { eserviceQueryBuilder } from "../services/db/eserviceQuery.js";
 import { api } from "../model/generated/api.js";
 import {
   ListResult,
@@ -18,11 +18,9 @@ import {
   EServiceContent,
 } from "pagopa-interop-probing-models";
 import { updateEServiceErrorMapper } from "../utilities/errorMappers.js";
-import { ReadModelRepository } from "../repositories/ReadModelRepository.js";
+import { ModelRepository } from "../repositories/Repository.js";
 
-const readModelService = readModelServiceBuilder(
-  ReadModelRepository.init(config)
-);
+const readModelService = readModelServiceBuilder(ModelRepository.init(config));
 const eserviceQuery = eserviceQueryBuilder(readModelService);
 const eServiceService = eServiceServiceBuilder(eserviceQuery);
 
