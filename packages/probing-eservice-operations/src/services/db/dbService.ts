@@ -228,7 +228,7 @@ export function readModelServiceBuilder(readModelRepository: ModelRepository) {
       limit: number,
       offset: number
     ): Promise<ListResult<EServiceContent>> {
-      const data = await eservices.find({
+      const data = await eserviceView.find({
         ...getEServicesFilters(filters),
         skip: offset,
         take: limit,
