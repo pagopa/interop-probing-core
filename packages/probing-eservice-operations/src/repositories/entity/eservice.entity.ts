@@ -75,11 +75,11 @@ export class EServiceEntity {
         .set({ hour: 23, minute: 59, second: 0, millisecond: 0 })
         .toDate(),
   })
-  pollingEndTime!: Date;
+  pollingEndTime: Date;
 
   @IsDefined()
   @Column({ name: "probing_enabled", default: true })
-  probingEnabled!: boolean;
+  probingEnabled: boolean;
 
   @IsDefined()
   @IsString()

@@ -27,7 +27,7 @@ import {
   ModelRepository,
   TypeORMQueryKeys,
   ModelFilter,
-} from "../../repositories/Repository.js";
+} from "../../repositories/modelRepository.js";
 
 export type EServiceQueryFilters = {
   eserviceName: string | undefined;
@@ -94,8 +94,9 @@ const getEServicesProducersFilters = (
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function readModelServiceBuilder(readModelRepository: ModelRepository) {
   const eservices = readModelRepository.eservices;
-  const eservicesProbingRequest = readModelRepository.eservicesProbingRequest;
-  const eservicesProbingResponse = readModelRepository.eservicesProbingResponse;
+  const eserviceProbingRequest = readModelRepository.eserviceProbingRequest;
+  const eserviceProbingResponse = readModelRepository.eserviceProbingResponse;
+  const eserviceView = readModelRepository.eserviceView;
 
   return {
     async updateEserviceState(
@@ -171,7 +172,7 @@ export function readModelServiceBuilder(readModelRepository: ModelRepository) {
       eserviceRecordId: number,
       eServiceUpdated: EserviceProbingUpdateLastRequest
     ): Promise<void> {
-      const data = await eservicesProbingRequest.upsert(
+      const data = await eserviceProbingRequest.upsert(
         { eserviceRecordId },
         { eserviceRecordId, lastRequest: eServiceUpdated.lastRequest }
       );
@@ -185,7 +186,7 @@ export function readModelServiceBuilder(readModelRepository: ModelRepository) {
       eserviceRecordId: number,
       eServiceUpdated: ChangeResponseReceived
     ): Promise<void> {
-      const data = await eservicesProbingResponse.upsert(
+      const data = await eserviceProbingResponse.upsert(
         { eserviceRecordId },
         {
           eserviceRecordId,
@@ -296,7 +297,7 @@ export function readModelServiceBuilder(readModelRepository: ModelRepository) {
       limit: number,
       offset: number
     ): Promise<ListResult<EServiceContent>> {
-      const data = await eservices.find({
+      const data = await eserviceView.find({
         skip: offset,
         take: limit,
       } satisfies ModelFilter<EServiceContent>);

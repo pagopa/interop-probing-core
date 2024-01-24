@@ -13,7 +13,7 @@ import {
   EserviceInteropState,
   EserviceTechnology,
   EserviceStatus,
-} from "../../../dtos/eservice.js";
+} from "../../../model/dtos/eservice.js";
 
 @Entity({ name: "eservice_view" })
 export class EserviceView {

@@ -18,7 +18,7 @@ import {
   EServiceContent,
 } from "pagopa-interop-probing-models";
 import { updateEServiceErrorMapper } from "../utilities/errorMappers.js";
-import { ModelRepository } from "../repositories/Repository.js";
+import { ModelRepository } from "../repositories/modelRepository.js";
 
 const readModelService = readModelServiceBuilder(ModelRepository.init(config));
 const eserviceQuery = eserviceQueryBuilder(readModelService);

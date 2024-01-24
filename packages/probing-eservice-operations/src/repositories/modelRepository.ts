@@ -4,6 +4,7 @@ import { Repository, EntityManager, DataSource } from "typeorm";
 import { FindManyOptions } from "typeorm";
 import { EserviceProbingRequest } from "./entity/eservice_probing_request.entity.js";
 import { EserviceProbingResponse } from "./entity/eservice_probing_response.entity.js";
+import { EserviceView } from "./entity/view/eservice.entity.js";
 
 /**
  * Extracts keys of a given type T
@@ -28,6 +29,7 @@ export type ModelFilter<T> = {
 type EServiceEntities = Repository<EServiceEntity>;
 type EserviceProbingRequestEntities = Repository<EserviceProbingRequest>;
 type EserviceProbingResponseEntities = Repository<EserviceProbingResponse>;
+type EserviceViewEntities = Repository<EserviceView>;
 
 export class ModelRepository {
   private static instance: ModelRepository;
@@ -36,8 +38,9 @@ export class ModelRepository {
   private entityManager: EntityManager;
 
   public eservices: EServiceEntities;
-  public eservicesProbingRequest: EserviceProbingRequestEntities;
-  public eservicesProbingResponse: EserviceProbingResponseEntities;
+  public eserviceProbingRequest: EserviceProbingRequestEntities;
+  public eserviceProbingResponse: EserviceProbingResponseEntities;
+  public eserviceView: EserviceViewEntities;
 
   private constructor({
     dbHost: host,
@@ -62,12 +65,13 @@ export class ModelRepository {
     this.connection.initialize();
     this.entityManager = this.connection.createEntityManager();
     this.eservices = this.entityManager.getRepository(EServiceEntity);
-    this.eservicesProbingRequest = this.entityManager.getRepository(
+    this.eserviceProbingRequest = this.entityManager.getRepository(
       EserviceProbingRequest
     );
-    this.eservicesProbingResponse = this.entityManager.getRepository(
+    this.eserviceProbingResponse = this.entityManager.getRepository(
       EserviceProbingResponse
     );
+    this.eserviceView = this.entityManager.getRepository(EserviceView);
   }
 
   public static init(config: DbConfig): ModelRepository {
