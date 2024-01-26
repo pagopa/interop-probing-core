@@ -16,7 +16,7 @@ const getLoggerMetadata = (): SessionMetaData => {
         correlationId: "",
       }
     : {
-      correlationId: appContext.correlationId,
+        correlationId: appContext.correlationId,
       };
 };
 
