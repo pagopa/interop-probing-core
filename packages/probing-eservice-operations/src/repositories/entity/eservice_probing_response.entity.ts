@@ -7,7 +7,7 @@ import {
 } from "typeorm";
 import { IsEnum, IsDefined } from "class-validator";
 import { EServiceEntity } from "./eservice.entity.js";
-import { EserviceStatus } from "../../model/dtos/eservice.js";
+import { EserviceStatus } from "pagopa-interop-probing-models";
 
 @Entity({ name: "eservice_probing_responses" })
 export class EserviceProbingResponse {

@@ -2,7 +2,6 @@ import { ApiError, makeApiProblemBuilder } from "pagopa-interop-probing-models";
 
 export const errorCodes = {
   eServiceNotFound: "0001",
-  eServiceCannotBeUpdated: "0002",
 };
 
 export type ErrorCodes = keyof typeof errorCodes;
@@ -17,27 +16,6 @@ export function eServiceNotFound(
     detail: `EService by ${eserviceId} version ${versionId} not found`,
     code: "eServiceNotFound",
     title: "EService not found",
-  });
-}
-
-export function eServiceCannotBeUpdatedByEserviceRecordId(
-  eserviceRecordId: number,
-): ApiError<ErrorCodes> {
-  return new ApiError({
-    detail: `EService by eserviceRecordId ${eserviceRecordId} cannot be updated`,
-    code: "eServiceCannotBeUpdated",
-    title: "EService cannot be updated",
-  });
-}
-
-export function eServiceCannotBeUpdated(
-  eserviceId: string,
-  versionId: string
-): ApiError<ErrorCodes> {
-  return new ApiError({
-    detail: `EService by eserviceId ${eserviceId} versionId ${versionId} cannot be updated`,
-    code: "eServiceCannotBeUpdated",
-    title: "EService cannot be updated",
   });
 }
 

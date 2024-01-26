@@ -26,10 +26,10 @@ export type ModelFilter<T> = {
   [P in FilterKeys<T>]?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 } & FindManyOptions<T>;
 
-type EServiceEntities = Repository<EServiceEntity>;
-type EserviceProbingRequestEntities = Repository<EserviceProbingRequest>;
-type EserviceProbingResponseEntities = Repository<EserviceProbingResponse>;
-type EserviceViewEntities = Repository<EserviceView>;
+export type EServiceEntities = Repository<EServiceEntity>;
+export type EserviceProbingRequestEntities = Repository<EserviceProbingRequest>;
+export type EserviceProbingResponseEntities = Repository<EserviceProbingResponse>;
+export type EserviceViewEntities = Repository<EserviceView>;
 
 export class ModelRepository {
   private static instance: ModelRepository;

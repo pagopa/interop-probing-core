@@ -1,14 +1,10 @@
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ZodiosRouter } from "@zodios/express";
-import {
-  eServiceMainDataByRecordIdNotFound,
-  eServiceProbingDataByRecordIdNotFound,
-  makeApiProblem,
-} from "../model/domain/errors.js";
+import { makeApiProblem } from "../model/domain/errors.js";
 import { ExpressContext, ZodiosContext } from "pagopa-interop-probing-commons";
 import { config } from "../utilities/config.js";
-import { readModelServiceBuilder } from "../services/db/dbService.js";
-import { eServiceServiceBuilder } from "../services/eServiceService.js";
+import { modelServiceBuilder } from "../services/db/dbService.js";
+import { eServiceServiceBuilder } from "../services/eserviceService.js";
 import { eserviceQueryBuilder } from "../services/db/eserviceQuery.js";
 import { api } from "../model/generated/api.js";
 import {
@@ -20,8 +16,8 @@ import {
 import { updateEServiceErrorMapper } from "../utilities/errorMappers.js";
 import { ModelRepository } from "../repositories/modelRepository.js";
 
-const readModelService = readModelServiceBuilder(ModelRepository.init(config));
-const eserviceQuery = eserviceQueryBuilder(readModelService);
+const modelService = modelServiceBuilder(ModelRepository.init(config));
+const eserviceQuery = eserviceQueryBuilder(modelService);
 const eServiceService = eServiceServiceBuilder(eserviceQuery);
 
 const eServiceRouter = (
@@ -155,59 +151,32 @@ const eServiceRouter = (
     })
     .get("/eservices/mainData/:eserviceRecordId", async (req, res) => {
       try {
-        const eServiceMainData =
-          await readModelService.getEserviceMainDataByRecordId(
-            req.params.eserviceRecordId
-          );
+        const eServiceMainData = await eServiceService.getEserviceMainData(
+          req.params.eserviceRecordId
+        );
 
-        if (eServiceMainData) {
-          return res
-            .status(200)
-            .json(eServiceMainData satisfies EServiceMainData)
-            .end();
-        } else {
-          return res
-            .status(404)
-            .json(
-              makeApiProblem(
-                eServiceMainDataByRecordIdNotFound(req.params.eserviceRecordId),
-                () => 404
-              )
-            )
-            .end();
-        }
+        return res
+          .status(200)
+          .json(eServiceMainData satisfies EServiceMainData)
+          .end();
       } catch (error) {
-        const errorRes = makeApiProblem(error, () => 500);
+        const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
         return res.status(errorRes.status).json(errorRes).end();
       }
     })
     .get("/eservices/probingData/:eserviceRecordId", async (req, res) => {
       try {
         const eServiceProbingData =
-          await readModelService.getEserviceProbingDataByRecordId(
+          await eServiceService.getEserviceProbingData(
             req.params.eserviceRecordId
           );
 
-        if (eServiceProbingData) {
-          return res
-            .status(200)
-            .json(eServiceProbingData satisfies EServiceProbingData)
-            .end();
-        } else {
-          return res
-            .status(404)
-            .json(
-              makeApiProblem(
-                eServiceProbingDataByRecordIdNotFound(
-                  req.params.eserviceRecordId
-                ),
-                () => 404
-              )
-            )
-            .end();
-        }
+        return res
+          .status(200)
+          .json(eServiceProbingData satisfies EServiceProbingData)
+          .end();
       } catch (error) {
-        const errorRes = makeApiProblem(error, () => 500);
+        const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
         return res.status(errorRes.status).json(errorRes).end();
       }
     })

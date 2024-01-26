@@ -15,19 +15,22 @@ import {
   EserviceSaveRequest,
   EserviceProbingUpdateLastRequest,
   ChangeResponseReceived,
+  eserviceMonitorState,
+  eserviceInteropState,
+  responseStatus,
 } from "pagopa-interop-probing-models";
 import { P, match } from "ts-pattern";
 import { In, ILike } from "typeorm";
 import { z } from "zod";
 import {
-  eServiceCannotBeUpdated,
-  eServiceCannotBeUpdatedByEserviceRecordId,
-} from "../../model/domain/errors.js";
-import {
   ModelRepository,
   TypeORMQueryKeys,
   ModelFilter,
 } from "../../repositories/modelRepository.js";
+import {
+  eServiceMainDataByRecordIdNotFound,
+  eServiceProbingDataByRecordIdNotFound,
+} from "../../model/domain/errors.js";
 
 export type EServiceQueryFilters = {
   eserviceName: string | undefined;
@@ -68,14 +71,40 @@ const makeFilter = (
 const getEServicesFilters = (
   filters: EServiceQueryFilters
 ): { where: object } => {
-  const { eserviceName, producerName, versionNumber } = filters;
+  const { eserviceName, producerName, versionNumber, state } = filters;
 
-  const queryFilters = {
+  const queryFilters = [];
+  const andOperatorFilters = {
     ...makeFilter("eserviceName", eserviceName),
     ...makeFilter("producerName", producerName),
     ...makeFilter("versionNumber", versionNumber),
   };
 
+  if (state?.includes(eserviceMonitorState.offline)) {
+    const queryByStateFilters = {
+      ...andOperatorFilters,
+      state: eserviceInteropState.inactive,
+    };
+
+    const queryByResponseStatusFilters = {
+      ...andOperatorFilters,
+      responseStatus: responseStatus.ko,
+    };
+
+    queryFilters.push(...[queryByStateFilters, queryByResponseStatusFilters]);
+  } else if (state?.includes(eserviceMonitorState.online)) {
+    const queryByStateFilters = {
+      ...andOperatorFilters,
+      state: eserviceInteropState.active,
+    };
+
+    const queryByResponseStatusFilters = {
+      ...andOperatorFilters,
+      responseStatus: responseStatus.ok,
+    };
+
+    queryFilters.push(...[queryByStateFilters, queryByResponseStatusFilters]);
+  }
   return { where: queryFilters };
 };
 
@@ -92,11 +121,11 @@ const getEServicesProducersFilters = (
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export function readModelServiceBuilder(readModelRepository: ModelRepository) {
-  const eservices = readModelRepository.eservices;
-  const eserviceProbingRequest = readModelRepository.eserviceProbingRequest;
-  const eserviceProbingResponse = readModelRepository.eserviceProbingResponse;
-  const eserviceView = readModelRepository.eserviceView;
+export function modelServiceBuilder(modelRepository: ModelRepository) {
+  const eservices = modelRepository.eservices;
+  const eserviceProbingRequest = modelRepository.eserviceProbingRequest;
+  const eserviceProbingResponse = modelRepository.eserviceProbingResponse;
+  const eserviceView = modelRepository.eserviceView;
 
   return {
     async updateEserviceState(
@@ -104,14 +133,10 @@ export function readModelServiceBuilder(readModelRepository: ModelRepository) {
       versionId: string,
       eServiceUpdated: ChangeEserviceStateRequest
     ): Promise<void> {
-      const data = await eservices.update(
+      await eservices.update(
         { eserviceId, versionId },
         { state: eServiceUpdated.state }
       );
-      const result = ChangeEserviceStateRequest.safeParse(data);
-      if (!result.success) {
-        throw eServiceCannotBeUpdated(eserviceId, versionId);
-      }
     },
 
     async updateEserviceProbingState(
@@ -119,14 +144,10 @@ export function readModelServiceBuilder(readModelRepository: ModelRepository) {
       versionId: string,
       eServiceUpdated: ChangeEserviceProbingStateRequest
     ): Promise<void> {
-      const data = await eservices.update(
+      await eservices.update(
         { eserviceId, versionId },
         { probingEnabled: eServiceUpdated.probingEnabled }
       );
-      const result = ChangeEserviceProbingStateRequest.safeParse(data);
-      if (!result.success) {
-        throw eServiceCannotBeUpdated(eserviceId, versionId);
-      }
     },
 
     async updateEserviceFrequency(
@@ -134,14 +155,10 @@ export function readModelServiceBuilder(readModelRepository: ModelRepository) {
       versionId: string,
       eServiceUpdated: ChangeProbingFrequencyRequest
     ): Promise<void> {
-      const data = await eservices.update(
+      await eservices.update(
         { eserviceId, versionId },
         { pollingFrequency: eServiceUpdated.pollingFrequency }
       );
-      const result = ChangeProbingFrequencyRequest.safeParse(data);
-      if (!result.success) {
-        throw eServiceCannotBeUpdated(eserviceId, versionId);
-      }
     },
 
     async saveEservice(
@@ -149,8 +166,7 @@ export function readModelServiceBuilder(readModelRepository: ModelRepository) {
       versionId: string,
       eServiceUpdated: EserviceSaveRequest
     ): Promise<void> {
-      const data = await eservices.upsert(
-        { eserviceId, versionId },
+      await eservices.upsert(
         {
           eserviceId,
           versionId,
@@ -160,44 +176,42 @@ export function readModelServiceBuilder(readModelRepository: ModelRepository) {
           technology: eServiceUpdated.technology,
           versionNumber: eServiceUpdated.versionNumber,
           audience: eServiceUpdated.audience,
+        },
+        {
+          skipUpdateIfNoValuesChanged: true,
+          conflictPaths: ["eserviceId", "versionId"],
         }
       );
-      const result = EserviceSaveRequest.safeParse(data);
-      if (!result.success) {
-        throw eServiceCannotBeUpdated(eserviceId, versionId);
-      }
     },
 
     async updateEserviceLastRequest(
       eserviceRecordId: number,
       eServiceUpdated: EserviceProbingUpdateLastRequest
     ): Promise<void> {
-      const data = await eserviceProbingRequest.upsert(
-        { eserviceRecordId },
-        { eserviceRecordId, lastRequest: eServiceUpdated.lastRequest }
+      await eserviceProbingRequest.upsert(
+        { eserviceRecordId, lastRequest: eServiceUpdated.lastRequest },
+        {
+          skipUpdateIfNoValuesChanged: true,
+          conflictPaths: ["eserviceRecordId"],
+        }
       );
-      const result = EserviceProbingUpdateLastRequest.safeParse(data);
-      if (!result.success) {
-        throw eServiceCannotBeUpdatedByEserviceRecordId(eserviceRecordId);
-      }
     },
 
     async updateResponseReceived(
       eserviceRecordId: number,
       eServiceUpdated: ChangeResponseReceived
     ): Promise<void> {
-      const data = await eserviceProbingResponse.upsert(
-        { eserviceRecordId },
+      await eserviceProbingResponse.upsert(
         {
           eserviceRecordId,
           responseReceived: eServiceUpdated.responseReceived,
           responseStatus: eServiceUpdated.responseStatus,
+        },
+        {
+          skipUpdateIfNoValuesChanged: true,
+          conflictPaths: ["eserviceRecordId"],
         }
       );
-      const result = ChangeResponseReceived.safeParse(data);
-      if (!result.success) {
-        throw eServiceCannotBeUpdatedByEserviceRecordId(eserviceRecordId);
-      }
     },
 
     async getEServiceByIdAndVersion(
@@ -253,12 +267,12 @@ export function readModelServiceBuilder(readModelRepository: ModelRepository) {
       };
     },
 
-    async getEserviceMainDataByRecordId(
+    async getEserviceMainData(
       eserviceRecordId: number
-    ): Promise<EServiceMainData | undefined> {
+    ): Promise<EServiceMainData> {
       const data = await eservices.findOne({ where: { eserviceRecordId } });
       if (!data) {
-        return undefined;
+        throw eServiceMainDataByRecordIdNotFound(eserviceRecordId);
       } else {
         const result = EServiceMainData.safeParse(data);
         if (!result.success) {
@@ -273,12 +287,15 @@ export function readModelServiceBuilder(readModelRepository: ModelRepository) {
       }
     },
 
-    async getEserviceProbingDataByRecordId(
+    async getEserviceProbingData(
       eserviceRecordId: number
-    ): Promise<EServiceProbingData | undefined> {
-      const data = await eservices.findOne({ where: { eserviceRecordId } });
+    ): Promise<EServiceProbingData> {
+      const data = await eserviceView.findOne({
+        where: { eserviceRecordId },
+        order: { eserviceRecordId: "ASC" },
+      });
       if (!data) {
-        return undefined;
+        throw eServiceProbingDataByRecordIdNotFound(eserviceRecordId);
       } else {
         const result = EServiceProbingData.safeParse(data);
         if (!result.success) {
@@ -298,6 +315,12 @@ export function readModelServiceBuilder(readModelRepository: ModelRepository) {
       offset: number
     ): Promise<ListResult<EServiceContent>> {
       const data = await eserviceView.find({
+        select: {
+          eserviceRecordId: true,
+          technology: true,
+          basePath: true,
+          audience: true,
+        },
         skip: offset,
         take: limit,
       } satisfies ModelFilter<EServiceContent>);
@@ -326,6 +349,8 @@ export function readModelServiceBuilder(readModelRepository: ModelRepository) {
     ): Promise<ListResult<string>> {
       const data = await eservices.find({
         ...getEServicesProducersFilters(filters),
+        order: { producerName: "ASC" },
+        select: { producerName: true },
         skip: offset,
         take: limit,
       } satisfies ModelFilter<EService>);
@@ -357,4 +382,4 @@ export function readModelServiceBuilder(readModelRepository: ModelRepository) {
   };
 }
 
-export type ReadModelService = ReturnType<typeof readModelServiceBuilder>;
+export type ModelService = ReturnType<typeof modelServiceBuilder>;

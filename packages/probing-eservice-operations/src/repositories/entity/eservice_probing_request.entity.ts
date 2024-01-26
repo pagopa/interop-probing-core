@@ -11,7 +11,7 @@ import { EServiceEntity } from "./eservice.entity.js";
 @Entity({ name: "eservice_probing_requests" })
 export class EserviceProbingRequest {
   @PrimaryGeneratedColumn()
-  eserviceRecordId!: number;
+  eserviceRecordId: number;
 
   @IsDefined()
   @Column({ name: "last_request", type: "timestamptz" })

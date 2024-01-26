@@ -11,8 +11,8 @@ import {
   Min,
   IsNumber,
 } from "class-validator";
-import { EserviceInteropState, EserviceTechnology } from "../../model/dtos/eservice.js";
 import * as moment from "moment";
+import { EserviceInteropState, EserviceTechnology } from "pagopa-interop-probing-models";
 
 @Entity({ name: "eservices" })
 @Unique(["eservice_id", "version_id"])

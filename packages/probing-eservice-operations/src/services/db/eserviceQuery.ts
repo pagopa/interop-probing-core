@@ -8,22 +8,24 @@ import {
   EserviceSaveRequest,
   EserviceProbingUpdateLastRequest,
   ChangeResponseReceived,
+  EServiceMainData,
+  EServiceProbingData,
 } from "pagopa-interop-probing-models";
 import {
-  ReadModelService,
+  ModelService,
   EServiceQueryFilters,
   EServiceProducersQueryFilters,
 } from "./dbService.js";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
-export function eserviceQueryBuilder(readModelService: ReadModelService) {
+export function eserviceQueryBuilder(modelService: ModelService) {
   return {
     updateEserviceState: async (
       eserviceId: string,
       versionId: string,
       eServiceUpdated: ChangeEserviceStateRequest
     ): Promise<void> =>
-      await readModelService.updateEserviceState(
+      await modelService.updateEserviceState(
         eserviceId,
         versionId,
         eServiceUpdated
@@ -33,7 +35,7 @@ export function eserviceQueryBuilder(readModelService: ReadModelService) {
       versionId: string,
       eServiceUpdated: ChangeEserviceProbingStateRequest
     ): Promise<void> =>
-      await readModelService.updateEserviceProbingState(
+      await modelService.updateEserviceProbingState(
         eserviceId,
         versionId,
         eServiceUpdated
@@ -43,7 +45,7 @@ export function eserviceQueryBuilder(readModelService: ReadModelService) {
       versionId: string,
       eServiceUpdated: ChangeProbingFrequencyRequest
     ): Promise<void> =>
-      await readModelService.updateEserviceFrequency(
+      await modelService.updateEserviceFrequency(
         eserviceId,
         versionId,
         eServiceUpdated
@@ -53,16 +55,12 @@ export function eserviceQueryBuilder(readModelService: ReadModelService) {
       versionId: string,
       eServiceUpdated: EserviceSaveRequest
     ): Promise<void> =>
-      await readModelService.saveEservice(
-        eserviceId,
-        versionId,
-        eServiceUpdated
-      ),
+      await modelService.saveEservice(eserviceId, versionId, eServiceUpdated),
     updateEserviceLastRequest: async (
       eserviceRecordId: number,
       eServiceUpdated: EserviceProbingUpdateLastRequest
     ): Promise<void> =>
-      await readModelService.updateEserviceLastRequest(
+      await modelService.updateEserviceLastRequest(
         eserviceRecordId,
         eServiceUpdated
       ),
@@ -70,7 +68,7 @@ export function eserviceQueryBuilder(readModelService: ReadModelService) {
       eserviceRecordId: number,
       eServiceUpdated: ChangeResponseReceived
     ): Promise<void> =>
-      await readModelService.updateResponseReceived(
+      await modelService.updateResponseReceived(
         eserviceRecordId,
         eServiceUpdated
       ),
@@ -78,24 +76,32 @@ export function eserviceQueryBuilder(readModelService: ReadModelService) {
       eserviceId: string,
       versionId: string
     ): Promise<EService | undefined> =>
-      await readModelService.getEServiceByIdAndVersion(eserviceId, versionId),
+      await modelService.getEServiceByIdAndVersion(eserviceId, versionId),
     getEservices: async (
       filters: EServiceQueryFilters,
       limit: number,
       offset: number
     ): Promise<ListResult<EServiceContent>> =>
-      await readModelService.getEservices(filters, limit, offset),
+      await modelService.getEservices(filters, limit, offset),
+    getEserviceMainData: async (
+      eserviceRecordId: number
+    ): Promise<EServiceMainData> =>
+      await modelService.getEserviceMainData(eserviceRecordId),
+    getEserviceProbingData: async (
+      eserviceRecordId: number
+    ): Promise<EServiceProbingData> =>
+      await modelService.getEserviceProbingData(eserviceRecordId),
     getEservicesProducers: async (
       filters: EServiceProducersQueryFilters,
       limit: number,
       offset: number
     ): Promise<ListResult<string>> =>
-      await readModelService.getEservicesProducers(filters, limit, offset),
+      await modelService.getEservicesProducers(filters, limit, offset),
     getEservicesReadyForPolling: async (
       limit: number,
       offset: number
     ): Promise<ListResult<EServiceContent>> =>
-      await readModelService.getEservicesReadyForPolling(limit, offset),
+      await modelService.getEservicesReadyForPolling(limit, offset),
   };
 }
 

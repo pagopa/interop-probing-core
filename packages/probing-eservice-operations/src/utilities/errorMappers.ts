@@ -15,6 +15,5 @@ export const updateEServiceErrorMapper = (
   error: ApiError<ErrorCodes>
 ): number =>
   match(error.code)
-    .with("eServiceCannotBeUpdated", () => HTTP_STATUS_BAD_REQUEST)
     .with("eServiceNotFound", () => HTTP_STATUS_BAD_REQUEST)
     .otherwise(() => HTTP_STATUS_INTERNAL_SERVER_ERROR);

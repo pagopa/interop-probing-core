@@ -85,6 +85,8 @@ export type EserviceSaveRequest = z.infer<typeof EserviceSaveRequest>;
 
 export const EService = z.object({
   eserviceRecordId: z.number().int(),
+  eserviceId: z.string().uuid(),
+  versionId: z.string().uuid(),
   eserviceName: z.string(),
   producerName: z.string(),
   state: EserviceInteropState,

@@ -2,6 +2,8 @@ import { logger } from "pagopa-interop-probing-commons";
 import {
   ChangeResponseReceived,
   EServiceContent,
+  EServiceMainData,
+  EServiceProbingData,
   EserviceProbingUpdateLastRequest,
   EserviceSaveRequest,
   ListResult,
@@ -161,6 +163,20 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       return await eserviceQuery.getEservices(filters, limit, offset);
     },
 
+    async getEserviceMainData(
+      eserviceRecordId: number,
+    ): Promise<EServiceMainData> {
+      logger.info("Retrieving eService main data");
+      return await eserviceQuery.getEserviceMainData(eserviceRecordId);
+    },
+
+    async getEserviceProbingData(
+      eserviceRecordId: number,
+    ): Promise<EServiceProbingData> {
+      logger.info("Retrieving eService probing data");
+      return await eserviceQuery.getEserviceProbingData(eserviceRecordId);
+    },
+
     async getEservicesReadyForPolling(
       limit: number,
       offset: number
@@ -179,3 +195,5 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
     },
   };
 }
+
+export type EserviceService = ReturnType<typeof eServiceServiceBuilder>;
