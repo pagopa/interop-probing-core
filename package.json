@@ -27,7 +27,7 @@
     "infra:destroy": "./scripts/infra-destroy.sh"
   },
   "devDependencies": {
-    "@tsconfig/node-lts": "^18.12.5",
+    "@tsconfig/node-lts": "^20.1.0",
     "turbo": "^1.10.16"
   },
   "packageManager": "pnpm@8.11.0"
