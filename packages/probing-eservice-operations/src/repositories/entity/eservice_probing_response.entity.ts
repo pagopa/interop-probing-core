@@ -6,8 +6,8 @@ import {
   JoinColumn,
 } from "typeorm";
 import { IsEnum, IsDefined } from "class-validator";
-import { EServiceEntity } from "./eservice.entity.js";
 import { EserviceStatus } from "pagopa-interop-probing-models";
+import { EServiceEntity } from "./eservice.entity.js";
 
 @Entity({ name: "eservice_probing_responses" })
 export class EserviceProbingResponse {
@@ -20,10 +20,10 @@ export class EserviceProbingResponse {
 
   @IsDefined()
   @IsEnum(EserviceStatus)
-  @Column({ name: "status" })
+  @Column({ name: "status", type: "varchar" })
   responseStatus!: EserviceStatus;
 
   @OneToOne(() => EServiceEntity, { lazy: true })
   @JoinColumn({ name: "eservices_record_id" })
-  eservice: EServiceEntity;
+  eservice!: EServiceEntity;
 }

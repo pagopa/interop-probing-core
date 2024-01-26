@@ -1,4 +1,3 @@
-import { Entity, PrimaryGeneratedColumn, Column, Unique } from "typeorm";
 import {
   IsDateString,
   Length,
@@ -12,7 +11,11 @@ import {
   IsNumber,
 } from "class-validator";
 import * as moment from "moment";
-import { EserviceInteropState, EserviceTechnology } from "pagopa-interop-probing-models";
+import {
+  EserviceInteropState,
+  EserviceTechnology,
+} from "pagopa-interop-probing-models";
+import { Entity, PrimaryGeneratedColumn, Column, Unique } from "typeorm";
 
 @Entity({ name: "eservices" })
 @Unique(["eservice_id", "version_id"])
@@ -31,25 +34,25 @@ export class EServiceEntity {
   @IsString()
   @IsNotEmpty()
   @Length(1, 255)
-  @Column({ name: "eservice_name" })
+  @Column({ name: "eservice_name", type: "varchar" })
   eserviceName!: string;
 
   @IsDefined()
   @IsString()
   @IsEnum(EserviceTechnology)
-  @Column({ name: "eservice_technology" })
+  @Column({ name: "eservice_technology", type: "varchar" })
   technology!: EserviceTechnology;
 
   @IsDefined()
   @IsUUID("4")
-  @Column({ name: "eservice_id" })
+  @Column({ name: "eservice_id", type: "uuid" })
   eserviceId!: string;
 
   @IsDefined()
   @Min(1)
   @IsNumber()
-  @Column({ name: "polling_frequency", default: 5 })
-  pollingFrequency: number;
+  @Column({ name: "polling_frequency", type: "int", default: 5 })
+  pollingFrequency!: number;
 
   @IsDefined()
   @IsDateString()
@@ -75,37 +78,37 @@ export class EServiceEntity {
         .set({ hour: 23, minute: 59, second: 0, millisecond: 0 })
         .toDate(),
   })
-  pollingEndTime: Date;
+  pollingEndTime!: Date;
 
   @IsDefined()
-  @Column({ name: "probing_enabled", default: true })
-  probingEnabled: boolean;
+  @Column({ name: "probing_enabled", type: "boolean", default: true })
+  probingEnabled!: boolean;
 
   @IsDefined()
   @IsString()
   @IsNotEmpty()
   @Length(1, 255)
-  @Column({ name: "producer_name" })
+  @Column({ name: "producer_name", type: "varchar" })
   producerName!: string;
 
   @IsDefined()
   @IsEnum(EserviceInteropState)
-  @Column({ name: "state" })
+  @Column({ name: "state", type: "varchar" })
   state!: EserviceInteropState;
 
   @IsDefined()
   @IsUUID("4")
-  @Column({ name: "version_id" })
+  @Column({ name: "version_id", type: "uuid" })
   versionId!: string;
 
   @IsNumber()
-  @Column({ name: "lock_version" })
+  @Column({ name: "lock_version", type: "int" })
   lockVersion!: number;
 
   @IsDefined()
   @Min(1)
   @IsNumber()
-  @Column({ name: "version_number" })
+  @Column({ name: "version_number", type: "int" })
   versionNumber!: number;
 
   @IsDefined()
