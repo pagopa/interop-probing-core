@@ -1,23 +1,36 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToOne,
-  JoinColumn,
-} from "typeorm";
-import { IsDefined } from "class-validator";
-import { EServiceEntity } from "./eservice.entity.js";
+import { EntitySchema } from "typeorm";
+import { EserviceSchema, Eservice } from "./eservice.entity.js";
 
-@Entity({ name: "eservice_probing_requests" })
-export class EserviceProbingRequest {
-  @PrimaryGeneratedColumn()
+export interface EserviceProbingRequestSchema {
   eserviceRecordId: number;
-
-  @IsDefined()
-  @Column({ name: "last_request", type: "timestamptz" })
-  lastRequest!: Date;
-
-  @OneToOne(() => EServiceEntity, { lazy: true })
-  @JoinColumn({ name: "eservices_record_id" })
-  eservice!: EServiceEntity;
+  lastRequest: string;
+  eservice?: EserviceSchema;
 }
+
+export const EserviceProbingRequest =
+  new EntitySchema<EserviceProbingRequestSchema>({
+    name: `${process.env.SCHEMA_NAME}.eservice_probing_requests`,
+    columns: {
+      eserviceRecordId: {
+        name: "eservices_record_id",
+        type: "bigint",
+        primary: true,
+      },
+      lastRequest: {
+        type: "timestamptz",
+        name: "last_request",
+        nullable: false,
+      },
+    },
+    relations: {
+      eservice: {
+        type: "one-to-one",
+        target: Eservice,
+        lazy: true,
+        joinColumn: {
+          name: "eservices_record_id",
+          referencedColumnName: "eserviceRecordId"
+        },
+      },
+    },
+  });

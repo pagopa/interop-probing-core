@@ -1,87 +1,134 @@
-import { Entity, Column, PrimaryGeneratedColumn } from "typeorm";
+import { EntitySchema } from "typeorm";
 import {
-  IsBoolean,
-  IsString,
-  IsEnum,
-  IsNumber,
-  IsDateString,
-  IsArray,
-  Length,
-  IsUUID,
-} from "class-validator";
-import { EserviceInteropState, EserviceTechnology, EserviceStatus } from "pagopa-interop-probing-models";
+  EserviceInteropState,
+  EserviceTechnology,
+  EserviceStatus,
+} from "pagopa-interop-probing-models";
 
-@Entity({ name: "eservice_view" })
-export class EserviceView {
-  @PrimaryGeneratedColumn({ name: "id", type: "bigint", unsigned: true })
-  eserviceRecordId!: number;
-
-  @IsString()
-  @Length(1, 255)
-  @Column({ name: "eservice_name", type: "varchar" })
-  eserviceName!: string;
-
-  @Column({ name: "eservice_id", type: "varchar" })
-  eserviceId!: string;
-
-  @IsString()
-  @Length(1, 255)
-  @Column({ name: "producer_name", type: "varchar" })
-  producerName!: string;
-
-  @IsBoolean()
-  @Column({ name: "probing_enabled", type: "boolean" })
-  probingEnabled!: boolean;
-
-  @IsEnum(EserviceInteropState)
-  @Column({ name: "state", type: "varchar" })
-  state!: EserviceInteropState;
-
-  @IsUUID("4")
-  @Column({ name: "version_id", type: "uuid" })
-  versionId!: string;
-
-  @IsNumber()
-  @Column({ name: "version_number", type: "int" })
-  versionNumber!: number;
-
-  @IsDateString()
-  @Column({ name: "response_received", type: "timestamptz" })
-  responseReceived!: Date;
-
-  @IsDateString()
-  @Column({ name: "last_request", type: "timestamptz" })
-  lastRequest!: Date;
-
-  @IsNumber()
-  @Column({ name: "polling_frequency", type: "int" })
-  pollingFrequency!: number;
-
-  @IsDateString()
-  @Column({ name: "polling_start_time", type: "timestamptz" })
-  pollingStartTime!: Date;
-
-  @IsDateString()
-  @Column({ name: "polling_end_time", type: "timestamptz" })
-  pollingEndTime!: Date;
-
-  @IsEnum(EserviceTechnology)
-  @Column({ name: "technology", type: "varchar" })
-  technology!: EserviceTechnology;
-
-  @IsArray()
-  @IsString({ each: true })
-  @Length(1, 2048, { each: true })
-  @Column({ name: "base_path", type: "varchar", array: true, length: 2048 })
-  basePath!: string[];
-
-  @IsEnum(EserviceStatus)
-  @Column({ name: "status", type: "varchar" })
-  responseStatus!: EserviceStatus;
-
-  @IsArray()
-  @IsString({ each: true })
-  @Length(1, 2048, { each: true })
-  @Column({ name: "audience", type: "varchar", array: true, length: 2048 })
-  audience!: string[];
+export interface EserviceViewSchema {
+  eserviceRecordId: number;
+  eserviceName: string;
+  eserviceId: string;
+  producerName: string;
+  probingEnabled: boolean;
+  state: EserviceInteropState;
+  versionId: string;
+  versionNumber: number;
+  responseReceived: string;
+  lastRequest: string;
+  pollingFrequency: number;
+  pollingStartTime: string;
+  pollingEndTime: string;
+  technology: EserviceTechnology;
+  basePath: string[];
+  responseStatus: EserviceStatus;
+  audience: string[];
 }
+
+export const EserviceView: EntitySchema<EserviceViewSchema> = new EntitySchema({
+  name: `${process.env.SCHEMA_NAME}.eservice_view`,
+  columns: {
+    eserviceRecordId: {
+      name: "id",
+      type: "bigint",
+      primary: true,
+    },
+    eserviceName: {
+      name: "eservice_name",
+      type: "varchar",
+    },
+    eserviceId: {
+      name: "eservice_id",
+      type: "varchar",
+    },
+    producerName: {
+      name: "producer_name",
+      type: "varchar",
+    },
+    probingEnabled: {
+      name: "probing_enabled",
+      type: "boolean",
+    },
+    state: {
+      name: "state",
+      type: "enum",
+      enum: EserviceInteropState,
+    },
+    versionId: {
+      name: "version_id",
+      type: "varchar",
+    },
+    versionNumber: {
+      name: "version_number",
+      type: "int",
+    },
+    responseReceived: {
+      name: "response_received",
+      type: "timestamptz",
+    },
+    lastRequest: {
+      name: "last_request",
+      type: "timestamptz",
+    },
+    pollingFrequency: {
+      name: "polling_frequency",
+      type: "int",
+    },
+    pollingStartTime: {
+      name: "polling_start_time",
+      type: "time with time zone",
+    },
+    pollingEndTime: {
+      name: "polling_end_time",
+      type: "time with time zone",
+    },
+    technology: {
+      name: "eservice_technology",
+      type: "enum",
+      enum: EserviceTechnology,
+    },
+    basePath: {
+      name: "base_path",
+      type: "varchar",
+      array: true,
+      length: 2048,
+    },
+    responseStatus: {
+      name: "status",
+      type: "enum",
+      enum: EserviceStatus,
+    },
+    audience: {
+      name: "audience",
+      type: "varchar",
+      array: true,
+      length: 2048,
+    },
+  },
+  expression: `
+  SELECT
+    e.id AS eserviceRecordId,
+    e.eservice_name AS eserviceName,
+    e.eservice_id AS eserviceId,
+    e.producer_name AS producerName,
+    e.probing_enabled AS probingEnabled,
+    e.state,
+    e.version_id AS versionId,
+    e.version_number AS versionNumber,
+    epr.response_received AS responseReceived,
+    epreq.last_request AS lastRequest,
+    e.polling_frequency AS pollingFrequency,
+    e.polling_start_time AS pollingStartTime,
+    e.polling_end_time AS pollingEndTime,
+    e.eservice_technology AS technology,
+    e.base_path AS basePath,
+    epr.status AS responseStatus,
+    e.audience
+  FROM
+  ${process.env.SCHEMA_NAME}.eservices e
+  LEFT JOIN
+  ${process.env.SCHEMA_NAME}.eservice_probing_responses epr ON epr.eservices_record_id = e.id
+  LEFT JOIN
+  ${process.env.SCHEMA_NAME}.eservice_probing_requests epreq ON epreq.eservices_record_id = e.id
+`,
+});
