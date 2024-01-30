@@ -1,34 +1,50 @@
-import { EService, responseStatus, technology } from "pagopa-interop-probing-models";
-import { v4 as uuidv4 } from "uuid";
-import { EserviceViewEntities } from "../src/repositories/modelRepository.js";
+import {
+  EserviceEntities,
+  EserviceProbingRequestEntities,
+  EserviceProbingResponseEntities,
+} from "../src/repositories/modelRepository.js";
+import { ObjectLiteral } from "typeorm";
+import { EserviceSchema } from "../src/repositories/entity/eservice.entity.js";
+import { EserviceProbingRequestSchema } from "../src/repositories/entity/eservice_probing_request.entity.js";
+import { EserviceProbingResponseSchema } from "../src/repositories/entity/eservice_probing_response.entity.js";
 
-export const getMockEService = (): EService => ({
-  eserviceRecordId: 0,
-  eserviceName: "eService 001",
-  producerName: "eService producer 001",
-  state: "ACTIVE",
-  responseReceived: "2024-01-25T00:51:05.736Z",
-  pollingStartTime: "2024-01-25T00:51:05.736Z",
-  pollingEndTime: "2024-01-25T00:51:05.736Z",
-  lastRequest: "2024-01-25T00:51:05.736Z",
-  responseStatus: responseStatus.ok,
-  versionNumber: 0,
-  basePath: ["test-1"],
-  technology: technology.rest,
-  pollingFrequency: 0,
-  probingEnabled: true,
-  audience: ["string"],
-  eserviceId: uuidv4(), 
-  versionId: uuidv4()
-});
-
-export const addOneEService = async (
-  eServiceData: EService,
-  eservices: EserviceViewEntities
-): Promise<void> => {
-  const newEService = await eservices.create();
-  Object.assign(newEService, {
-    eServiceData
+export const addEserviceProbingRequest = async (
+  data: EserviceProbingRequestSchema,
+  repository: EserviceProbingRequestEntities
+): Promise<ObjectLiteral[]> => {
+  const result = await repository.upsert(data, {
+    skipUpdateIfNoValuesChanged: true,
+    conflictPaths: ["eserviceRecordId"],
   });
-  await eservices.save(newEService);
+  return result.identifiers;
+};
+
+export const addEserviceProbingResponse = async (
+  data: EserviceProbingResponseSchema,
+  repository: EserviceProbingResponseEntities
+): Promise<ObjectLiteral[]> => {
+  const result = await repository.upsert(data, {
+    skipUpdateIfNoValuesChanged: true,
+    conflictPaths: ["eserviceRecordId"],
+  });
+  return result.identifiers;
+};
+
+export const addEservice = async (
+  data: EserviceSchema,
+  repository: EserviceEntities
+): Promise<{ id: string }> => {
+  const results = await repository
+    .createQueryBuilder()
+    .insert()
+    .values({
+      eserviceRecordId: () =>
+        `nextval('"${process.env.SCHEMA_NAME}"."eservice_sequence"'::regclass)`,
+      ...data,
+    })
+    .returning("id")
+    .execute();
+
+  const [result] = results.raw;
+  return result;
 };
