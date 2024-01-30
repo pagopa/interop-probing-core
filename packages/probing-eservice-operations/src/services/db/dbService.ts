@@ -31,6 +31,7 @@ import {
   eServiceMainDataByRecordIdNotFound,
   eServiceProbingDataByRecordIdNotFound,
 } from "../../model/domain/errors.js";
+import { EserviceSchema } from "../../repositories/entity/eservice.entity.js";
 
 export type EServiceQueryFilters = {
   eserviceName: string | undefined;
@@ -43,12 +44,12 @@ export type EServiceProducersQueryFilters = {
   producerName: string | undefined;
 };
 
-type EServiceDataFields = TypeORMQueryKeys<EService>;
+type EServiceDataFields = TypeORMQueryKeys<EserviceSchema>;
 
 const makeFilter = (
   fieldName: EServiceDataFields,
   value: number | number[] | string | string[] | undefined
-): ModelFilter<EService> | undefined =>
+): ModelFilter<EserviceSchema> | undefined =>
   match(value)
     .with(P.nullish, () => undefined)
     .with(P.string, () => ({
@@ -166,22 +167,43 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       versionId: string,
       eServiceUpdated: EserviceSaveRequest
     ): Promise<void> {
-      await eservices.upsert(
-        {
+      const updateEservice: EserviceSaveRequest = {
+        eserviceName: eServiceUpdated.eserviceName,
+        producerName: eServiceUpdated.producerName,
+        basePath: eServiceUpdated.basePath,
+        technology: eServiceUpdated.technology,
+        versionNumber: eServiceUpdated.versionNumber,
+        audience: eServiceUpdated.audience,
+        state: eServiceUpdated.state
+      };
+      const existingEservice = await eservices
+        .createQueryBuilder()
+        .where("eservice_id = :eserviceId AND version_id = :versionId", {
           eserviceId,
           versionId,
-          eserviceName: eServiceUpdated.eserviceName,
-          producerName: eServiceUpdated.producerName,
-          basePath: eServiceUpdated.basePath,
-          technology: eServiceUpdated.technology,
-          versionNumber: eServiceUpdated.versionNumber,
-          audience: eServiceUpdated.audience,
-        },
-        {
-          skipUpdateIfNoValuesChanged: true,
-          conflictPaths: ["eserviceId", "versionId"],
-        }
-      );
+        })
+        .getOne();
+
+      if (existingEservice) {
+        await eservices
+          .createQueryBuilder()
+          .update()
+          .set(updateEservice)
+          .where("eservice_id = :eserviceId AND version_id = :versionId", {
+            eserviceId,
+            versionId,
+          })
+          .execute();
+      } else {
+        await eservices
+          .createQueryBuilder()
+          .insert()
+          .values({
+            eserviceRecordId: () => `nextval('"${process.env.SCHEMA_NAME}"."eservice_sequence"'::regclass)`,
+            ...updateEservice,
+          })
+          .execute();
+      }
     },
 
     async updateEserviceLastRequest(
@@ -246,7 +268,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         ...getEServicesFilters(filters),
         skip: offset,
         take: limit,
-      } satisfies ModelFilter<EServiceContent>);
+      } satisfies ModelFilter<EserviceSchema>);
 
       const result = z.array(EServiceContent).safeParse(data.map((d) => d));
       if (!result.success) {
@@ -263,7 +285,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         content: result.data,
         offset,
         limit,
-        totalElements: await eservices.count(getEServicesFilters(filters)),
+        totalElements: await eserviceView.count(getEServicesFilters(filters)),
       };
     },
 
@@ -304,6 +326,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
               result
             )} - data ${JSON.stringify(data)} `
           );
+
           throw genericError("Unable to parse eservice probingData item");
         }
         return result.data;
@@ -323,7 +346,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         },
         skip: offset,
         take: limit,
-      } satisfies ModelFilter<EServiceContent>);
+      } satisfies ModelFilter<EserviceSchema>);
 
       const result = z.array(EServiceContent).safeParse(data.map((d) => d));
       if (!result.success) {
@@ -353,22 +376,15 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         select: { producerName: true },
         skip: offset,
         take: limit,
-      } satisfies ModelFilter<EService>);
+      } satisfies ModelFilter<EserviceSchema>);
 
-      const checkSchema = z
-        .array(EServiceContent)
+      const result = z
+        .array(z.string())
         .safeParse(data.map((d) => d.producerName));
-
-      const parse = z.array(EServiceContent).safeParse(data.map((d) => d));
-      const producers = data.map((d) => d.producerName);
-      const result = parse.success
-        ? z.array(z.string()).safeParse(producers)
-        : { success: false, data: [] };
-
       if (!result.success) {
         logger.error(
           `Unable to parse eservices producers items: result ${JSON.stringify(
-            checkSchema
+            result
           )} - data ${JSON.stringify(data)} `
         );
 
