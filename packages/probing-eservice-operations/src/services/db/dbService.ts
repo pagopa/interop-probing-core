@@ -174,7 +174,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         technology: eServiceUpdated.technology,
         versionNumber: eServiceUpdated.versionNumber,
         audience: eServiceUpdated.audience,
-        state: eServiceUpdated.state
+        state: eServiceUpdated.state,
       };
       const existingEservice = await eservices
         .createQueryBuilder()
@@ -199,8 +199,15 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
           .createQueryBuilder()
           .insert()
           .values({
-            eserviceRecordId: () => `nextval('"${process.env.SCHEMA_NAME}"."eservice_sequence"'::regclass)`,
+            eserviceRecordId: () =>
+              `nextval('"${process.env.SCHEMA_NAME}"."eservice_sequence"'::regclass)`,
+            eserviceId,
+            versionId,
             ...updateEservice,
+            pollingStartTime: "00:00:00+00",
+            pollingEndTime: "23:59:00+00",
+            probingEnabled: true,
+            lockVersion: 1
           })
           .execute();
       }

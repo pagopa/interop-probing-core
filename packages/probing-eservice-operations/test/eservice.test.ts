@@ -416,8 +416,13 @@ describe("database test", async () => {
     });
 
     describe("saveEservice", () => {
-      it("should create or update the EService Version, with corresponding details", async () => {
+      const eserviceId = uuidv4();
+      const versionId = uuidv4();
+
+      it("should save the EService with corresponding details", async () => {
         const payload = {
+          eserviceId,
+          versionId,
           name: "eService 003",
           producerName: "eService producer 003",
           state: eserviceInteropState.inactive,
@@ -428,14 +433,14 @@ describe("database test", async () => {
         };
 
         await eserviceService.saveEservice(
-          "10ba038e-48da-487b-96e8-8d3b99b6d18a",
-          "98a66bf7-78b3-4b1d-9b34-df327578907c",
+          payload.eserviceId,
+          payload.versionId,
           payload
         );
 
         const updatedEservice = await eservices.findOneBy({
-          eserviceId: "10ba038e-48da-487b-96e8-8d3b99b6d18a",
-          versionId: "98a66bf7-78b3-4b1d-9b34-df327578907c",
+          eserviceId: payload.eserviceId,
+          versionId: payload.versionId,
         });
 
         expect(updatedEservice?.eserviceName).toBe(payload.name);
@@ -444,6 +449,27 @@ describe("database test", async () => {
         expect(updatedEservice?.technology).toBe(payload.technology);
         expect(updatedEservice?.versionNumber).toBe(payload.versionNumber);
         expect(updatedEservice?.audience).toStrictEqual(payload.audience);
+      });
+
+      it("should update the EService with corresponding details", async () => {
+        const payload = {
+          name: "eService 003",
+          producerName: "eService producer 003",
+          state: eserviceInteropState.inactive,
+          basePath: ["path-003"],
+          technology: technology.rest,
+          versionNumber: 5,
+          audience: ["audience"],
+        };
+
+        await eserviceService.saveEservice(eserviceId, versionId, payload);
+
+        const updatedEservice = await eservices.findOneBy({
+          eserviceId,
+          versionId,
+        });
+
+        expect(updatedEservice?.versionNumber).toBe(payload.versionNumber);
       });
     });
 
