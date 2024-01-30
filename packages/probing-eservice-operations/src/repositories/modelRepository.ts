@@ -1,10 +1,21 @@
-import { EServiceEntity } from "./entity/eservice.entity.js";
 import { DbConfig } from "../utilities/dbConfig.js";
 import { Repository, EntityManager, DataSource } from "typeorm";
 import { FindManyOptions } from "typeorm";
-import { EserviceProbingRequest } from "./entity/eservice_probing_request.entity.js";
-import { EserviceProbingResponse } from "./entity/eservice_probing_response.entity.js";
-import { EserviceView } from "./entity/view/eservice.entity.js";
+import {
+  EserviceProbingRequest,
+  EserviceProbingRequestSchema,
+} from "./entity/eservice_probing_request.entity.js";
+import {
+  EserviceProbingResponse,
+  EserviceProbingResponseSchema,
+} from "./entity/eservice_probing_response.entity.js";
+import {
+  EserviceView,
+  EserviceViewSchema,
+} from "./entity/view/eservice.entity.js";
+import { Eservice, EserviceSchema } from "./entity/eservice.entity.js";
+import { V1_DDL_1706531694434 } from "../services/db/migration/V1__DDL.js";
+import { logger } from "pagopa-interop-probing-commons";
 
 /**
  * Extracts keys of a given type T
@@ -26,10 +37,12 @@ export type ModelFilter<T> = {
   [P in FilterKeys<T>]?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 } & FindManyOptions<T>;
 
-export type EServiceEntities = Repository<EServiceEntity>;
-export type EserviceProbingRequestEntities = Repository<EserviceProbingRequest>;
-export type EserviceProbingResponseEntities = Repository<EserviceProbingResponse>;
-export type EserviceViewEntities = Repository<EserviceView>;
+export type EserviceEntities = Repository<EserviceSchema>;
+export type EserviceProbingRequestEntities =
+  Repository<EserviceProbingRequestSchema>;
+export type EserviceProbingResponseEntities =
+  Repository<EserviceProbingResponseSchema>;
+export type EserviceViewEntities = Repository<EserviceViewSchema>;
 
 export class ModelRepository {
   private static instance: ModelRepository;
@@ -37,7 +50,7 @@ export class ModelRepository {
   private connection: DataSource;
   private entityManager: EntityManager;
 
-  public eservices: EServiceEntities;
+  public eservices: EserviceEntities;
   public eserviceProbingRequest: EserviceProbingRequestEntities;
   public eserviceProbingResponse: EserviceProbingResponseEntities;
   public eserviceView: EserviceViewEntities;
@@ -57,14 +70,20 @@ export class ModelRepository {
       username,
       password,
       database,
-      entities: [EServiceEntity],
+      entities: [
+        Eservice,
+        EserviceProbingRequest,
+        EserviceProbingResponse,
+        EserviceView,
+      ],
+      migrations: [V1_DDL_1706531694434],
+      migrationsRun: true,
       synchronize: false,
       logging: false,
     });
 
-    this.connection.initialize();
     this.entityManager = this.connection.createEntityManager();
-    this.eservices = this.entityManager.getRepository(EServiceEntity);
+    this.eservices = this.entityManager.getRepository(Eservice);
     this.eserviceProbingRequest = this.entityManager.getRepository(
       EserviceProbingRequest
     );
@@ -74,12 +93,19 @@ export class ModelRepository {
     this.eserviceView = this.entityManager.getRepository(EserviceView);
   }
 
-  public static init(config: DbConfig): ModelRepository {
+  public static async init(config: DbConfig): Promise<ModelRepository> {
     if (!ModelRepository.instance) {
       // eslint-disable-next-line functional/immutable-data
       ModelRepository.instance = new ModelRepository(config);
+      const connectionStatus =
+        await ModelRepository.instance.connection.initialize();
+      logger.info(
+        `Database Connection Status: ${
+          connectionStatus ? "Initialized" : "Not Initialized"
+        }`
+      );
     }
 
-    return ModelRepository.instance;
+    return await ModelRepository.instance;
   }
 }
