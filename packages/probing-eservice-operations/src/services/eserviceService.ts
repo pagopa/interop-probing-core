@@ -93,7 +93,7 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       eServiceToBeUpdated.pollingEndTime = payload.endTime;
 
       logger.info("Updating eService frequency");
-      await eserviceQuery.updateEserviceProbingState(
+      await eserviceQuery.updateEserviceFrequency(
         eserviceId,
         versionId,
         eServiceToBeUpdated
@@ -164,14 +164,14 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
     },
 
     async getEserviceMainData(
-      eserviceRecordId: number,
+      eserviceRecordId: number
     ): Promise<EServiceMainData> {
       logger.info("Retrieving eService main data");
       return await eserviceQuery.getEserviceMainData(eserviceRecordId);
     },
 
     async getEserviceProbingData(
-      eserviceRecordId: number,
+      eserviceRecordId: number
     ): Promise<EServiceProbingData> {
       logger.info("Retrieving eService probing data");
       return await eserviceQuery.getEserviceProbingData(eserviceRecordId);

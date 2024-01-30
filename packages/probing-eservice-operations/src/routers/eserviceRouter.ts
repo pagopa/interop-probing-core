@@ -16,7 +16,7 @@ import {
 import { updateEServiceErrorMapper } from "../utilities/errorMappers.js";
 import { ModelRepository } from "../repositories/modelRepository.js";
 
-const modelService = modelServiceBuilder(ModelRepository.init(config));
+const modelService = modelServiceBuilder(await ModelRepository.init(config));
 const eserviceQuery = eserviceQueryBuilder(modelService);
 const eServiceService = eServiceServiceBuilder(eserviceQuery);
 
