@@ -127,7 +127,7 @@ describe("database test", async () => {
             eserviceName: "eService 002",
             producerName: "eService producer 002",
             versionNumber: 1,
-            state: eserviceInteropState.inactive,
+            state: eserviceInteropState.active,
             pollingStartTime: moment()
               .tz("UTC")
               .set({ hour: 8, minute: 0 })
@@ -153,7 +153,7 @@ describe("database test", async () => {
             eserviceName: "eService 003",
             producerName: "eService producer 003",
             versionNumber: 1,
-            state: eserviceInteropState.active,
+            state: eserviceInteropState.inactive,
             pollingStartTime: moment()
               .tz("UTC")
               .set({ hour: 8, minute: 0 })
@@ -177,12 +177,6 @@ describe("database test", async () => {
         expect(eservice1.id).toBe("1");
         expect(eservice2.id).toBe("2");
         expect(eservice3.id).toBe("3");
-
-
-        const updatedEservice = await eservices.findOneBy({
-          eserviceRecordId: Number(eservice3.id)
-        });
-        console.log('updatedEservice3 ----->', updatedEservice)
       });
 
       it("should create 3 eservices probing request", async () => {
@@ -233,7 +227,7 @@ describe("database test", async () => {
           } satisfies EserviceProbingResponseSchema,
           eserviceProbingResponse
         );
-        
+
         const eservice3ProbingResponse = await addEserviceProbingResponse(
           {
             eserviceRecordId: 3,
@@ -250,7 +244,7 @@ describe("database test", async () => {
     });
 
     describe("getEservices", () => {
-      it("service returns SearchEserviceResponse object with content empty", async () => {
+      it("service returns getEservices response object with content empty", async () => {
         const eService1: EServiceQueryFilters = {
           eserviceName: "eService 999",
           producerName: "eService producer 999",
@@ -264,7 +258,7 @@ describe("database test", async () => {
         expect(result1.totalElements).toBe(0);
       });
 
-      it("given a list of all state values as parameter, service returns SearchEserviceResponse object with content not empty", async () => {
+      it("given a list of all state values as parameter, service returns getEservices response object with content not empty", async () => {
         const eService1: EServiceQueryFilters = {
           eserviceName: "eService 001",
           producerName: "eService producer 001",
@@ -272,15 +266,50 @@ describe("database test", async () => {
           state: [eserviceMonitorState.online],
         };
 
-        const result1 = await eserviceService.getEservices(eService1, 50, 0);
+        const result1 = await eserviceService.getEservices(eService1, 2, 0);
 
         expect(result1.totalElements).not.toBe(0);
         expect(result1.offset).toBe(0);
-        expect(result1.limit).toBe(50);
+        expect(result1.limit).toBe(2);
         expect(result1.content[0].eserviceName).toBe(eService1.eserviceName);
         expect(result1.content[0].producerName).toBe(eService1.producerName);
         expect(result1.content[0].versionNumber).toBe(eService1.versionNumber);
         expect(result1.content[0].state).toBe(eserviceInteropState.active);
+      });
+
+      /*
+      TODO
+      
+      it("given status n/d as parameter, service returns getEservices response object with content empty", async () => {
+        const eService1: EServiceQueryFilters = {
+          eserviceName: "eService 001",
+          producerName: "eService producer 001",
+          versionNumber: 1,
+          state: [eserviceMonitorState['n/d']],
+        };
+
+        const result1 = await eserviceService.getEservices(eService1, 2, 0);
+
+        expect(result1.content).toStrictEqual([]);
+        expect(result1.totalElements).toBe(0);
+      });
+      
+      */
+
+      it("given status offline as parameter, service returns getEservices response object with content not empty", async () => {
+        const eService1: EServiceQueryFilters = {
+          eserviceName: "eService 003",
+          producerName: "eService producer 003",
+          versionNumber: 1,
+          state: [eserviceMonitorState.offline],
+        };
+
+        const result1 = await eserviceService.getEservices(eService1, 2, 0);
+
+        expect(result1.totalElements).toBe(1);
+        expect(result1.offset).toBe(0);
+        expect(result1.limit).toBe(2);
+        expect(result1.content[0].state).toBe(eserviceInteropState.inactive);
       });
     });
 

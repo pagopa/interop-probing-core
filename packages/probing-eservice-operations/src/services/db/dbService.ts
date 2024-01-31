@@ -20,13 +20,12 @@ import {
   responseStatus,
   EServiceContentReadyForPolling,
 } from "pagopa-interop-probing-models";
-import { P, match } from "ts-pattern";
-import { In, ILike } from "typeorm";
+import { Like } from "typeorm";
 import { z } from "zod";
 import {
   ModelRepository,
-  TypeORMQueryKeys,
   ModelFilter,
+  EserviceViewEntities,
 } from "../../repositories/modelRepository.js";
 import {
   eServiceMainDataByRecordIdNotFound,
@@ -36,6 +35,7 @@ import {
   EserviceSchema,
   eServiceDefaultValues,
 } from "../../repositories/entity/eservice.entity.js";
+import { SelectQueryBuilder } from "typeorm";
 
 export type EServiceQueryFilters = {
   eserviceName: string | undefined;
@@ -48,70 +48,65 @@ export type EServiceProducersQueryFilters = {
   producerName: string | undefined;
 };
 
-type EServiceDataFields = TypeORMQueryKeys<EserviceSchema>;
-
-const makeFilter = (
-  fieldName: EServiceDataFields,
-  value: number | number[] | string | string[] | undefined
-): ModelFilter<EserviceSchema> | undefined =>
-  match(value)
-    .with(P.nullish, () => undefined)
-    .with(P.string, () => ({
-      [`${fieldName}`]: ILike(`%${value}%`),
-    }))
-    .with(P.array(P.string), (a) =>
-      a.length === 0
-        ? undefined
-        : {
-            [`${fieldName}`]: In(a.map((v) => ILike(`%${v}%`))),
-          }
-    )
-    .otherwise(() => {
-      logger.error(
-        `Unable to build filter for field ${fieldName} and value ${value}`
-      );
-      return undefined;
-    });
-
-const getEServicesFilters = (
+const addQueryFilters = (
+  queryBuilder: SelectQueryBuilder<EserviceViewEntities>,
   filters: EServiceQueryFilters
-): { where: object } => {
+): void => {
   const { eserviceName, producerName, versionNumber, state } = filters;
 
-  const queryFilters = [];
-  const andOperatorFilters = {
-    ...makeFilter("eserviceName", eserviceName),
-    ...makeFilter("producerName", producerName),
-    ...makeFilter("versionNumber", versionNumber),
-  };
-
-  if (state?.includes(eserviceMonitorState.offline)) {
-    console.log("state ---->", state);
-    const queryByStateFilters = {
-      ...andOperatorFilters,
-      state: eserviceInteropState.inactive,
-    };
-
-    const queryByResponseStatusFilters = {
-      ...andOperatorFilters,
-      responseStatus: responseStatus.ko,
-    };
-
-    queryFilters.push(...[queryByStateFilters, queryByResponseStatusFilters]);
-  } else if (state?.includes(eserviceMonitorState.online)) {
-    const queryByStateFilters = {
-      ...andOperatorFilters,
-      state: eserviceInteropState.active,
-    };
-
-    const queryByResponseStatusFilters = {
-      ...andOperatorFilters,
-      responseStatus: responseStatus.ok,
-    };
-
-    queryFilters.push(...[queryByStateFilters, queryByResponseStatusFilters]);
+  if (eserviceName) {
+    queryBuilder.andWhere(`eservice_name LIKE :eserviceName`, {
+      eserviceName: `%${eserviceName}%`, // TODO: check if toUpperCase() needed
+    });
   }
-  return { where: queryFilters };
+
+  if (producerName) {
+    queryBuilder.andWhere(`producer_name = :producerName`, {
+      producerName: producerName, // TODO: check if toUpperCase() needed
+    });
+  }
+
+  if (versionNumber) {
+    queryBuilder.andWhere(`version_number = :versionNumber`, { versionNumber });
+  }
+
+  if (state) {
+    const isOffline = state.includes(eserviceMonitorState.offline);
+    const isOnline = state.includes(eserviceMonitorState.online);
+    const isNDState = state.includes(eserviceMonitorState["n/d"]);
+    const predicates: string[] = [];
+
+    if (isOffline) {
+      predicates.push(`state = :state OR status = :responseStatus`);
+    }
+
+    if (isOnline) {
+      predicates.push(`state = :state AND status = :responseStatus`);
+    }
+
+    queryBuilder.andWhere(`(${predicates.join(" OR ")})`, {
+      ...(isOffline && {
+        state: eserviceInteropState.inactive,
+        responseStatus: responseStatus.ko,
+      }),
+      ...(isOnline && {
+        state: eserviceInteropState.active,
+        responseStatus: responseStatus.ok,
+      }),
+    });
+
+    if (isNDState) {
+      const minOfTolleranceMultiplier = process.env
+        .TOLERANCE_MULTIPLIER_IN_MINUTES as string;
+
+      queryBuilder.andWhere(`probing_enabled = true`);
+      queryBuilder.andWhere(`last_request IS NOT NULL`);
+      queryBuilder.andWhere(
+        `(EXTRACT(MINUTE FROM last_request) < polling_frequency * :${minOfTolleranceMultiplier} OR response_received > last_request)`
+      );
+      queryBuilder.andWhere(`response_received IS NOT NULL`);
+    }
+  }
 };
 
 const getEServicesProducersFilters = (
@@ -120,7 +115,7 @@ const getEServicesProducersFilters = (
   const { producerName } = filters;
 
   const queryFilters = {
-    ...makeFilter("producerName", producerName),
+    ...(producerName && { producerName: Like(`%${producerName}%`) }), // TODO:  check if toUpperCase() needed
   };
 
   return { where: queryFilters };
@@ -273,11 +268,15 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       limit: number,
       offset: number
     ): Promise<ListResult<EServiceContent>> {
-      const data = await eserviceView.find({
-        ...getEServicesFilters(filters),
-        skip: offset,
-        take: limit,
-      } satisfies ModelFilter<EserviceSchema>);
+      const [data, count] = await eserviceView
+        .createQueryBuilder()
+        .where((qb: SelectQueryBuilder<EserviceViewEntities>) =>
+          addQueryFilters(qb, filters)
+        )
+        .orderBy({ id: "ASC" })
+        .skip(offset)
+        .take(limit)
+        .getManyAndCount();
 
       const result = z.array(EServiceContent).safeParse(data.map((d) => d));
       if (!result.success) {
@@ -294,7 +293,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         content: result.data,
         offset,
         limit,
-        totalElements: await eserviceView.count(getEServicesFilters(filters)),
+        totalElements: count,
       };
     },
 
