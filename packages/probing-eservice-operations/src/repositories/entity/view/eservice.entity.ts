@@ -4,6 +4,7 @@ import {
   EserviceTechnology,
   EserviceStatus,
 } from "pagopa-interop-probing-models";
+import { config } from "../../../utilities/config.js";
 
 export interface EserviceViewSchema {
   eserviceRecordId: number;
@@ -26,7 +27,7 @@ export interface EserviceViewSchema {
 }
 
 export const EserviceView: EntitySchema<EserviceViewSchema> = new EntitySchema({
-  name: `${process.env.SCHEMA_NAME}.eservice_view`,
+  name: `${config.schemaName}.eservice_view`,
   columns: {
     eserviceRecordId: {
       name: "id",
@@ -125,10 +126,10 @@ export const EserviceView: EntitySchema<EserviceViewSchema> = new EntitySchema({
     epr.status AS responseStatus,
     e.audience
   FROM
-  ${process.env.SCHEMA_NAME}.eservices e
+  ${config.schemaName}.eservices e
   LEFT JOIN
-  ${process.env.SCHEMA_NAME}.eservice_probing_responses epr ON epr.eservices_record_id = e.id
+  ${config.schemaName}.eservice_probing_responses epr ON epr.eservices_record_id = e.id
   LEFT JOIN
-  ${process.env.SCHEMA_NAME}.eservice_probing_requests epreq ON epreq.eservices_record_id = e.id
+  ${config.schemaName}.eservice_probing_requests epreq ON epreq.eservices_record_id = e.id
 `,
 });

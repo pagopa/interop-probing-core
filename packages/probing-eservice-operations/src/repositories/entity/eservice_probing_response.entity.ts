@@ -1,6 +1,7 @@
 import { EntitySchema } from "typeorm";
 import { EserviceStatus } from "pagopa-interop-probing-models";
 import { EserviceSchema, Eservice } from "./eservice.entity.js";
+import { config } from "../../utilities/config.js";
 
 export interface EserviceProbingResponseSchema {
   eserviceRecordId: number;
@@ -11,7 +12,7 @@ export interface EserviceProbingResponseSchema {
 
 export const EserviceProbingResponse =
   new EntitySchema<EserviceProbingResponseSchema>({
-    name: `${process.env.SCHEMA_NAME}.eservice_probing_responses`,
+    name: `${config.schemaName}.eservice_probing_responses`,
     columns: {
       eserviceRecordId: {
         name: "eservices_record_id",

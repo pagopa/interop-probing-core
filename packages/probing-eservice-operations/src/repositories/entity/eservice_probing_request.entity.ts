@@ -1,5 +1,6 @@
 import { EntitySchema } from "typeorm";
 import { EserviceSchema, Eservice } from "./eservice.entity.js";
+import { config } from "../../utilities/config.js";
 
 export interface EserviceProbingRequestSchema {
   eserviceRecordId: number;
@@ -9,7 +10,7 @@ export interface EserviceProbingRequestSchema {
 
 export const EserviceProbingRequest =
   new EntitySchema<EserviceProbingRequestSchema>({
-    name: `${process.env.SCHEMA_NAME}.eservice_probing_requests`,
+    name: `${config.schemaName}.eservice_probing_requests`,
     columns: {
       eserviceRecordId: {
         name: "eservices_record_id",

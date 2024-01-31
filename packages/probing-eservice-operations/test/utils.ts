@@ -7,6 +7,7 @@ import { ObjectLiteral } from "typeorm";
 import { EserviceSchema } from "../src/repositories/entity/eservice.entity.js";
 import { EserviceProbingRequestSchema } from "../src/repositories/entity/eservice_probing_request.entity.js";
 import { EserviceProbingResponseSchema } from "../src/repositories/entity/eservice_probing_response.entity.js";
+import { config } from "../src/utilities/config.js";
 
 export const addEserviceProbingRequest = async (
   data: EserviceProbingRequestSchema,
@@ -39,7 +40,7 @@ export const addEservice = async (
     .insert()
     .values({
       eserviceRecordId: () =>
-        `nextval('"${process.env.SCHEMA_NAME}"."eservice_sequence"'::regclass)`,
+        `nextval('"${config.schemaName}"."eservice_sequence"'::regclass)`,
       ...data,
     })
     .returning("id")

@@ -3,6 +3,7 @@ import {
   EserviceInteropState,
   EserviceTechnology,
 } from "pagopa-interop-probing-models";
+import { config } from "../../utilities/config.js";
 
 export interface EserviceSchema {
   eserviceRecordId?: number;
@@ -58,9 +59,9 @@ export const eServiceDefaultValues = {
  * EserviceSchema
  * @remarks
  * - `eserviceRecordId`: serves as the primary key and is generated manually
- * using the nextval function of PostgreSQL during insert queries addressing an 
+ * using the nextval function of PostgreSQL during insert queries addressing an
  * issue in TypeORM for column awareness of the sequence: https://github.com/typeorm/typeorm/issues/5283
- * 
+ *
  * @example
  * // Example usage to insert a new record with manually generated eserviceRecordId:
  * await Eservice
@@ -68,13 +69,13 @@ export const eServiceDefaultValues = {
  *   .insert()
  *   .values({
  *     eserviceRecordId: () =>
- *       `nextval('"${process.env.SCHEMA_NAME}"."eservice_sequence"'::regclass)`,
+ *       `nextval('"${config.schemaName}"."eservice_sequence"'::regclass)`,
  *     // ... (other values for other columns)
  *   })
  *   .execute();
  */
 export const Eservice = new EntitySchema<EserviceSchema>({
-  name: `${process.env.SCHEMA_NAME}.eservices`,
+  name: `${config.schemaName}.eservices`,
   columns: {
     eserviceRecordId: {
       name: "id",
