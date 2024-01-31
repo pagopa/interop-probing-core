@@ -8,16 +8,15 @@ export class V1_DDL_1706531694434 implements MigrationInterface {
     );
 
     // Create Sequence
-    // Reasoning for using "id BIGINT NOT NULL" without "DEFAULT nextval('eservice_sequence')":
-    // The 'id' column serves as the primary key for the 'eservices' table and is generated
-    // using the nextval function directly during insert queries. This approach aligns with
-    // the implemented generator sequence, addressing an issue in TypeORM for column
-    // awareness of the sequence: https://github.com/typeorm/typeorm/issues/5283
+    
     await queryRunner.query(
       `CREATE SEQUENCE IF NOT EXISTS ${process.env.SCHEMA_NAME}.eservice_sequence START WITH 1 INCREMENT BY 1`
     );
 
     // Create eservices Table
+    // Reasoning for using "id BIGINT NOT NULL" without "DEFAULT nextval('eservice_sequence')":
+    // The 'id' column serves as the primary key for the 'eservices' table and is generated
+    // using the nextval function directly during insert queries.
     await queryRunner.query(`
             CREATE TABLE IF NOT EXISTS ${process.env.SCHEMA_NAME}.eservices (
                 id BIGINT NOT NULL,

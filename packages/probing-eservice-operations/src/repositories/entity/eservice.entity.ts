@@ -51,9 +51,28 @@ export const eServiceDefaultValues = {
   pollingEndTime: "23:59:00+00",
   pollingFrequency: 5,
   probingEnabled: true,
-  lockVersion: 1
+  lockVersion: 1,
 } as const;
 
+/**
+ * EserviceSchema
+ * @remarks
+ * - `eserviceRecordId`: serves as the primary key and is generated manually
+ * using the nextval function of PostgreSQL during insert queries addressing an 
+ * issue in TypeORM for column awareness of the sequence: https://github.com/typeorm/typeorm/issues/5283
+ * 
+ * @example
+ * // Example usage to insert a new record with manually generated eserviceRecordId:
+ * await Eservice
+ *   .createQueryBuilder()
+ *   .insert()
+ *   .values({
+ *     eserviceRecordId: () =>
+ *       `nextval('"${process.env.SCHEMA_NAME}"."eservice_sequence"'::regclass)`,
+ *     // ... (other values for other columns)
+ *   })
+ *   .execute();
+ */
 export const Eservice = new EntitySchema<EserviceSchema>({
   name: `${process.env.SCHEMA_NAME}.eservices`,
   columns: {
@@ -140,5 +159,4 @@ export const Eservice = new EntitySchema<EserviceSchema>({
       nullable: false,
     },
   },
-  
 });
