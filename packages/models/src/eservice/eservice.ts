@@ -87,15 +87,27 @@ export const EserviceSaveRequest = z.object({
 });
 export type EserviceSaveRequest = z.infer<typeof EserviceSaveRequest>;
 
+/**
+ * Schema for EService.
+ *
+ * @remarks
+ * - `eserviceRecordId`: In PostgreSQL, the primary key column type for eserviceRecordId is `bigint`, which returns a string.
+ *   Due to the JavaScript limit for accurate representation of integers being 9007199254740991 (2^53),
+ *   values exceeding this limit must be returned as strings.
+ *   Despite this, the API Swagger documentation specifies a number type.
+ *   We transform it to a number with the understanding that eservices' numbers are assumed
+ *   to stay within the safe JavaScript integer limit.
+ *   For more details, refer to: [TypeORM Issue #8583](https://github.com/typeorm/typeorm/issues/8583)
+ *
+ * - `pollingFrequency`: This field is an integer with a minimum value of 1 and a default value of 5.
+ *
+ * @see EserviceInteropState - Enum representing the state of EService.
+ * @see EserviceTechnology - Enum representing the technology of EService.
+ *
+ * @throws `ValidationError` if the input does not conform to the defined schema.
+ */
 export const EService = z.object({
   eserviceRecordId: z.string().transform((value) => Number(value)),
-  // In PostgreSQL, the primary key column type for eserviceRecordId is bigint, which returns a string.
-  // Due to the JavaScript limit for accurate representation of integers being 9007199254740991 (2^53),
-  // values exceeding this limit must returned as strings.
-  // Despite this, the API Swagger documentation specifies a number type.
-  // We transform it to a number with the understanding that eservices' numbers are assumed
-  // to stay within the safe JavaScript integer limit.
-  // For more details, refer to: https://github.com/typeorm/typeorm/issues/8583
   eserviceId: z.string().uuid(),
   versionId: z.string().uuid(),
   eserviceName: z.string(),
@@ -113,9 +125,30 @@ export const EService = z.object({
 });
 export type EService = z.infer<typeof EService>;
 
+/**
+ * Schema for EService Content.
+ *
+ * @remarks
+ * This schema defines the structure of content related to the EService entity,
+ * specifically designed for response payloads or content representations.
+ *
+ * - `eserviceRecordId`: This field is transformed using the `transform` utility to ensure
+ *   that the value matches the expected response schema of OpenAPI. The transformation
+ *   involves parsing the input as a string and converting it to a number.
+ *   For more details, refer to: [EService schema declaration](link_to_EService_schema_declaration)
+ *
+ * - `responseReceived` and `lastRequest`: These date fields are transformed to ISO string format
+ *   using the `transform` utility to align with common practices for date representation in APIs.
+ *
+ * @see EService - Entity schema for EService, includes details about `eserviceRecordId`.
+ * @see EserviceInteropState - Enum representing the state of EService.
+ * @see EserviceTechnology - Enum representing the technology of EService.
+ * @see EserviceStatus - Enum representing the status of EService.
+ *
+ * @throws `ValidationError` if the input does not conform to the defined schema.
+ */
 export const EServiceContent = z.object({
   eserviceRecordId: z.string().transform((value) => Number(value)),
-  // For more details, refer to: EService schema declaration
   eserviceName: z.string(),
   producerName: z.string(),
   state: EserviceInteropState,

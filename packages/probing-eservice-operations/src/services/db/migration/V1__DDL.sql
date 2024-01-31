@@ -2,6 +2,12 @@ CREATE SCHEMA IF NOT EXISTS ${schema_name};
 
 CREATE SEQUENCE IF NOT EXISTS ${schema_name}.eservice_sequence START WITH 1 INCREMENT BY 1;
 
+-- Table: ${schema_name}.eservices
+-- Reasoning for using "id BIGINT NOT NULL" without "DEFAULT nextval('eservice_sequence')":
+-- The 'id' column serves as the primary key for the 'eservices' table and is generated
+-- using the nextval function directly during insert queries. This approach aligns with
+-- the implemented generator sequence, addressing an issue in TypeORM for column 
+-- awareness of the sequence: https://github.com/typeorm/typeorm/issues/5283
 CREATE TABLE ${schema_name}.eservices (
    id BIGINT NOT NULL,
    base_path VARCHAR(2048) array NOT NULL,
@@ -13,7 +19,7 @@ CREATE TABLE ${schema_name}.eservices (
    polling_start_time time WITH TIME ZONE NOT NULL,
    probing_enabled BOOLEAN NOT NULL,
    producer_name VARCHAR(2048) NOT NULL,
-   state VARCHAR(255) NOT NULL,
+   state VARCHAR(255) NOT NULL, 
    version_id UUID NOT NULL,
    lock_version INTEGER NOT NULL,
    version_number INTEGER NOT NULL,
