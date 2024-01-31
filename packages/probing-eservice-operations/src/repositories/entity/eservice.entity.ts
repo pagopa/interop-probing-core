@@ -22,6 +22,30 @@ export interface EserviceSchema {
   audience: string[];
 }
 
+/**
+ * SIMILAR ISSUE: https://github.com/typeorm/typeorm/issues/7098
+ * -----------------------------------------------------
+ * DESCRIPTION:
+ * There is an issue where default values specified in entity schemas
+ * are being ignored during the insertion of records using TypeORM.
+ *
+ * DETAILS:
+ * When attempting to insert a record into the database using TypeORM, the expected
+ * default values defined in the entity schema are not being applied as intended giving not null error.
+ *
+ * WORKAROUND:
+ * Currently workaround is manually set default values during record insertion.
+ *
+ * EXAMPLE:
+ * ```typescript
+ * const data = {a: 1, b: 2}:
+ * const newRecord = new YourEntity();
+ * await entityManager.save({...eServiceDefaultValues, ..data});
+ * ```
+ *
+ * Please refer to the GitHub issue for updates on the status of the bug and any
+ * potential fixes or workarounds provided by the TypeORM community.
+ */
 export const eServiceDefaultValues = {
   pollingStartTime: "00:00:00+00",
   pollingEndTime: "23:59:00+00",
