@@ -18,6 +18,7 @@ import {
   eserviceMonitorState,
   eserviceInteropState,
   responseStatus,
+  EServiceContentReadyForPolling,
 } from "pagopa-interop-probing-models";
 import { P, match } from "ts-pattern";
 import { In, ILike } from "typeorm";
@@ -343,7 +344,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     async getEservicesReadyForPolling(
       limit: number,
       offset: number
-    ): Promise<ListResult<EServiceContent>> {
+    ): Promise<ListResult<EServiceContentReadyForPolling>> {
       const data = await eserviceView.find({
         select: {
           eserviceRecordId: true,
@@ -355,7 +356,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         take: limit,
       } satisfies ModelFilter<EserviceSchema>);
 
-      const result = z.array(EServiceContent).safeParse(data.map((d) => d));
+      const result = z.array(EServiceContentReadyForPolling).safeParse(data.map((d) => d));
       if (!result.success) {
         logger.error(
           `Unable to parse eservices ready for polling items: result ${JSON.stringify(

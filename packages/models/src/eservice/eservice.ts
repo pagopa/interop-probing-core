@@ -131,6 +131,15 @@ export const EServiceContent = z.object({
 });
 export type EServiceContent = z.infer<typeof EServiceContent>;
 
+export const EServiceContentReadyForPolling = z.object({
+  eserviceRecordId: z.string().transform((value) => Number(value)),
+  // For more details, refer to: EService schema declaration
+  basePath: z.array(z.string()),
+  technology: EserviceTechnology,
+  audience: z.array(z.string()),
+});
+export type EServiceContentReadyForPolling = z.infer<typeof EServiceContentReadyForPolling>;
+
 export const EServiceMainData = z.object({
   eserviceName: z.string(),
   producerName: z.string(),
