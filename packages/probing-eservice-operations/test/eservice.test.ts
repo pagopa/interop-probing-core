@@ -139,7 +139,7 @@ describe("database test", async () => {
             basePath: ["test-1"],
             technology: technology.rest,
             pollingFrequency: 7,
-            probingEnabled: false,
+            probingEnabled: true,
             audience: ["string"],
             eserviceId: uuidv4(),
             versionId: uuidv4(),
@@ -277,9 +277,6 @@ describe("database test", async () => {
         expect(result1.content[0].state).toBe(eserviceInteropState.active);
       });
 
-      /*
-      TODO
-      
       it("given status n/d as parameter, service returns getEservices response object with content empty", async () => {
         const eService1: EServiceQueryFilters = {
           eserviceName: "eService 001",
@@ -294,8 +291,6 @@ describe("database test", async () => {
         expect(result1.totalElements).toBe(0);
       });
       
-      */
-
       it("given status offline as parameter, service returns getEservices response object with content not empty", async () => {
         const eService1: EServiceQueryFilters = {
           eserviceName: "eService 003",
@@ -340,11 +335,11 @@ describe("database test", async () => {
     });
 
     describe("getEservicesReadyForPolling", () => {
-      it("should get eServices ready for polling", async () => {
+      it("service returns getEservicesReadyForPolling response object with content not empty", async () => {
         const eServicesReadyForPolling =
-          await eserviceService.getEservicesReadyForPolling(2, 0);
+          await eserviceService.getEservicesReadyForPolling(1, 0);
 
-        expect(eServicesReadyForPolling.content.length).toBe(2);
+        expect(eServicesReadyForPolling.content.length).toBe(1);
       });
     });
 

@@ -36,6 +36,8 @@ import {
   eServiceDefaultValues,
 } from "../../repositories/entity/eservice.entity.js";
 import { SelectQueryBuilder } from "typeorm";
+import { EserviceView } from "../../repositories/entity/view/eservice.entity.js";
+import { config } from "../../utilities/config.js";
 
 export type EServiceQueryFilters = {
   eserviceName: string | undefined;
@@ -48,7 +50,7 @@ export type EServiceProducersQueryFilters = {
   producerName: string | undefined;
 };
 
-const addQueryFilters = (
+const addPredicateEservices = (
   queryBuilder: SelectQueryBuilder<EserviceViewEntities>,
   filters: EServiceQueryFilters
 ): void => {
@@ -84,29 +86,54 @@ const addQueryFilters = (
       predicates.push(`state = :state AND status = :responseStatus`);
     }
 
-    queryBuilder.andWhere(`(${predicates.join(" OR ")})`, {
-      ...(isOffline && {
-        state: eserviceInteropState.inactive,
-        responseStatus: responseStatus.ko,
-      }),
-      ...(isOnline && {
-        state: eserviceInteropState.active,
-        responseStatus: responseStatus.ok,
-      }),
-    });
+    if (isOffline || isOnline) {
+      queryBuilder.andWhere(`(${predicates.join(" OR ")})`, {
+        ...(isOffline && {
+          state: eserviceInteropState.inactive,
+          responseStatus: responseStatus.ko,
+        }),
+        ...(isOnline && {
+          state: eserviceInteropState.active,
+          responseStatus: responseStatus.ok,
+        }),
+      });
+    }
 
     if (isNDState) {
-      const minOfTolleranceMultiplier = process.env
-        .TOLERANCE_MULTIPLIER_IN_MINUTES as string;
+      const extractMinuteLessPollingFrequencyPeTollerance = `CAST(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60 AS INTEGER) < (polling_frequency * :minOfTolleranceMultiplier)`;
 
-      queryBuilder.andWhere(`probing_enabled = true`);
+      queryBuilder.distinct(true);
+      queryBuilder.andWhere("probing_enabled = :probingEnabled", {
+        probingEnabled: true,
+      });
       queryBuilder.andWhere(`last_request IS NOT NULL`);
-      queryBuilder.andWhere(
-        `(EXTRACT(MINUTE FROM last_request) < polling_frequency * :${minOfTolleranceMultiplier} OR response_received > last_request)`
-      );
       queryBuilder.andWhere(`response_received IS NOT NULL`);
+      queryBuilder.andWhere(
+        `((${extractMinuteLessPollingFrequencyPeTollerance}) OR (response_received > last_request))`,
+        { minOfTolleranceMultiplier: config.minOfTolleranceMultiplier }
+      );
     }
   }
+};
+
+const addPredicateEservicesReadyForPolling = (
+  queryBuilder: SelectQueryBuilder<EserviceViewEntities>,
+  entityAlias: string
+): void => {
+  const makeInterval = `(DATE_TRUNC('minute', ${entityAlias}.last_request) + MAKE_INTERVAL(mins => ${entityAlias}.polling_frequency))`;
+  const compareTimestampInterval = `CURRENT_TIME BETWEEN ${entityAlias}.polling_start_time AND ${entityAlias}.polling_end_time`;
+
+  queryBuilder
+    .andWhere(`${entityAlias}.state = :state`, {
+      state: eserviceInteropState.active,
+    })
+    .andWhere(`${entityAlias}.probing_enabled = :probingEnabled`, {
+      probingEnabled: true,
+    })
+    .andWhere(
+      `((${entityAlias}.last_request IS NULL AND ${entityAlias}.response_received IS NULL) OR ((${makeInterval} <= CURRENT_TIMESTAMP) AND (${entityAlias}.last_request <= ${entityAlias}.response_received)))`
+    )
+    .andWhere(compareTimestampInterval);
 };
 
 const getEServicesProducersFilters = (
@@ -200,7 +227,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
           .insert()
           .values({
             eserviceRecordId: () =>
-              `nextval('"${process.env.SCHEMA_NAME}"."eservice_sequence"'::regclass)`,
+              `nextval('"${config.schemaName}"."eservice_sequence"'::regclass)`,
             eserviceId,
             versionId,
             ...eServiceDefaultValues,
@@ -271,7 +298,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       const [data, count] = await eserviceView
         .createQueryBuilder()
         .where((qb: SelectQueryBuilder<EserviceViewEntities>) =>
-          addQueryFilters(qb, filters)
+          addPredicateEservices(qb, filters)
         )
         .orderBy({ id: "ASC" })
         .skip(offset)
@@ -345,16 +372,23 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       limit: number,
       offset: number
     ): Promise<ListResult<EServiceContentReadyForPolling>> {
-      const data = await eserviceView.find({
-        select: {
-          eserviceRecordId: true,
-          technology: true,
-          basePath: true,
-          audience: true,
-        },
-        skip: offset,
-        take: limit,
-      } satisfies ModelFilter<EserviceSchema>);
+      const [data, count] = await eserviceView
+        .createQueryBuilder()
+        .distinct(true)
+        .where((qb: SelectQueryBuilder<EserviceViewEntities>) =>
+          addPredicateEservicesReadyForPolling(qb, "eserviceView")
+        )
+        .select([
+          "eserviceView.eserviceRecordId",
+          "eserviceView.technology",
+          "eserviceView.basePath",
+          "eserviceView.audience",
+        ])
+        .from(EserviceView, "eserviceView") // Explicitly defining the 'from' clause is required to address the issue described here https://github.com/typeorm/typeorm/issues/1937.
+        .orderBy("eserviceView.eserviceRecordId", "ASC")
+        .skip(offset)
+        .take(limit)
+        .getManyAndCount();
 
       const result = z
         .array(EServiceContentReadyForPolling)
@@ -371,7 +405,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
 
       return {
         content: result.data,
-        totalElements: await eservices.count(),
+        totalElements: count,
       };
     },
 
