@@ -32,7 +32,10 @@ import {
   eServiceMainDataByRecordIdNotFound,
   eServiceProbingDataByRecordIdNotFound,
 } from "../../model/domain/errors.js";
-import { EserviceSchema } from "../../repositories/entity/eservice.entity.js";
+import {
+  EserviceSchema,
+  eServiceDefaultValues,
+} from "../../repositories/entity/eservice.entity.js";
 
 export type EServiceQueryFilters = {
   eserviceName: string | undefined;
@@ -83,6 +86,7 @@ const getEServicesFilters = (
   };
 
   if (state?.includes(eserviceMonitorState.offline)) {
+    console.log("state ---->", state);
     const queryByStateFilters = {
       ...andOperatorFilters,
       state: eserviceInteropState.inactive,
@@ -204,11 +208,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
               `nextval('"${process.env.SCHEMA_NAME}"."eservice_sequence"'::regclass)`,
             eserviceId,
             versionId,
+            ...eServiceDefaultValues,
             ...updateEservice,
-            pollingStartTime: "00:00:00+00",
-            pollingEndTime: "23:59:00+00",
-            probingEnabled: true,
-            lockVersion: 1
           })
           .execute();
       }
@@ -356,7 +357,9 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         take: limit,
       } satisfies ModelFilter<EserviceSchema>);
 
-      const result = z.array(EServiceContentReadyForPolling).safeParse(data.map((d) => d));
+      const result = z
+        .array(EServiceContentReadyForPolling)
+        .safeParse(data.map((d) => d));
       if (!result.success) {
         logger.error(
           `Unable to parse eservices ready for polling items: result ${JSON.stringify(

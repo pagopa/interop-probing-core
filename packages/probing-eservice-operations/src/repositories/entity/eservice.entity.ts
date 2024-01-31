@@ -22,6 +22,14 @@ export interface EserviceSchema {
   audience: string[];
 }
 
+export const eServiceDefaultValues = {
+  pollingStartTime: "00:00:00+00",
+  pollingEndTime: "23:59:00+00",
+  pollingFrequency: 5,
+  probingEnabled: true,
+  lockVersion: 1
+} as const;
+
 export const Eservice = new EntitySchema<EserviceSchema>({
   name: `${process.env.SCHEMA_NAME}.eservices`,
   columns: {
@@ -57,25 +65,21 @@ export const Eservice = new EntitySchema<EserviceSchema>({
     pollingFrequency: {
       name: "polling_frequency",
       type: "int",
-      default: 5,
       nullable: false,
     },
     pollingStartTime: {
       name: "polling_start_time",
       type: "time with time zone",
-      default: "00:00:00+00",
       nullable: false,
     },
     pollingEndTime: {
       name: "polling_end_time",
       type: "time with time zone",
-      default: "23:59:00+00",
       nullable: false,
     },
     probingEnabled: {
       name: "probing_enabled",
       type: "boolean",
-      default: true,
       nullable: false,
     },
     producerName: {
