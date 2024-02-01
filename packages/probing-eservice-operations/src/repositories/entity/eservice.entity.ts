@@ -4,6 +4,7 @@ import {
   EserviceTechnology,
 } from "pagopa-interop-probing-models";
 import { config } from "../../utilities/config.js";
+import moment from "moment-timezone";
 
 export interface EserviceSchema {
   eserviceRecordId?: number;
@@ -46,10 +47,23 @@ export interface EserviceSchema {
  *
  * Please refer to the GitHub issue for updates on the status of the bug and any
  * potential fixes or workarounds provided by the TypeORM community.
+ *
+ * INFO:
+ * @property {string} pollingStartTime - Format: "00:00:00+00"
+ * @property {string} pollingEndTime - Format: "23:59:00+00"
+ * @property {number} pollingFrequency
+ * @property {boolean} probingEnabled
+ * @property {number} lockVersion
  */
 export const eServiceDefaultValues = {
-  pollingStartTime: "00:00:00+00",
-  pollingEndTime: "23:59:00+00",
+  pollingStartTime: moment()
+    .tz("UTC")
+    .set({ hour: 0, minute: 0, seconds: 0 })
+    .format("HH:mm:ss"),
+  pollingEndTime: moment()
+    .tz("UTC")
+    .set({ hour: 23, minute: 59, seconds: 0 })
+    .format("HH:mm:ss"),
   pollingFrequency: 5,
   probingEnabled: true,
   lockVersion: 1,

@@ -2,12 +2,14 @@ import {
   EserviceEntities,
   EserviceProbingRequestEntities,
   EserviceProbingResponseEntities,
+  EserviceViewEntities,
 } from "../src/repositories/modelRepository.js";
 import { ObjectLiteral } from "typeorm";
 import { EserviceSchema } from "../src/repositories/entity/eservice.entity.js";
 import { EserviceProbingRequestSchema } from "../src/repositories/entity/eservice_probing_request.entity.js";
 import { EserviceProbingResponseSchema } from "../src/repositories/entity/eservice_probing_response.entity.js";
 import { config } from "../src/utilities/config.js";
+import { EserviceViewSchema } from "../src/repositories/entity/view/eservice.entity.js";
 
 export const addEserviceProbingRequest = async (
   data: EserviceProbingRequestSchema,
@@ -45,7 +47,13 @@ export const addEservice = async (
     })
     .returning("id")
     .execute();
-
   const [result] = results.raw;
   return result;
+};
+
+export const getEservice = async (
+  eserviceRecordId: number,
+  repository: EserviceViewEntities
+): Promise<EserviceViewSchema | { [key: string]: string } > => {
+  return await repository.findOneBy({ eserviceRecordId }) || {};
 };

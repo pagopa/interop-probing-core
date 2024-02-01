@@ -20,7 +20,7 @@ import {
   responseStatus,
   EServiceContentReadyForPolling,
 } from "pagopa-interop-probing-models";
-import { Like } from "typeorm";
+import { Brackets, Like } from "typeorm";
 import { z } from "zod";
 import {
   ModelRepository,
@@ -38,6 +38,7 @@ import {
 import { SelectQueryBuilder } from "typeorm";
 import { EserviceView } from "../../repositories/entity/view/eservice.entity.js";
 import { config } from "../../utilities/config.js";
+import { WhereExpressionBuilder } from "typeorm/browser";
 
 export type EServiceQueryFilters = {
   eserviceName: string | undefined;
@@ -48,6 +49,59 @@ export type EServiceQueryFilters = {
 
 export type EServiceProducersQueryFilters = {
   producerName: string | undefined;
+};
+
+const probingDisabledPredicate = (queryBuilder: WhereExpressionBuilder) => {
+  const extractMinute = `CAST(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60 AS INTEGER) > polling_frequency`;
+
+  queryBuilder.orWhere(`probing_enabled = false`);
+  queryBuilder.orWhere(`last_request IS NULL`);
+  queryBuilder.orWhere(
+    `((${extractMinute}) AND (response_received < last_request))`,
+    { minOfTolleranceMultiplier: config.minOfTolleranceMultiplier }
+  );
+  queryBuilder.orWhere(`response_received IS NULL`);
+};
+
+const probingEnabledPredicate = (
+  queryBuilder: WhereExpressionBuilder,
+  {
+    isStateOffline,
+    isStateOnline,
+  }: { isStateOffline: boolean | undefined; isStateOnline: boolean | undefined }
+) => {
+  const predicates: string[] = [];
+
+  if (isStateOffline) {
+    predicates.push(`(state = :state OR status = :responseStatus)`);
+  }
+
+  if (isStateOnline) {
+    predicates.push(`(state = :state AND status = :responseStatus)`);
+  }
+
+  if (isStateOffline || isStateOnline) {
+    queryBuilder.andWhere(`(${predicates.join(" OR ")})`, {
+      ...(isStateOffline && {
+        state: eserviceInteropState.inactive,
+        responseStatus: responseStatus.ko,
+      }),
+      ...(isStateOnline && {
+        state: eserviceInteropState.active,
+        responseStatus: responseStatus.ok,
+      }),
+    });
+  }
+
+  const extractMinute = `CAST(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60 AS INTEGER) < (polling_frequency * :minOfTolleranceMultiplier)`;
+
+  queryBuilder.andWhere(`probing_enabled = true`);
+  queryBuilder.andWhere(`last_request IS NOT NULL`);
+  queryBuilder.andWhere(`response_received IS NOT NULL`);
+  queryBuilder.andWhere(
+    `((${extractMinute}) OR (response_received > last_request))`,
+    { minOfTolleranceMultiplier: config.minOfTolleranceMultiplier }
+  );
 };
 
 const addPredicateEservices = (
@@ -72,47 +126,44 @@ const addPredicateEservices = (
     queryBuilder.andWhere(`version_number = :versionNumber`, { versionNumber });
   }
 
-  if (state) {
-    const isOffline = state.includes(eserviceMonitorState.offline);
-    const isOnline = state.includes(eserviceMonitorState.online);
-    const isNDState = state.includes(eserviceMonitorState["n/d"]);
-    const predicates: string[] = [];
+  const isStateOffline = state?.includes(eserviceMonitorState.offline);
+  const isStateOnline = state?.includes(eserviceMonitorState.online);
+  const isStateND = state?.includes(eserviceMonitorState["n/d"]);
+  const allStates = isStateOffline && isStateOnline && isStateND;
 
-    if (isOffline) {
-      predicates.push(`state = :state OR status = :responseStatus`);
-    }
+  if (!state || allStates) {
+    queryBuilder.orderBy({ eservice_name: "ASC" });
+  } else if (isStateND) {
+    queryBuilder.andWhere(
+      new Brackets((subQb: WhereExpressionBuilder) => {
+        subQb.orWhere(
+          new Brackets((subQb2) => {
+            probingEnabledPredicate(subQb2, {
+              isStateOffline,
+              isStateOnline,
+            });
+          })
+        );
+        subQb.orWhere(
+          new Brackets((subQb2) => {
+            probingDisabledPredicate(subQb2);
+          })
+        );
+      })
+    );
 
-    if (isOnline) {
-      predicates.push(`state = :state AND status = :responseStatus`);
-    }
-
-    if (isOffline || isOnline) {
-      queryBuilder.andWhere(`(${predicates.join(" OR ")})`, {
-        ...(isOffline && {
-          state: eserviceInteropState.inactive,
-          responseStatus: responseStatus.ko,
-        }),
-        ...(isOnline && {
-          state: eserviceInteropState.active,
-          responseStatus: responseStatus.ok,
-        }),
-      });
-    }
-
-    if (isNDState) {
-      const extractMinuteLessPollingFrequencyPeTollerance = `CAST(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60 AS INTEGER) < (polling_frequency * :minOfTolleranceMultiplier)`;
-
-      queryBuilder.distinct(true);
-      queryBuilder.andWhere("probing_enabled = :probingEnabled", {
-        probingEnabled: true,
-      });
-      queryBuilder.andWhere(`last_request IS NOT NULL`);
-      queryBuilder.andWhere(`response_received IS NOT NULL`);
-      queryBuilder.andWhere(
-        `((${extractMinuteLessPollingFrequencyPeTollerance}) OR (response_received > last_request))`,
-        { minOfTolleranceMultiplier: config.minOfTolleranceMultiplier }
-      );
-    }
+    queryBuilder.orderBy({ id: "ASC" });
+  } else {
+    queryBuilder.distinct(true);
+    queryBuilder.andWhere(
+      new Brackets((subQb: WhereExpressionBuilder) => {
+        probingEnabledPredicate(subQb, {
+          isStateOffline,
+          isStateOnline,
+        });
+      })
+    );
+    queryBuilder.orderBy({ id: "ASC" });
   }
 };
 
@@ -300,7 +351,6 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         .where((qb: SelectQueryBuilder<EserviceViewEntities>) =>
           addPredicateEservices(qb, filters)
         )
-        .orderBy({ id: "ASC" })
         .skip(offset)
         .take(limit)
         .getManyAndCount();
@@ -384,7 +434,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
           "eserviceView.basePath",
           "eserviceView.audience",
         ])
-        .from(EserviceView, "eserviceView") // Explicitly defining the 'from' clause is required to address the issue described here https://github.com/typeorm/typeorm/issues/1937.
+        .from(EserviceView, "eserviceView") // Explicitly defining the 'from' clause is required to address select and the issue described here https://github.com/typeorm/typeorm/issues/1937.
         .orderBy("eserviceView.eserviceRecordId", "ASC")
         .skip(offset)
         .take(limit)
