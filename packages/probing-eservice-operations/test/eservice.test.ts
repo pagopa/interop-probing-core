@@ -63,18 +63,18 @@ describe("database test", async () => {
   let eserviceQuery: EserviceQuery;
   let eserviceService: EserviceService;
 
-  interface DisableDataOptions {
-    disableProbingRequest?: boolean;
-    disableProbingResponse?: boolean;
+  interface DataOptions {
+    disableCreationProbingRequest?: boolean;
+    disableCreationProbingResponse?: boolean;
   }
 
   const createEservice = async ({
-    options: disableDataOptions = {},
+    options: dataOptions = {},
     eserviceData: partialEserviceData = {},
     probingRequestData: partialProbingRequestData = {},
     probingResponseData: partialProbingResponseData = {},
   }: {
-    options?: DisableDataOptions;
+    options?: DataOptions;
     eserviceData?: Partial<EserviceSchema>;
     probingRequestData?: Partial<EserviceProbingRequestSchema>;
     probingResponseData?: Partial<EserviceProbingResponseSchema>;
@@ -100,7 +100,7 @@ describe("database test", async () => {
       modelRepository.eservices
     );
 
-    if (!disableDataOptions.disableProbingRequest) {
+    if (!dataOptions.disableCreationProbingRequest) {
       await addEserviceProbingRequest(
         {
           eserviceRecordId: Number(eservice.id),
@@ -111,7 +111,7 @@ describe("database test", async () => {
       );
     }
 
-    if (!disableDataOptions.disableProbingResponse) {
+    if (!dataOptions.disableCreationProbingResponse) {
       await addEserviceProbingResponse(
         {
           eserviceRecordId: Number(eservice.id),
@@ -162,16 +162,6 @@ describe("database test", async () => {
   });
 
   afterEach(async () => {
-    // TODO: check if these tests are necessary
-    /* 
-    eserviceProbingRequest has been created 
-    eService main data has been retrieved and MainDataEserviceResponse is created
-    e-service to obtain main data is not found
-    eService probing data has been retrieved and MainDataEserviceResponse is created
-    e-service to obtain probing data is not found
-    eservice probing response object has been created
-    */
-
     await eserviceProbingRequest.delete({});
     await eserviceProbingResponse.delete({});
     await eservices.delete({});
@@ -259,7 +249,7 @@ describe("database test", async () => {
     });
 
     describe("getEserviceMainData", () => {
-      it("should get eServices main data", async () => {
+      it("e-service main data has been retrieved and MainDataEserviceResponse is created", async () => {
         const eservice = await createEservice();
         const result = await eserviceService.getEserviceMainData(
           eservice.eserviceRecordId
@@ -275,7 +265,7 @@ describe("database test", async () => {
     });
 
     describe("getEserviceProbingData", () => {
-      it("e-service last request has correctly updated", async () => {
+      it("e-service probing data has been retrieved and MainDataEserviceResponse is created", async () => {
         const eservice = await createEservice();
         const result = await eserviceService.getEserviceProbingData(
           eservice.eserviceRecordId
@@ -564,11 +554,65 @@ describe("database test", async () => {
 
         expect(result?.lastRequest).toBe(payload.lastRequest);
       });
+
+      it("e-service probing request has been created", async () => {
+        const { eserviceRecordId } = await createEservice({
+          options: { disableCreationProbingRequest: true },
+        });
+
+        const payload = {
+          lastRequest: new Date().toISOString(),
+        };
+
+        await eserviceService.updateEserviceLastRequest(
+          eserviceRecordId,
+          payload
+        );
+
+        const updatedEservice = await eserviceProbingRequest.findOneBy({
+          eserviceRecordId,
+        });
+
+        const schema = z.object({
+          lastRequest: z.date().transform((date) => date.toISOString()),
+        });
+
+        const result = schema.parse(updatedEservice);
+
+        expect(result?.lastRequest).toBe(payload.lastRequest);
+      });
     });
 
     describe("updateResponseReceived", () => {
       it("e-service reponse received has correctly updated", async () => {
         const { eserviceRecordId } = await createEservice();
+
+        const payload = {
+          status: responseStatus.ok,
+          responseReceived: new Date().toISOString(),
+        };
+
+        await eserviceService.updateResponseReceived(eserviceRecordId, payload);
+
+        const updatedEservice = await eserviceProbingResponse.findOneBy({
+          eserviceRecordId,
+        });
+
+        const schema = z.object({
+          responseReceived: z.date().transform((date) => date.toISOString()),
+          responseStatus: EserviceStatus,
+        });
+
+        const result = schema.parse(updatedEservice);
+
+        expect(result?.responseStatus).toBe(payload.status);
+        expect(result?.responseReceived).toBe(payload.responseReceived);
+      });
+
+      it("e-service probing response object has been created", async () => {
+        const { eserviceRecordId } = await createEservice({
+          options: { disableCreationProbingResponse: true },
+        });
 
         const payload = {
           status: responseStatus.ok,
