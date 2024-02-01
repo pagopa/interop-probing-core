@@ -20,21 +20,17 @@ import {
   responseStatus,
   EServiceContentReadyForPolling,
 } from "pagopa-interop-probing-models";
-import { Brackets, Like } from "typeorm";
+import { Brackets } from "typeorm";
 import { z } from "zod";
 import {
   ModelRepository,
-  ModelFilter,
   EserviceViewEntities,
 } from "../../repositories/modelRepository.js";
 import {
   eServiceMainDataByRecordIdNotFound,
   eServiceProbingDataByRecordIdNotFound,
 } from "../../model/domain/errors.js";
-import {
-  EserviceSchema,
-  eServiceDefaultValues,
-} from "../../repositories/entity/eservice.entity.js";
+import { eServiceDefaultValues } from "../../repositories/entity/eservice.entity.js";
 import { SelectQueryBuilder } from "typeorm";
 import { EserviceView } from "../../repositories/entity/view/eservice.entity.js";
 import { config } from "../../utilities/config.js";
@@ -111,14 +107,14 @@ const addPredicateEservices = (
   const { eserviceName, producerName, versionNumber, state } = filters;
 
   if (eserviceName) {
-    queryBuilder.andWhere(`eservice_name LIKE :eserviceName`, {
-      eserviceName: `%${eserviceName}%`, // TODO: check if toUpperCase() needed
+    queryBuilder.andWhere(`UPPER(eservice_name) LIKE UPPER(:eserviceName)`, {
+      eserviceName: `%${eserviceName}%`,
     });
   }
 
   if (producerName) {
-    queryBuilder.andWhere(`producer_name = :producerName`, {
-      producerName: producerName, // TODO: check if toUpperCase() needed
+    queryBuilder.andWhere(`UPPER(producer_name) = UPPER(:producerName)`, {
+      producerName: producerName,
     });
   }
 
@@ -185,18 +181,6 @@ const addPredicateEservicesReadyForPolling = (
       `((${entityAlias}.last_request IS NULL AND ${entityAlias}.response_received IS NULL) OR ((${makeInterval} <= CURRENT_TIMESTAMP) AND (${entityAlias}.last_request <= ${entityAlias}.response_received)))`
     )
     .andWhere(compareTimestampInterval);
-};
-
-const getEServicesProducersFilters = (
-  filters: EServiceProducersQueryFilters
-): { where: object } => {
-  const { producerName } = filters;
-
-  const queryFilters = {
-    ...(producerName && { producerName: Like(`%${producerName}%`) }), // TODO:  check if toUpperCase() needed
-  };
-
-  return { where: queryFilters };
 };
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -464,13 +448,16 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       limit: number,
       offset: number
     ): Promise<ListResult<string>> {
-      const data = await eservices.find({
-        ...getEServicesProducersFilters(filters),
-        order: { producerName: "ASC" },
-        select: { producerName: true },
-        skip: offset,
-        take: limit,
-      } satisfies ModelFilter<EserviceSchema>);
+      const data = await eservices
+        .createQueryBuilder("eservice")
+        .where("UPPER(eservice.producerName) LIKE UPPER(:producerName)", {
+          producerName: `%${filters.producerName}%`,
+        })
+        .orderBy("eservice.producerName", "ASC")
+        .select(["eservice.producerName"])
+        .skip(offset)
+        .take(limit)
+        .getMany();
 
       const result = z
         .array(z.string())
