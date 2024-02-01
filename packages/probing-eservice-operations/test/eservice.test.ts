@@ -267,7 +267,7 @@ describe("database test", async () => {
         expect(result).toBeTruthy();
       });
 
-      it("should throw eServiceMainDataByRecordIdNotFound if the eService doesn't exist", async () => {
+      it("e-service should not be found and an `eServiceProbingDataByRecordIdNotFound` should be thrown", async () => {
         await expect(
           async () => await eserviceService.getEserviceMainData(99)
         ).rejects.toThrowError(eServiceMainDataByRecordIdNotFound(99));
@@ -283,7 +283,7 @@ describe("database test", async () => {
         expect(result).toBeTruthy();
       });
 
-      it("should throw eServiceProbingDataByRecordIdNotFound if the eService doesn't exist", async () => {
+      it("e-service should not be found and an `eServiceProbingDataByRecordIdNotFound` should be thrown", async () => {
         await expect(
           async () => await eserviceService.getEserviceProbingData(99)
         ).rejects.toThrowError(eServiceProbingDataByRecordIdNotFound(99));
@@ -540,31 +540,6 @@ describe("database test", async () => {
     });
 
     describe("updateEserviceLastRequest", () => {
-      it("e-service last request has correctly updated", async () => {
-        const { eserviceRecordId } = await createEservice();
-
-        const payload = {
-          lastRequest: new Date().toISOString(),
-        };
-
-        await eserviceService.updateEserviceLastRequest(
-          eserviceRecordId,
-          payload
-        );
-
-        const updatedEservice = await eserviceProbingRequest.findOneBy({
-          eserviceRecordId,
-        });
-
-        const schema = z.object({
-          lastRequest: z.date().transform((date) => date.toISOString()),
-        });
-
-        const result = schema.parse(updatedEservice);
-
-        expect(result?.lastRequest).toBe(payload.lastRequest);
-      });
-
       it("e-service last request has correctly updated", async () => {
         const { eserviceRecordId } = await createEservice();
 
