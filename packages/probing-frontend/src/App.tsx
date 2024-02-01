@@ -1,8 +1,16 @@
-import './App.css'
+import '@/App.css'
 import { RouterProvider } from '@/router'
+import { ToastNotification } from '@/layout/ToastNotification'
+import { LoadingOverlay } from '@/layout/LoadingOverlay'
 
 function App() {
-  return <RouterProvider />
+  return (
+    <>
+      <LoadingOverlay />
+      <ToastNotification />
+      <RouterProvider />
+    </>
+  )
 }
 
 export default App

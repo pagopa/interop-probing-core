@@ -1,0 +1,53 @@
+{
+  "actions": {
+    "suspend": "Suspend",
+    "activate": "Activate",
+    "reject": "Reject",
+    "upgrade": "Upgrade",
+    "delete": "Delete",
+    "inspect": "View",
+    "edit": "Edit",
+    "clone": "Clone",
+    "publish": "Publish",
+    "download": "Download",
+    "archive": "Archive",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "createNewDraft": "Create draft",
+    "saveDraft": "Save draft",
+    "manageDraft": "Manage draft",
+    "deleteDraft": "Delete draft",
+    "publishDraft": "Publish draft",
+    "editDraft": "Edit draft",
+    "insert": "Insert"
+  },
+  "dialogSessionExpired": {
+    "title": "Session expired",
+    "content": {
+      "description": "Your session on PDND Interoperabilità has expired. You are about to be redirected to Self Care"
+    },
+    "actions": {
+      "exitLabel": "Exit"
+    }
+  },
+  "footer": {
+    "links": {
+      "privacy": {
+        "label": "Privacy Policy",
+        "ariaLabel": "Vai al link: privacy policy"
+      },
+      "dataProtection": {
+        "label": "Personal data protection rights",
+        "ariaLabel": "Vai al link: personal data protection rights"
+      },
+      "terms": {
+        "label": "Terms and conditions",
+        "ariaLabel": "Vai al link: terms and conditions"
+      },
+      "a11y": {
+        "label": "Accessibility",
+        "ariaLabel": "Vai al link: accessibility"
+      }
+    }
+  }
+}
