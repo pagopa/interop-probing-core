@@ -11,4 +11,5 @@ export const passwordRules = {
   hasUpperCase: /[A-Z]/,
   hasDigit: /\d/,
   hasSpecialChar: /[@$!%*?&_]/,
+  email: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
 } as const

@@ -51,9 +51,13 @@
     }
   },
   "loginForm": {
+    "title": "Accedi",
+    "subtitle": "",
     "username": "Nome utente",
     "password": "Password",
     "signIn": "Accedi",
+    "fieldRequired": "Inserisci la password",
+    "emailPattern": "Inserisci una mail valida",
     "forgotPassword": "Hai dimenticato la password? <1>Clicca qui</1> per ripristinarla",
     "returnToList": "Torna alla lista degli e-service"
   },
@@ -64,7 +68,15 @@
     "newPasswordConfirm": "Conferma nuova password",
     "signIn": "Accedi",
     "passwordLengthError": "La password è troppo breve",
-    "passwordPatternError": "La password deve contenere almeno una maiuscola, una minuscola, un numero e un carattere speciale"
+    "passwordPatternError": "La password deve contenere almeno una maiuscola, una minuscola, un numero e un carattere speciale",
+    "notMatching": "Le due password non coincidono"
+  },
+  "recoverPasswordForm": {
+    "title": "Recupera password",
+    "subtitle": "",
+    "email": "Email",
+    "emailPattern": "Inserisci una mail vaida",
+    "send": "Invia"
   },
   "homePage": {
     "title": "Stato degli e-service",

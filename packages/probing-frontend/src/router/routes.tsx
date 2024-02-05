@@ -6,6 +6,7 @@ import RoutesWrapper from './RoutesWrapper'
 import { HomePage } from '@/pages/HomePage/Home.page'
 import { LoginPage } from '@/pages/LoginPage/Login.Page'
 import { FirstAccessPage } from '@/pages/FirstAccessPage/FirstAccess.Page'
+import { RecoverPasswordPage } from '@/pages/RecoverPasswordPage/RecoverPassword.Page'
 
 export const { routes, reactRouterDOMRoutes, hooks, components, utils } = new InteropRouterBuilder<
   LangCode,
@@ -37,7 +38,7 @@ export const { routes, reactRouterDOMRoutes, hooks, components, utils } = new In
   .addRoute({
     key: 'RECOVER_PASSWORD',
     path: '/recover-password',
-    element: <>WIP: RECOVER PASSWORD</>,
+    element: <RecoverPasswordPage />,
     public: true,
     authLevels: ['admin'],
   })

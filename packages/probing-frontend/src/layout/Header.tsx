@@ -1,7 +1,7 @@
 import type { ProductSwitchItem } from '@pagopa/mui-italia'
 import { HeaderAccount, HeaderProduct } from '@pagopa/mui-italia'
 import { useState } from 'react'
-
+import { useNavigate } from '@/router'
 const RootLink = {
   label: 'PagoPA S.p.A.',
   href: 'https://www.pagopa.it',
@@ -20,8 +20,11 @@ const productSwitchItem: ProductSwitchItem = {
 }
 export const Header = () => {
   const [logged, setLogged] = useState<boolean>(false)
+  const navigate = useNavigate()
   const handleLogin = () => {
-    return null
+    {
+      navigate('LOGIN')
+    }
   }
   const user = logged
     ? {

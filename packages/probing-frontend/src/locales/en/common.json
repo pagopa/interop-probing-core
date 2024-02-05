@@ -51,9 +51,13 @@
     }
   },
   "loginForm": {
+    "title": "Sign in",
+    "subtitle": "",
     "username": "Username",
     "password": "Password",
     "signIn": "Sign in",
+    "fieldRequired": "Password is mandatory",
+    "emailPattern": "Please insert a valid mail",
     "forgotPassword": "Forgot your password? <1>Click here</1> to reset it.",
     "clickHere": "Click here",
     "returnToList": "Return to e-service list"
@@ -66,7 +70,15 @@
     "signIn": "Sign in",
     "fieldRequired": "Password is mandatory",
     "passwordLengthError": "Password is too short",
-    "passwordPatternError": "Password must contain at least one lowercase letter"
+    "passwordPatternError": "Password must contain at least one lowercase letter",
+    "notMatching": "Password not matching"
+  },
+  "recoverPasswordForm": {
+    "title": "Recover password",
+    "subtitle": "",
+    "email": "Email",
+    "emailPattern": "Please insert a valid mail",
+    "send": "Recover"
   },
   "homePage": {
     "title": "E-services status",

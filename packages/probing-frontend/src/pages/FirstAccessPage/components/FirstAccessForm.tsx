@@ -1,4 +1,4 @@
-import { Button, Paper } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import type { FieldValues } from 'react-hook-form'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -16,7 +16,7 @@ export const FirstAccessForm = () => {
     formState: { errors, isValid },
     watch,
     handleSubmit,
-  } = useForm()
+  } = useForm({ mode: 'onChange' })
 
   const onSubmit = (data: FieldValues) => {
     console.log(data, errors)
@@ -37,18 +37,7 @@ export const FirstAccessForm = () => {
   }
 
   return (
-    <Paper
-      elevation={16}
-      variant="elevation"
-      sx={{
-        maxWidth: 480,
-        borderRadius: 3,
-        my: 2,
-        p: 4,
-      }}
-      component="form"
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <Box noValidate component="form" onSubmit={handleSubmit(onSubmit)}>
       <InputWrapper error={errors['newPassword'] as { message: string }}>
         <MUITextField
           sx={{ mb: 2, my: 2 }}
@@ -72,15 +61,15 @@ export const FirstAccessForm = () => {
             required: { value: true, message: t('fieldRequired') },
             minLength: { value: passwordRules.minLength, message: t('passwordLengthError') },
             validate: {
-              checkPasswords: (value) => watch('newPassword') === value,
+              checkPasswords: (value) => watch('newPassword') === value || t('notMatching'),
             },
           })}
         ></MUITextField>
       </InputWrapper>
 
-      <Button disabled={isValid} variant="contained" type="submit" sx={{ width: 95, mt: 2 }}>
+      <Button disabled={!isValid} variant="contained" type="submit" sx={{ width: 95, mt: 2 }}>
         {t('signIn')}
       </Button>
-    </Paper>
+    </Box>
   )
 }
