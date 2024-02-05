@@ -7,7 +7,6 @@ import {
   EServiceProbingData,
   EserviceProbingUpdateLastRequest,
   EserviceSaveRequest,
-  ListResult,
 } from "pagopa-interop-probing-models";
 import {
   EServiceQueryFilters,
@@ -23,6 +22,7 @@ import {
   ApiUpdateResponseReceivedPayload,
 } from "../model/types.js";
 import { eServiceNotFound } from "../model/domain/errors.js";
+import { ListResult } from "../model/dbModels.js";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, max-params
 export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {

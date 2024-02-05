@@ -8,13 +8,13 @@ import { eServiceServiceBuilder } from "../services/eserviceService.js";
 import { eserviceQueryBuilder } from "../services/db/eserviceQuery.js";
 import { api } from "../model/generated/api.js";
 import {
-  ListResult,
   EServiceMainData,
   EServiceProbingData,
   EServiceContent,
 } from "pagopa-interop-probing-models";
 import { updateEServiceErrorMapper } from "../utilities/errorMappers.js";
 import { ModelRepository } from "../repositories/modelRepository.js";
+import { ListResult } from "../model/dbModels.js";
 
 const modelService = modelServiceBuilder(await ModelRepository.init(config));
 const eserviceQuery = eserviceQueryBuilder(modelService);
