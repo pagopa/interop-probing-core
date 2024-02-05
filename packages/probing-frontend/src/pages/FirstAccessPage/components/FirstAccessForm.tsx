@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { TextField as MUITextField } from '@mui/material'
 import { InputWrapper } from '@/components/shared/InputWrapper'
-import { passwordRules } from '@/config/costants'
+import { passwordRules } from '@/config/constants'
 
 export const FirstAccessForm = () => {
   const { t } = useTranslation('common', {
