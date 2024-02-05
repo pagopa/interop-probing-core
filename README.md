@@ -1,5 +1,3 @@
-> NOTE: this repo is still a work in progress
-
 # Interoperability Probing Monorepo
 
 ## How to start
@@ -10,8 +8,14 @@ To get started, you will need:
 - pnpm (https://pnpm.io/installation)
 - Docker (for local development, https://www.docker.com/get-started/)
 
-Then install the dependencies with
+Install the required dependencies with:
 
 ```
 pnpm install
+```
+
+Build the project:
+
+```
+pnpm build
 ```
