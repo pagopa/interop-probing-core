@@ -1,8 +1,7 @@
-import { LANGUAGES } from '@/config/costants'
+import { LANGUAGES } from '@/config/constants'
 import { Typography } from '@mui/material'
 import type { FooterLinksType, LangCode } from '@pagopa/mui-italia'
 import { Footer as MUIItaliaFooter } from '@pagopa/mui-italia'
-import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useNavigate } from 'react-router-dom'
 
