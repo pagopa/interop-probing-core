@@ -1,4 +1,4 @@
-/* Common Readmodel query type's definitions */
+/* dbModel query type's definitions */
 
 export type WithMetadata<T> = { data: T; metadata: { version: number } };
 

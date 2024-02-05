@@ -1,7 +1,6 @@
 import {
   EService,
   ChangeEserviceProbingStateRequest,
-  ListResult,
   ChangeEserviceStateRequest,
   EServiceContent,
   ChangeProbingFrequencyRequest,
@@ -17,6 +16,7 @@ import {
   EServiceQueryFilters,
   EServiceProducersQueryFilters,
 } from "./dbService.js";
+import { ListResult } from "../../model/dbModels.js";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function eserviceQueryBuilder(modelService: ModelService) {

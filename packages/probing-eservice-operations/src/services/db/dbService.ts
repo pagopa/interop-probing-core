@@ -3,7 +3,6 @@
 import { logger } from "pagopa-interop-probing-commons";
 import {
   genericError,
-  ListResult,
   EService,
   EServiceContent,
   EserviceMonitorState,
@@ -35,6 +34,7 @@ import { SelectQueryBuilder } from "typeorm";
 import { EserviceView } from "../../repositories/entity/view/eservice.entity.js";
 import { config } from "../../utilities/config.js";
 import { WhereExpressionBuilder } from "typeorm/browser";
+import { ListResult } from "../../model/dbModels.js";
 
 export type EServiceQueryFilters = {
   eserviceName: string | undefined;

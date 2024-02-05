@@ -99,8 +99,6 @@ export type EserviceSaveRequest = z.infer<typeof EserviceSaveRequest>;
  *   to stay within the safe JavaScript integer limit.
  *   For more details, refer to: [TypeORM Issue #8583](https://github.com/typeorm/typeorm/issues/8583)
  *
- * - `pollingFrequency`: This field is an integer with a minimum value of 1 and a default value of 5.
- *
  * @see EserviceInteropState - Enum representing the state of EService.
  * @see EserviceTechnology - Enum representing the technology of EService.
  *
@@ -136,9 +134,6 @@ export type EService = z.infer<typeof EService>;
  *   that the value matches the expected response schema of OpenAPI. The transformation
  *   involves parsing the input as a string and converting it to a number.
  *   For more details, refer to: [EService schema declaration](link_to_EService_schema_declaration)
- *
- * - `responseReceived` and `lastRequest`: These date fields are transformed to ISO string format
- *   using the `transform` utility to align with common practices for date representation in APIs.
  *
  * @see EService - Entity schema for EService, includes details about `eserviceRecordId`.
  * @see EserviceInteropState - Enum representing the state of EService.
