@@ -28,7 +28,7 @@ export const customFormat = winston.format.printf(
       .split("\n")
       .map(
         (line: string) =>
-          `${timestamp} ${level.toUpperCase()} - [UID=${correlationId}] ${line}`
+          `${timestamp} ${level.toUpperCase()} - [CID=${correlationId}] ${line}`
       );
     return lines.join("\n");
   }
