@@ -16,7 +16,7 @@ const _RoutesWrapper: React.FC = () => {
       <Header />
       <AppLayout>
         <ErrorBoundary key={routeKey} FallbackComponent={Error}>
-          <React.Suspense fallback={<>laoding...</>}>
+          <React.Suspense fallback={<>Loading...</>}>
             <Outlet />
           </React.Suspense>
         </ErrorBoundary>

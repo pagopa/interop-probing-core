@@ -1,9 +1,10 @@
 import { LANGUAGES } from '@/config/costants'
 import { Typography } from '@mui/material'
-import type { FooterLinksType } from '@pagopa/mui-italia'
+import type { FooterLinksType, LangCode } from '@pagopa/mui-italia'
 import { Footer as MUIItaliaFooter } from '@pagopa/mui-italia'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 type FooterLinksTypeMulti = Omit<FooterLinksType, 'label' | 'ariaLabel'> & { labelKey?: string }
 
@@ -26,8 +27,15 @@ const LegalInfo = (
   </>
 )
 export const Footer = () => {
-  const { t } = useTranslation('common', { keyPrefix: 'footer' })
+  const { t, i18n } = useTranslation('common', { keyPrefix: 'footer' })
   const navigate = useNavigate()
+  const location = useLocation()
+
+  const changeLanguageHandler = (lang: LangCode) => {
+    console.log(location)
+    i18n.changeLanguage(lang)
+    navigate(`/${lang}/location`)
+  }
 
   const links: Array<FooterLinksTypeMulti> = [
     {
@@ -69,20 +77,22 @@ export const Footer = () => {
     })
   }
   return (
-    <MUIItaliaFooter
-      loggedUser={Boolean(false)}
-      companyLink={pagoPaLink}
-      legalInfo={LegalInfo}
-      postLoginLinks={convertLinks(links) as Array<FooterLinksType>}
-      preLoginLinks={{
-        aboutUs: { title: 'Chi siamo', links: [] },
-        resources: { title: 'Risorse', links: [] },
-        followUs: { title: 'Seguici su', links: [], socialLinks: [] },
-      }}
-      onLanguageChanged={() => null}
-      currentLangCode={'it'}
-      languages={LANGUAGES}
-      hideProductsColumn={true}
-    />
+    <>
+      <MUIItaliaFooter
+        loggedUser={Boolean(true)}
+        companyLink={pagoPaLink}
+        legalInfo={LegalInfo}
+        postLoginLinks={convertLinks(links) as Array<FooterLinksType>}
+        preLoginLinks={{
+          aboutUs: { title: 'Chi siamo', links: [] },
+          resources: { title: 'Risorse', links: [] },
+          followUs: { title: 'Seguici su', links: [], socialLinks: [] },
+        }}
+        onLanguageChanged={(lang: LangCode) => changeLanguageHandler(lang)}
+        currentLangCode={i18n.language as LangCode}
+        languages={LANGUAGES}
+        hideProductsColumn={true}
+      />
+    </>
   )
 }

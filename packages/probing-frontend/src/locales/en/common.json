@@ -49,5 +49,32 @@
         "ariaLabel": "Vai al link: accessibility"
       }
     }
+  },
+  "loginForm": {
+    "username": "Username",
+    "password": "Password",
+    "signIn": "Sign in",
+    "forgotPassword": "Forgot your password? <1>Click here</1> to reset it.",
+    "clickHere": "Click here",
+    "returnToList": "Return to e-service list"
+  },
+  "firstAccessForm": {
+    "title": "Create new password",
+    "subtitle": "Your password must be at least 12 chatacters long and contain a lowercase letter, a uppercase letter, a number and a special character",
+    "newPassword": "New password",
+    "newPasswordConfirm": "Confirm new password",
+    "signIn": "Sign in",
+    "fieldRequired": "fieldRequired",
+    "passwordLengthError": "Password must be at least {{minLength}} characters long",
+    "passwordLowerCaseError": "Password must contain at least one lowercase letter",
+    "passwordUpperCaseError": "Password must contain at least one uppercase letter",
+    "passwordDigitError": "Password must contain at least one digit",
+    "passwordSpecialCharError": "Password must contain at least one special character",
+    "passwordMismatch": "Passwords do not match",
+    "passwordRequirements": "Password must meet the specified requirements"
+  },
+  "homePage": {
+    "title": "E-services status",
+    "subtitle": "On this page, you can monitor the status of e-services provided by erogators on PDND Interoperabilità."
   }
 }

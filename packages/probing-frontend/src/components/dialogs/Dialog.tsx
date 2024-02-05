@@ -27,9 +27,7 @@ const _Dialog = match(
 
 export const Dialog: React.FC = () => {
   const dialog = useDialogStore((state) => state.dialog)
-  useEffect(() => {
-    console.log(dialog)
-  }, [dialog])
+
   if (!dialog) return null
 
   return (

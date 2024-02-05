@@ -22,32 +22,50 @@
     "insert": "Inserisci"
   },
   "dialogSessionExpired": {
-    "title": "Session expired",
+    "title": "La sessione è scaduta",
     "content": {
-      "description": "Your session on PDND Interoperabilità has expired. You are about to be redirected to Self Care"
+      "description": "La sessione su PDND Interoperabilità è scaduta. Stai per essere reindirizzato su Area Riservata"
     },
     "actions": {
-      "exitLabel": "Exit"
-    },
-    "footer": {
-      "links": {
-        "privacy": {
-          "label": "Privacy Policy",
-          "ariaLabel": "Vai al link: privacy policy"
-        },
-        "dataProtection": {
-          "label": "Diritto alla protezione dei dati personali",
-          "ariaLabel": "Vai al link: diritto alla protezione dei dati personali"
-        },
-        "terms": {
-          "label": "Termini e condizioni",
-          "ariaLabel": "Vai al link: termini e condizioni"
-        },
-        "a11y": {
-          "label": "Accessibilità",
-          "ariaLabel": "Vai al link: accessibilità"
-        }
+      "exitLabel": "Esci"
+    }
+  },
+  "footer": {
+    "links": {
+      "privacy": {
+        "label": "Privacy Policy",
+        "ariaLabel": "Vai al link: privacy policy"
+      },
+      "dataProtection": {
+        "label": "Diritto alla protezione dei dati personali",
+        "ariaLabel": "Vai al link: diritto alla protezione dei dati personali"
+      },
+      "terms": {
+        "label": "Termini e condizioni",
+        "ariaLabel": "Vai al link: termini e condizioni"
+      },
+      "a11y": {
+        "label": "Accessibilità",
+        "ariaLabel": "Vai al link: accessibilità"
       }
     }
+  },
+  "loginForm": {
+    "username": "Nome utente",
+    "password": "Password",
+    "signIn": "Accedi",
+    "forgotPassword": "Hai dimenticato la password? <1>Clicca qui</1> per ripristinarla",
+    "returnToList": "Torna alla lista degli e-service"
+  },
+  "firstAccessForm": {
+    "title": "Creazione password",
+    "subtitle": "La tua password deve essere lunga almeno 12 caratteri e contenere almeno una lettera minuscola, una maiuscola, un numero e un carattere speciale",
+    "newPassword": "Nuova password",
+    "newPasswordConfirm": "Conferma nuova password",
+    "signIn": "Accedi"
+  },
+  "homePage": {
+    "title": "Stato degli e-service",
+    "subtitle": "In questa pagina puoi monitorare lo stato degli e-service messi a disposizione degli erogatori su PDND Interoperabilità"
   }
 }
