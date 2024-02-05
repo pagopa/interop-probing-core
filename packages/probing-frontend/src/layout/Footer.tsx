@@ -1,9 +1,11 @@
 import { LANGUAGES } from '@/config/constants'
+import { useSwitchPathLang } from '@/router'
+import type { LangCode } from '@/types/commons.types'
+import type { FooterLinksType } from '@pagopa/mui-italia'
 import { Typography } from '@mui/material'
-import type { FooterLinksType, LangCode } from '@pagopa/mui-italia'
 import { Footer as MUIItaliaFooter } from '@pagopa/mui-italia'
 import { useTranslation } from 'react-i18next'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 type FooterLinksTypeMulti = Omit<FooterLinksType, 'label' | 'ariaLabel'> & { labelKey?: string }
 
@@ -28,12 +30,9 @@ const LegalInfo = (
 export const Footer = () => {
   const { t, i18n } = useTranslation('common', { keyPrefix: 'footer' })
   const navigate = useNavigate()
-  const location = useLocation()
-
+  const switchLang = useSwitchPathLang()
   const changeLanguageHandler = (lang: LangCode) => {
-    console.log(location)
-    i18n.changeLanguage(lang)
-    navigate(`/${lang}/location`)
+    switchLang(lang)
   }
 
   const links: Array<FooterLinksTypeMulti> = [
@@ -87,7 +86,7 @@ export const Footer = () => {
           resources: { title: 'Risorse', links: [] },
           followUs: { title: 'Seguici su', links: [], socialLinks: [] },
         }}
-        onLanguageChanged={(lang: LangCode) => changeLanguageHandler(lang)}
+        onLanguageChanged={(lang) => changeLanguageHandler(lang as LangCode)}
         currentLangCode={i18n.language as LangCode}
         languages={LANGUAGES}
         hideProductsColumn={true}

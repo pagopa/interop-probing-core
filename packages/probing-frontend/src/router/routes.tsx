@@ -4,6 +4,8 @@ import { InteropRouterBuilder } from '@pagopa/interop-fe-commons'
 import { createBrowserRouter } from 'react-router-dom'
 import RoutesWrapper from './RoutesWrapper'
 import { HomePage } from '@/pages/HomePage/Home.page'
+import { LoginPage } from '@/pages/LoginPage/Login.Page'
+import { FirstAccessPage } from '@/pages/FirstAccessPage/FirstAccess.Page'
 
 export const { routes, reactRouterDOMRoutes, hooks, components, utils } = new InteropRouterBuilder<
   LangCode,
@@ -15,6 +17,27 @@ export const { routes, reactRouterDOMRoutes, hooks, components, utils } = new In
     key: 'HOME',
     path: '/home',
     element: <HomePage />,
+    public: true,
+    authLevels: ['admin'],
+  })
+  .addRoute({
+    key: 'LOGIN',
+    path: '/login',
+    element: <LoginPage />,
+    public: true,
+    authLevels: ['admin'],
+  })
+  .addRoute({
+    key: 'CREATE_PASSWORD',
+    path: '/creazione-password',
+    element: <FirstAccessPage />,
+    public: true,
+    authLevels: ['admin'],
+  })
+  .addRoute({
+    key: 'RECOVER_PASSWORD',
+    path: '/recover-password',
+    element: <>WIP: RECOVER PASSWORD</>,
     public: true,
     authLevels: ['admin'],
   })

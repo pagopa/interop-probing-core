@@ -64,14 +64,9 @@
     "newPassword": "New password",
     "newPasswordConfirm": "Confirm new password",
     "signIn": "Sign in",
-    "fieldRequired": "fieldRequired",
-    "passwordLengthError": "Password must be at least {{minLength}} characters long",
-    "passwordLowerCaseError": "Password must contain at least one lowercase letter",
-    "passwordUpperCaseError": "Password must contain at least one uppercase letter",
-    "passwordDigitError": "Password must contain at least one digit",
-    "passwordSpecialCharError": "Password must contain at least one special character",
-    "passwordMismatch": "Passwords do not match",
-    "passwordRequirements": "Password must meet the specified requirements"
+    "fieldRequired": "Password is mandatory",
+    "passwordLengthError": "Password is too short",
+    "passwordPatternError": "Password must contain at least one lowercase letter"
   },
   "homePage": {
     "title": "E-services status",

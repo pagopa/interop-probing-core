@@ -62,7 +62,9 @@
     "subtitle": "La tua password deve essere lunga almeno 12 caratteri e contenere almeno una lettera minuscola, una maiuscola, un numero e un carattere speciale",
     "newPassword": "Nuova password",
     "newPasswordConfirm": "Conferma nuova password",
-    "signIn": "Accedi"
+    "signIn": "Accedi",
+    "passwordLengthError": "La password è troppo breve",
+    "passwordPatternError": "La password deve contenere almeno una maiuscola, una minuscola, un numero e un carattere speciale"
   },
   "homePage": {
     "title": "Stato degli e-service",

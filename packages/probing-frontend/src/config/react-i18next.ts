@@ -5,7 +5,7 @@ import commonEn from '@/locales/en/common.json'
 
 i18n.use(initReactI18next).init({
   debug: false,
-  fallbackLng: 'en',
+  fallbackLng: 'it',
   supportedLngs: ['it', 'en'],
   interpolation: {
     escapeValue: false,
