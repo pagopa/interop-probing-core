@@ -29,6 +29,13 @@ export const { routes, reactRouterDOMRoutes, hooks, components, utils } = new In
     authLevels: ['admin'],
   })
   .addRoute({
+    key: 'RESTORE_PASSWORD',
+    path: '/ripristino-password/:code/:username',
+    element: <FirstAccessPage isRecover={true} />,
+    public: true,
+    authLevels: ['admin'],
+  })
+  .addRoute({
     key: 'CREATE_PASSWORD',
     path: '/creazione-password',
     element: <FirstAccessPage />,

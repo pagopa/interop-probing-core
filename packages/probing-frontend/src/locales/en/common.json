@@ -73,6 +73,10 @@
     "passwordPatternError": "Password must contain at least one lowercase letter",
     "notMatching": "Password not matching"
   },
+  "restoreForm": {
+    "title": "Recover password",
+    "subtitle": "Your password must be at least 12 chatacters long and contain a lowercase letter, a uppercase letter, a number and a special character"
+  },
   "recoverPasswordForm": {
     "title": "Recover password",
     "subtitle": "",

@@ -8,7 +8,7 @@ import { LoginLayout } from '@/layout/LoginLayout'
 export const LoginPage = () => {
   return (
     <>
-      <LoginLayout i18nContext="loginForm">
+      <LoginLayout i18nContext={'loginForm'}>
         <LoginForm />
       </LoginLayout>
       <FooterLogin />

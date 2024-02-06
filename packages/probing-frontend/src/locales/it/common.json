@@ -69,7 +69,12 @@
     "signIn": "Accedi",
     "passwordLengthError": "La password è troppo breve",
     "passwordPatternError": "La password deve contenere almeno una maiuscola, una minuscola, un numero e un carattere speciale",
+    "fieldRequired": "Inserisci la password",
     "notMatching": "Le due password non coincidono"
+  },
+  "restoreForm": {
+    "title": "Recupera password",
+    "subtitle": "La tua password deve essere lunga almeno 12 caratteri e contenere almeno una lettera minuscola, una maiuscola, un numero e un carattere speciale"
   },
   "recoverPasswordForm": {
     "title": "Recupera password",

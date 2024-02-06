@@ -6,24 +6,27 @@ import { TextField as MUITextField } from '@mui/material'
 import { InputWrapper } from '@/components/shared/InputWrapper'
 import { passwordRules } from '@/config/constants'
 
-export const FirstAccessForm = () => {
+export const FirstAccessForm = ({ isRecover }: { isRecover: boolean }) => {
   const { t } = useTranslation('common', {
     keyPrefix: 'firstAccessForm',
   })
 
   const {
     register,
-    formState: { errors, isValid },
+    formState: { errors },
     watch,
     handleSubmit,
   } = useForm({ mode: 'onChange' })
 
   const onSubmit = (data: FieldValues) => {
+    if (isRecover) {
+      // newPassword API?
+    }
     console.log(data, errors)
   }
 
   const newPasswordValidators = {
-    required: { value: true, message: 'La password è obbligatoria' },
+    required: { value: true, message: t('fieldRequired') },
     minLength: { value: passwordRules.minLength, message: t('passwordLengthError') },
     validate: {
       hasLowerCase: (value: string) =>
@@ -67,7 +70,7 @@ export const FirstAccessForm = () => {
         ></MUITextField>
       </InputWrapper>
 
-      <Button disabled={!isValid} variant="contained" type="submit" sx={{ width: 95, mt: 2 }}>
+      <Button variant="contained" type="submit" sx={{ width: 95, mt: 2 }}>
         {t('signIn')}
       </Button>
     </Box>

@@ -1,10 +1,10 @@
 import { FirstAccessForm } from './components/FirstAccessForm'
 import { LoginLayout } from '@/layout/LoginLayout'
 
-export const FirstAccessPage = () => {
+export const FirstAccessPage = ({ isRecover = false }: { isRecover?: boolean }) => {
   return (
-    <LoginLayout i18nContext="firstAccessForm">
-      <FirstAccessForm />
+    <LoginLayout i18nContext={isRecover ? 'restoreForm' : 'firstAccessForm'}>
+      <FirstAccessForm isRecover={isRecover} />
     </LoginLayout>
   )
 }
