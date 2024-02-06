@@ -5,11 +5,13 @@ import {
   DeleteMessageCommand,
   Message,
 } from "@aws-sdk/client-sqs";
-import { captureAWSv3Client, Segment } from "aws-xray-sdk";
+import pkg from "aws-xray-sdk";
 
-export interface SQSConfig {
+interface SQSConfig {
   awsRegion: string;
 }
+
+const { captureAWSv3Client, Segment } = pkg;
 
 export const instantiateSQSClient = (
   config: SQSConfig,
@@ -30,20 +32,25 @@ export const sqsRunConsumer = async (
 ): Promise<void> => {
   const command = new ReceiveMessageCommand({
     QueueUrl: queueUrl,
-    MaxNumberOfMessages: 1,
+    MaxNumberOfMessages: 10,
   });
 
   const { Messages } = await sqsClient.send(command);
   if (Messages?.length) {
     try {
-      const [message] = Messages;
-      await consumerHandler(message);
-      await sqsDeleteMessage(sqsClient, queueUrl, message.ReceiptHandle);
+      for (const message of Messages) {
+        if (!message.ReceiptHandle) {
+          throw new Error(
+            `ReceiptHandle not found in Message: ${JSON.stringify(message)}`
+          );
+        }
+
+        await consumerHandler(message);
+        await sqsDeleteMessage(sqsClient, queueUrl, message.ReceiptHandle);
+      }
     } catch (e) {
-      throw new Error(`Unexpected error on consumer queue: ${e}`);
+      throw new Error(`Unexpected error on Consumer queue: ${e}`);
     }
-  } else {
-    throw new Error("No messages found in the queue");
   }
 };
 
@@ -63,7 +70,7 @@ export const sqsSendMessage = async (
 export const sqsDeleteMessage = async (
   sqsClient: SQSClient,
   queueUrl: string,
-  receiptHandle: string | undefined
+  receiptHandle: string
 ): Promise<void> => {
   const deleteCommand = new DeleteMessageCommand({
     QueueUrl: queueUrl,
