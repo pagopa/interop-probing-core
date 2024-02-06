@@ -5,40 +5,57 @@ import { TextField as MUITextField } from '@mui/material'
 import { InputWrapper } from '@/components/shared/InputWrapper'
 import { useNavigate } from '@/router'
 import { passwordRules } from '@/config/constants'
+import { AuthHooks } from '@/hooks/auth.hooks'
 
 export const LoginForm = () => {
   const navigate = useNavigate()
   const { t } = useTranslation('common', {
     keyPrefix: 'loginForm',
   })
+  const { mutate: doLogin } = AuthHooks.useLogin()
 
   const {
     register,
     formState: { errors, isValid },
     handleSubmit,
-  } = useForm<{ name: string; password: string }>({
+  } = useForm<{ username: string; password: string }>({
     defaultValues: {
-      name: '',
+      username: '',
       password: '',
     },
     mode: 'onChange',
   })
 
-  const onSubmit = (data: { name: string }) => {
-    console.log(data)
-    navigate('CREATE_PASSWORD')
+  const onSubmit = (data: { username: string; password: string }) => {
+    if (data.username === 'diego.longo@mobilesoft.it') {
+      //mock login
+      navigate('CREATE_PASSWORD')
+      return
+    }
+    doLogin(
+      { ...data },
+      {
+        onSuccess(data) {
+          console.log('RESULT', data)
+          navigate('CREATE_PASSWORD')
+        },
+        onError(err) {
+          console.log('ERRORE', err)
+        },
+      }
+    )
   }
 
   return (
     <Paper noValidate component="form" onSubmit={handleSubmit(onSubmit)}>
-      <InputWrapper error={errors['name'] as { message: string }}>
+      <InputWrapper error={errors['username'] as { message: string }}>
         <MUITextField
           sx={{ mb: 2, my: 2 }}
-          id="name"
+          id="username"
           label={t('username')}
           required={true}
           autoComplete="username"
-          {...register('name', {
+          {...register('username', {
             pattern: { value: passwordRules.email, message: t('emailPattern') },
           })}
         ></MUITextField>
