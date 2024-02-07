@@ -2,10 +2,10 @@ import { z } from "zod";
 
 export const ConsumerConfig = z
   .object({
-    DEFAULT_CONSUMER_TIMEOUT_SECONDS: z.coerce.number().min(1),
+    DEFAULT_CONSUMER_TIMEOUT_IN_SECONDS: z.coerce.number().min(1),
   })
   .transform((c) => ({
-    defaultConsumerTimeout: c.DEFAULT_CONSUMER_TIMEOUT_SECONDS,
+    defaultConsumerTimeout: c.DEFAULT_CONSUMER_TIMEOUT_IN_SECONDS,
   }));
 
 
