@@ -1,5 +1,6 @@
 import { InputWrapper } from '@/components/shared/InputWrapper'
 import { passwordRules } from '@/config/constants'
+import { AuthHooks } from '@/hooks/auth.hooks'
 import { Box, TextField as MUITextField } from '@mui/material'
 import { Button } from '@mui/material'
 import { useForm } from 'react-hook-form'
@@ -10,14 +11,23 @@ export const RecoverPasswordForm = () => {
     keyPrefix: 'recoverPasswordForm',
   })
 
+  const { mutate: passwordRecover } = AuthHooks.usePasswordRecovery()
+
   const {
     register,
     formState: { errors, isValid },
     handleSubmit,
-  } = useForm({ defaultValues: { email: '' }, mode: 'onChange' })
+  } = useForm({ defaultValues: { email: '' } })
 
   const onSubmit = (data: { email: string }) => {
-    console.log(data)
+    passwordRecover(data.email, {
+      onSuccess(data) {
+        console.log('OK', data)
+      },
+      onError(err) {
+        console.log('ERRORE', err)
+      },
+    })
   }
   return (
     <Box noValidate component="form" onSubmit={handleSubmit(onSubmit)}>

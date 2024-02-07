@@ -13,6 +13,7 @@ export const LoginForm = () => {
     keyPrefix: 'loginForm',
   })
   const { mutate: doLogin } = AuthHooks.useLogin()
+  const { refetch } = AuthHooks.useToken()
 
   const {
     register,
@@ -23,21 +24,16 @@ export const LoginForm = () => {
       username: '',
       password: '',
     },
-    mode: 'onChange',
   })
 
   const onSubmit = (data: { username: string; password: string }) => {
-    if (data.username === 'diego.longo@mobilesoft.it') {
-      //mock login
-      navigate('CREATE_PASSWORD')
-      return
-    }
     doLogin(
       { ...data },
       {
         onSuccess(data) {
           console.log('RESULT', data)
-          navigate('CREATE_PASSWORD')
+          refetch()
+          navigate('HOME')
         },
         onError(err) {
           console.log('ERRORE', err)

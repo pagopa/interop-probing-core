@@ -5,24 +5,38 @@ import { useTranslation } from 'react-i18next'
 import { TextField as MUITextField } from '@mui/material'
 import { InputWrapper } from '@/components/shared/InputWrapper'
 import { passwordRules } from '@/config/constants'
+import { AuthHooks } from '@/hooks/auth.hooks'
 
-export const FirstAccessForm = ({ isRecover }: { isRecover: boolean }) => {
+export const FirstAccessForm = () => {
   const { t } = useTranslation('common', {
     keyPrefix: 'firstAccessForm',
   })
+  const queryParams = new URLSearchParams(window.location.hash.substring(1))
+  const code = queryParams.get('code')
+  const username = queryParams.get('username')
+  const { mutate: passwordReset } = AuthHooks.usePasswordReset()
 
   const {
     register,
     formState: { errors },
     watch,
     handleSubmit,
-  } = useForm({ mode: 'onChange' })
+  } = useForm({ defaultValues: { newPassword: '', newPasswordConfirm: '' }, mode: 'onChange' })
 
   const onSubmit = (data: FieldValues) => {
-    if (isRecover) {
-      // newPassword API?
+    if (code && username) {
+      passwordReset(
+        { username, code, new_password: data.newPasswordConfirm },
+        {
+          onSuccess(data) {
+            console.log('OK', data)
+          },
+          onError(err) {
+            console.log('ERRORE', err)
+          },
+        }
+      )
     }
-    console.log(data, errors)
   }
 
   const newPasswordValidators = {

@@ -1,6 +1,8 @@
 import awsConfigs from '@/config/aws-exports'
 import { Auth, Amplify } from 'aws-amplify'
+
 Amplify.configure(awsConfigs)
+
 async function login(loginForm: { username: string; password: string }) {
   try {
     const { username, password } = loginForm
@@ -34,12 +36,30 @@ async function passwordRecovery(username: string) {
   }
 }
 
-async function passwordReset(username: string, code: string, new_password: string) {
+async function passwordReset({
+  username,
+  code,
+  new_password,
+}: {
+  username: string
+  code: string
+  new_password: string
+}) {
   try {
     await Auth.forgotPasswordSubmit(username, code, new_password)
   } catch (error) {
     throw error
   }
 }
-const authService = { login, logout, passwordRecovery, passwordReset }
+
+async function getSessionToken(): Promise<string | null> {
+  try {
+    const token = sessionStorage.getItem('token')
+    return token
+  } catch (error) {
+    console.error('Error retrieving token from session storage:', error)
+    return null
+  }
+}
+const authService = { login, logout, passwordRecovery, passwordReset, getSessionToken }
 export default authService

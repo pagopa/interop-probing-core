@@ -4,7 +4,7 @@ import { LoginLayout } from '@/layout/LoginLayout'
 export const FirstAccessPage = ({ isRecover = false }: { isRecover?: boolean }) => {
   return (
     <LoginLayout i18nContext={isRecover ? 'restoreForm' : 'firstAccessForm'}>
-      <FirstAccessForm isRecover={isRecover} />
+      <FirstAccessForm />
     </LoginLayout>
   )
 }

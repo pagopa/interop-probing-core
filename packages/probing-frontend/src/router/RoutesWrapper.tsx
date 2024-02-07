@@ -8,12 +8,14 @@ import { useLocation } from '@/router'
 import { ErrorBoundary } from 'react-error-boundary'
 import { AppLayout } from '@/layout/AppLayout'
 import { Footer, Header } from '@/layout'
+import { AuthHooks } from '@/hooks/auth.hooks'
 const Error = () => <>Error</>
 const _RoutesWrapper: React.FC = () => {
+  const { jwt, refetch } = AuthHooks.useToken()
   const { routeKey } = useLocation()
   return (
     <>
-      <Header />
+      <Header jwt={jwt} refetch={refetch} />
       <AppLayout>
         <ErrorBoundary key={routeKey} FallbackComponent={Error}>
           <React.Suspense fallback={<>Loading...</>}>
