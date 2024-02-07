@@ -11,6 +11,11 @@ import {
 import { decodeSQSMessage } from "./model/models.js";
 import { Message } from "@aws-sdk/client-sqs";
 import { api } from "../../probing-eservice-operations/src/model/generated/api.js";
+import {
+  ApplicationError,
+  makeApplicationError,
+} from "./model/domain/errors.js";
+
 
 const sqsClient = await instantiateSQSClient(
   { awsRegion: config.awsRegion },
@@ -19,21 +24,25 @@ const sqsClient = await instantiateSQSClient(
 
 const eserviceService: EserviceService = eServiceServiceClient(api);
 
-async function processMessage(message: Message): Promise<void> {
+export async function processMessage(message: Message): Promise<void> {
   try {
     await eserviceService.updateResponseReceived(decodeSQSMessage(message));
-    logger.info(
-      `eService response received updated for MessageId: ${message.MessageId}.`
-    );
-  } catch (e) {
-    throw new Error(
-      `Error during eService message handling. MessageId: ${message.MessageId}. ${e}`
+  } catch (e: unknown) {
+    throw makeApplicationError(
+      e instanceof ApplicationError
+        ? e
+        : new Error(
+            `Unexpected error handling message with MessageId: ${message.MessageId}. Details: ${e}`
+          )
     );
   }
 }
 
 await sqsRunConsumer(
   sqsClient,
-  config.sqsEndpointPollResultQueue,
+  {
+    queueUrl: config.sqsEndpointPollResultQueue, 
+    defaultConsumerTimeout: config.defaultConsumerTimeout
+  },
   processMessage
 ).catch(logger.error);
