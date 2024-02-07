@@ -15,8 +15,15 @@ interface SQSConfig {
 
 const { captureAWSv3Client, Segment } = pkg;
 
-const processExit = (existStatusCode: number = 1): void => {
+const delay = (seconds: number): Promise<void> => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, seconds * 1000);
+  });
+};
+
+const processExit = async (existStatusCode: number = 1): Promise<void> => {
   logger.info(`Process exit with code ${existStatusCode}`);
+  await delay(1);
   process.exit(existStatusCode);
 };
 
@@ -72,15 +79,13 @@ export const sqsRunConsumer = async (
   do {
     try {
       await initConsumer(sqsClient, config.queueUrl, consumerHandler);
-
-      await new Promise((resolve) =>
-        setTimeout(resolve, config.defaultConsumerTimeout * 1000)
-      );
     } catch (e) {
       logger.error(
         `Generic error occurs during consumer process. Details: ${e}`
       );
-      processExit();
+      await processExit();
+    } finally {
+      await delay(config.defaultConsumerTimeout);
     }
   } while (true);
 };

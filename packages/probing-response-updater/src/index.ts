@@ -16,7 +16,6 @@ import {
   makeApplicationError,
 } from "./model/domain/errors.js";
 
-
 const sqsClient = await instantiateSQSClient(
   { awsRegion: config.awsRegion },
   config.applicationName
@@ -41,8 +40,8 @@ export async function processMessage(message: Message): Promise<void> {
 await sqsRunConsumer(
   sqsClient,
   {
-    queueUrl: config.sqsEndpointPollResultQueue, 
-    defaultConsumerTimeout: config.defaultConsumerTimeout
+    queueUrl: config.sqsEndpointPollResultQueue,
+    defaultConsumerTimeout: config.defaultConsumerTimeout,
   },
   processMessage
 ).catch(logger.error);

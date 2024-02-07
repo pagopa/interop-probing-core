@@ -168,7 +168,7 @@ importers:
   packages/probing-response-updater:
     dependencies:
       '@aws-sdk/client-sqs':
-        specifier: ^3.504.0
+        specifier: ^3.507.0
         version: 3.507.0
       '@tsconfig/node-lts':
         specifier: ^20.1.0
