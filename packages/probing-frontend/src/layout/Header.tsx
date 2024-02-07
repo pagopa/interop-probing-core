@@ -1,4 +1,3 @@
-import type { ProductSwitchItem } from '@pagopa/mui-italia'
 import { HeaderAccount, HeaderProduct } from '@pagopa/mui-italia'
 import { useNavigate } from '@/router'
 import { AuthHooks } from '@/hooks/auth.hooks'
@@ -7,21 +6,8 @@ import type {
   RefetchQueryFilters,
   QueryObserverResult,
 } from '@tanstack/react-query'
-const RootLink = {
-  label: 'PagoPA S.p.A.',
-  href: 'https://www.pagopa.it',
-  ariaLabel: 'Vai al sito di PagoPA S.p.A.',
-  title: 'Vai al sito di PagoPA S.p.A.',
-}
+import { RootLink, assistanceLink, documentationLink, productSwitchItem } from '@/config/constants'
 
-const documentationLink = 'https://docs.pagopa.it/interoperabilita-1'
-const assistanceLink = 'https://selfcare.pagopa.it/assistenza'
-const productSwitchItem: ProductSwitchItem = {
-  id: 'prod-interop',
-  title: `Interoperabilità`,
-  productUrl: '',
-  linkType: 'internal',
-}
 export const Header = ({
   jwt,
   refetch,
@@ -38,17 +24,9 @@ export const Header = ({
       navigate('LOGIN')
     }
   }
-  const user = jwt
-    ? {
-        id: '123',
-        name: 'Diego',
-        surname: 'Longo',
-        email: 'diego.longo@pagopa.it',
-      }
-    : false
 
   const handleLogout = () => {
-    logout(undefined, {
+    logout(void 0, {
       onSuccess(data) {
         console.log('OK', data), refetch()
       },
@@ -58,7 +36,7 @@ export const Header = ({
     <header>
       <HeaderAccount
         rootLink={RootLink}
-        loggedUser={user}
+        loggedUser={jwt ? { id: jwt } : false}
         onLogin={() => handleLogin()}
         onLogout={() => handleLogout()}
         onAssistanceClick={() => {
@@ -68,7 +46,7 @@ export const Header = ({
           window.open(documentationLink, '_blank')
         }}
       />
-      <HeaderProduct key={'124u218ih'} productsList={[productSwitchItem]} />
+      <HeaderProduct key={productSwitchItem.id} productsList={[productSwitchItem]} />
     </header>
   )
 }

@@ -2,23 +2,52 @@ import awsConfigs from '@/config/aws-exports'
 import { Auth, Amplify } from 'aws-amplify'
 
 Amplify.configure(awsConfigs)
+type User = {
+  username: string
+  attributes: {
+    email: string
+    email_verified: boolean
+    sub: string
+  }
+  signInUserSession: {
+    idToken: { jwtToken: string }
+    refreshToken: { token: string }
+    accessToken: { jwtToken: string }
+  }
+}
 
-async function login(loginForm: { username: string; password: string }) {
+interface LoginForm {
+  username: string
+  password: string
+}
+
+async function login(loginForm: LoginForm): Promise<User | unknown> {
   try {
     const { username, password } = loginForm
-    const user = await Auth.signIn(username, password)
-    const token = user.signInUserSession.idToken.jwtToken
-    const refreshToken = user.signInUserSession.refreshToken.token
-    const accessToken = user.signInUserSession.accessToken.jwtToken
+    const {
+      signInUserSession: user,
+      attributes,
+      username: loggedUsername,
+    }: User = await Auth.signIn(username, password)
+
+    const { idToken, refreshToken, accessToken } = user
+    const { jwtToken: token } = idToken
+    const { token: refreshTokenToken } = refreshToken
+    const { jwtToken: accessTokenToken } = accessToken
+
+    const { email } = attributes
+
+    sessionStorage.setItem('email', email)
     sessionStorage.setItem('token', token)
-    sessionStorage.setItem('refreshToken', refreshToken)
-    sessionStorage.setItem('accessToken', accessToken)
+    sessionStorage.setItem('username', loggedUsername)
+    sessionStorage.setItem('refreshToken', refreshTokenToken)
+    sessionStorage.setItem('accessToken', accessTokenToken)
+
     return user
   } catch (error) {
     throw error
   }
 }
-
 async function logout() {
   try {
     await Auth.signOut()

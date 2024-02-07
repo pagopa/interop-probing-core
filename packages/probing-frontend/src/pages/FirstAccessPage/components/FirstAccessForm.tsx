@@ -6,11 +6,13 @@ import { TextField as MUITextField } from '@mui/material'
 import { InputWrapper } from '@/components/shared/InputWrapper'
 import { passwordRules } from '@/config/constants'
 import { AuthHooks } from '@/hooks/auth.hooks'
+import { useNavigate } from '@/router'
 
 export const FirstAccessForm = () => {
   const { t } = useTranslation('common', {
     keyPrefix: 'firstAccessForm',
   })
+  const navigate = useNavigate()
   const queryParams = new URLSearchParams(window.location.hash.substring(1))
   const code = queryParams.get('code')
   const username = queryParams.get('username')
@@ -28,11 +30,8 @@ export const FirstAccessForm = () => {
       passwordReset(
         { username, code, new_password: data.newPasswordConfirm },
         {
-          onSuccess(data) {
-            console.log('OK', data)
-          },
-          onError(err) {
-            console.log('ERRORE', err)
+          onSuccess() {
+            navigate('PASSWORD_UPDATED')
           },
         }
       )

@@ -86,5 +86,15 @@
   "homePage": {
     "title": "Stato degli e-service",
     "subtitle": "In questa pagina puoi monitorare lo stato degli e-service messi a disposizione degli erogatori su PDND Interoperabilità"
+  },
+  "EMAIL_SENT": {
+    "title": "Hai un nuovo messaggio",
+    "subtitle": "Se l'indirizzo che hai indicato esiste nel nostro database, troverai le istruzioni per il recupero password nella tua casella di posta (controlla anche lo spam)",
+    "button": "Torna alla home"
+  },
+  "PASSWORD_UPDATED": {
+    "title": "Ripristino password completato",
+    "subtitle": "La tua nuova password è stata salvata correttamente",
+    "button": "Vai alla login"
   }
 }

@@ -1,0 +1,17 @@
+{
+  "auth": {
+    "loginSpinnerMessage": "Stiamo effettuando l'autenticazione. Attendere, prego",
+    "loginError": "Il nome utente o la password non sono corretti. Ritenta oppure effettua il ripristino della password",
+    "loginTooManyRequests": "Hai effettuato troppi tentativi errati. Per questioni di sicurezza, l'accesso a questo account è bloccato per un'ora",
+    "logoutSuccessMessage": "Logout effettuato correttamente",
+    "loginSuccessMessage": "Login effettuato correttamente",
+    "resetError": "Qualcosa è andato storto nell'elaborazione della richiesta. Per favore, riprova più tardi",
+    "recoverError": "Qualcosa è andato storto nell'elaborazione della richiesta. Per favore, riprova più tardi",
+    "recoverSpinnerMessage": "Stiamo effettuando la richiesta, attendere prego",
+    "resetSpinnerMessage": "Stiamo effettuando la richiesta, attendere prego"
+  },
+  "generic": {
+    "error": "L'operazione non è andata a buon fine, riprovare",
+    "success": "Operazione effettuata con successo"
+  }
+}

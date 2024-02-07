@@ -1,6 +1,7 @@
 import { InputWrapper } from '@/components/shared/InputWrapper'
 import { passwordRules } from '@/config/constants'
 import { AuthHooks } from '@/hooks/auth.hooks'
+import { useNavigate } from '@/router'
 import { Box, TextField as MUITextField } from '@mui/material'
 import { Button } from '@mui/material'
 import { useForm } from 'react-hook-form'
@@ -10,7 +11,7 @@ export const RecoverPasswordForm = () => {
   const { t } = useTranslation('common', {
     keyPrefix: 'recoverPasswordForm',
   })
-
+  const navigate = useNavigate()
   const { mutate: passwordRecover } = AuthHooks.usePasswordRecovery()
 
   const {
@@ -21,11 +22,8 @@ export const RecoverPasswordForm = () => {
 
   const onSubmit = (data: { email: string }) => {
     passwordRecover(data.email, {
-      onSuccess(data) {
-        console.log('OK', data)
-      },
-      onError(err) {
-        console.log('ERRORE', err)
+      onSuccess() {
+        navigate('EMAIL_SENT')
       },
     })
   }

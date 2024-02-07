@@ -1,0 +1,9 @@
+{
+  "auth": {
+    "loginSpinnerMessage": "Logging in. Please wait.",
+    "loginError": "Incorrect username or password. Please try again or reset your password.",
+    "loginTooManyRequests": "You have made too many incorrect attempts. For security reasons, access to this account is blocked for one hour.",
+    "logoutSuccessMessage": "Logout successful",
+    "loginSuccessMessage": "Login successful"
+  }
+}

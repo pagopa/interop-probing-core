@@ -4,15 +4,15 @@ import { useTranslation } from 'react-i18next'
 import { TextField as MUITextField } from '@mui/material'
 import { InputWrapper } from '@/components/shared/InputWrapper'
 import { useNavigate } from '@/router'
-import { passwordRules } from '@/config/constants'
 import { AuthHooks } from '@/hooks/auth.hooks'
+import { passwordRules } from '@/config/constants'
 
 export const LoginForm = () => {
   const navigate = useNavigate()
   const { t } = useTranslation('common', {
     keyPrefix: 'loginForm',
   })
-  const { mutate: doLogin } = AuthHooks.useLogin()
+  const { login } = AuthHooks.useLogin()
   const { refetch } = AuthHooks.useToken()
 
   const {
@@ -27,7 +27,7 @@ export const LoginForm = () => {
   })
 
   const onSubmit = (data: { username: string; password: string }) => {
-    doLogin(
+    login(
       { ...data },
       {
         onSuccess(data) {

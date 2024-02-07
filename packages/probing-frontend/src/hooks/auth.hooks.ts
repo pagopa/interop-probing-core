@@ -1,18 +1,48 @@
 import { useMutation, useQuery } from '@tanstack/react-query'
 import authService from '@/services/auth.service'
+import { useTranslation } from 'react-i18next'
 
 function useLogin() {
-  return useMutation(authService.login)
-}
+  const { t } = useTranslation('feedback')
+  const { mutate: login } = useMutation(authService.login, {
+    meta: {
+      successToastLabel: t('auth.loginSuccessMessage'),
+      errorToastLabel: t('auth.loginError'),
+      loadingLabel: t('auth.loginSpinnerMessage'),
+    },
+  })
 
+  return { login }
+}
 function usePasswordRecovery() {
-  return useMutation(authService.passwordRecovery)
+  const { t } = useTranslation('feedback')
+  return useMutation(authService.passwordRecovery, {
+    meta: {
+      successToastLabel: t('auth.recoverSuccessMessage'),
+      errorToastLabel: t('auth.recoverError'),
+      loadingLabel: ' ',
+    },
+  })
 }
 function usePasswordReset() {
-  return useMutation(authService.passwordReset)
+  const { t } = useTranslation('feedback')
+  return useMutation(authService.passwordReset, {
+    meta: {
+      successToastLabel: t('auth.resetSuccessMessage'),
+      errorToastLabel: t('auth.resetError'),
+      loadingLabel: ' ',
+    },
+  })
 }
 function useLogout() {
-  return useMutation(authService.logout)
+  const { t } = useTranslation('feedback')
+  return useMutation(authService.logout, {
+    meta: {
+      successToastLabel: t('auth.logoutSuccessMessage'),
+      errorToastLabel: t('generic.error'),
+      loadingLabel: ' ',
+    },
+  })
 }
 
 function useToken() {

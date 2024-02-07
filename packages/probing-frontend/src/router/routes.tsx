@@ -7,6 +7,7 @@ import { HomePage } from '@/pages/HomePage/Home.page'
 import { LoginPage } from '@/pages/LoginPage/Login.Page'
 import { FirstAccessPage } from '@/pages/FirstAccessPage/FirstAccess.Page'
 import { RecoverPasswordPage } from '@/pages/RecoverPasswordPage/RecoverPassword.Page'
+import { SuccessPage } from '@/pages/SuccessPage/Success.Page'
 
 export const { routes, reactRouterDOMRoutes, hooks, components, utils } = new InteropRouterBuilder<
   LangCode,
@@ -46,6 +47,20 @@ export const { routes, reactRouterDOMRoutes, hooks, components, utils } = new In
     key: 'RECOVER_PASSWORD',
     path: '/recover-password',
     element: <RecoverPasswordPage />,
+    public: true,
+    authLevels: ['admin'],
+  })
+  .addRoute({
+    key: 'EMAIL_SENT',
+    path: '/email-sent',
+    element: <SuccessPage parent={'EMAIL_SENT'} />,
+    public: true,
+    authLevels: ['admin'],
+  })
+  .addRoute({
+    key: 'PASSWORD_UPDATED',
+    path: '/password-updated',
+    element: <SuccessPage parent={'PASSWORD_UPDATED'} />,
     public: true,
     authLevels: ['admin'],
   })
