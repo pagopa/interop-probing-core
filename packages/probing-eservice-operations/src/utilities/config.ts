@@ -5,7 +5,7 @@ import { z } from "zod";
 const eServiceOperationsConfig = CommonConfig.and(DbConfig).and(
   z
     .object({
-      TOLERANCE_MULTIPLIER_IN_MINUTES: z.string(),
+      TOLERANCE_MULTIPLIER_IN_MINUTES: z.coerce.number().min(1),
       SCHEMA_NAME: z.string(),
       DEFAULT_AWS_REGION: z.string(),
     })
