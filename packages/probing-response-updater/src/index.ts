@@ -23,18 +23,22 @@ const sqsClient = await instantiateSQSClient(
 
 const eserviceService: EserviceService = eServiceServiceClient(api);
 
-export async function processMessage(message: Message): Promise<void> {
-  try {
-    await eserviceService.updateResponseReceived(decodeSQSMessage(message));
-  } catch (e: unknown) {
-    throw makeApplicationError(
-      e instanceof ApplicationError
-        ? e
-        : new Error(
-            `Unexpected error handling message with MessageId: ${message.MessageId}. Details: ${e}`
-          )
-    );
-  }
+export async function processMessage(
+  service: EserviceService
+): Promise<(message: Message) => Promise<void>> {
+  return async (message: Message): Promise<void> => {
+    try {
+      await service.updateResponseReceived(decodeSQSMessage(message));
+    } catch (e: unknown) {
+      throw makeApplicationError(
+        e instanceof ApplicationError
+          ? e
+          : new Error(
+              `Unexpected error handling message with MessageId: ${message.MessageId}. Details: ${e}`
+            )
+      );
+    }
+  };
 }
 
 await sqsRunConsumer(
@@ -43,5 +47,5 @@ await sqsRunConsumer(
     queueUrl: config.sqsEndpointPollResultQueue,
     defaultConsumerTimeout: config.defaultConsumerTimeout,
   },
-  processMessage
+  async (message: Message) => (await processMessage(eserviceService))(message)
 ).catch(logger.error);
