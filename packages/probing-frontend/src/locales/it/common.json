@@ -73,11 +73,11 @@
     "notMatching": "Le due password non coincidono"
   },
   "restoreForm": {
-    "title": "Recupera password",
+    "title": "Ripristino password",
     "subtitle": "La tua password deve essere lunga almeno 12 caratteri e contenere almeno una lettera minuscola, una maiuscola, un numero e un carattere speciale"
   },
   "recoverPasswordForm": {
-    "title": "Recupera password",
+    "title": "Recupero password",
     "subtitle": "",
     "email": "Email",
     "emailPattern": "Inserisci una mail vaida",

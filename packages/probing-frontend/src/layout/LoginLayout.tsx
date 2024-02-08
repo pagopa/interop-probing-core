@@ -12,21 +12,31 @@ export const LoginLayout = ({
 }) => {
   const { t } = useTranslation('common', { keyPrefix: i18nContext })
   return (
-    <Box sx={{ maxWidth: 600, mx: 'auto' }}>
-      <Typography component="h1" variant="h4" fontWeight={700} sx={{ mb: 1 }}>
+    <Box
+      sx={{
+        maxWidth: 600,
+        mx: 'auto',
+        mt: '16px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
+      <Typography component="h1" variant="h4" fontWeight={700}>
         {t('title')}
       </Typography>
-      <Typography component="p" sx={{ mb: 3 }}>
-        {t('subtitle')}
-      </Typography>
-      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      {t('subtitle') !== '' && (
+        <Typography component="p" sx={{ mb: 3, mt: 2 }}>
+          {t('subtitle')}
+        </Typography>
+      )}
+      <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: 480 }}>
         <Paper
           elevation={16}
           variant="elevation"
           sx={{
-            maxWidth: 480,
             borderRadius: 3,
-            my: 2,
+            my: 4,
             p: 4,
           }}
         >

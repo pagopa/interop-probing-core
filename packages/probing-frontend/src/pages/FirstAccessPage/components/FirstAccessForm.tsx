@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { TextField as MUITextField } from '@mui/material'
 import { InputWrapper } from '@/components/shared/InputWrapper'
 import { passwordRules } from '@/config/constants'
-import { AuthHooks } from '@/hooks/auth.hooks'
+import { AuthHooks } from '@/api/auth/auth.hooks'
 import { useNavigate } from '@/router'
 
 export const FirstAccessForm = () => {

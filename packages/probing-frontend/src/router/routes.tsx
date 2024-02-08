@@ -8,6 +8,7 @@ import { LoginPage } from '@/pages/LoginPage/Login.Page'
 import { FirstAccessPage } from '@/pages/FirstAccessPage/FirstAccess.Page'
 import { RecoverPasswordPage } from '@/pages/RecoverPasswordPage/RecoverPassword.Page'
 import { SuccessPage } from '@/pages/SuccessPage/Success.Page'
+import { NotFoundPage } from '@/pages/NotFoundPage'
 
 export const { routes, reactRouterDOMRoutes, hooks, components, utils } = new InteropRouterBuilder<
   LangCode,
@@ -45,22 +46,29 @@ export const { routes, reactRouterDOMRoutes, hooks, components, utils } = new In
   })
   .addRoute({
     key: 'RECOVER_PASSWORD',
-    path: '/recover-password',
+    path: '/recupera-password',
     element: <RecoverPasswordPage />,
     public: true,
     authLevels: ['admin'],
   })
   .addRoute({
     key: 'EMAIL_SENT',
-    path: '/email-sent',
+    path: '/email-inviata',
     element: <SuccessPage parent={'EMAIL_SENT'} />,
     public: true,
     authLevels: ['admin'],
   })
   .addRoute({
     key: 'PASSWORD_UPDATED',
-    path: '/password-updated',
+    path: '/password-aggiornata',
     element: <SuccessPage parent={'PASSWORD_UPDATED'} />,
+    public: true,
+    authLevels: ['admin'],
+  })
+  .addRoute({
+    key: 'NOT_FOUND',
+    path: '/not-found',
+    element: <NotFoundPage />,
     public: true,
     authLevels: ['admin'],
   })
@@ -74,6 +82,7 @@ export const router = createBrowserRouter(
       children: reactRouterDOMRoutes,
     },
     { path: '/', element: <components.Redirect to="HOME" /> },
+    { path: '/ripristino-password', element: <components.Redirect to="CREATE_PASSWORD" /> },
     { path: '/*', element: <components.Redirect to="HOME" /> },
   ],
   { basename: '/' }

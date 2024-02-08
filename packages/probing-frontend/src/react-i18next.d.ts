@@ -5,6 +5,7 @@ declare module 'i18next' {
     resources: {
       common: typeof common
       feedback: typeof feedback
+      error: typeof error
     }
   }
 }

@@ -8,7 +8,8 @@
     "resetError": "Qualcosa è andato storto nell'elaborazione della richiesta. Per favore, riprova più tardi",
     "recoverError": "Qualcosa è andato storto nell'elaborazione della richiesta. Per favore, riprova più tardi",
     "recoverSpinnerMessage": "Stiamo effettuando la richiesta, attendere prego",
-    "resetSpinnerMessage": "Stiamo effettuando la richiesta, attendere prego"
+    "resetSpinnerMessage": "Stiamo effettuando la richiesta, attendere prego",
+    "resetSuccessMessage": "Password aggiornata correttamente"
   },
   "generic": {
     "error": "L'operazione non è andata a buon fine, riprovare",

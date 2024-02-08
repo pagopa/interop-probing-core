@@ -2,23 +2,20 @@ import React from 'react'
 import { Outlet } from 'react-router-dom'
 import { Box } from '@mui/material'
 import { Dialog } from '@/components/dialogs'
-// import { ErrorBoundary } from '../../../components/shared/ErrorBoundary'
-// import { ErrorPage } from '@/pages'
 import { useLocation } from '@/router'
 import { ErrorBoundary } from 'react-error-boundary'
 import { AppLayout } from '@/layout/AppLayout'
 import { Footer, Header } from '@/layout'
-import { AuthHooks } from '@/hooks/auth.hooks'
-const Error = () => <>Error</>
+import { ErrorPage } from '@/pages/ErrorPage'
+import { PageContainerSkeleton } from '@/layout/PageContainer'
 const _RoutesWrapper: React.FC = () => {
-  const { jwt, refetch } = AuthHooks.useToken()
   const { routeKey } = useLocation()
   return (
     <>
-      <Header jwt={jwt} refetch={refetch} />
+      <Header />
       <AppLayout>
-        <ErrorBoundary key={routeKey} FallbackComponent={Error}>
-          <React.Suspense fallback={<>Loading...</>}>
+        <ErrorBoundary key={routeKey} FallbackComponent={ErrorPage}>
+          <React.Suspense fallback={<PageContainerSkeleton />}>
             <Outlet />
           </React.Suspense>
         </ErrorBoundary>
@@ -32,9 +29,9 @@ const RoutesWrapper: React.FC = () => {
   return (
     <>
       <ErrorBoundary
-        FallbackComponent={() => (
+        FallbackComponent={(props) => (
           <Box sx={{ p: 8 }}>
-            <>Error</>
+            <ErrorPage {...props} />
           </Box>
         )}
       >

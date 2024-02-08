@@ -1,6 +1,6 @@
 import { InputWrapper } from '@/components/shared/InputWrapper'
 import { passwordRules } from '@/config/constants'
-import { AuthHooks } from '@/hooks/auth.hooks'
+import { AuthHooks } from '@/api/auth/auth.hooks'
 import { useNavigate } from '@/router'
 import { Box, TextField as MUITextField } from '@mui/material'
 import { Button } from '@mui/material'
@@ -31,7 +31,12 @@ export const RecoverPasswordForm = () => {
     <Box noValidate component="form" onSubmit={handleSubmit(onSubmit)}>
       <InputWrapper error={errors['email'] as { message: string }}>
         <MUITextField
-          sx={{ mb: 2, my: 2 }}
+          sx={{
+            width: '480px',
+            '@media (max-width: 600px)': {
+              width: '100%', // Width for screens smaller than 600px
+            },
+          }}
           id="email"
           label={t('email')}
           required={true}
@@ -41,7 +46,7 @@ export const RecoverPasswordForm = () => {
           })}
         ></MUITextField>
       </InputWrapper>
-      <Button disabled={!isValid} variant="contained" type="submit" sx={{ width: 95, mt: 2 }}>
+      <Button disabled={!isValid} variant="contained" type="submit" size="medium">
         {t('send')}
       </Button>
     </Box>

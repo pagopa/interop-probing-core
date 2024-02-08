@@ -1,22 +1,10 @@
 import { HeaderAccount, HeaderProduct } from '@pagopa/mui-italia'
 import { useNavigate } from '@/router'
-import { AuthHooks } from '@/hooks/auth.hooks'
-import type {
-  RefetchOptions,
-  RefetchQueryFilters,
-  QueryObserverResult,
-} from '@tanstack/react-query'
+import { AuthHooks } from '@/api/auth/auth.hooks'
 import { RootLink, assistanceLink, documentationLink, productSwitchItem } from '@/config/constants'
+import { useJwt } from '@/hooks/useJwt'
 
-export const Header = ({
-  jwt,
-  refetch,
-}: {
-  jwt?: string | null
-  refetch: <TPageData>(
-    options?: (RefetchOptions & RefetchQueryFilters<TPageData>) | undefined
-  ) => Promise<QueryObserverResult<string | null, unknown>>
-}) => {
+export const Header = () => {
   const { mutate: logout } = AuthHooks.useLogout()
   const navigate = useNavigate()
   const handleLogin = () => {
@@ -25,10 +13,12 @@ export const Header = ({
     }
   }
 
+  const jwt = useJwt()
+
   const handleLogout = () => {
     logout(void 0, {
       onSuccess(data) {
-        console.log('OK', data), refetch()
+        console.log('OK', data)
       },
     })
   }
@@ -36,7 +26,7 @@ export const Header = ({
     <header>
       <HeaderAccount
         rootLink={RootLink}
-        loggedUser={jwt ? { id: jwt } : false}
+        loggedUser={jwt ? { id: jwt.email } : false}
         onLogin={() => handleLogin()}
         onLogout={() => handleLogout()}
         onAssistanceClick={() => {

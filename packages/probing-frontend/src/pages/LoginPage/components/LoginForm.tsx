@@ -1,10 +1,10 @@
-import { Button, Paper } from '@mui/material'
+import { Box, Button } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { TextField as MUITextField } from '@mui/material'
 import { InputWrapper } from '@/components/shared/InputWrapper'
 import { useNavigate } from '@/router'
-import { AuthHooks } from '@/hooks/auth.hooks'
+import { AuthHooks } from '@/api/auth/auth.hooks'
 import { passwordRules } from '@/config/constants'
 
 export const LoginForm = () => {
@@ -12,8 +12,7 @@ export const LoginForm = () => {
   const { t } = useTranslation('common', {
     keyPrefix: 'loginForm',
   })
-  const { login } = AuthHooks.useLogin()
-  const { refetch } = AuthHooks.useToken()
+  const { mutate: login } = AuthHooks.useLogin()
 
   const {
     register,
@@ -27,26 +26,17 @@ export const LoginForm = () => {
   })
 
   const onSubmit = (data: { username: string; password: string }) => {
-    login(
-      { ...data },
-      {
-        onSuccess(data) {
-          console.log('RESULT', data)
-          refetch()
-          navigate('HOME')
-        },
-        onError(err) {
-          console.log('ERRORE', err)
-        },
-      }
-    )
+    login(data, {
+      onSuccess() {
+        navigate('HOME')
+      },
+    })
   }
 
   return (
-    <Paper noValidate component="form" onSubmit={handleSubmit(onSubmit)}>
+    <Box noValidate component="form" onSubmit={handleSubmit(onSubmit)}>
       <InputWrapper error={errors['username'] as { message: string }}>
         <MUITextField
-          sx={{ mb: 2, my: 2 }}
           id="username"
           label={t('username')}
           required={true}
@@ -58,7 +48,6 @@ export const LoginForm = () => {
       </InputWrapper>
       <InputWrapper error={errors['password'] as { message: string }}>
         <MUITextField
-          sx={{ mb: 2 }}
           id="password"
           label={t('password')}
           autoComplete="password"
@@ -67,9 +56,9 @@ export const LoginForm = () => {
           {...register('password', { required: true || t('fieldRequired') })}
         ></MUITextField>
       </InputWrapper>
-      <Button disabled={!isValid} variant="contained" type="submit" sx={{ width: 95, mt: 2 }}>
+      <Button disabled={!isValid} variant="contained" type="submit" size="medium">
         {t('signIn')}
       </Button>
-    </Paper>
+    </Box>
   )
 }

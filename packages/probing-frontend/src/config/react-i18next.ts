@@ -4,6 +4,8 @@ import commonIt from '@/locales/it/common.json'
 import commonEn from '@/locales/en/common.json'
 import feedbackIt from '@/locales/it/feedback.json'
 import feedbackEn from '@/locales/en/feedback.json'
+import errorIt from '@/locales/it/error.json'
+import errorEn from '@/locales/en/error.json'
 
 i18n.use(initReactI18next).init({
   debug: false,
@@ -17,10 +19,12 @@ i18n.use(initReactI18next).init({
     it: {
       common: commonIt,
       feedback: feedbackIt,
+      error: errorIt,
     },
     en: {
       common: commonEn,
       feedback: feedbackEn,
+      error: errorEn,
     },
   },
 })
