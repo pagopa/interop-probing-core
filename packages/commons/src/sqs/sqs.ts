@@ -15,16 +15,10 @@ interface SQSConfig {
 
 const { captureAWSv3Client, Segment } = pkg;
 
-const delay = (seconds: number): Promise<void> => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, seconds * 1000);
-  });
-};
-
-const processExit = async (existStatusCode: number = 1): Promise<void> => {
-  logger.info(`Process exit with code ${existStatusCode}`);
-  await delay(1);
-  process.exit(existStatusCode);
+const processExit = async (exitStatusCode: number = 1): Promise<void> => {
+  logger.info(`Process exit with code ${exitStatusCode}`);
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  process.exit(exitStatusCode);
 };
 
 export const instantiateSQSClient = (
@@ -39,24 +33,18 @@ export const instantiateSQSClient = (
   return sqsClient;
 };
 
-const initConsumer = async (
+const processQueue = async (
   sqsClient: SQSClient,
-  queueUrl: string,
+  config: { queueUrl: string } & ConsumerConfig,
   consumerHandler: (messagePayload: Message) => Promise<void>
 ): Promise<void> => {
-  logger.info(`Consumer connecting to queue: ${queueUrl}`);
-
   const command = new ReceiveMessageCommand({
-    QueueUrl: queueUrl,
+    QueueUrl: config.queueUrl,
+    WaitTimeSeconds: config.consumerPollingTimeout,
     MaxNumberOfMessages: 10,
   });
 
   const { Messages } = await sqsClient.send(command);
-
-  logger.info(
-    `Consumer successfully connected to and received messages from queue: ${queueUrl}`
-  );
-
   if (Messages?.length) {
     for (const message of Messages) {
       if (!message.ReceiptHandle) {
@@ -66,7 +54,7 @@ const initConsumer = async (
       }
 
       await consumerHandler(message);
-      await sqsDeleteMessage(sqsClient, queueUrl, message.ReceiptHandle);
+      await sqsDeleteMessage(sqsClient, config.queueUrl, message.ReceiptHandle);
     }
   }
 };
@@ -76,16 +64,16 @@ export const sqsRunConsumer = async (
   config: { queueUrl: string } & ConsumerConfig,
   consumerHandler: (messagePayload: Message) => Promise<void>
 ): Promise<void> => {
+  logger.info(`Consumer processing on Queue: ${config.queueUrl}`);
+
   do {
     try {
-      await initConsumer(sqsClient, config.queueUrl, consumerHandler);
+      await processQueue(sqsClient, config, consumerHandler);
     } catch (e) {
       logger.error(
-        `Generic error occurs during consumer process. Details: ${e}`
+        `Generic error occurs processing Queue: ${config.queueUrl}. Details: ${e}`
       );
       await processExit();
-    } finally {
-      await delay(config.defaultConsumerTimeout);
     }
   } while (true);
 };
