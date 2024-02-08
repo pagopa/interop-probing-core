@@ -4,16 +4,21 @@ import {
   SendMessageCommand,
   DeleteMessageCommand,
   Message,
+  SQSClientConfig,
 } from "@aws-sdk/client-sqs";
 import pkg from "aws-xray-sdk";
 import { logger } from "../logging/index.js";
 import { ConsumerConfig } from "../index.js";
 
-interface SQSConfig {
-  awsRegion: string;
-}
-
 const { captureAWSv3Client, Segment } = pkg;
+
+const serializeError = (error: unknown) => {
+  try {
+    return JSON.stringify(error, Object.getOwnPropertyNames(error));
+  } catch (e) {
+    return error;
+  }
+};
 
 const processExit = async (exitStatusCode: number = 1): Promise<void> => {
   logger.info(`Process exit with code ${exitStatusCode}`);
@@ -22,14 +27,13 @@ const processExit = async (exitStatusCode: number = 1): Promise<void> => {
 };
 
 export const instantiateSQSClient = (
-  config: SQSConfig,
+  config: SQSClientConfig,
   awsXraySegmentName: string
 ): SQSClient => {
   const sqsClient = new SQSClient({
-    region: config.awsRegion,
+    region: config.region,
   });
   captureAWSv3Client(sqsClient, new Segment(awsXraySegmentName));
-
   return sqsClient;
 };
 
@@ -59,7 +63,7 @@ const processQueue = async (
   }
 };
 
-export const sqsRunConsumer = async (
+export const runConsumer = async (
   sqsClient: SQSClient,
   config: { queueUrl: string } & ConsumerConfig,
   consumerHandler: (messagePayload: Message) => Promise<void>
@@ -71,7 +75,9 @@ export const sqsRunConsumer = async (
       await processQueue(sqsClient, config, consumerHandler);
     } catch (e) {
       logger.error(
-        `Generic error occurs processing Queue: ${config.queueUrl}. Details: ${e}`
+        `Generic error occurs processing Queue: ${
+          config.queueUrl
+        }. Details: ${serializeError(e)}`
       );
       await processExit();
     }
@@ -102,4 +108,10 @@ export const sqsDeleteMessage = async (
   });
 
   await sqsClient.send(deleteCommand);
+};
+
+export {
+  SQSClient,
+  SQSClientConfig,
+  Message,
 };

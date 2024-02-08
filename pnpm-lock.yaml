@@ -167,18 +167,12 @@ importers:
 
   packages/probing-response-updater:
     dependencies:
-      '@aws-sdk/client-sqs':
-        specifier: ^3.507.0
-        version: 3.507.0
       '@tsconfig/node-lts':
         specifier: ^20.1.0
         version: 20.1.1
       '@zodios/core':
         specifier: ^10.9.2
         version: 10.9.6(axios@1.6.5)(zod@3.22.4)
-      aws-xray-sdk:
-        specifier: ^3.0.0
-        version: 3.5.3
       dotenv-flow:
         specifier: ^3.2.0
         version: 3.3.0

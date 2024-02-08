@@ -27,10 +27,8 @@
     "vitest": "^0.33.0"
   },
   "dependencies": {
-    "@aws-sdk/client-sqs": "^3.507.0",
     "@tsconfig/node-lts": "^20.1.0",
     "@zodios/core": "^10.9.2",
-    "aws-xray-sdk": "^3.0.0",
     "dotenv-flow": "^3.2.0",
     "pagopa-interop-probing-commons": "workspace:*",
     "pagopa-interop-probing-models": "workspace:*",
