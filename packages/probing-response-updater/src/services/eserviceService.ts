@@ -4,7 +4,7 @@ import { Api } from "../../../probing-eservice-operations/src/model/types.js";
 import { logger } from "pagopa-interop-probing-commons";
 import { apiUpdateResponseReceivedError } from "../model/domain/errors.js";
 
-export const eServiceServiceClient = (apiClient: ZodiosInstance<Api>) => {
+export const eServiceServiceBuilder = (apiClient: ZodiosInstance<Api>) => {
   return {
     async updateResponseReceived({
       params,
@@ -31,4 +31,4 @@ export const eServiceServiceClient = (apiClient: ZodiosInstance<Api>) => {
   };
 };
 
-export type EserviceService = ReturnType<typeof eServiceServiceClient>;
+export type EserviceService = ReturnType<typeof eServiceServiceBuilder>;

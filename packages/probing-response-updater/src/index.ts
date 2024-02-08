@@ -6,7 +6,7 @@ import {
 import { config } from "./utilities/config.js";
 import {
   EserviceService,
-  eServiceServiceClient,
+  eServiceServiceBuilder,
 } from "./services/eserviceService.js";
 import { decodeSQSMessage } from "./model/models.js";
 import { Message } from "@aws-sdk/client-sqs";
@@ -21,7 +21,7 @@ const sqsClient = await instantiateSQSClient(
   config.applicationName
 );
 
-const eserviceService: EserviceService = eServiceServiceClient(api);
+const eserviceService: EserviceService = eServiceServiceBuilder(api);
 
 export async function processMessage(
   service: EserviceService
