@@ -26,7 +26,7 @@ const processExit = async (exitStatusCode: number = 1): Promise<void> => {
   process.exit(exitStatusCode);
 };
 
-export const instantiateSQSClient = (
+export const instantiateClient = (
   config: SQSClientConfig,
   awsXraySegmentName: string
 ): SQSClient => {
@@ -58,7 +58,7 @@ const processQueue = async (
       }
 
       await consumerHandler(message);
-      await sqsDeleteMessage(sqsClient, config.queueUrl, message.ReceiptHandle);
+      await deleteMessage(sqsClient, config.queueUrl, message.ReceiptHandle);
     }
   }
 };
@@ -84,7 +84,7 @@ export const runConsumer = async (
   } while (true);
 };
 
-export const sqsSendMessage = async (
+export const sendMessage = async (
   sqsClient: SQSClient,
   queueUrl: string,
   messageBody: string
@@ -97,7 +97,7 @@ export const sqsSendMessage = async (
   await sqsClient.send(command);
 };
 
-export const sqsDeleteMessage = async (
+export const deleteMessage = async (
   sqsClient: SQSClient,
   queueUrl: string,
   receiptHandle: string

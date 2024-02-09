@@ -6,9 +6,9 @@ import {
   makeApplicationError,
 } from "./model/domain/errors.js";
 
-export async function processMessage(
+export function processMessage(
   service: EserviceService
-): Promise<(message: SQS.Message) => Promise<void>> {
+): (message: SQS.Message) => Promise<void> {
   return async (message: SQS.Message): Promise<void> => {
     try {
       await service.updateResponseReceived(decodeSQSMessage(message));

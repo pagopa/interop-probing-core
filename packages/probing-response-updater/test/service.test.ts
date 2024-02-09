@@ -23,7 +23,7 @@ describe("eService service test", () => {
   });
 
   afterAll(() => {
-    vi.restoreAllMocks()
+    vi.restoreAllMocks();
   });
 
   it("finding the e-service identified by eserviceRecordId, response received is successfully updated", async () => {

@@ -11,7 +11,7 @@ const apiClient = createApiClient(config.operationsBaseUrl);
 
 const eserviceService: EserviceService = eServiceServiceBuilder(apiClient);
 
-const sqsClient: SQS.SQSClient = await SQS.instantiateSQSClient(
+const sqsClient: SQS.SQSClient = await SQS.instantiateClient(
   { region: config.awsRegion },
   config.applicationName
 );
@@ -22,8 +22,5 @@ await SQS.runConsumer(
     queueUrl: config.sqsEndpointPollResultQueue,
     consumerPollingTimeout: config.consumerPollingTimeout,
   },
-  async (message: SQS.Message) =>
-    (
-      await processMessage(eserviceService)
-    )(message)
+  processMessage(eserviceService)
 ).catch(logger.error);
