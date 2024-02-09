@@ -6,10 +6,12 @@ const eServiceResponseUpdaterConfig = AWSConfig.and(ConsumerConfig).and(
     .object({
       INTEROP_PROBING_RESPONSE_UPDATER_NAME: z.string(),
       SQS_ENDPOINT_POLL_RESULT_QUEUE: z.string(),
+      API_OPERATIONS_BASEURL: z.string(),
     })
     .transform((c) => ({
       applicationName: c.INTEROP_PROBING_RESPONSE_UPDATER_NAME,
       sqsEndpointPollResultQueue: c.SQS_ENDPOINT_POLL_RESULT_QUEUE,
+      operationsBaseUrl: c.API_OPERATIONS_BASEURL,
     }))
 );
 

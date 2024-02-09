@@ -1,13 +1,16 @@
-import { describe, expect, it, beforeAll, afterEach, vi } from "vitest";
+import { describe, expect, it, beforeAll, afterEach, vi, afterAll } from "vitest";
 import { sqsMessages } from "./sqsMessages.js";
 import { processMessage } from "../src/messagesHandler.js";
 import { AppError } from "../src/model/domain/errors.js";
-import { api } from "../../probing-eservice-operations/src/model/generated/api.js";
+import { createApiClient } from "../../probing-eservice-operations/src/model/generated/api.js";
 import {
   EserviceService,
   eServiceServiceBuilder,
 } from "../src/services/eserviceService.js";
 import { SQS } from "pagopa-interop-probing-commons";
+import { config } from "../src/utilities/config.js";
+
+const apiClient = createApiClient(config.operationsBaseUrl);
 
 describe("Consumer queue test", () => {
   let eserviceService: EserviceService;
@@ -20,11 +23,15 @@ describe("Consumer queue test", () => {
     (await processMessage(eserviceService))(message);
 
   beforeAll(async () => {
-    eserviceService = eServiceServiceBuilder(api);
+    eserviceService = eServiceServiceBuilder(apiClient);
   });
 
   afterEach(() => {
-    eserviceService = eServiceServiceBuilder(api);
+    eserviceService = eServiceServiceBuilder(apiClient);
+  });
+
+  afterAll(() => {
+    vi.restoreAllMocks()
   });
 
   it("given valid message, method should not throw an exception", async () => {
@@ -129,7 +136,7 @@ describe("Consumer queue test", () => {
       await executeProcessMessage(badFormattedResponseReceived);
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0003");
+      expect((error as AppError).code).toBe("0001");
     }
   });
 });

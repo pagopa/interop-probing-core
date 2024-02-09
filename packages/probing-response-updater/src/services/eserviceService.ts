@@ -2,7 +2,10 @@ import { UpdateResponseReceivedApi } from "../model/models.js";
 import { ZodiosInstance } from "@zodios/core";
 import { Api } from "../../../probing-eservice-operations/src/model/types.js";
 import { logger } from "pagopa-interop-probing-commons";
-import { apiUpdateResponseReceivedError } from "../model/domain/errors.js";
+import {
+  apiUpdateResponseReceivedError,
+  makeApplicationError,
+} from "../model/domain/errors.js";
 
 export const eServiceServiceBuilder = (apiClient: ZodiosInstance<Api>) => {
   return {
@@ -18,13 +21,16 @@ export const eServiceServiceBuilder = (apiClient: ZodiosInstance<Api>) => {
           },
           { params: { eserviceRecordId: params.eserviceRecordId } }
         );
+
         logger.info(
           `Updating eService response received with eserviceRecordId: ${params.eserviceRecordId} and responseReceived: ${payload.responseReceived}`
         );
       } catch (error: unknown) {
-        throw apiUpdateResponseReceivedError(
-          `Error updating eService response received with eserviceRecordId: ${params.eserviceRecordId}. Details: ${error}.`,
-          error
+        throw makeApplicationError(
+          apiUpdateResponseReceivedError(
+            `Error updating eService response received with eserviceRecordId: ${params.eserviceRecordId}. Details: ${error}.`,
+            error
+          )
         );
       }
     },

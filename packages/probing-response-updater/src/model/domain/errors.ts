@@ -1,25 +1,29 @@
 /* eslint-disable max-classes-per-file */
 import { P, match } from "ts-pattern";
 import { ZodError } from "zod";
-
+import { AxiosError } from 'axios';
 export class ApplicationError<T> extends Error {
   public code: T;
   public title: string;
   public detail: string;
+  public status?: number;
 
   constructor({
     code,
     title,
     detail,
+    status
   }: {
     code: T;
     title: string;
     detail: string;
+    status?: number
   }) {
     super(detail);
     this.code = code;
     this.title = title;
     this.detail = detail;
+    if (status) this.status = status;
   }
 }
 
@@ -28,12 +32,14 @@ export class AppError extends ApplicationError<string> {
     code,
     title,
     detail,
+    status,
   }: {
     code: string;
     title: string;
     detail: string;
+    status?: number;
   }) {
-    super({ code, title, detail });
+    super({ code, title, detail, status });
   }
 }
 
@@ -47,14 +53,17 @@ export function makeApplicationErrorBuilder<T extends string>(errors: {
       code,
       title,
       detail,
+      status
     }: ApplicationError<ErrorCodes>): AppError =>
       new AppError({
         code: allErrors[code],
         title,
         detail,
+        status
       });
 
     return match<unknown, AppError>(error)
+      .with(P.instanceOf(AppError), (applicationError) => applicationError)
       .with(P.instanceOf(ApplicationError<ErrorCodes>), (applicationError) =>
         makeApplicationError(applicationError)
       )
@@ -88,12 +97,14 @@ export function apiUpdateResponseReceivedError(
   detail: string,
   error: unknown
 ): ApplicationError<ErrorCodes> {
+  const status = (error as AxiosError).response?.status;
   const zodiosErrorCause = (error as ZodError)?.cause;
   const zodiosErrorDetails: string = zodiosErrorCause
     ? `Cause: ${JSON.stringify(zodiosErrorCause)}`
     : "";
 
   return new ApplicationError({
+    ...(status && { status }),
     detail: `${detail} ${zodiosErrorDetails}`,
     code: "apiUpdateResponseReceivedError",
     title: "EService service updateResponseReceived error",
