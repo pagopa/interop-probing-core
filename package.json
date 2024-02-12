@@ -1,0 +1,31 @@
+{
+  "private": true,
+  "name": "root",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start:probing-api": "turbo start --filter pagopa-interop-probing-api",
+    "start:probing-caller": "turbo start --filter pagopa-interop-probing-caller",
+    "start:probing-eservice-operations": "turbo start --filter pagopa-interop-probing-eservice-operations",
+    "start:probing-eservice-registry-reader": "turbo start --filter pagopa-interop-probing-eservice-registry-reader",
+    "start:probing-eservice-registry-updater": "turbo start --filter pagopa-interop-probing-eservice-registry-updater",
+    "start:probing-response-updater": "turbo start --filter pagopa-interop-probing-response-updater",
+    "start:probing-scheduler": "turbo start --filter pagopa-interop-probing-scheduler",
+    "start:probing-statistics-api": "turbo start --filter pagopa-interop-probing-statistics-api",
+    "start:probing-telemetry-writer": "turbo start --filter pagopa-interop-probing-telemetry-writer",
+    "test": "turbo test",
+    "test:it": "turbo test:it",
+    "build": "turbo build",
+    "lint": "turbo lint",
+    "lint:autofix": "turbo lint:autofix",
+    "format:check": "turbo format:check",
+    "format:write": "turbo format:write",
+    "generate-model": "turbo generate-model"
+  },
+  "devDependencies": {
+    "@tsconfig/node-lts": "^20.1.0",
+    "turbo": "^1.10.16"
+  },
+  "packageManager": "pnpm@8.11.0"
+}
