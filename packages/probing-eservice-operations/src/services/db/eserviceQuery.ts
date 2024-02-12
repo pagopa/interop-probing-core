@@ -9,7 +9,7 @@ import {
   ChangeResponseReceived,
   EServiceMainData,
   EServiceProbingData,
-  EServiceContentReadyForPolling,
+  PollingResource,
 } from "pagopa-interop-probing-models";
 import {
   ModelService,
@@ -101,7 +101,7 @@ export function eserviceQueryBuilder(modelService: ModelService) {
     getEservicesReadyForPolling: async (
       limit: number,
       offset: number
-    ): Promise<ListResult<EServiceContentReadyForPolling>> =>
+    ): Promise<ListResult<PollingResource>> =>
       await modelService.getEservicesReadyForPolling(limit, offset),
   };
 }

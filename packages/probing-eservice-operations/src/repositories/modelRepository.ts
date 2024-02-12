@@ -14,7 +14,6 @@ import {
   EserviceViewSchema,
 } from "./entity/view/eservice.entity.js";
 import { Eservice, EserviceSchema } from "./entity/eservice.entity.js";
-import { V1_DDL_1706531694434 } from "../services/db/migration/V1__DDL.js";
 import { logger } from "pagopa-interop-probing-commons";
 
 /**
@@ -76,8 +75,7 @@ export class ModelRepository {
         EserviceProbingResponse,
         EserviceView,
       ],
-      migrations: [V1_DDL_1706531694434],
-      migrationsRun: true,
+      migrationsRun: false,
       synchronize: false,
       logging: false,
     });

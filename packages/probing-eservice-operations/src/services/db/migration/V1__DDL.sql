@@ -50,7 +50,7 @@ FROM ${schema_name}.eservices e
 LEFT JOIN ${schema_name}.eservice_probing_responses epr ON epr.eservices_record_id = e.id
 LEFT JOIN ${schema_name}.eservice_probing_requests epreq on epreq.eservices_record_id=e.id;
 
-CREATE ROLE "${database_username}" WITH 
+CREATE ROLE "${db_username}" WITH 
 	NOSUPERUSER
 	NOCREATEDB
 	NOCREATEROLE
@@ -59,12 +59,12 @@ CREATE ROLE "${database_username}" WITH
 	NOREPLICATION
 	NOBYPASSRLS
 	CONNECTION LIMIT -1
-	PASSWORD '${database_password}';
+	PASSWORD '${db_password}';
 
 --Grants
-GRANT CREATE, USAGE ON SCHEMA ${schema_name} TO "${database_username}";
-GRANT SELECT, INSERT, UPDATE ON TABLE ${schema_name}.eservice_probing_requests TO "${database_username}";
-GRANT SELECT, INSERT, UPDATE ON TABLE ${schema_name}.eservice_probing_responses TO "${database_username}";
-GRANT SELECT, INSERT, UPDATE ON TABLE ${schema_name}.eservices TO "${database_username}";
-GRANT SELECT ON TABLE ${schema_name}.eservice_view TO "${database_username}";
-GRANT SELECT, USAGE ON SEQUENCE ${schema_name}.eservice_sequence TO "${database_username}";
+GRANT CREATE, USAGE ON SCHEMA ${schema_name} TO "${db_username}";
+GRANT SELECT, INSERT, UPDATE ON TABLE ${schema_name}.eservice_probing_requests TO "${db_username}";
+GRANT SELECT, INSERT, UPDATE ON TABLE ${schema_name}.eservice_probing_responses TO "${db_username}";
+GRANT SELECT, INSERT, UPDATE ON TABLE ${schema_name}.eservices TO "${db_username}";
+GRANT SELECT ON TABLE ${schema_name}.eservice_view TO "${db_username}";
+GRANT SELECT, USAGE ON SEQUENCE ${schema_name}.eservice_sequence TO "${db_username}";

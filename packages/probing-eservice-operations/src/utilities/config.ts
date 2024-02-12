@@ -7,12 +7,12 @@ const eServiceOperationsConfig = CommonConfig.and(DbConfig).and(
     .object({
       TOLERANCE_MULTIPLIER_IN_MINUTES: z.coerce.number().min(1),
       SCHEMA_NAME: z.string(),
-      DEFAULT_AWS_REGION: z.string(),
+      AWS_REGION: z.string(),
     })
     .transform((c) => ({
       minOfTolleranceMultiplier: c.TOLERANCE_MULTIPLIER_IN_MINUTES,
       schemaName: c.SCHEMA_NAME,
-      defaultAwsRegion: c.DEFAULT_AWS_REGION
+      awsRegion: c.AWS_REGION
     }))
 );
 
