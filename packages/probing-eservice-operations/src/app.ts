@@ -13,7 +13,7 @@ app.disable("x-powered-by");
 
 // Capture all AWS clients we create
 const AWS = AWSXRay.captureAWS(AWS_SDK);
-AWS.config.update({ region: config.defaultAwsRegion || "us-west-2" });
+AWS.config.update({ region: config.awsRegion || "us-west-2" });
 
 // Capture all outgoing https requests
 AWSXRay.captureHTTPsGlobal(https);
