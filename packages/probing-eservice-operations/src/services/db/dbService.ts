@@ -17,7 +17,7 @@ import {
   eserviceMonitorState,
   eserviceInteropState,
   responseStatus,
-  EServiceContentReadyForPolling,
+  PollingResource,
 } from "pagopa-interop-probing-models";
 import { Brackets } from "typeorm";
 import { z } from "zod";
@@ -330,6 +330,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       limit: number,
       offset: number
     ): Promise<ListResult<EServiceContent>> {
+
+     
       const [data, count] = await eserviceView
         .createQueryBuilder()
         .where((qb: SelectQueryBuilder<EserviceViewEntities>) =>
@@ -338,6 +340,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         .skip(offset)
         .take(limit)
         .getManyAndCount();
+
+        console.log('DATA_____>', data);
 
       const result = z.array(EServiceContent).safeParse(data.map((d) => d));
       if (!result.success) {
@@ -405,7 +409,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     async getEservicesReadyForPolling(
       limit: number,
       offset: number
-    ): Promise<ListResult<EServiceContentReadyForPolling>> {
+    ): Promise<ListResult<PollingResource>> {
       const [data, count] = await eserviceView
         .createQueryBuilder()
         .distinct(true)
@@ -425,7 +429,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         .getManyAndCount();
 
       const result = z
-        .array(EServiceContentReadyForPolling)
+        .array(PollingResource)
         .safeParse(data.map((d) => d));
       if (!result.success) {
         logger.error(

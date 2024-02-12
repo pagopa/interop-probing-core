@@ -15,14 +15,14 @@ export interface EserviceViewSchema {
   state: EserviceInteropState;
   versionId: string;
   versionNumber: number;
-  responseReceived: string;
-  lastRequest: string;
+  responseReceived?: string;
+  lastRequest?: string;
   pollingFrequency: number;
   pollingStartTime: string;
   pollingEndTime: string;
   technology: EserviceTechnology;
   basePath: string[];
-  responseStatus: EserviceStatus;
+  responseStatus?: EserviceStatus;
   audience: string[];
 }
 
@@ -131,5 +131,7 @@ export const EserviceView: EntitySchema<EserviceViewSchema> = new EntitySchema({
   ${config.schemaName}.eservice_probing_responses epr ON epr.eservices_record_id = e.id
   LEFT JOIN
   ${config.schemaName}.eservice_probing_requests epreq ON epreq.eservices_record_id = e.id
+  WHERE
+    epr.response_received IS NOT NULL OR epreq.last_request IS NOT NULL
 `,
 });

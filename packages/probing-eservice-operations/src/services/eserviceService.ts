@@ -2,7 +2,7 @@ import { logger } from "pagopa-interop-probing-commons";
 import {
   ChangeResponseReceived,
   EServiceContent,
-  EServiceContentReadyForPolling,
+  PollingResource,
   EServiceMainData,
   EServiceProbingData,
   EserviceProbingUpdateLastRequest,
@@ -181,7 +181,7 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
     async getEservicesReadyForPolling(
       limit: number,
       offset: number
-    ): Promise<ListResult<EServiceContentReadyForPolling>> {
+    ): Promise<ListResult<PollingResource>> {
       logger.info("Retrieving eServices ready for polling");
       return await eserviceQuery.getEservicesReadyForPolling(limit, offset);
     },

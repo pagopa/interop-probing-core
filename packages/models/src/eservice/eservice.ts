@@ -147,9 +147,15 @@ export const EServiceContent = z.object({
   eserviceName: z.string(),
   producerName: z.string(),
   state: EserviceInteropState,
-  responseReceived: z.date().transform((date) => date.toISOString()),
-  lastRequest: z.date().transform((date) => date.toISOString()),
-  responseStatus: EserviceStatus,
+  responseReceived: z
+    .date()
+    .transform((date) => date.toISOString())
+    .optional(),
+  lastRequest: z
+    .date()
+    .transform((date) => date.toISOString())
+    .optional(),
+  responseStatus: EserviceStatus.optional(),
   versionNumber: z.number().int(),
   basePath: z.array(z.string()),
   technology: EserviceTechnology,
@@ -157,16 +163,17 @@ export const EServiceContent = z.object({
   probingEnabled: z.boolean(),
   audience: z.array(z.string()),
 });
+
 export type EServiceContent = z.infer<typeof EServiceContent>;
 
-export const EServiceContentReadyForPolling = z.object({
+export const PollingResource = z.object({
   eserviceRecordId: z.string().transform((value) => Number(value)),
-  // For more details, refer to: EService schema declaration
   basePath: z.array(z.string()),
   technology: EserviceTechnology,
   audience: z.array(z.string()),
 });
-export type EServiceContentReadyForPolling = z.infer<typeof EServiceContentReadyForPolling>;
+
+export type PollingResource = z.infer<typeof PollingResource>;
 
 export const EServiceMainData = z.object({
   eserviceName: z.string(),
