@@ -7,11 +7,9 @@ import {
   EServiceProbingData,
   EserviceProbingUpdateLastRequest,
   EserviceSaveRequest,
-} from "pagopa-interop-probing-models";
-import {
   EServiceQueryFilters,
   EServiceProducersQueryFilters,
-} from "./db/dbService.js";
+} from "pagopa-interop-probing-models";
 import { EserviceQuery } from "./db/eserviceQuery.js";
 import {
   ApiSaveEservicePayload,
@@ -155,13 +153,13 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       );
     },
 
-    async getEservices(
+    async searchEservices(
       filters: EServiceQueryFilters,
       limit: number,
       offset: number
     ): Promise<ListResult<EServiceContent>> {
       logger.info("Retrieving eServices");
-      return await eserviceQuery.getEservices(filters, limit, offset);
+      return await eserviceQuery.searchEservices(filters, limit, offset);
     },
 
     async getEserviceMainData(

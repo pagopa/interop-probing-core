@@ -10,11 +10,11 @@ import {
   EServiceMainData,
   EServiceProbingData,
   PollingResource,
+  EServiceQueryFilters,
+  EServiceProducersQueryFilters,
 } from "pagopa-interop-probing-models";
 import {
   ModelService,
-  EServiceQueryFilters,
-  EServiceProducersQueryFilters,
 } from "./dbService.js";
 import { ListResult } from "../../model/dbModels.js";
 
@@ -78,12 +78,12 @@ export function eserviceQueryBuilder(modelService: ModelService) {
       versionId: string
     ): Promise<EService | undefined> =>
       await modelService.getEServiceByIdAndVersion(eserviceId, versionId),
-    getEservices: async (
+    searchEservices: async (
       filters: EServiceQueryFilters,
       limit: number,
       offset: number
     ): Promise<ListResult<EServiceContent>> =>
-      await modelService.getEservices(filters, limit, offset),
+      await modelService.searchEservices(filters, limit, offset),
     getEserviceMainData: async (
       eserviceRecordId: number
     ): Promise<EServiceMainData> =>

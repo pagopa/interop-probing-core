@@ -124,7 +124,7 @@ const eServiceRouter = (
   eServiceRouter
     .get("/eservices", async (req, res) => {
       try {
-        const eservices = await eServiceService.getEservices(
+        const eservices = await eServiceService.searchEservices(
           {
             eserviceName: req.query.eserviceName,
             producerName: req.query.producerName,

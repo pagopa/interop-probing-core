@@ -6,6 +6,8 @@ import {
   EserviceProbingResponseEntities,
 } from "../src/repositories/modelRepository.js";
 import {
+  EServiceProducersQueryFilters,
+  EServiceQueryFilters,
   EserviceStatus,
   eserviceInteropState,
   eserviceMonitorState,
@@ -29,8 +31,6 @@ import {
   eserviceQueryBuilder,
 } from "../src/services/db/eserviceQuery.js";
 import {
-  EServiceProducersQueryFilters,
-  EServiceQueryFilters,
   ModelService,
   modelServiceBuilder,
 } from "../src/services/db/dbService.js";
@@ -168,8 +168,8 @@ describe("database test", async () => {
   });
 
   describe("Eservice service", () => {
-    describe("getEservices", () => {
-      it("service returns getEservices response object with content empty", async () => {
+    describe("searchEservices", () => {
+      it("service returns searchEservices response object with content empty", async () => {
         const filters: EServiceQueryFilters = {
           eserviceName: "eService 001",
           producerName: "eService producer 001",
@@ -177,13 +177,13 @@ describe("database test", async () => {
           state: [eserviceMonitorState.offline],
         };
 
-        const result = await eserviceService.getEservices(filters, 50, 0);
+        const result = await eserviceService.searchEservices(filters, 50, 0);
 
         expect(result.content).toStrictEqual([]);
         expect(result.totalElements).toBe(0);
       });
 
-      it("given a list of all state values as parameter, service returns getEservices response object with content not empty", async () => {
+      it("given a list of all state values as parameter, service returns searchEservices response object with content not empty", async () => {
         const eserviceData = {
           eserviceName: "eService 001",
           producerName: "eService producer 001",
@@ -200,14 +200,14 @@ describe("database test", async () => {
           ],
         };
 
-        const result = await eserviceService.getEservices(filters, 2, 0);
+        const result = await eserviceService.searchEservices(filters, 2, 0);
         expect(result.totalElements).not.toBe(0);
         expect(result.offset).toBe(0);
         expect(result.limit).toBe(2);
         expect(result.content[0].state).toBe(eserviceInteropState.inactive);
       });
 
-      it("given status n/d as parameter, service returns getEservices response object with content empty", async () => {
+      it("given status n/d as parameter, service returns searchEservices response object with content empty", async () => {
         const eserviceData = {
           eserviceName: "eService 001",
           producerName: "eService producer 001",
@@ -220,13 +220,13 @@ describe("database test", async () => {
           state: [eserviceMonitorState["n/d"]],
         };
 
-        const result = await eserviceService.getEservices(filters, 2, 0);
+        const result = await eserviceService.searchEservices(filters, 2, 0);
 
         expect(result.content).toStrictEqual([]);
         expect(result.totalElements).toBe(0);
       });
 
-      it("given status offline as parameter, service returns getEservices response object with content not empty", async () => {
+      it("given status offline as parameter, service returns searchEservices response object with content not empty", async () => {
         const eserviceData = {
           eserviceName: "eService 001",
           producerName: "eService producer 001",
@@ -239,7 +239,7 @@ describe("database test", async () => {
           state: [eserviceMonitorState.offline],
         };
 
-        const result = await eserviceService.getEservices(filters, 2, 0);
+        const result = await eserviceService.searchEservices(filters, 2, 0);
 
         expect(result.totalElements).toBe(1);
         expect(result.offset).toBe(0);
@@ -280,8 +280,8 @@ describe("database test", async () => {
       });
     });
 
-    describe("getEservicesReadyForPolling", () => {
-      it("service returns getEservicesReadyForPolling response object with content not empty", async () => {
+    describe("searchEservicesReadyForPolling", () => {
+      it("service returns searchEservicesReadyForPolling response object with content not empty", async () => {
         const eserviceData = {
           eserviceName: "eService 001",
           producerName: "eService producer 001",
@@ -291,20 +291,20 @@ describe("database test", async () => {
         await createEservice({
           eserviceData: { ...eserviceData, state: eserviceInteropState.active },
         });
-        const result = await eserviceService.getEservicesReadyForPolling(2, 0);
+        const result = await eserviceService.searchEservicesReadyForPolling(2, 0);
 
         expect(result.content.length).toBe(1);
         expect(result.totalElements).toBe(2);
       });
     });
 
-    describe("getEservicesProducers", () => {
+    describe("searchEservicesProducers", () => {
       it("given a valid producer name with no matching records, then returns an empty list", async () => {
         const filters: EServiceProducersQueryFilters = {
           producerName: "no matching records eService producer",
         };
         await createEservice();
-        const producers = await eserviceService.getEservicesProducers(
+        const producers = await eserviceService.searchEservicesProducers(
           filters,
           1,
           0
@@ -318,7 +318,7 @@ describe("database test", async () => {
           producerName: "eService producer 001",
         };
         await createEservice();
-        const result = await eserviceService.getEservicesProducers(
+        const result = await eserviceService.searchEservicesProducers(
           filters,
           10,
           0
@@ -334,7 +334,7 @@ describe("database test", async () => {
         };
         await createEservice();
         await createEservice();
-        const producers = await eserviceService.getEservicesProducers(
+        const producers = await eserviceService.searchEservicesProducers(
           eServiceProducer1,
           2,
           0

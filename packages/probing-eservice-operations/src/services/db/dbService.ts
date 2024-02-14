@@ -5,7 +5,6 @@ import {
   genericError,
   EService,
   EServiceContent,
-  EserviceMonitorState,
   EServiceMainData,
   EServiceProbingData,
   ChangeEserviceProbingStateRequest,
@@ -18,6 +17,8 @@ import {
   eserviceInteropState,
   responseStatus,
   PollingResource,
+  EServiceQueryFilters,
+  EServiceProducersQueryFilters,
 } from "pagopa-interop-probing-models";
 import { Brackets } from "typeorm";
 import { z } from "zod";
@@ -35,17 +36,6 @@ import { EserviceView } from "../../repositories/entity/view/eservice.entity.js"
 import { config } from "../../utilities/config.js";
 import { WhereExpressionBuilder } from "typeorm/browser";
 import { ListResult } from "../../model/dbModels.js";
-
-export type EServiceQueryFilters = {
-  eserviceName: string | undefined;
-  producerName: string | undefined;
-  versionNumber: number | undefined;
-  state: EserviceMonitorState[] | undefined;
-};
-
-export type EServiceProducersQueryFilters = {
-  producerName: string | undefined;
-};
 
 const probingDisabledPredicate = (queryBuilder: WhereExpressionBuilder) => {
   const extractMinute = `CAST(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60 AS INTEGER) > polling_frequency`;
@@ -325,7 +315,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       }
     },
 
-    async getEservices(
+    async searchEservices(
       filters: EServiceQueryFilters,
       limit: number,
       offset: number
@@ -340,8 +330,6 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         .skip(offset)
         .take(limit)
         .getManyAndCount();
-
-        console.log('DATA_____>', data);
 
       const result = z.array(EServiceContent).safeParse(data.map((d) => d));
       if (!result.success) {
