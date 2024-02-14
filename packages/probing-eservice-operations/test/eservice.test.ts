@@ -280,8 +280,8 @@ describe("database test", async () => {
       });
     });
 
-    describe("searchEservicesReadyForPolling", () => {
-      it("service returns searchEservicesReadyForPolling response object with content not empty", async () => {
+    describe("getEservicesReadyForPolling", () => {
+      it("service returns getEservicesReadyForPolling response object with content not empty", async () => {
         const eserviceData = {
           eserviceName: "eService 001",
           producerName: "eService producer 001",
@@ -291,20 +291,20 @@ describe("database test", async () => {
         await createEservice({
           eserviceData: { ...eserviceData, state: eserviceInteropState.active },
         });
-        const result = await eserviceService.searchEservicesReadyForPolling(2, 0);
+        const result = await eserviceService.getEservicesReadyForPolling(2, 0);
 
         expect(result.content.length).toBe(1);
         expect(result.totalElements).toBe(2);
       });
     });
 
-    describe("searchEservicesProducers", () => {
+    describe("getEservicesProducers", () => {
       it("given a valid producer name with no matching records, then returns an empty list", async () => {
         const filters: EServiceProducersQueryFilters = {
           producerName: "no matching records eService producer",
         };
         await createEservice();
-        const producers = await eserviceService.searchEservicesProducers(
+        const producers = await eserviceService.getEservicesProducers(
           filters,
           1,
           0
@@ -318,7 +318,7 @@ describe("database test", async () => {
           producerName: "eService producer 001",
         };
         await createEservice();
-        const result = await eserviceService.searchEservicesProducers(
+        const result = await eserviceService.getEservicesProducers(
           filters,
           10,
           0
@@ -334,7 +334,7 @@ describe("database test", async () => {
         };
         await createEservice();
         await createEservice();
-        const producers = await eserviceService.searchEservicesProducers(
+        const producers = await eserviceService.getEservicesProducers(
           eServiceProducer1,
           2,
           0
