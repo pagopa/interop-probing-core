@@ -194,3 +194,14 @@ export const EServiceProbingData = z.object({
   pollingFrequency: z.number().int(),
 });
 export type EServiceProbingData = z.infer<typeof EServiceProbingData>;
+
+export type EServiceQueryFilters = {
+  eserviceName?: string | undefined;
+  producerName?: string | undefined;
+  versionNumber?: number | undefined;
+  state?: EserviceMonitorState[] | undefined;
+};
+
+export type EServiceProducersQueryFilters = {
+  producerName: string | undefined;
+};
