@@ -20,7 +20,7 @@ import {
   ApiUpdateResponseReceivedPayload,
 } from "../model/types.js";
 import { eServiceNotFound } from "../model/domain/errors.js";
-import { ListResult } from "../model/dbModels.js";
+import { ListResultEservices, ListResultProducers } from "../model/dbModels.js";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, max-params
 export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
@@ -157,7 +157,7 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       filters: EServiceQueryFilters,
       limit: number,
       offset: number
-    ): Promise<ListResult<EServiceContent>> {
+    ): Promise<ListResultEservices<EServiceContent>> {
       logger.info("Retrieving eServices");
       return await eserviceQuery.searchEservices(filters, limit, offset);
     },
@@ -179,7 +179,7 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
     async getEservicesReadyForPolling(
       limit: number,
       offset: number
-    ): Promise<ListResult<PollingResource>> {
+    ): Promise<ListResultEservices<PollingResource>> {
       logger.info("Retrieving eServices ready for polling");
       return await eserviceQuery.getEservicesReadyForPolling(limit, offset);
     },
@@ -188,7 +188,7 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       filters: EServiceProducersQueryFilters,
       limit: number,
       offset: number
-    ): Promise<ListResult<string>> {
+    ): Promise<ListResultProducers<string>> {
       logger.info("Retrieving eServices Producers");
       return await eserviceQuery.getEservicesProducers(filters, limit, offset);
     },

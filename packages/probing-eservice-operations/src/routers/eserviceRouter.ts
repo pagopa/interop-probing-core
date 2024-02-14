@@ -14,7 +14,7 @@ import {
 } from "pagopa-interop-probing-models";
 import { updateEServiceErrorMapper } from "../utilities/errorMappers.js";
 import { ModelRepository } from "../repositories/modelRepository.js";
-import { ListResult } from "../model/dbModels.js";
+import { ListResultEservices } from "../model/dbModels.js";
 
 const modelService = modelServiceBuilder(await ModelRepository.init(config));
 const eserviceQuery = eserviceQueryBuilder(modelService);
@@ -142,7 +142,7 @@ const eServiceRouter = (
             offset: eservices.offset,
             limit: eservices.limit,
             totalElements: eservices.totalElements,
-          } satisfies ListResult<EServiceContent>)
+          } satisfies ListResultEservices<EServiceContent>)
           .end();
       } catch (error) {
         const errorRes = makeApiProblem(error, () => 500);
