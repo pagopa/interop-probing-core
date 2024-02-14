@@ -20,7 +20,6 @@ async function login(loginForm: LoginForm): Promise<void> {
     const { signInUserSession }: User = await Auth.signIn(username, password)
     const jwt = signInUserSession.idToken.jwtToken
     localStorage.setItem('token', jwt)
-    throw new AuthenticationError()
   } catch {
     throw new AuthenticationError()
   }

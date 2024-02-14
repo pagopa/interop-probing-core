@@ -17,7 +17,7 @@ function usePasswordRecovery() {
   const { t } = useTranslation('feedback')
   return useMutation(authService.passwordRecovery, {
     meta: {
-      successToastLabel: t('auth.generic.success'),
+      successToastLabel: t('generic.success'),
       errorToastLabel: t('auth.recoverError'),
       loadingLabel: ' ',
     },
