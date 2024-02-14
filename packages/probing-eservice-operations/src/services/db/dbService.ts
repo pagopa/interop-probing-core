@@ -35,7 +35,10 @@ import { SelectQueryBuilder } from "typeorm";
 import { EserviceView } from "../../repositories/entity/view/eservice.entity.js";
 import { config } from "../../utilities/config.js";
 import { WhereExpressionBuilder } from "typeorm/browser";
-import { ListResult } from "../../model/dbModels.js";
+import {
+  ListResultEservices,
+  ListResultProducers,
+} from "../../model/dbModels.js";
 
 const probingDisabledPredicate = (queryBuilder: WhereExpressionBuilder) => {
   const extractMinute = `CAST(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60 AS INTEGER) > polling_frequency`;
@@ -319,9 +322,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       filters: EServiceQueryFilters,
       limit: number,
       offset: number
-    ): Promise<ListResult<EServiceContent>> {
-
-     
+    ): Promise<ListResultEservices<EServiceContent>> {
       const [data, count] = await eserviceView
         .createQueryBuilder()
         .where((qb: SelectQueryBuilder<EserviceViewEntities>) =>
@@ -397,7 +398,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     async getEservicesReadyForPolling(
       limit: number,
       offset: number
-    ): Promise<ListResult<PollingResource>> {
+    ): Promise<ListResultEservices<PollingResource>> {
       const [data, count] = await eserviceView
         .createQueryBuilder()
         .distinct(true)
@@ -416,9 +417,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         .take(limit)
         .getManyAndCount();
 
-      const result = z
-        .array(PollingResource)
-        .safeParse(data.map((d) => d));
+      const result = z.array(PollingResource).safeParse(data.map((d) => d));
       if (!result.success) {
         logger.error(
           `Unable to parse eservices ready for polling items: result ${JSON.stringify(
@@ -439,7 +438,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       filters: EServiceProducersQueryFilters,
       limit: number,
       offset: number
-    ): Promise<ListResult<string>> {
+    ): Promise<ListResultProducers<string>> {
       const data = await eservices
         .createQueryBuilder("eservice")
         .where("UPPER(eservice.producerName) LIKE UPPER(:producerName)", {
