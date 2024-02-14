@@ -8,7 +8,7 @@ import {
 } from "@aws-sdk/client-sqs";
 import pkg from "aws-xray-sdk";
 import { logger } from "../logging/index.js";
-import { ConsumerConfig } from "../index.js";
+import { ConsumerConfig } from "../config/consumerConfig.js";
 
 const { captureAWSv3Client, Segment } = pkg;
 

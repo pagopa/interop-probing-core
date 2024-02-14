@@ -2,38 +2,20 @@ import {
   describe,
   expect,
   it,
-  beforeAll,
-  afterEach,
   vi,
   afterAll,
 } from "vitest";
 import { sqsMessages } from "./sqsMessages.js";
 import { processMessage } from "../src/messagesHandler.js";
 import { AppError } from "../src/model/domain/errors.js";
-import { createApiClient } from "../../probing-eservice-operations/src/model/generated/api.js";
-import {
-  EserviceService,
-  eServiceServiceBuilder,
-} from "../src/services/eserviceService.js";
 import { SQS } from "pagopa-interop-probing-commons";
-import { config } from "../src/utilities/config.js";
-
-const apiClient = createApiClient(config.operationsBaseUrl);
+import { decodeSQSMessage } from "../src/model/models.js";
 
 describe("Consumer queue test", () => {
-  let eserviceService: EserviceService;
 
   const mockEserviceService = {
     updateResponseReceived: vi.fn().mockResolvedValue(undefined),
   };
-
-  beforeAll(async () => {
-    eserviceService = eServiceServiceBuilder(apiClient);
-  });
-
-  afterEach(() => {
-    eserviceService = eServiceServiceBuilder(apiClient);
-  });
 
   afterAll(() => {
     vi.restoreAllMocks();
@@ -46,20 +28,18 @@ describe("Consumer queue test", () => {
       Body: JSON.stringify(sqsMessages.messageChangeResponseReceivedDto),
     };
 
-    eserviceService = mockEserviceService;
+    await expect(async () => {
+      await processMessage(mockEserviceService)(validMessage);
+    }).not.toThrowError();
 
-    try {
-      await processMessage(eserviceService)(validMessage);
-    } catch (error) {
-      expect(error).not.toBeInstanceOf(AppError);
-    }
+    expect(mockEserviceService.updateResponseReceived).toHaveBeenCalledWith(decodeSQSMessage(validMessage));
   });
 
   it("given invalid message, method should throw an error", async () => {
     const invalidMessage = {};
 
     try {
-      await processMessage(eserviceService)(invalidMessage);
+      await processMessage(mockEserviceService)(invalidMessage);
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0002");
@@ -74,7 +54,7 @@ describe("Consumer queue test", () => {
     };
 
     try {
-      await processMessage(eserviceService)(emptyMessage);
+      await processMessage(mockEserviceService)(emptyMessage);
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0002");
@@ -91,7 +71,7 @@ describe("Consumer queue test", () => {
     };
 
     try {
-      await processMessage(eserviceService)(missingEserviceRecordId);
+      await processMessage(mockEserviceService)(missingEserviceRecordId);
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0002");
@@ -108,7 +88,7 @@ describe("Consumer queue test", () => {
     };
 
     try {
-      await processMessage(eserviceService)(missingResponseReceived);
+      await processMessage(mockEserviceService)(missingResponseReceived);
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0002");
@@ -123,7 +103,7 @@ describe("Consumer queue test", () => {
     };
 
     try {
-      await processMessage(eserviceService)(missingStatus);
+      await processMessage(mockEserviceService)(missingStatus);
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0002");
@@ -138,7 +118,7 @@ describe("Consumer queue test", () => {
     };
 
     try {
-      await processMessage(eserviceService)(badFormattedResponseReceived);
+      await processMessage(mockEserviceService)(badFormattedResponseReceived);
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0001");

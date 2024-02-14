@@ -18,6 +18,8 @@ const apiClient = createApiClient(config.operationsBaseUrl);
 describe("eService service test", () => {
   let eserviceService: EserviceService;
 
+  // TODO: mock apiClient
+
   beforeAll(() => {
     eserviceService = eServiceServiceBuilder(apiClient);
   });
