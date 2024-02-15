@@ -2,9 +2,9 @@ import { afterAll, describe, expect, it, vi } from "vitest";
 import { responseStatus } from "pagopa-interop-probing-models";
 import { createApiClient } from "../../probing-eservice-operations/src/model/generated/api.js";
 import {
-  EserviceService,
-  eServiceServiceBuilder,
-} from "../src/services/eserviceService.js";
+  ResponseUpdaterService,
+  responseUpdaterServiceBuilder,
+} from "../src/services/responseUpdaterService.js";
 import { AppError } from "../src/model/domain/errors.js";
 import { config } from "./../src/utilities/config.js";
 import { mockApiClientError } from "./utils.js";
@@ -12,7 +12,8 @@ import { mockApiClientError } from "./utils.js";
 const apiClient = createApiClient(config.operationsBaseUrl);
 
 describe("eService service test", () => {
-  const eserviceService: EserviceService = eServiceServiceBuilder(apiClient);
+  const responseUpdaterService: ResponseUpdaterService =
+    responseUpdaterServiceBuilder(apiClient);
 
   afterAll(() => {
     vi.restoreAllMocks();
@@ -29,7 +30,7 @@ describe("eService service test", () => {
 
     await expect(
       async () =>
-        await eserviceService.updateResponseReceived({
+        await responseUpdaterService.updateResponseReceived({
           params: { eserviceRecordId },
           payload: {
             status,
@@ -53,7 +54,7 @@ describe("eService service test", () => {
     );
 
     try {
-      await eserviceService.updateResponseReceived({
+      await responseUpdaterService.updateResponseReceived({
         params: { eserviceRecordId },
         payload: {
           status,
@@ -72,7 +73,7 @@ describe("eService service test", () => {
     const responseReceived = "2023-04-06";
 
     try {
-      await eserviceService.updateResponseReceived({
+      await responseUpdaterService.updateResponseReceived({
         params: { eserviceRecordId },
         payload: {
           status,

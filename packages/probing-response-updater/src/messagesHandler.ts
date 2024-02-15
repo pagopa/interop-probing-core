@@ -1,5 +1,5 @@
 import { SQS } from "pagopa-interop-probing-commons";
-import { EserviceService } from "./services/eserviceService.js";
+import { ResponseUpdaterService } from "./services/responseUpdaterService.js";
 import { decodeSQSMessage } from "./model/models.js";
 import {
   ApplicationError,
@@ -7,7 +7,7 @@ import {
 } from "./model/domain/errors.js";
 
 export function processMessage(
-  service: EserviceService
+  service: ResponseUpdaterService
 ): (message: SQS.Message) => Promise<void> {
   return async (message: SQS.Message): Promise<void> => {
     try {

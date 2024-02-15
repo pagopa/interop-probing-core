@@ -1,10 +1,4 @@
-import {
-  describe,
-  expect,
-  it,
-  vi,
-  afterAll,
-} from "vitest";
+import { describe, expect, it, vi, afterAll } from "vitest";
 import { sqsMessages } from "./sqsMessages.js";
 import { processMessage } from "../src/messagesHandler.js";
 import { AppError } from "../src/model/domain/errors.js";
@@ -12,8 +6,7 @@ import { SQS } from "pagopa-interop-probing-commons";
 import { decodeSQSMessage } from "../src/model/models.js";
 
 describe("Consumer queue test", () => {
-
-  const mockEserviceService = {
+  const mockResponseUpdaterService = {
     updateResponseReceived: vi.fn().mockResolvedValue(undefined),
   };
 
@@ -29,17 +22,19 @@ describe("Consumer queue test", () => {
     };
 
     await expect(async () => {
-      await processMessage(mockEserviceService)(validMessage);
+      await processMessage(mockResponseUpdaterService)(validMessage);
     }).not.toThrowError();
 
-    expect(mockEserviceService.updateResponseReceived).toHaveBeenCalledWith(decodeSQSMessage(validMessage));
+    expect(
+      mockResponseUpdaterService.updateResponseReceived
+    ).toHaveBeenCalledWith(decodeSQSMessage(validMessage));
   });
 
   it("given invalid message, method should throw an error", async () => {
     const invalidMessage = {};
 
     try {
-      await processMessage(mockEserviceService)(invalidMessage);
+      await processMessage(mockResponseUpdaterService)(invalidMessage);
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0002");
@@ -54,11 +49,13 @@ describe("Consumer queue test", () => {
     };
 
     try {
-      await processMessage(mockEserviceService)(emptyMessage);
+      await processMessage(mockResponseUpdaterService)(emptyMessage);
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0002");
-      expect(mockEserviceService.updateResponseReceived).not.toBeCalled();
+      expect(
+        mockResponseUpdaterService.updateResponseReceived
+      ).not.toBeCalled();
     }
   });
 
@@ -72,11 +69,13 @@ describe("Consumer queue test", () => {
     };
 
     try {
-      await processMessage(mockEserviceService)(missingEserviceRecordId);
+      await processMessage(mockResponseUpdaterService)(missingEserviceRecordId);
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0002");
-      expect(mockEserviceService.updateResponseReceived).not.toBeCalled();
+      expect(
+        mockResponseUpdaterService.updateResponseReceived
+      ).not.toBeCalled();
     }
   });
 
@@ -90,11 +89,13 @@ describe("Consumer queue test", () => {
     };
 
     try {
-      await processMessage(mockEserviceService)(missingResponseReceived);
+      await processMessage(mockResponseUpdaterService)(missingResponseReceived);
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0002");
-      expect(mockEserviceService.updateResponseReceived).not.toBeCalled();
+      expect(
+        mockResponseUpdaterService.updateResponseReceived
+      ).not.toBeCalled();
     }
   });
 
@@ -106,11 +107,13 @@ describe("Consumer queue test", () => {
     };
 
     try {
-      await processMessage(mockEserviceService)(missingStatus);
+      await processMessage(mockResponseUpdaterService)(missingStatus);
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0002");
-      expect(mockEserviceService.updateResponseReceived).not.toBeCalled();
+      expect(
+        mockResponseUpdaterService.updateResponseReceived
+      ).not.toBeCalled();
     }
   });
 
@@ -122,7 +125,9 @@ describe("Consumer queue test", () => {
     };
 
     try {
-      await processMessage(mockEserviceService)(badFormattedResponseReceived);
+      await processMessage(mockResponseUpdaterService)(
+        badFormattedResponseReceived
+      );
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0001");
