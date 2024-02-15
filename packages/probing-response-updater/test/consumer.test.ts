@@ -58,6 +58,7 @@ describe("Consumer queue test", () => {
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0002");
+      expect(mockEserviceService.updateResponseReceived).not.toBeCalled();
     }
   });
 
@@ -75,6 +76,7 @@ describe("Consumer queue test", () => {
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0002");
+      expect(mockEserviceService.updateResponseReceived).not.toBeCalled();
     }
   });
 
@@ -92,6 +94,7 @@ describe("Consumer queue test", () => {
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0002");
+      expect(mockEserviceService.updateResponseReceived).not.toBeCalled();
     }
   });
 
@@ -107,6 +110,7 @@ describe("Consumer queue test", () => {
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0002");
+      expect(mockEserviceService.updateResponseReceived).not.toBeCalled();
     }
   });
 
