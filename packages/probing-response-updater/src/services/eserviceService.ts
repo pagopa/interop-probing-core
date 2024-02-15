@@ -28,7 +28,7 @@ export const eServiceServiceBuilder = (apiClient: ZodiosInstance<Api>) => {
       } catch (error: unknown) {
         throw makeApplicationError(
           apiUpdateResponseReceivedError(
-            `Error updating eService response received with eserviceRecordId: ${params.eserviceRecordId}. Details: ${error}.`,
+            `Error updating eService response received with eserviceRecordId: ${params.eserviceRecordId}. Details: ${error}`,
             error
           )
         );

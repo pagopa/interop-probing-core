@@ -1,28 +1,18 @@
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
+import { afterAll, describe, expect, it, vi } from "vitest";
 import { responseStatus } from "pagopa-interop-probing-models";
 import { createApiClient } from "../../probing-eservice-operations/src/model/generated/api.js";
 import {
   EserviceService,
   eServiceServiceBuilder,
 } from "../src/services/eserviceService.js";
-import {
-  AppError,
-  apiUpdateResponseReceivedError,
-  makeApplicationError,
-} from "../src/model/domain/errors.js";
+import { AppError } from "../src/model/domain/errors.js";
 import { config } from "./../src/utilities/config.js";
 import { mockApiClientError } from "./utils.js";
 
 const apiClient = createApiClient(config.operationsBaseUrl);
 
 describe("eService service test", () => {
-  let eserviceService: EserviceService;
-
-  // TODO: mock apiClient
-
-  beforeAll(() => {
-    eserviceService = eServiceServiceBuilder(apiClient);
-  });
+  const eserviceService: EserviceService = eServiceServiceBuilder(apiClient);
 
   afterAll(() => {
     vi.restoreAllMocks();
@@ -35,9 +25,7 @@ describe("eService service test", () => {
       Date.now() - new Date().getTimezoneOffset() * 60000
     ).toISOString();
 
-    vi.spyOn(eserviceService, "updateResponseReceived").mockResolvedValue(
-      undefined
-    );
+    vi.spyOn(apiClient, "updateResponseReceived").mockResolvedValue(undefined);
 
     await expect(
       async () =>
@@ -59,15 +47,9 @@ describe("eService service test", () => {
     ).toISOString();
 
     const apiClientError = mockApiClientError(500, "Internal server error");
-    const mockError = makeApplicationError(
-      apiUpdateResponseReceivedError(
-        `Error updating eService response received with eserviceRecordId: ${eserviceRecordId}. Details: ${apiClientError}.`,
-        apiClientError
-      )
-    );
 
-    vi.spyOn(eserviceService, "updateResponseReceived").mockRejectedValueOnce(
-      mockError
+    vi.spyOn(apiClient, "updateResponseReceived").mockRejectedValueOnce(
+      apiClientError
     );
 
     try {
