@@ -51,7 +51,7 @@ import {
 import { EserviceProbingRequestSchema } from "../src/repositories/entity/eservice_probing_request.entity.js";
 import { EserviceProbingResponseSchema } from "../src/repositories/entity/eservice_probing_response.entity.js";
 import { z } from "zod";
-import moment from "moment-timezone";
+import { nowDateUTC } from '../src/utilities/date.js';
 
 describe("database test", async () => {
   let eservices: EserviceEntities;
@@ -142,7 +142,7 @@ describe("database test", async () => {
       .withDatabase(config.dbName)
       .withCopyFilesToContainer([
         {
-          source: "../services/db/migration/V1_DDL.sql",
+          source: "../services/db/migration/V1__DDL.sql",
           target: "/docker-entrypoint-initdb.d/01-init.sql",
         },
       ])
@@ -418,14 +418,8 @@ describe("database test", async () => {
 
         const payload = {
           frequency: 10,
-          startTime: moment()
-            .tz("UTC")
-            .set({ hour: 8, minute: 0 })
-            .format("HH:mm:ss"),
-          endTime: moment()
-            .tz("UTC")
-            .set({ hour: 8, minute: 0 })
-            .format("HH:mm:ss"),
+          startTime: nowDateUTC(8, 0),
+          endTime: nowDateUTC(8, 0),
         };
 
         await eserviceService.updateEserviceFrequency(eserviceId, versionId, {
@@ -450,14 +444,8 @@ describe("database test", async () => {
 
         const payload = {
           frequency: 10,
-          startTime: moment()
-            .tz("UTC")
-            .set({ hour: 8, minute: 0 })
-            .format("HH:mm:ss"),
-          endTime: moment()
-            .tz("UTC")
-            .set({ hour: 8, minute: 0 })
-            .format("HH:mm:ss"),
+          startTime: nowDateUTC(8, 0),
+          endTime: nowDateUTC(8, 0),
         };
 
         await expect(
