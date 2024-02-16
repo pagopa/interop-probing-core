@@ -4,6 +4,7 @@ import {
   eserviceMonitorState,
   responseStatus,
   EserviceStatus,
+  EserviceMonitorState,
 } from "pagopa-interop-probing-models";
 import { config } from "./config.js";
 
@@ -29,7 +30,7 @@ export function fromPdndToMonitorState({
   responseReceived: string;
   lastRequest: string;
   pollingFrequency: number;
-}) {
+}): EserviceMonitorState {
   switch (state) {
     case eserviceInteropState.active:
       return checkND(

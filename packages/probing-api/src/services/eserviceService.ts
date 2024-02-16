@@ -7,7 +7,7 @@ import {
   ApiUpdateResponseReceivedPayload,
 } from "../../../probing-eservice-operations/src/model/types.js";
 import {
-  EServiceProbingData,
+  ApiEServiceContent,
   EServiceProducersQueryFilters,
   EServiceQueryFilters,
 } from "pagopa-interop-probing-models";
@@ -23,6 +23,7 @@ import {
 } from "../model/types.js";
 import { fromPdndToMonitorState, isActive } from "../utilities/enumUtils.js";
 import { z } from "zod";
+import { logger } from "pagopa-interop-probing-commons";
 
 export const operationsServiceBuilder = (
   operationsApiClient: ZodiosInstance<Api>
@@ -87,28 +88,41 @@ export const operationsServiceBuilder = (
       limit: number,
       offset: number
     ): Promise<ApiGetEservicesResponse> {
-      const { totalElements = 0 , content = [] } =
-        await operationsApiClient.searchEservices({
-          queries: {
-            limit,
-            offset,
-            ...filters,
-          },
-        });
+      const data = await operationsApiClient.searchEservices({
+        queries: {
+          limit,
+          offset,
+          ...filters,
+        },
+      });
 
-      
+      const content = [];
+      const result = z.array(ApiEServiceContent).safeParse(
+        data.content.map((d) => ({
+          eserviceRecordId: d.eserviceRecordId,
+          eserviceName: d.eserviceName,
+          producerName: d.producerName,
+          responseReceived: d.responseReceived,
+          state: fromPdndToMonitorState,
+          versionNumber: d.versionNumber,
+        }))
+      );
 
-      const result = z
-        .array(EServiceProbingData)
-        .safeParse((data.content || []).map((d) => d));
-
-      const result_content = result.map((el) => ({ ...el, state: fromPdndToMonitorState(el.state) }));
+      if (!result.success) {
+        logger.error(
+          `Unable to parse eservices items: result ${JSON.stringify(
+            result
+          )} - data ${JSON.stringify(data.content)} `
+        );
+      } else {
+        content.push(...result.data)
+      }
 
       return {
         content,
         offset,
         limit,
-        totalElements,
+        totalElements: data.totalElements,
       };
     },
 
