@@ -1,7 +1,7 @@
-import { CommonConfig } from "pagopa-interop-probing-commons";
+import { HTTPServerConfig, LoggerConfig } from "pagopa-interop-probing-commons";
 import { z } from "zod";
 
-const apiConfig = CommonConfig.and(
+const apiConfig = HTTPServerConfig.and(LoggerConfig).and(
   z
     .object({
       AWS_REGION: z.string(),
@@ -11,7 +11,7 @@ const apiConfig = CommonConfig.and(
     .transform((c) => ({
       awsRegion: c.AWS_REGION,
       operationsBaseUrl: c.API_OPERATIONS_BASEURL,
-      minOfTolleranceMultiplier: c.TOLERANCE_MULTIPLIER_IN_MINUTES
+      minOfTolleranceMultiplier: c.TOLERANCE_MULTIPLIER_IN_MINUTES,
     }))
 );
 
