@@ -195,6 +195,16 @@ export const EServiceProbingData = z.object({
 });
 export type EServiceProbingData = z.infer<typeof EServiceProbingData>;
 
+export const ApiEServiceContent = z.object({
+  eserviceRecordId: z.number(),
+  eserviceName: z.string(),
+  producerName: z.string(),
+  responseReceived: z.string().datetime({ offset: true }),
+  state: EserviceMonitorState,
+  versionNumber: z.number(),
+});
+export type ApiEServiceContent = z.infer<typeof ApiEServiceContent>;
+
 export type EServiceQueryFilters = {
   eserviceName?: string | undefined;
   producerName?: string | undefined;
