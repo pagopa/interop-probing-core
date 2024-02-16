@@ -1,8 +1,8 @@
-import { CommonConfig } from "pagopa-interop-probing-commons";
+import { HTTPServerConfig, LoggerConfig } from "pagopa-interop-probing-commons";
 import { DbConfig } from "./dbConfig.js";
 import { z } from "zod";
 
-const eServiceOperationsConfig = CommonConfig.and(DbConfig).and(
+const eServiceOperationsConfig = HTTPServerConfig.and(LoggerConfig).and(DbConfig).and(
   z
     .object({
       TOLERANCE_MULTIPLIER_IN_MINUTES: z.coerce.number().min(1),
