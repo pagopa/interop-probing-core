@@ -204,3 +204,14 @@ export const ApiEServiceContent = z.object({
   versionNumber: z.number(),
 });
 export type ApiEServiceContent = z.infer<typeof ApiEServiceContent>;
+
+export type EServiceQueryFilters = {
+  eserviceName?: string | undefined;
+  producerName?: string | undefined;
+  versionNumber?: number | undefined;
+  state?: EserviceMonitorState[] | undefined;
+};
+
+export type EServiceProducersQueryFilters = {
+  producerName: string | undefined;
+};
