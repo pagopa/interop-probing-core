@@ -12,10 +12,6 @@ import {
   EServiceQueryFilters,
 } from "pagopa-interop-probing-models";
 import {
-  eServiceMainDataByRecordIdNotFound,
-  eServiceProbingDataByRecordIdNotFound,
-} from "../model/domain/errors.js";
-import {
   ApiGetEserviceMainDataResponse,
   ApiGetEserviceProbingDataResponse,
   ApiGetEservicesResponse,
@@ -129,17 +125,11 @@ export const operationsServiceBuilder = (
     async getEserviceMainData(
       eserviceRecordId: number
     ): Promise<ApiGetEserviceMainDataResponse> {
-      const data = await operationsApiClient.getEserviceMainData({
+      return await operationsApiClient.getEserviceMainData({
         params: {
           eserviceRecordId,
         },
       });
-
-      if (!data) {
-        throw eServiceMainDataByRecordIdNotFound(eserviceRecordId);
-      }
-
-      return data;
     },
 
     async getEserviceProbingData(
@@ -150,10 +140,6 @@ export const operationsServiceBuilder = (
           eserviceRecordId,
         },
       });
-
-      if (!data) {
-        throw eServiceProbingDataByRecordIdNotFound(eserviceRecordId);
-      }
 
       return {
         probingEnabled: data.probingEnabled,
