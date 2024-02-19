@@ -1,18 +1,15 @@
 import { MonitoringQueries } from '@/api/monitoring/monitoring.hooks'
 
 export const MonitoringEserviceTelemetry = ({
-  params,
+  eserviceId,
   pollingFrequency,
 }: {
-  params: { id: string } | undefined
+  eserviceId: string
   pollingFrequency: number
 }) => {
-  const { data: eservicesTelemetry } = MonitoringQueries.useGetTelemetryData(
-    {
-      eServiceId: params?.id ?? '',
-      pollingFrequency: pollingFrequency,
-    },
-    {}
-  )
+  const { data: eservicesTelemetry } = MonitoringQueries.useGetTelemetryData({
+    eserviceId,
+    pollingFrequency,
+  })
   return <div>{JSON.stringify(eservicesTelemetry)}</div>
 }

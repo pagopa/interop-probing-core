@@ -9,14 +9,13 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 
 export const MonitoringDetailPage = () => {
   const { t } = useTranslation('common')
-  const params = useParams()
+  const { id: eserviceId } = useParams<'MONITORING_DETAIL'>()
 
-  const { data: eservicesDetail } = MonitoringQueries.useGetEserviceData(
-    { eServiceId: params?.id ?? '' },
-    {}
-  )
+  const { data: eservicesDetail } = MonitoringQueries.useGetEserviceData({
+    eserviceId,
+  })
   const { data: eservicesProbingDetail, isSuccess: isSuccessProbing } =
-    MonitoringQueries.useGetEserviceProbingData({ eServiceId: params?.id ?? '' }, {})
+    MonitoringQueries.useGetEserviceProbingData({ eserviceId })
 
   const hasValidData = isSuccessProbing && eservicesDetail
 
@@ -28,7 +27,7 @@ export const MonitoringDetailPage = () => {
       <hr />
       {hasValidData && (
         <MonitoringEserviceTelemetry
-          params={params}
+          eserviceId={eserviceId}
           pollingFrequency={eservicesDetail.pollingFrequency}
         />
       )}

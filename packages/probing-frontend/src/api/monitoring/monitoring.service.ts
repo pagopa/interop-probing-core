@@ -18,27 +18,27 @@ async function getProducersList(params: { producerName: string }): Promise<Filte
 }
 
 async function getEserviceData<EserviceResponse>({
-  eServiceId,
+  eserviceId,
   type,
 }: {
-  eServiceId: string
+  eserviceId: string
   type: 'main' | 'probing'
 }): Promise<EserviceResponse> {
   const response = await axiosInstance.get<EserviceResponse>(
-    `${import.meta.env.VITE_BASE_PATH}/eservices/${type}Data/${eServiceId}`
+    `${import.meta.env.VITE_BASE_PATH}/eservices/${type}Data/${eserviceId}`
   )
   return response.data
 }
 
 async function getTelemetryData({
-  eServiceId,
+  eserviceId,
   pollingFrequency,
 }: {
-  eServiceId: string
+  eserviceId: string
   pollingFrequency: number
 }): Promise<TelemetryData> {
   const response = await axiosInstance.get<TelemetryData>(
-    `${import.meta.env.VITE_BASE_PATH}/telemetryData/eservices/${eServiceId}`,
+    `${import.meta.env.VITE_BASE_PATH}/telemetryData/eservices/${eserviceId}`,
     { params: { pollingFrequency } }
   )
   return response.data
@@ -50,11 +50,11 @@ async function getFilteredTelemetryData(
     startDate: string
     endDate: string
   },
-  eServiceId: string
+  eserviceId: string
 ): Promise<unknown> {
   // TODO: type data
   const response = await axiosInstance.get<unknown>(
-    `${import.meta.env.VITE_BASE_PATH}/telemetryData/eservices/filtered/${eServiceId}`,
+    `${import.meta.env.VITE_BASE_PATH}/telemetryData/eservices/filtered/${eserviceId}`,
     { params }
   )
   return response.data
@@ -63,6 +63,9 @@ async function getFilteredTelemetryData(
 const MonitoringServices = {
   getList,
   getProducersList,
+  getEserviceData,
+  getTelemetryData,
+  getFilteredTelemetryData,
 }
 
 export default MonitoringServices
