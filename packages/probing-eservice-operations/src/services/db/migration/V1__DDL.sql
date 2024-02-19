@@ -2,10 +2,6 @@ CREATE SCHEMA IF NOT EXISTS ${schema_name};
 
 CREATE SEQUENCE IF NOT EXISTS ${schema_name}.eservice_sequence START WITH 1 INCREMENT BY 1;
 
--- Table: ${schema_name}.eservices
--- Reasoning for using "id BIGINT NOT NULL" without "DEFAULT nextval('eservice_sequence')":
--- The 'id' column serves as the primary key for the 'eservices' table and is generated
--- using the nextval function directly during insert queries.
 CREATE TABLE ${schema_name}.eservices (
    id BIGINT NOT NULL,
    base_path VARCHAR(2048) array NOT NULL,

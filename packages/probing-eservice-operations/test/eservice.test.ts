@@ -51,7 +51,8 @@ import {
 import { EserviceProbingRequestSchema } from "../src/repositories/entity/eservice_probing_request.entity.js";
 import { EserviceProbingResponseSchema } from "../src/repositories/entity/eservice_probing_response.entity.js";
 import { z } from "zod";
-import { nowDateUTC } from '../src/utilities/date.js';
+import { nowDateUTC } from "../src/utilities/date.js";
+import { initDbSql } from "./init-db.js";
 
 describe("database test", async () => {
   let eservices: EserviceEntities;
@@ -140,18 +141,12 @@ describe("database test", async () => {
       .withUsername(config.dbUsername)
       .withPassword(config.dbPassword)
       .withDatabase(config.dbName)
-      .withCopyFilesToContainer([
-        {
-          source: "../services/db/migration/V1__DDL.sql",
-          target: "/docker-entrypoint-initdb.d/01-init.sql",
-        },
-      ])
       .withExposedPorts(5432)
       .start();
 
     config.dbPort = postgreSqlContainer.getMappedPort(5432);
 
-    modelRepository = await ModelRepository.init(config);
+    modelRepository = await ModelRepository.init(config, initDbSql);
     eservices = modelRepository.eservices;
     eserviceProbingRequest = modelRepository.eserviceProbingRequest;
     eserviceProbingResponse = modelRepository.eserviceProbingResponse;
