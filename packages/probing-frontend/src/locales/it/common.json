@@ -109,8 +109,34 @@
     "eServiceStatus": "Stato e-service",
     "lastDetectionDate": "Data ultima rilevazione",
     "readMore": "Approfondisci",
+    "noDataLabel": "La ricerca non ha prodotto risultati",
+    "loading": "Operazione in corso..."
+  },
+  "detailsPage": {
+    "subtitle": "In questa pagina puoi verificare lo stato dell'e-service in tempo reale ed esplorare lo storico delle performance",
+    "producerName": "EROGATORE",
+    "version": "VERSIONE",
+    "eServiceTab": "SCHEDA E-SERVICE",
+    "viewInCatalog": "Visualizza sul catalogo",
+    "returnToList": "Torna alla lista degli e-service",
+    "realTimeTitle": "In tempo reale",
+    "refresh": "Ricarica",
+    "monitoringState": "STATO DEL MONITORAGGIO",
+    "eserviceState": "STATO DELL'E-SERVICE",
+    "lastRelevationDate": "DATA ULTIMA RILEVAZIONE",
+    "success": "attivo",
+    "error": "errore",
+    "warning": "attenzione",
+    "active": "attivo",
+    "suspended": "sospeso",
     "loading": "Operazione in corso...",
-    "noDataLabel": "La ricerca non ha prodotto risultati"
+    "alerts": {
+      "monitoringSuspended": "Monitoraggio sospeso",
+      "versionSuspendedMessage": "L'e-service è offline perché questa versione è attualmente sospesa",
+      "eserviceNotAnswerMessage": "L'e-service è offline perché non risponde al sistema di monitoraggio",
+      "monitoringSystemSuspendedMessage": "Il sistema di monitoraggio è attualmente sospeso",
+      "genericAlert": "Ulteriori dettagli non disponibili"
+    }
   },
   "hour": "ore"
 }

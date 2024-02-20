@@ -11,5 +11,11 @@ export const MonitoringEserviceTelemetry = ({
     eserviceId,
     pollingFrequency,
   })
-  return <div>{JSON.stringify(eservicesTelemetry)}</div>
+  console.log(eservicesTelemetry)
+  return (
+    <div>
+      / / &nbsp;&nbsp;&nbsp;TO-DO TELEMETRY
+      {/* {JSON.stringify(eservicesTelemetry)} */}
+    </div>
+  )
 }

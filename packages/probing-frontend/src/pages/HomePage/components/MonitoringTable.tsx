@@ -70,7 +70,7 @@ export const MonitoringTable = () => {
   } = MonitoringQueries.useGetList(params, { suspense: false })
 
   const handleRefetch = async () => {
-    showOverlay('loading')
+    showOverlay(t('loading'))
     // We want show the loading overlay for at least 1 second, to avoid flickering
     await Promise.all([refetch(), new Promise((resolve) => setTimeout(resolve, 1000))])
     hideOverlay()

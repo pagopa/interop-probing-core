@@ -16,7 +16,7 @@ export type EService = {
 
 export type Percentage = {
   value: number
-  status: 'OK' | 'N/D' | 'KO' // Assuming the possible status are OK, N/D, and KO
+  status: 'OK' | 'N/D' | 'KO' | 'OFFLINE' // Assuming the possible status are OK, N/D, KO, and OFFLINE
 }
 
 export type TelemetryData = {
@@ -36,7 +36,7 @@ export type MainEservice = {
 
 export type ProbingEservice = {
   probingEnabled: boolean
-  state: 'OK' | 'N/D' | 'KO' // Assuming the possible states are OK, N/D, and KO
+  state: 'OK' | 'N/D' | 'KO' | 'OFFLINE' // Assuming the possible states are OK, N/D, KO, and OFFLINE
   responseReceived: string | null
   eserviceActive: boolean
 }

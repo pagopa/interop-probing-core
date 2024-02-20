@@ -110,8 +110,34 @@
     "eServiceStatus": "E-service status",
     "lastDetectionDate": "Last detection date",
     "readMore": "Read more",
+    "noDataLabel": "No results",
+    "loading": "Loading..."
+  },
+  "detailsPage": {
+    "subtitle": "On this page you can check the status of the e-service in real time and explore the performance history",
+    "producerName": "PRODUCER",
+    "version": "VERSION",
+    "eServiceTab": "E-SERVICE TAB",
+    "viewInCatalog": "View in catalog",
+    "returnToList": "Return to the list of e-services",
+    "realTimeTitle": "In real time",
+    "refresh": "Reload",
+    "monitoringState": "MONITORING STATE",
+    "eserviceState": "E-SERVICE STATE",
+    "lastRelevationDate": "LAST RELEVATION DATE",
+    "success": "success",
+    "error": "error",
+    "warning": "warning",
+    "active": "active",
+    "suspended": "suspended",
     "loading": "Loading...",
-    "noDataLabel": "No results"
+    "alerts": {
+      "monitoringSuspended": "Monitoring suspended",
+      "versionSuspendedMessage": "The e-service is offline because this version is currently suspended",
+      "eserviceNotAnswerMessage": "The e-service is offline because it's not responding to the monitoring system",
+      "monitoringSystemSuspendedMessage": "The monitoring system is currently suspended",
+      "genericAlert": "Further details not available"
+    }
   },
   "hour": "hours"
 }
