@@ -1,7 +1,13 @@
-import { makeApiProblemBuilder, Problem } from "pagopa-interop-probing-models";
+import { ApiError, makeApiProblemBuilder, Problem } from "pagopa-interop-probing-models";
 import { AxiosError } from "axios";
 
-export const makeApiProblem = makeApiProblemBuilder({});
+export const errorCodes = {
+  eServiceNotFound: "0001",
+};
+
+export type ErrorCodes = keyof typeof errorCodes;
+
+export const makeApiProblem = makeApiProblemBuilder(errorCodes);
 
 export const resolveOperationsApiClientProblem = (error: unknown): Problem => {
   const operationsApiProblem = Problem.safeParse(
@@ -14,3 +20,14 @@ export const resolveOperationsApiClientProblem = (error: unknown): Problem => {
     return makeApiProblem(error, () => 500);
   }
 };
+
+export function eServiceNotFound(
+  eserviceId: string,
+  versionId: string
+): ApiError<ErrorCodes> {
+  return new ApiError({
+    detail: `EService by ${eserviceId} version ${versionId} not found`,
+    code: "eServiceNotFound",
+    title: "EService not found",
+  });
+}
