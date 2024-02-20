@@ -1,4 +1,3 @@
-export const initDbSql = `
 CREATE SCHEMA IF NOT EXISTS probing;
 
 CREATE SEQUENCE IF NOT EXISTS probing.eservice_sequence START WITH 1 INCREMENT BY 1;
@@ -41,12 +40,13 @@ CREATE TABLE probing.eservice_probing_requests (
 
 ALTER TABLE probing.eservice_probing_requests ADD CONSTRAINT FK_ESERVICE_ESERVICE_PROBING_REQUESTS FOREIGN KEY (eservices_record_id) REFERENCES probing.eservices(id);
 
-CREATE VIEW probing.eservice_view AS SELECT e.id, e.eservice_id , e.eservice_name, e.producer_name , e.version_id , e.state , epr.status ,e.probing_enabled , e.version_number , epr.response_received , epreq.last_request, e.polling_frequency, e.polling_start_time, e.polling_end_time, e.base_path, e.eservice_technology, e.audience
+CREATE VIEW probing.eservice_view AS
+SELECT e.id, e.eservice_id , e.eservice_name, e.producer_name , e.version_id , e.state , epr.status ,e.probing_enabled , e.version_number , epr.response_received , epreq.last_request, e.polling_frequency, e.polling_start_time, e.polling_end_time, e.base_path, e.eservice_technology, e.audience
 FROM probing.eservices e
 LEFT JOIN probing.eservice_probing_responses epr ON epr.eservices_record_id = e.id
 LEFT JOIN probing.eservice_probing_requests epreq on epreq.eservices_record_id=e.id;
 
-CREATE ROLE "mydbuser_operations" WITH 
+CREATE ROLE "probinguser" WITH 
     NOSUPERUSER
     NOCREATEDB
     NOCREATEROLE
@@ -57,10 +57,9 @@ CREATE ROLE "mydbuser_operations" WITH
     CONNECTION LIMIT -1
     PASSWORD 'mypassword';
 
-GRANT CREATE, USAGE ON SCHEMA probing TO "mydbuser_operations";
-GRANT SELECT, INSERT, UPDATE ON TABLE probing.eservice_probing_requests TO "mydbuser_operations";
-GRANT SELECT, INSERT, UPDATE ON TABLE probing.eservice_probing_responses TO "mydbuser_operations";
-GRANT SELECT, INSERT, UPDATE ON TABLE probing.eservices TO "mydbuser_operations";
-GRANT SELECT ON TABLE probing.eservice_view TO "mydbuser_operations";
-GRANT SELECT, USAGE ON SEQUENCE probing.eservice_sequence TO "mydbuser_operations";
-`;
+GRANT CREATE, USAGE ON SCHEMA probing TO "probinguser";
+GRANT SELECT, INSERT, UPDATE ON TABLE probing.eservice_probing_requests TO "probinguser";
+GRANT SELECT, INSERT, UPDATE ON TABLE probing.eservice_probing_responses TO "probinguser";
+GRANT SELECT, INSERT, UPDATE ON TABLE probing.eservices TO "probinguser";
+GRANT SELECT ON TABLE probing.eservice_view TO "probinguser";
+GRANT SELECT, USAGE ON SEQUENCE probing.eservice_sequence TO "probinguser";
