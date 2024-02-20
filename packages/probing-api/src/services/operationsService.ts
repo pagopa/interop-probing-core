@@ -10,6 +10,7 @@ import {
   ApiEServiceContent,
   EServiceProducersQueryFilters,
   EServiceQueryFilters,
+  genericError,
 } from "pagopa-interop-probing-models";
 import {
   ApiGetEserviceMainDataResponse,
@@ -110,8 +111,10 @@ export const operationsServiceBuilder = (
             result
           )} - data ${JSON.stringify(data.content)} `
         );
+        
+        throw genericError("Unable to parse eservices items");
       } else {
-        content.push(...result.data)
+        content.push(...result.data);
       }
 
       return {
