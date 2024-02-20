@@ -1,25 +1,70 @@
-import { afterAll, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { zodiosCtx } from "pagopa-interop-probing-commons";
 import eServiceRouter from "../src/routers/eserviceRouter.js";
 import supertest from "supertest";
 import { v4 as uuidv4 } from "uuid";
 import { createApiClient as createOperationsApiClient } from "../../probing-eservice-operations/src/model/generated/api.js";
 import { config } from "../src/utilities/config.js";
-import { mockOperationsApiClientError } from "./utils.js";
+import { mockOperationsApiClientError, nowDateUTC } from "./utils.js";
 import {
+  eServiceMainDataByRecordIdNotFound,
   eServiceNotFound,
+  eServiceProbingDataByRecordIdNotFound,
   makeApiProblem,
 } from "../src/model/domain/errors.js";
 import { updateEServiceErrorMapper } from "../src/utilities/errorMappers.js";
+import {
+  ApiGetEserviceMainDataResponse,
+  ApiGetEservicesResponse,
+  ApiGetProducersResponse,
+  ApiUpdateEserviceFrequencyPayload,
+  ApiUpdateEserviceProbingStatePayload,
+  ApiUpdateEserviceStatePayload,
+} from "../src/model/types.js";
+import {
+  EServiceMainData,
+  EServiceProbingData,
+  EServiceProducersQueryFilters,
+  EServiceQueryFilters,
+  EserviceInteropState,
+  EserviceMonitorState,
+  eserviceInteropState,
+  eserviceMonitorState,
+  responseStatus,
+} from "pagopa-interop-probing-models";
 
 const operationsApiClient = createOperationsApiClient(config.operationsBaseUrl);
 const app = zodiosCtx.app();
 app.use(eServiceRouter(zodiosCtx)(operationsApiClient));
-const request = supertest(app);
+
+const probingApiClient = supertest(app);
 
 describe("eService Router", () => {
-  afterAll(() => {
+  beforeEach(() => {
     vi.restoreAllMocks();
+  });
+
+  it("e-service state gets updated", async () => {
+    const params = {
+      eserviceId: uuidv4(),
+      versionId: uuidv4(),
+    };
+    const eserviceUpdateState: ApiUpdateEserviceStatePayload = {
+      eServiceState: "ACTIVE",
+    };
+
+    vi.spyOn(operationsApiClient, "updateEserviceState").mockResolvedValue(
+      undefined
+    );
+
+    const response = await probingApiClient
+      .post(
+        `/eservices/${params.eserviceId}/versions/${params.versionId}/updateState`
+      )
+      .set("Content-Type", "application/json")
+      .send(eserviceUpdateState);
+
+    expect(response.status).toBe(204);
   });
 
   it("e-service state can't be updated because e-service does not exist", async () => {
@@ -27,7 +72,7 @@ describe("eService Router", () => {
       eserviceId: uuidv4(),
       versionId: uuidv4(),
     };
-    const eserviceUpdateState = {
+    const eserviceUpdateState: ApiUpdateEserviceStatePayload = {
       eServiceState: "ACTIVE",
     };
     const errorRes = makeApiProblem(
@@ -40,7 +85,7 @@ describe("eService Router", () => {
       apiClientError
     );
 
-    const response = await request
+    const response = await probingApiClient
       .post(
         `/eservices/${params.eserviceId}/versions/${params.versionId}/updateState`
       )
@@ -52,26 +97,499 @@ describe("eService Router", () => {
     expect(response.status).toBe(404);
   });
 
-  it("e-service state gets updated", async () => {
+  it("e-service state can't be updated because e-service id request parameter is missing", async () => {
+    const params = {
+      versionId: uuidv4(),
+    };
+    const eserviceUpdateState: ApiUpdateEserviceStatePayload = {
+      eServiceState: "ACTIVE",
+    };
+
+    const response = await probingApiClient
+      .post(`/eservices/versions/${params.versionId}/updateState`)
+      .set("Content-Type", "application/json")
+      .send(eserviceUpdateState);
+
+    expect(response.text).contains(
+      `Cannot POST /eservices/versions/${params.versionId}/updateState`
+    );
+    expect(response.status).toBe(404);
+  });
+
+  it("e-service state can't be updated because e-service version id request parameter is missing", async () => {
+    const params = {
+      eserviceId: uuidv4(),
+    };
+    const eserviceUpdateState: ApiUpdateEserviceStatePayload = {
+      eServiceState: "ACTIVE",
+    };
+
+    const response = await probingApiClient
+      .post(`/eservices/${params.eserviceId}/versions/updateState`)
+      .set("Content-Type", "application/json")
+      .send(eserviceUpdateState);
+
+    expect(response.text).contains(
+      `Cannot POST /eservices/${params.eserviceId}/versions/updateState`
+    );
+    expect(response.status).toBe(404);
+  });
+
+  it("e-service state can't be updated because request body eServiceState is missing", async () => {
     const params = {
       eserviceId: uuidv4(),
       versionId: uuidv4(),
     };
-    const eserviceUpdateState = {
-      eServiceState: "ACTIVE",
-    };
 
-    vi.spyOn(operationsApiClient, "updateEserviceState").mockResolvedValue(
-      undefined
-    );
-
-    const response = await request
+    const response = await probingApiClient
       .post(
         `/eservices/${params.eserviceId}/versions/${params.versionId}/updateState`
       )
+      .set("Content-Type", "application/json");
+
+    expect(response.text).toContain(`"context":"body"`);
+    expect(response.text).toContain("eServiceState");
+    expect(response.text).toContain("Required");
+    expect(response.status).toBe(400);
+  });
+
+  it("e-service probing state gets updated", async () => {
+    const params = {
+      eserviceId: uuidv4(),
+      versionId: uuidv4(),
+    };
+    const updateEserviceProbingState: ApiUpdateEserviceProbingStatePayload = {
+      probingEnabled: true,
+    };
+
+    vi.spyOn(
+      operationsApiClient,
+      "updateEserviceProbingState"
+    ).mockResolvedValue(undefined);
+
+    const response = await probingApiClient
+      .post(
+        `/eservices/${params.eserviceId}/versions/${params.versionId}/probing/updateState`
+      )
       .set("Content-Type", "application/json")
-      .send(eserviceUpdateState);
+      .send(updateEserviceProbingState);
 
     expect(response.status).toBe(204);
+  });
+
+  it("e-service probing state can't be updated because e-service does not exist", async () => {
+    const params = {
+      eserviceId: uuidv4(),
+      versionId: uuidv4(),
+    };
+    const updateEserviceProbingState: ApiUpdateEserviceProbingStatePayload = {
+      probingEnabled: true,
+    };
+
+    const errorRes = makeApiProblem(
+      eServiceNotFound(params.eserviceId, params.versionId),
+      updateEServiceErrorMapper
+    );
+    const apiClientError = mockOperationsApiClientError(errorRes);
+
+    vi.spyOn(
+      operationsApiClient,
+      "updateEserviceProbingState"
+    ).mockRejectedValue(apiClientError);
+
+    const response = await probingApiClient
+      .post(
+        `/eservices/${params.eserviceId}/versions/${params.versionId}/probing/updateState`
+      )
+      .set("Content-Type", "application/json")
+      .send(updateEserviceProbingState);
+
+    expect(response.text).contains(params.eserviceId);
+    expect(response.text).contains(params.versionId);
+    expect(response.status).toBe(404);
+  });
+
+  it("e-service state can't be updated because request body probingEnabled is missing", async () => {
+    const params = {
+      eserviceId: uuidv4(),
+      versionId: uuidv4(),
+    };
+
+    const response = await probingApiClient
+      .post(
+        `/eservices/${params.eserviceId}/versions/${params.versionId}/probing/updateState`
+      )
+      .set("Content-Type", "application/json");
+
+    expect(response.text).toContain(`"context":"body"`);
+    expect(response.text).toContain("probingEnabled");
+    expect(response.text).toContain("Required");
+    expect(response.status).toBe(400);
+  });
+
+  it("e-service frequency, polling stard date and end date get updated", async () => {
+    const params = {
+      eserviceId: uuidv4(),
+      versionId: uuidv4(),
+    };
+    const updateEserviceFrequency: ApiUpdateEserviceFrequencyPayload = {
+      startTime: nowDateUTC(0, 0, 0),
+      endTime: nowDateUTC(23, 59, 0),
+      frequency: 5,
+    };
+
+    vi.spyOn(operationsApiClient, "updateEserviceFrequency").mockResolvedValue(
+      undefined
+    );
+
+    const response = await probingApiClient
+      .post(
+        `/eservices/${params.eserviceId}/versions/${params.versionId}/updateFrequency`
+      )
+      .set("Content-Type", "application/json")
+      .send(updateEserviceFrequency);
+
+    expect(response.status).toBe(204);
+  });
+
+  it("e-service frequency can't be updated because e-service does not exist", async () => {
+    const params = {
+      eserviceId: uuidv4(),
+      versionId: uuidv4(),
+    };
+    const updateEserviceFrequency: ApiUpdateEserviceFrequencyPayload = {
+      startTime: nowDateUTC(0, 0, 0),
+      endTime: nowDateUTC(23, 59, 0),
+      frequency: 5,
+    };
+
+    const errorRes = makeApiProblem(
+      eServiceNotFound(params.eserviceId, params.versionId),
+      updateEServiceErrorMapper
+    );
+    const apiClientError = mockOperationsApiClientError(errorRes);
+
+    vi.spyOn(operationsApiClient, "updateEserviceFrequency").mockRejectedValue(
+      apiClientError
+    );
+
+    const response = await probingApiClient
+      .post(
+        `/eservices/${params.eserviceId}/versions/${params.versionId}/updateFrequency`
+      )
+      .set("Content-Type", "application/json")
+      .send(updateEserviceFrequency);
+
+    expect(response.text).contains(params.eserviceId);
+    expect(response.text).contains(params.versionId);
+    expect(response.status).toBe(404);
+  });
+
+  it("e-service frequency can't be updated because e-service id request parameter is missing", async () => {
+    const params = {
+      versionId: uuidv4(),
+    };
+
+    const response = await probingApiClient
+      .post(`/eservices/versions/${params.versionId}/updateFrequency`)
+      .set("Content-Type", "application/json");
+
+    expect(response.text).contains(
+      `Cannot POST /eservices/versions/${params.versionId}/updateFrequency`
+    );
+    expect(response.status).toBe(404);
+  });
+
+  it("e-service frequency can't be updated because e-service version id request parameter is missing", async () => {
+    const params = {
+      eserviceId: uuidv4(),
+    };
+
+    const response = await probingApiClient
+      .post(`/eservices/${params.eserviceId}/versions/updateFrequency`)
+      .set("Content-Type", "application/json");
+
+    expect(response.text).contains(
+      `Cannot POST /eservices/${params.eserviceId}/versions/updateFrequency`
+    );
+    expect(response.status).toBe(404);
+  });
+
+  it("e-service frequency can't be updated because request body is missing required fields", async () => {
+    const params = {
+      eserviceId: uuidv4(),
+      versionId: uuidv4(),
+    };
+
+    const response = await probingApiClient
+      .post(
+        `/eservices/${params.eserviceId}/versions/${params.versionId}/updateFrequency`
+      )
+      .set("Content-Type", "application/json");
+
+    expect(response.text).toContain(`"context":"body"`);
+    expect(response.text).toContain("startTime");
+    expect(response.text).toContain("endTime");
+    expect(response.text).toContain("Required");
+    expect(response.status).toBe(400);
+  });
+
+  it("the list of e-services has been retrieved", async () => {
+    const searchEservices: EServiceQueryFilters = {
+      eserviceName: "eService 001",
+      producerName: "eService producer 001",
+      versionNumber: 1,
+      state: [eserviceMonitorState.offline],
+    };
+
+    const pagination: { offset: number; limit: number } = {
+      offset: 0,
+      limit: 2,
+    };
+
+    vi.spyOn(operationsApiClient, "searchEservices").mockResolvedValue({
+      content: [],
+      totalElements: 0,
+      ...pagination,
+    } satisfies ApiGetEservicesResponse);
+
+    const response = await probingApiClient
+      .get(`/eservices`)
+      .set("Content-Type", "application/json")
+      .query({
+        ...searchEservices,
+        ...pagination,
+      });
+    expect(response.status).toBe(200);
+  });
+
+  it("the retrieved list of e-services is empty", async () => {
+    const searchEservices: EServiceQueryFilters = {
+      eserviceName: "eService 001",
+      producerName: "eService producer 001",
+      versionNumber: 1,
+      state: [eserviceMonitorState.offline],
+    };
+
+    const pagination: { offset: number; limit: number } = {
+      offset: 0,
+      limit: 2,
+    };
+
+    vi.spyOn(operationsApiClient, "searchEservices").mockResolvedValue({
+      content: [],
+      totalElements: 0,
+      ...pagination,
+    } satisfies ApiGetEservicesResponse);
+
+    const response = await probingApiClient
+      .get(`/eservices`)
+      .set("Content-Type", "application/json")
+      .query({
+        ...searchEservices,
+        ...pagination,
+      });
+    expect(response.status).toBe(200);
+  });
+
+  it("bad request exception is thrown because size request parameter is missing", async () => {
+    const searchEservices: EServiceQueryFilters = {
+      eserviceName: "eService 001",
+      producerName: "eService producer 001",
+      versionNumber: 1,
+    };
+
+    const pagination: { offset: number } = {
+      offset: 0,
+    };
+
+    const response = await probingApiClient
+      .get(`/eservices`)
+      .set("Content-Type", "application/json")
+      .query({
+        ...searchEservices,
+        ...pagination,
+      });
+
+    expect(response.text).toContain(`"context":"query.limit"`);
+    expect(response.text).toContain("Required");
+    expect(response.status).toBe(400);
+  });
+
+  it("bad request exception is thrown because pageNumber request parameter is missing", async () => {
+    const searchEservices: EServiceQueryFilters = {
+      eserviceName: "eService 001",
+      producerName: "eService producer 001",
+      versionNumber: 1,
+    };
+
+    const pagination: { limit: number } = {
+      limit: 1,
+    };
+
+    const response = await probingApiClient
+      .get(`/eservices`)
+      .set("Content-Type", "application/json")
+      .query({
+        ...searchEservices,
+        ...pagination,
+      });
+
+    expect(response.text).toContain(`"context":"query.offset"`);
+    expect(response.text).toContain("Required");
+    expect(response.status).toBe(400);
+  });
+
+  it("e-service main data cant be retrieved because e-service does not exist", async () => {
+    const eserviceRecordId: number = 1;
+
+    const errorRes = makeApiProblem(
+      eServiceMainDataByRecordIdNotFound(eserviceRecordId),
+      updateEServiceErrorMapper
+    );
+    const apiClientError = mockOperationsApiClientError(errorRes);
+
+    vi.spyOn(operationsApiClient, "getEserviceMainData").mockRejectedValue(
+      apiClientError
+    );
+
+    const response = await probingApiClient
+      .get(`/eservices/mainData/${eserviceRecordId}`)
+      .set("Content-Type", "application/json");
+
+    expect(response.text).contains(eserviceRecordId);
+    expect(response.status).toBe(404);
+  });
+
+  it("e-service main data are retrieved successfully", async () => {
+    const eserviceRecordId: number = 1;
+    const eserviceMainData: EServiceMainData = {
+      eserviceName: "eService 001",
+      producerName: "eService producer 001",
+      versionNumber: 1,
+      eserviceId: uuidv4(),
+      versionId: uuidv4(),
+      pollingFrequency: 5,
+    };
+
+    vi.spyOn(operationsApiClient, "getEserviceMainData").mockResolvedValue(
+      eserviceMainData
+    );
+
+    const {
+      body,
+      status,
+    }: { body: ApiGetEserviceMainDataResponse; status: number } =
+      await probingApiClient
+        .get(`/eservices/mainData/${eserviceRecordId}`)
+        .set("Content-Type", "application/json");
+
+    expect(body).to.have.property("eserviceName");
+    expect(status).toBe(200);
+  });
+
+  it("e-service probing data cant be retrieved because e-service does not exist", async () => {
+    const eserviceRecordId: number = 1;
+
+    const errorRes = makeApiProblem(
+      eServiceProbingDataByRecordIdNotFound(eserviceRecordId),
+      updateEServiceErrorMapper
+    );
+    const apiClientError = mockOperationsApiClientError(errorRes);
+
+    vi.spyOn(operationsApiClient, "getEserviceProbingData").mockRejectedValue(
+      apiClientError
+    );
+
+    const response = await probingApiClient
+      .get(`/eservices/probingData/${eserviceRecordId}`)
+      .set("Content-Type", "application/json");
+
+    expect(response.text).contains(eserviceRecordId);
+    expect(response.status).toBe(404);
+  });
+
+  it("e-service main data are retrieved successfully", async () => {
+    const eserviceRecordId: number = 1;
+    const eserviceMainData: EServiceProbingData = {
+      state: eserviceInteropState.inactive,
+      probingEnabled: true,
+      pollingFrequency: 5,
+      lastRequest: new Date().toISOString(),
+      responseReceived: new Date().toISOString(),
+      responseStatus: responseStatus.ok,
+    };
+
+    vi.spyOn(operationsApiClient, "getEserviceProbingData").mockResolvedValue(
+      eserviceMainData
+    );
+
+    const {
+      body,
+      status,
+    }: { body: ApiGetEserviceMainDataResponse; status: number } =
+      await probingApiClient
+        .get(`/eservices/probingData/${eserviceRecordId}`)
+        .set("Content-Type", "application/json");
+
+    expect(body).to.have.property("probingEnabled");
+    expect(body).to.have.property("state");
+    expect(body).to.have.property("eserviceActive");
+    expect(status).toBe(200);
+  });
+
+  it("given a valid producer name, then returns a non-empty list", async () => {
+    const eservicesProducers: EServiceProducersQueryFilters = {
+      producerName: "eService producer 001",
+    };
+
+    const pagination: { offset: number; limit: number } = {
+      offset: 0,
+      limit: 2,
+    };
+
+    vi.spyOn(operationsApiClient, "getEservicesProducers").mockResolvedValue({
+      content: ["eService producer 001"],
+    });
+
+    const { body, status }: { body: ApiGetProducersResponse; status: number } =
+      await probingApiClient
+        .get(`/producers`)
+        .set("Content-Type", "application/json")
+        .query({
+          ...eservicesProducers,
+          ...pagination,
+        });
+
+    expect(Array.isArray(body)).toBe(true);
+    expect(body.length).toBeGreaterThan(0);
+    expect(status).toBe(200);
+  });
+
+  it("given a valid producer name with no matching records, then returns an empty list", async () => {
+    const eservicesProducers: EServiceProducersQueryFilters = {
+      producerName: "eService producer 001",
+    };
+
+    const pagination: { offset: number; limit: number } = {
+      offset: 0,
+      limit: 2,
+    };
+
+    vi.spyOn(operationsApiClient, "getEservicesProducers").mockResolvedValue({
+      content: [],
+    });
+
+    const { body, status }: { body: ApiGetProducersResponse; status: number } =
+      await probingApiClient
+        .get(`/producers`)
+        .set("Content-Type", "application/json")
+        .query({
+          ...eservicesProducers,
+          ...pagination,
+        });
+
+    expect(body).toEqual(expect.arrayContaining([]));
+    expect(status).toBe(200);
   });
 });
