@@ -28,7 +28,7 @@ export const FirstAccessForm = () => {
   const onSubmit = (data: FieldValues) => {
     if (code && username) {
       passwordReset(
-        { username, code, new_password: data.newPasswordConfirm },
+        { username, code, newPassword: data.newPasswordConfirm },
         {
           onSuccess() {
             navigate('PASSWORD_UPDATED')

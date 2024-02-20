@@ -1,16 +1,15 @@
 import { Paper, Typography } from '@mui/material'
 import { Box } from '@mui/system'
-import type { KeyPrefix } from 'i18next'
-import { useTranslation } from 'react-i18next'
 
 export const LoginLayout = ({
   children,
-  i18nContext,
+  title,
+  description,
 }: {
   children: React.ReactNode
-  i18nContext: KeyPrefix<'common'>
+  title: string
+  description: string
 }) => {
-  const { t } = useTranslation('common', { keyPrefix: i18nContext })
   return (
     <Box
       sx={{
@@ -23,11 +22,11 @@ export const LoginLayout = ({
       }}
     >
       <Typography component="h1" variant="h4" fontWeight={700}>
-        {t('title')}
+        {title}
       </Typography>
-      {t('subtitle') !== '' && (
+      {description !== '' && (
         <Typography component="p" sx={{ mb: 3, mt: 2 }}>
-          {t('subtitle')}
+          {description}
         </Typography>
       )}
       <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', maxWidth: 480 }}>

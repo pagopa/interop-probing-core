@@ -1,4 +1,4 @@
-const awsConfigs = {
+export const awsConfigs = {
   aws_project_region: import.meta.env.VITE_AWS_PROJECT_REGION,
   aws_cognito_identity_pool_id: null,
   aws_cognito_region: import.meta.env.VITE_AWS_COGNITO_REGION,
@@ -16,5 +16,3 @@ const awsConfigs = {
   },
   aws_cognito_verification_mechanisms: ['EMAIL'],
 }
-
-export default awsConfigs

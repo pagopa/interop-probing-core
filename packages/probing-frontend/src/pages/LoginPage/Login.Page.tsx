@@ -6,9 +6,10 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { LoginLayout } from '@/layout/LoginLayout'
 
 export const LoginPage = () => {
+  const { t } = useTranslation('common')
   return (
     <>
-      <LoginLayout i18nContext={'loginForm'}>
+      <LoginLayout title={t('loginForm.title')} description={t('loginForm.subtitle')}>
         <LoginForm />
       </LoginLayout>
       <FooterLogin />

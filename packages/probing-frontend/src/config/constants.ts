@@ -8,7 +8,7 @@ export const productSwitchItem: ProductSwitchItem = {
   productUrl: '',
   linkType: 'internal',
 }
-export const STORAGE_KEY_SESSION_TOKEN = 'jwtokent'
+export const STORAGE_KEY_SESSION_TOKEN = 'token'
 
 export const LANGUAGES = {
   it: { it: 'Italiano', en: 'Inglese' },

@@ -1,4 +1,5 @@
-import awsConfigs from '@/config/aws-exports'
+import { awsConfigs } from '@/config/aws-exports'
+import { STORAGE_KEY_SESSION_TOKEN } from '@/config/constants'
 import { AuthenticationError } from '@/utils/errors.utils'
 import { Auth, Amplify } from 'aws-amplify'
 
@@ -19,7 +20,7 @@ async function login(loginForm: LoginForm): Promise<void> {
     const { username, password } = loginForm
     const { signInUserSession }: User = await Auth.signIn(username, password)
     const jwt = signInUserSession.idToken.jwtToken
-    localStorage.setItem('token', jwt)
+    localStorage.setItem(STORAGE_KEY_SESSION_TOKEN, jwt)
   } catch {
     throw new AuthenticationError()
   }
@@ -27,7 +28,7 @@ async function login(loginForm: LoginForm): Promise<void> {
 async function logout() {
   try {
     await Auth.signOut()
-    localStorage.clear()
+    localStorage.removeItem(STORAGE_KEY_SESSION_TOKEN)
   } catch {
     throw new AuthenticationError()
   }
@@ -44,14 +45,14 @@ async function passwordRecovery(username: string) {
 async function passwordReset({
   username,
   code,
-  new_password,
+  newPassword,
 }: {
   username: string
   code: string
-  new_password: string
+  newPassword: string
 }) {
   try {
-    await Auth.forgotPasswordSubmit(username, code, new_password)
+    await Auth.forgotPasswordSubmit(username, code, newPassword)
   } catch {
     throw new AuthenticationError()
   }

@@ -17,19 +17,22 @@ export const InputWrapper: React.FC<InputWrapperProps> = ({
   children,
   component = 'div',
 }) => {
-  const helperTextSx = {
-    fontWeight: 400,
-    color: 'text.secondary',
-    ml: 0,
-    mt: 0,
-    display: 'block',
-    fontSize: '0.9rem',
-  }
   return (
     <FormControl fullWidth component={component} error={!!error} sx={{ mb: '24px', ...sx }}>
       {children}
       {error && (
-        <FormHelperText component="span" id={errorId} sx={helperTextSx}>
+        <FormHelperText
+          component="span"
+          id={errorId}
+          sx={{
+            fontWeight: 400,
+            color: 'text.secondary',
+            ml: 0,
+            mt: 0,
+            display: 'block',
+            fontSize: '0.9rem',
+          }}
+        >
           {error.message}
         </FormHelperText>
       )}
