@@ -52,7 +52,7 @@ import { EserviceProbingRequestSchema } from "../src/repositories/entity/eservic
 import { EserviceProbingResponseSchema } from "../src/repositories/entity/eservice_probing_response.entity.js";
 import { z } from "zod";
 import { nowDateUTC } from "../src/utilities/date.js";
-import * as path from 'path';
+import { resolve } from 'path';
 
 describe("database test", async () => {
   let eservices: EserviceEntities;
@@ -144,7 +144,7 @@ describe("database test", async () => {
       .withExposedPorts(5432)
       .withCopyFilesToContainer([
         {
-          source: path.resolve(__dirname, 'init-db.sql'),
+          source: resolve(__dirname, 'init-db.sql'),
           target: "/docker-entrypoint-initdb.d/01-init.sql",
         },
       ])
