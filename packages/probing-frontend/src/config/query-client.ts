@@ -1,5 +1,4 @@
 import { useDialogStore, useLoadingOverlayStore, useToastNotificationStore } from '@/stores'
-import type { Query, QueryKey } from '@tanstack/react-query'
 import {
   type Mutation,
   type QueryClientConfig,
@@ -30,7 +29,7 @@ const { showOverlay, hideOverlay } = useLoadingOverlayStore.getState()
 const { openDialog } = useDialogStore.getState()
 
 const resolveMeta = (query: {
-  mutation: Mutation<unknown, unknown, unknown> | Query<unknown, unknown, unknown, QueryKey>
+  mutation: Mutation<unknown, unknown, unknown>
   data?: unknown
   error?: unknown
   variables?: unknown

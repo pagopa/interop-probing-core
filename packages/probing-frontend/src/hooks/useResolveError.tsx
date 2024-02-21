@@ -91,7 +91,7 @@ function useResolveError(fallbackProps: FallbackProps): UseResolveErrorReturnTyp
   }
 
   if (error instanceof UnauthorizedError) {
-    navigate('HOME')
+    navigate('MONITORING_E_SERVICE_LIST')
   }
 
   return { title, description, content }

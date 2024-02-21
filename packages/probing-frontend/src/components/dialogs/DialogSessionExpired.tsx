@@ -12,7 +12,7 @@ export const DialogSessionExpired: React.FC<DialogSessionExpiredProps> = () => {
   const navigate = useNavigate()
 
   const logout = React.useCallback(() => {
-    navigate('HOME')
+    navigate('MONITORING_E_SERVICE_LIST')
   }, [navigate])
 
   React.useEffect(() => {

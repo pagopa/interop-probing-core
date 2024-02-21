@@ -9,11 +9,22 @@ import { Table, TableRow } from '@pagopa/interop-fe-commons'
 import { ButtonNaked } from '@pagopa/mui-italia'
 import { useTranslation } from 'react-i18next'
 import RefreshIcon from '@mui/icons-material/Refresh'
-import { headLabels } from '@/config/constants'
 import { MonitoringTableRow } from './MonitoringTableRow'
 import { MonitoringQueries } from '@/api/monitoring/monitoring.hooks'
 import { Skeleton } from '@mui/material'
 import { useLoadingOverlay } from '@/stores'
+import type { TFunction } from 'i18next'
+
+const headLabels = (t: TFunction<'common', 'table'>): Array<string> => {
+  return [
+    t('eServiceName'),
+    t('version'),
+    t('producer'),
+    t('eServiceStatus'),
+    t('lastDetectionDate'),
+    '',
+  ]
+}
 
 export const MonitoringTable = () => {
   const { t } = useTranslation('common', { keyPrefix: 'table' })

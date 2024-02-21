@@ -28,7 +28,7 @@ export const LoginForm = () => {
   const onSubmit = (data: { username: string; password: string }) => {
     login(data, {
       onSuccess() {
-        navigate('HOME')
+        navigate('MONITORING_E_SERVICE_LIST')
       },
     })
   }

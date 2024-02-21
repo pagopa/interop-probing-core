@@ -17,7 +17,7 @@ export const { routes, reactRouterDOMRoutes, hooks, components, utils } = new In
   languages: ['it', 'en'],
 })
   .addRoute({
-    key: 'HOME',
+    key: 'MONITORING_E_SERVICE_LIST',
     path: '/monitoraggio',
     element: <HomePage />,
     public: true,

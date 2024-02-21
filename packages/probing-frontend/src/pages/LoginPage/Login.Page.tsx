@@ -27,7 +27,13 @@ const FooterLogin = () => {
         {t('forgotPassword')}
       </Trans>
       <Box>
-        <Link to={'HOME'} as="button" startIcon={<ArrowBackIcon />} variant="naked" sx={{ my: 4 }}>
+        <Link
+          to={'MONITORING_E_SERVICE_LIST'}
+          as="button"
+          startIcon={<ArrowBackIcon />}
+          variant="naked"
+          sx={{ my: 4 }}
+        >
           {t('returnToList')}
         </Link>
       </Box>

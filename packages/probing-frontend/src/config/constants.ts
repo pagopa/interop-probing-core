@@ -1,5 +1,4 @@
 import type { ProductSwitchItem } from '@pagopa/mui-italia'
-import type { TFunction } from 'i18next'
 
 export const documentationLink = 'https://docs.pagopa.it/interoperabilita-1'
 export const assistanceLink = 'https://selfcare.pagopa.it/assistenza'
@@ -10,7 +9,7 @@ export const productSwitchItem: ProductSwitchItem = {
   linkType: 'internal',
 }
 export const STORAGE_KEY_SESSION_TOKEN = 'token'
-
+export const API_BASE_PATH = import.meta.env.VITE_BASE_PATH
 export const LANGUAGES = {
   it: { it: 'Italiano', en: 'Inglese' },
   en: { it: 'Italian', en: 'English' },
@@ -30,15 +29,4 @@ export const RootLink = {
   href: 'https://www.pagopa.it',
   ariaLabel: 'Vai al sito di PagoPA S.p.A.',
   title: 'Vai al sito di PagoPA S.p.A.',
-}
-
-export const headLabels = (t: TFunction<'common', 'table'>): Array<string> => {
-  return [
-    t('eServiceName'),
-    t('version'),
-    t('producer'),
-    t('eServiceStatus'),
-    t('lastDetectionDate'),
-    '',
-  ]
 }
