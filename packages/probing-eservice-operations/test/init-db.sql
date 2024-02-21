@@ -1,5 +1,5 @@
 -- This SQL script creates the necessary database schema and tables for the probing application for unit test.
--- Note: This script provides a temporary approach and should be replaced with a more robust solution in the future.
+-- Note: This script provides a temporary approach and should be replaced with a more robust solution in the future to use orinal DDL.
 
 CREATE SCHEMA IF NOT EXISTS probing;
 
