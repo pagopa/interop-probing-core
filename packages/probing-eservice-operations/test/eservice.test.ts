@@ -29,8 +29,6 @@ import {
   eserviceQueryBuilder,
 } from "../src/services/db/eserviceQuery.js";
 import {
-  EServiceProducersQueryFilters,
-  EServiceQueryFilters,
   ModelService,
   modelServiceBuilder,
 } from "../src/services/db/dbService.js";
@@ -51,7 +49,9 @@ import {
 import { EserviceProbingRequestSchema } from "../src/repositories/entity/eservice_probing_request.entity.js";
 import { EserviceProbingResponseSchema } from "../src/repositories/entity/eservice_probing_response.entity.js";
 import { z } from "zod";
-import moment from "moment-timezone";
+import { nowDateUTC } from "../src/utilities/date.js";
+import { resolve } from 'path';
+import { ApiGetProducersQuery, ApiSearchEservicesQuery } from "../src/model/types.js";
 
 describe("database test", async () => {
   let eservices: EserviceEntities;
@@ -140,13 +140,13 @@ describe("database test", async () => {
       .withUsername(config.dbUsername)
       .withPassword(config.dbPassword)
       .withDatabase(config.dbName)
+      .withExposedPorts(5432)
       .withCopyFilesToContainer([
         {
-          source: "../services/db/migration/V1_DDL.sql",
+          source: resolve(__dirname, 'init-db.sql'),
           target: "/docker-entrypoint-initdb.d/01-init.sql",
         },
       ])
-      .withExposedPorts(5432)
       .start();
 
     config.dbPort = postgreSqlContainer.getMappedPort(5432);
@@ -168,29 +168,31 @@ describe("database test", async () => {
   });
 
   describe("Eservice service", () => {
-    describe("getEservices", () => {
-      it("service returns getEservices response object with content empty", async () => {
-        const filters: EServiceQueryFilters = {
+    describe("searchEservices", () => {
+      it("service returns searchEservices response object with content empty", async () => {
+        const filters: ApiSearchEservicesQuery = {
           eserviceName: "eService 001",
           producerName: "eService producer 001",
           versionNumber: 1,
           state: [eserviceMonitorState.offline],
+          limit: 2,
+          offset: 0
         };
 
-        const result = await eserviceService.getEservices(filters, 50, 0);
+        const result = await eserviceService.searchEservices(filters);
 
         expect(result.content).toStrictEqual([]);
         expect(result.totalElements).toBe(0);
       });
 
-      it("given a list of all state values as parameter, service returns getEservices response object with content not empty", async () => {
+      it("given a list of all state values as parameter, service returns searchEservices response object with content not empty", async () => {
         const eserviceData = {
           eserviceName: "eService 001",
           producerName: "eService producer 001",
         };
         await createEservice({ eserviceData });
 
-        const filters: EServiceQueryFilters = {
+        const filters: ApiSearchEservicesQuery = {
           ...eserviceData,
           versionNumber: 1,
           state: [
@@ -198,48 +200,54 @@ describe("database test", async () => {
             eserviceMonitorState.offline,
             eserviceMonitorState.online,
           ],
+          limit: 2,
+          offset: 0
         };
 
-        const result = await eserviceService.getEservices(filters, 2, 0);
+        const result = await eserviceService.searchEservices(filters);
         expect(result.totalElements).not.toBe(0);
         expect(result.offset).toBe(0);
         expect(result.limit).toBe(2);
         expect(result.content[0].state).toBe(eserviceInteropState.inactive);
       });
 
-      it("given status n/d as parameter, service returns getEservices response object with content empty", async () => {
+      it("given status n/d as parameter, service returns searchEservices response object with content empty", async () => {
         const eserviceData = {
           eserviceName: "eService 001",
           producerName: "eService producer 001",
         };
         await createEservice({ eserviceData });
 
-        const filters: EServiceQueryFilters = {
+        const filters: ApiSearchEservicesQuery = {
           ...eserviceData,
           versionNumber: 2,
           state: [eserviceMonitorState["n/d"]],
+          limit: 2,
+          offset: 0
         };
 
-        const result = await eserviceService.getEservices(filters, 2, 0);
+        const result = await eserviceService.searchEservices(filters);
 
         expect(result.content).toStrictEqual([]);
         expect(result.totalElements).toBe(0);
       });
 
-      it("given status offline as parameter, service returns getEservices response object with content not empty", async () => {
+      it("given status offline as parameter, service returns searchEservices response object with content not empty", async () => {
         const eserviceData = {
           eserviceName: "eService 001",
           producerName: "eService producer 001",
         };
         await createEservice({ eserviceData });
 
-        const filters: EServiceQueryFilters = {
+        const filters: ApiSearchEservicesQuery = {
           ...eserviceData,
           versionNumber: 1,
           state: [eserviceMonitorState.offline],
+          limit: 2,
+          offset: 0
         };
 
-        const result = await eserviceService.getEservices(filters, 2, 0);
+        const result = await eserviceService.searchEservices(filters);
 
         expect(result.totalElements).toBe(1);
         expect(result.offset).toBe(0);
@@ -300,28 +308,28 @@ describe("database test", async () => {
 
     describe("getEservicesProducers", () => {
       it("given a valid producer name with no matching records, then returns an empty list", async () => {
-        const filters: EServiceProducersQueryFilters = {
+        const filters: ApiGetProducersQuery = {
           producerName: "no matching records eService producer",
+          limit: 1,
+          offset: 0
         };
         await createEservice();
         const producers = await eserviceService.getEservicesProducers(
           filters,
-          1,
-          0
         );
 
         expect(producers.content.length).toBe(0);
       });
 
       it("given specific valid producer name, then returns a non-empty list", async () => {
-        const filters: EServiceProducersQueryFilters = {
+        const filters: ApiGetProducersQuery = {
           producerName: "eService producer 001",
+          limit: 10,
+          offset: 0
         };
         await createEservice();
         const result = await eserviceService.getEservicesProducers(
           filters,
-          10,
-          0
         );
 
         expect(result.content.length).not.toBe(0);
@@ -329,15 +337,15 @@ describe("database test", async () => {
       });
 
       it("given partial producerName as parameter, service returns list of 2 producers", async () => {
-        const eServiceProducer1: EServiceProducersQueryFilters = {
+        const eServiceProducer1: ApiGetProducersQuery = {
           producerName: "eService producer",
+          limit: 2,
+          offset: 0
         };
         await createEservice();
         await createEservice();
         const producers = await eserviceService.getEservicesProducers(
           eServiceProducer1,
-          2,
-          0
         );
 
         expect(producers.content.length).toBe(2);
@@ -418,14 +426,8 @@ describe("database test", async () => {
 
         const payload = {
           frequency: 10,
-          startTime: moment()
-            .tz("UTC")
-            .set({ hour: 8, minute: 0 })
-            .format("HH:mm:ss"),
-          endTime: moment()
-            .tz("UTC")
-            .set({ hour: 8, minute: 0 })
-            .format("HH:mm:ss"),
+          startTime: nowDateUTC(8, 0),
+          endTime: nowDateUTC(8, 0),
         };
 
         await eserviceService.updateEserviceFrequency(eserviceId, versionId, {
@@ -450,14 +452,8 @@ describe("database test", async () => {
 
         const payload = {
           frequency: 10,
-          startTime: moment()
-            .tz("UTC")
-            .set({ hour: 8, minute: 0 })
-            .format("HH:mm:ss"),
-          endTime: moment()
-            .tz("UTC")
-            .set({ hour: 8, minute: 0 })
-            .format("HH:mm:ss"),
+          startTime: nowDateUTC(8, 0),
+          endTime: nowDateUTC(8, 0),
         };
 
         await expect(

@@ -14,7 +14,7 @@ import {
 } from "pagopa-interop-probing-models";
 import { updateEServiceErrorMapper } from "../utilities/errorMappers.js";
 import { ModelRepository } from "../repositories/modelRepository.js";
-import { ListResult } from "../model/dbModels.js";
+import { ListResultEservices } from "../model/dbModels.js";
 
 const modelService = modelServiceBuilder(await ModelRepository.init(config));
 const eserviceQuery = eserviceQueryBuilder(modelService);
@@ -124,16 +124,14 @@ const eServiceRouter = (
   eServiceRouter
     .get("/eservices", async (req, res) => {
       try {
-        const eservices = await eServiceService.getEservices(
-          {
-            eserviceName: req.query.eserviceName,
-            producerName: req.query.producerName,
-            versionNumber: req.query.versionNumber,
-            state: req.query.state,
-          },
-          req.query.limit,
-          req.query.offset
-        );
+        const eservices = await eServiceService.searchEservices({
+          eserviceName: req.query.eserviceName,
+          producerName: req.query.producerName,
+          versionNumber: req.query.versionNumber,
+          state: req.query.state,
+          limit: req.query.limit,
+          offset: req.query.offset,
+        });
 
         return res
           .status(200)
@@ -142,7 +140,7 @@ const eServiceRouter = (
             offset: eservices.offset,
             limit: eservices.limit,
             totalElements: eservices.totalElements,
-          } satisfies ListResult<EServiceContent>)
+          } satisfies ListResultEservices<EServiceContent>)
           .end();
       } catch (error) {
         const errorRes = makeApiProblem(error, () => 500);
@@ -182,13 +180,11 @@ const eServiceRouter = (
     })
     .get("/producers", async (req, res) => {
       try {
-        const eservices = await eServiceService.getEservicesProducers(
-          {
-            producerName: req.query.producerName,
-          },
-          req.query.limit,
-          req.query.offset
-        );
+        const eservices = await eServiceService.getEservicesProducers({
+          producerName: req.query.producerName,
+          limit: req.query.limit,
+          offset: req.query.offset,
+        });
 
         return res
           .status(200)

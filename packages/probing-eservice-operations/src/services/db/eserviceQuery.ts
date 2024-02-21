@@ -11,12 +11,15 @@ import {
   EServiceProbingData,
   PollingResource,
 } from "pagopa-interop-probing-models";
+import { ModelService } from "./dbService.js";
 import {
-  ModelService,
-  EServiceQueryFilters,
-  EServiceProducersQueryFilters,
-} from "./dbService.js";
-import { ListResult } from "../../model/dbModels.js";
+  ListResultEservices,
+  ListResultProducers,
+} from "../../model/dbModels.js";
+import {
+  ApiGetProducersQuery,
+  ApiSearchEservicesQuery,
+} from "../../model/types.js";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function eserviceQueryBuilder(modelService: ModelService) {
@@ -78,12 +81,10 @@ export function eserviceQueryBuilder(modelService: ModelService) {
       versionId: string
     ): Promise<EService | undefined> =>
       await modelService.getEServiceByIdAndVersion(eserviceId, versionId),
-    getEservices: async (
-      filters: EServiceQueryFilters,
-      limit: number,
-      offset: number
-    ): Promise<ListResult<EServiceContent>> =>
-      await modelService.getEservices(filters, limit, offset),
+    searchEservices: async (
+      filters: ApiSearchEservicesQuery
+    ): Promise<ListResultEservices<EServiceContent>> =>
+      await modelService.searchEservices(filters),
     getEserviceMainData: async (
       eserviceRecordId: number
     ): Promise<EServiceMainData> =>
@@ -93,15 +94,13 @@ export function eserviceQueryBuilder(modelService: ModelService) {
     ): Promise<EServiceProbingData> =>
       await modelService.getEserviceProbingData(eserviceRecordId),
     getEservicesProducers: async (
-      filters: EServiceProducersQueryFilters,
-      limit: number,
-      offset: number
-    ): Promise<ListResult<string>> =>
-      await modelService.getEservicesProducers(filters, limit, offset),
+      filters: ApiGetProducersQuery
+    ): Promise<ListResultProducers<string>> =>
+      await modelService.getEservicesProducers(filters),
     getEservicesReadyForPolling: async (
       limit: number,
       offset: number
-    ): Promise<ListResult<PollingResource>> =>
+    ): Promise<ListResultEservices<PollingResource>> =>
       await modelService.getEservicesReadyForPolling(limit, offset),
   };
 }

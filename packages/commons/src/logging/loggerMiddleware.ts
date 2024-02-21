@@ -1,13 +1,13 @@
 import * as expressWinston from "express-winston";
 import * as winston from "winston";
-import { commonConfig } from "../config/commonConfig.js";
+import { loggerConfig } from "../config/loggerConfig.js";
 import { getContext } from "../index.js";
 
 export type SessionMetaData = {
   correlationId: string | undefined;
 };
 
-const config = commonConfig();
+const config = loggerConfig();
 
 const getLoggerMetadata = (): SessionMetaData => {
   const appContext = getContext();

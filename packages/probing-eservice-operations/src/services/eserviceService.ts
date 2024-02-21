@@ -8,13 +8,11 @@ import {
   EserviceProbingUpdateLastRequest,
   EserviceSaveRequest,
 } from "pagopa-interop-probing-models";
-import {
-  EServiceQueryFilters,
-  EServiceProducersQueryFilters,
-} from "./db/dbService.js";
 import { EserviceQuery } from "./db/eserviceQuery.js";
 import {
+  ApiGetProducersQuery,
   ApiSaveEservicePayload,
+  ApiSearchEservicesQuery,
   ApiUpdateEserviceFrequencyPayload,
   ApiUpdateEserviceProbingStatePayload,
   ApiUpdateEserviceStatePayload,
@@ -22,7 +20,7 @@ import {
   ApiUpdateResponseReceivedPayload,
 } from "../model/types.js";
 import { eServiceNotFound } from "../model/domain/errors.js";
-import { ListResult } from "../model/dbModels.js";
+import { ListResultEservices, ListResultProducers } from "../model/dbModels.js";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, max-params
 export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
@@ -155,13 +153,11 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       );
     },
 
-    async getEservices(
-      filters: EServiceQueryFilters,
-      limit: number,
-      offset: number
-    ): Promise<ListResult<EServiceContent>> {
+    async searchEservices(
+      filters: ApiSearchEservicesQuery
+    ): Promise<ListResultEservices<EServiceContent>> {
       logger.info("Retrieving eServices");
-      return await eserviceQuery.getEservices(filters, limit, offset);
+      return await eserviceQuery.searchEservices(filters);
     },
 
     async getEserviceMainData(
@@ -181,18 +177,16 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
     async getEservicesReadyForPolling(
       limit: number,
       offset: number
-    ): Promise<ListResult<PollingResource>> {
+    ): Promise<ListResultEservices<PollingResource>> {
       logger.info("Retrieving eServices ready for polling");
       return await eserviceQuery.getEservicesReadyForPolling(limit, offset);
     },
 
     async getEservicesProducers(
-      filters: EServiceProducersQueryFilters,
-      limit: number,
-      offset: number
-    ): Promise<ListResult<string>> {
+      filters: ApiGetProducersQuery
+    ): Promise<ListResultProducers<string>> {
       logger.info("Retrieving eServices Producers");
-      return await eserviceQuery.getEservicesProducers(filters, limit, offset);
+      return await eserviceQuery.getEservicesProducers(filters);
     },
   };
 }
