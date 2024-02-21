@@ -1,4 +1,5 @@
 import type { ProductSwitchItem } from '@pagopa/mui-italia'
+import type { TFunction } from 'i18next'
 
 export const documentationLink = 'https://docs.pagopa.it/interoperabilita-1'
 export const assistanceLink = 'https://selfcare.pagopa.it/assistenza'
@@ -29,4 +30,15 @@ export const RootLink = {
   href: 'https://www.pagopa.it',
   ariaLabel: 'Vai al sito di PagoPA S.p.A.',
   title: 'Vai al sito di PagoPA S.p.A.',
+}
+
+export const headLabels = (t: TFunction<'common', 'table'>): Array<string> => {
+  return [
+    t('eServiceName'),
+    t('version'),
+    t('producer'),
+    t('eServiceStatus'),
+    t('lastDetectionDate'),
+    '',
+  ]
 }

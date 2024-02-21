@@ -18,7 +18,7 @@ export const { routes, reactRouterDOMRoutes, hooks, components, utils } = new In
 })
   .addRoute({
     key: 'HOME',
-    path: '/home',
+    path: '/monitoraggio',
     element: <HomePage />,
     public: true,
     authLevels: ['admin'],

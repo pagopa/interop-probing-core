@@ -16,11 +16,7 @@ export const Header = () => {
   const jwt = useJwt()
 
   const handleLogout = () => {
-    logout(void 0, {
-      onSuccess(data) {
-        console.log('OK', data)
-      },
-    })
+    logout(void 0)
   }
   return (
     <header>
