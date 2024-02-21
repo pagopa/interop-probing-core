@@ -110,7 +110,8 @@
     "eServiceStatus": "E-service status",
     "lastDetectionDate": "Last detection date",
     "readMore": "Read more",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "noDataLabel": "No results"
   },
   "hour": "hours"
 }

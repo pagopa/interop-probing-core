@@ -106,17 +106,18 @@ export const MonitoringTable = () => {
       {isInitialLoading ? (
         <TableSkeleton />
       ) : (
-        <Table headLabels={headLabels(t)} isEmpty={!eservices || eservices?.content?.length === 0}>
+        <Table
+          headLabels={headLabels(t)}
+          isEmpty={!eservices || eservices?.content?.length === 0}
+          noDataLabel={t('noDataLabel')}
+        >
           {eservices?.content?.map((eService) => (
             <MonitoringTableRow key={eService.eserviceRecordId} row={eService} />
           ))}
         </Table>
       )}
 
-      <Pagination
-        {...paginationProps}
-        totalPages={getTotalPageCount(eservices?.totalElements) ?? 0}
-      />
+      <Pagination {...paginationProps} totalPages={getTotalPageCount(eservices?.totalElements)} />
     </>
   )
 }

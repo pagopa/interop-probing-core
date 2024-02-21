@@ -3,7 +3,7 @@ import type { InferRouteKey } from '@pagopa/interop-fe-commons'
 import { InteropRouterBuilder } from '@pagopa/interop-fe-commons'
 import { createBrowserRouter } from 'react-router-dom'
 import RoutesWrapper from './RoutesWrapper'
-import { HomePage } from '@/pages/HomePage/Home.page'
+import { MonitoringEServicesList } from '@/pages/MonitoringEServicesList/MonitoringEServicesList.page'
 import { LoginPage } from '@/pages/LoginPage/Login.Page'
 import { FirstAccessPage } from '@/pages/FirstAccessPage/FirstAccess.Page'
 import { RecoverPasswordPage } from '@/pages/RecoverPasswordPage/RecoverPassword.Page'
@@ -19,7 +19,7 @@ export const { routes, reactRouterDOMRoutes, hooks, components, utils } = new In
   .addRoute({
     key: 'MONITORING_E_SERVICE_LIST',
     path: '/monitoraggio',
-    element: <HomePage />,
+    element: <MonitoringEServicesList />,
     public: true,
     authLevels: ['admin'],
   })
