@@ -6,21 +6,19 @@ import {
   ApiUpdateEserviceStatePayload,
   ApiUpdateResponseReceivedPayload,
 } from "../../../probing-eservice-operations/src/model/types.js";
-import {
-  ApiEServiceContent,
-  EServiceProducersQueryFilters,
-  EServiceQueryFilters,
-  genericError,
-} from "pagopa-interop-probing-models";
+import { genericError } from "pagopa-interop-probing-models";
 import {
   ApiGetEserviceMainDataResponse,
   ApiGetEserviceProbingDataResponse,
-  ApiGetEservicesResponse,
+  ApiSearchEservicesResponse,
+  ApiGetProducersQuery,
   ApiGetProducersResponse,
+  ApiSearchEservicesQuery,
 } from "../model/types.js";
 import { fromPdndToMonitorState, isActive } from "../utilities/enumUtils.js";
 import { z } from "zod";
 import { logger } from "pagopa-interop-probing-commons";
+import { ApiEServiceContent } from "../model/eservice.js";
 
 export const operationsServiceBuilder = (
   operationsApiClient: ZodiosInstance<Api>
@@ -81,15 +79,12 @@ export const operationsServiceBuilder = (
     },
 
     async getEservices(
-      filters: EServiceQueryFilters,
-      limit: number,
-      offset: number
-    ): Promise<ApiGetEservicesResponse> {
+      filters: ApiSearchEservicesQuery
+    ): Promise<ApiSearchEservicesResponse> {
       const data = await operationsApiClient.searchEservices({
         queries: {
-          limit,
-          offset,
           ...filters,
+          ...{ versionNumber: Number(filters.versionNumber) || undefined },
         },
       });
 
@@ -111,7 +106,7 @@ export const operationsServiceBuilder = (
             result
           )} - data ${JSON.stringify(data.content)} `
         );
-        
+
         throw genericError("Unable to parse eservices items");
       } else {
         content.push(...result.data);
@@ -119,8 +114,8 @@ export const operationsServiceBuilder = (
 
       return {
         content,
-        offset,
-        limit,
+        offset: filters.offset,
+        limit: filters.limit,
         totalElements: data.totalElements,
       };
     },
@@ -155,16 +150,10 @@ export const operationsServiceBuilder = (
     },
 
     async getEservicesProducers(
-      filters: EServiceProducersQueryFilters,
-      limit: number,
-      offset: number
+      filters: ApiGetProducersQuery
     ): Promise<ApiGetProducersResponse> {
       const { content = [] } = await operationsApiClient.getEservicesProducers({
-        queries: {
-          limit,
-          offset,
-          ...filters,
-        },
+        queries: filters,
       });
 
       return content.map((el) => ({ label: el, value: el }));

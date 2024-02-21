@@ -15,19 +15,17 @@ import {
 import { updateEServiceErrorMapper } from "../src/utilities/errorMappers.js";
 import {
   ApiGetEserviceMainDataResponse,
-  ApiGetEservicesResponse,
+  ApiSearchEservicesResponse,
   ApiGetProducersResponse,
   ApiUpdateEserviceFrequencyPayload,
   ApiUpdateEserviceProbingStatePayload,
   ApiUpdateEserviceStatePayload,
+  ApiSearchEservicesQuery,
+  ApiGetProducersQuery,
 } from "../src/model/types.js";
 import {
   EServiceMainData,
   EServiceProbingData,
-  EServiceProducersQueryFilters,
-  EServiceQueryFilters,
-  EserviceInteropState,
-  EserviceMonitorState,
   eserviceInteropState,
   eserviceMonitorState,
   responseStatus,
@@ -335,14 +333,11 @@ describe("eService Router", () => {
   });
 
   it("the list of e-services has been retrieved", async () => {
-    const searchEservices: EServiceQueryFilters = {
+    const searchEservices: ApiSearchEservicesQuery = {
       eserviceName: "eService 001",
       producerName: "eService producer 001",
       versionNumber: 1,
-      state: [eserviceMonitorState.offline],
-    };
-
-    const pagination: { offset: number; limit: number } = {
+      state: [eserviceMonitorState.online],
       offset: 0,
       limit: 2,
     };
@@ -350,28 +345,25 @@ describe("eService Router", () => {
     vi.spyOn(operationsApiClient, "searchEservices").mockResolvedValue({
       content: [],
       totalElements: 0,
-      ...pagination,
-    } satisfies ApiGetEservicesResponse);
+      offset: 0,
+      limit: 2,
+    } satisfies ApiSearchEservicesResponse);
 
     const response = await probingApiClient
       .get(`/eservices`)
       .set("Content-Type", "application/json")
-      .query({
-        ...searchEservices,
-        ...pagination,
-      });
+      .query(searchEservices);
+
+    console.log(response, response);
     expect(response.status).toBe(200);
   });
 
   it("the retrieved list of e-services is empty", async () => {
-    const searchEservices: EServiceQueryFilters = {
+    const searchEservices: ApiSearchEservicesQuery = {
       eserviceName: "eService 001",
       producerName: "eService producer 001",
       versionNumber: 1,
       state: [eserviceMonitorState.offline],
-    };
-
-    const pagination: { offset: number; limit: number } = {
       offset: 0,
       limit: 2,
     };
@@ -379,36 +371,37 @@ describe("eService Router", () => {
     vi.spyOn(operationsApiClient, "searchEservices").mockResolvedValue({
       content: [],
       totalElements: 0,
-      ...pagination,
-    } satisfies ApiGetEservicesResponse);
+      offset: 0,
+      limit: 2,
+    } satisfies ApiSearchEservicesResponse);
 
     const response = await probingApiClient
       .get(`/eservices`)
       .set("Content-Type", "application/json")
-      .query({
-        ...searchEservices,
-        ...pagination,
-      });
+      .query(searchEservices);
     expect(response.status).toBe(200);
   });
 
   it("bad request exception is thrown because size request parameter is missing", async () => {
-    const searchEservices: EServiceQueryFilters = {
+    const searchEservices: ApiSearchEservicesQuery = {
       eserviceName: "eService 001",
       producerName: "eService producer 001",
       versionNumber: 1,
+      offset: 0,
+      limit: 1,
     };
 
-    const pagination: { offset: number } = {
-      offset: 0,
-    };
+    const { eserviceName, producerName, versionNumber, offset } =
+      searchEservices;
 
     const response = await probingApiClient
       .get(`/eservices`)
       .set("Content-Type", "application/json")
       .query({
-        ...searchEservices,
-        ...pagination,
+        eserviceName,
+        producerName,
+        versionNumber,
+        offset,
       });
 
     expect(response.text).toContain(`"context":"query.limit"`);
@@ -417,22 +410,25 @@ describe("eService Router", () => {
   });
 
   it("bad request exception is thrown because pageNumber request parameter is missing", async () => {
-    const searchEservices: EServiceQueryFilters = {
+    const searchEservices: ApiSearchEservicesQuery = {
       eserviceName: "eService 001",
       producerName: "eService producer 001",
       versionNumber: 1,
-    };
-
-    const pagination: { limit: number } = {
+      offset: 0,
       limit: 1,
     };
+
+    const { eserviceName, producerName, versionNumber, limit } =
+      searchEservices;
 
     const response = await probingApiClient
       .get(`/eservices`)
       .set("Content-Type", "application/json")
       .query({
-        ...searchEservices,
-        ...pagination,
+        eserviceName,
+        producerName,
+        versionNumber,
+        limit,
       });
 
     expect(response.text).toContain(`"context":"query.offset"`);
@@ -539,11 +535,8 @@ describe("eService Router", () => {
   });
 
   it("given a valid producer name, then returns a non-empty list", async () => {
-    const eservicesProducers: EServiceProducersQueryFilters = {
+    const eservicesProducers: ApiGetProducersQuery = {
       producerName: "eService producer 001",
-    };
-
-    const pagination: { offset: number; limit: number } = {
       offset: 0,
       limit: 2,
     };
@@ -556,10 +549,7 @@ describe("eService Router", () => {
       await probingApiClient
         .get(`/producers`)
         .set("Content-Type", "application/json")
-        .query({
-          ...eservicesProducers,
-          ...pagination,
-        });
+        .query(eservicesProducers);
 
     expect(Array.isArray(body)).toBe(true);
     expect(body.length).toBeGreaterThan(0);
@@ -567,11 +557,8 @@ describe("eService Router", () => {
   });
 
   it("given a valid producer name with no matching records, then returns an empty list", async () => {
-    const eservicesProducers: EServiceProducersQueryFilters = {
+    const eservicesProducers: ApiGetProducersQuery = {
       producerName: "eService producer 001",
-    };
-
-    const pagination: { offset: number; limit: number } = {
       offset: 0,
       limit: 2,
     };
@@ -584,10 +571,7 @@ describe("eService Router", () => {
       await probingApiClient
         .get(`/producers`)
         .set("Content-Type", "application/json")
-        .query({
-          ...eservicesProducers,
-          ...pagination,
-        });
+        .query(eservicesProducers);
 
     expect(body).toEqual(expect.arrayContaining([]));
     expect(status).toBe(200);

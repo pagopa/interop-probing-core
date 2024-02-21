@@ -1,4 +1,4 @@
-import { ZodiosBodyByPath, ZodiosResponseByPath } from "@zodios/core";
+import { ZodiosBodyByPath, ZodiosQueryParamsByPath, ZodiosResponseByPath } from "@zodios/core";
 import { api } from "./generated/api.js";
 
 export type Api = typeof api.api;
@@ -21,7 +21,13 @@ export type ApiUpdateEserviceFrequencyPayload = ZodiosBodyByPath<
   "/eservices/:eserviceId/versions/:versionId/updateFrequency"
 >;
 
-export type ApiGetEservicesResponse = ZodiosResponseByPath<
+export type ApiSearchEservicesResponse = ZodiosResponseByPath<
+  Api,
+  "get",
+  "/eservices"
+>;
+
+export type ApiSearchEservicesQuery = ZodiosQueryParamsByPath<
   Api,
   "get",
   "/eservices"
@@ -40,6 +46,12 @@ export type ApiGetEserviceProbingDataResponse = ZodiosResponseByPath<
 >;
 
 export type ApiGetProducersResponse = ZodiosResponseByPath<
+  Api,
+  "get",
+  "/producers"
+>;
+
+export type ApiGetProducersQuery = ZodiosQueryParamsByPath<
   Api,
   "get",
   "/producers"
