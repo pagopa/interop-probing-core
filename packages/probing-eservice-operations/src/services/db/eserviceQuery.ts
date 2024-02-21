@@ -10,14 +10,16 @@ import {
   EServiceMainData,
   EServiceProbingData,
   PollingResource,
-  EServiceQueryFilters,
-  EServiceProducersQueryFilters,
 } from "pagopa-interop-probing-models";
 import { ModelService } from "./dbService.js";
 import {
   ListResultEservices,
   ListResultProducers,
 } from "../../model/dbModels.js";
+import {
+  ApiGetProducersQuery,
+  ApiSearchEservicesQuery,
+} from "../../model/types.js";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function eserviceQueryBuilder(modelService: ModelService) {
@@ -80,11 +82,9 @@ export function eserviceQueryBuilder(modelService: ModelService) {
     ): Promise<EService | undefined> =>
       await modelService.getEServiceByIdAndVersion(eserviceId, versionId),
     searchEservices: async (
-      filters: EServiceQueryFilters,
-      limit: number,
-      offset: number
+      filters: ApiSearchEservicesQuery
     ): Promise<ListResultEservices<EServiceContent>> =>
-      await modelService.searchEservices(filters, limit, offset),
+      await modelService.searchEservices(filters),
     getEserviceMainData: async (
       eserviceRecordId: number
     ): Promise<EServiceMainData> =>
@@ -94,11 +94,9 @@ export function eserviceQueryBuilder(modelService: ModelService) {
     ): Promise<EServiceProbingData> =>
       await modelService.getEserviceProbingData(eserviceRecordId),
     getEservicesProducers: async (
-      filters: EServiceProducersQueryFilters,
-      limit: number,
-      offset: number
+      filters: ApiGetProducersQuery
     ): Promise<ListResultProducers<string>> =>
-      await modelService.getEservicesProducers(filters, limit, offset),
+      await modelService.getEservicesProducers(filters),
     getEservicesReadyForPolling: async (
       limit: number,
       offset: number

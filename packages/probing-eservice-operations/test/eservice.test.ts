@@ -6,8 +6,6 @@ import {
   EserviceProbingResponseEntities,
 } from "../src/repositories/modelRepository.js";
 import {
-  EServiceProducersQueryFilters,
-  EServiceQueryFilters,
   EserviceStatus,
   eserviceInteropState,
   eserviceMonitorState,
@@ -53,6 +51,7 @@ import { EserviceProbingResponseSchema } from "../src/repositories/entity/eservi
 import { z } from "zod";
 import { nowDateUTC } from "../src/utilities/date.js";
 import { resolve } from 'path';
+import { ApiGetProducersQuery, ApiSearchEservicesQuery } from "../src/model/types.js";
 
 describe("database test", async () => {
   let eservices: EserviceEntities;
@@ -171,14 +170,16 @@ describe("database test", async () => {
   describe("Eservice service", () => {
     describe("searchEservices", () => {
       it("service returns searchEservices response object with content empty", async () => {
-        const filters: EServiceQueryFilters = {
+        const filters: ApiSearchEservicesQuery = {
           eserviceName: "eService 001",
           producerName: "eService producer 001",
           versionNumber: 1,
           state: [eserviceMonitorState.offline],
+          limit: 2,
+          offset: 0
         };
 
-        const result = await eserviceService.searchEservices(filters, 50, 0);
+        const result = await eserviceService.searchEservices(filters);
 
         expect(result.content).toStrictEqual([]);
         expect(result.totalElements).toBe(0);
@@ -191,7 +192,7 @@ describe("database test", async () => {
         };
         await createEservice({ eserviceData });
 
-        const filters: EServiceQueryFilters = {
+        const filters: ApiSearchEservicesQuery = {
           ...eserviceData,
           versionNumber: 1,
           state: [
@@ -199,9 +200,11 @@ describe("database test", async () => {
             eserviceMonitorState.offline,
             eserviceMonitorState.online,
           ],
+          limit: 2,
+          offset: 0
         };
 
-        const result = await eserviceService.searchEservices(filters, 2, 0);
+        const result = await eserviceService.searchEservices(filters);
         expect(result.totalElements).not.toBe(0);
         expect(result.offset).toBe(0);
         expect(result.limit).toBe(2);
@@ -215,13 +218,15 @@ describe("database test", async () => {
         };
         await createEservice({ eserviceData });
 
-        const filters: EServiceQueryFilters = {
+        const filters: ApiSearchEservicesQuery = {
           ...eserviceData,
           versionNumber: 2,
           state: [eserviceMonitorState["n/d"]],
+          limit: 2,
+          offset: 0
         };
 
-        const result = await eserviceService.searchEservices(filters, 2, 0);
+        const result = await eserviceService.searchEservices(filters);
 
         expect(result.content).toStrictEqual([]);
         expect(result.totalElements).toBe(0);
@@ -234,13 +239,15 @@ describe("database test", async () => {
         };
         await createEservice({ eserviceData });
 
-        const filters: EServiceQueryFilters = {
+        const filters: ApiSearchEservicesQuery = {
           ...eserviceData,
           versionNumber: 1,
           state: [eserviceMonitorState.offline],
+          limit: 2,
+          offset: 0
         };
 
-        const result = await eserviceService.searchEservices(filters, 2, 0);
+        const result = await eserviceService.searchEservices(filters);
 
         expect(result.totalElements).toBe(1);
         expect(result.offset).toBe(0);
@@ -301,28 +308,28 @@ describe("database test", async () => {
 
     describe("getEservicesProducers", () => {
       it("given a valid producer name with no matching records, then returns an empty list", async () => {
-        const filters: EServiceProducersQueryFilters = {
+        const filters: ApiGetProducersQuery = {
           producerName: "no matching records eService producer",
+          limit: 1,
+          offset: 0
         };
         await createEservice();
         const producers = await eserviceService.getEservicesProducers(
           filters,
-          1,
-          0
         );
 
         expect(producers.content.length).toBe(0);
       });
 
       it("given specific valid producer name, then returns a non-empty list", async () => {
-        const filters: EServiceProducersQueryFilters = {
+        const filters: ApiGetProducersQuery = {
           producerName: "eService producer 001",
+          limit: 10,
+          offset: 0
         };
         await createEservice();
         const result = await eserviceService.getEservicesProducers(
           filters,
-          10,
-          0
         );
 
         expect(result.content.length).not.toBe(0);
@@ -330,15 +337,15 @@ describe("database test", async () => {
       });
 
       it("given partial producerName as parameter, service returns list of 2 producers", async () => {
-        const eServiceProducer1: EServiceProducersQueryFilters = {
+        const eServiceProducer1: ApiGetProducersQuery = {
           producerName: "eService producer",
+          limit: 2,
+          offset: 0
         };
         await createEservice();
         await createEservice();
         const producers = await eserviceService.getEservicesProducers(
           eServiceProducer1,
-          2,
-          0
         );
 
         expect(producers.content.length).toBe(2);

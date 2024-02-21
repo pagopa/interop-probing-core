@@ -17,8 +17,6 @@ import {
   eserviceInteropState,
   responseStatus,
   PollingResource,
-  EServiceQueryFilters,
-  EServiceProducersQueryFilters,
 } from "pagopa-interop-probing-models";
 import { Brackets } from "typeorm";
 import { z } from "zod";
@@ -36,6 +34,7 @@ import { EserviceView } from "../../repositories/entity/view/eservice.entity.js"
 import { config } from "../../utilities/config.js";
 import { WhereExpressionBuilder } from "typeorm/browser";
 import { ListResultEservices, ListResultProducers } from "../../model/dbModels.js";
+import { ApiGetProducersQuery, ApiSearchEservicesQuery } from "../../model/types.js";
 
 const probingDisabledPredicate = (queryBuilder: WhereExpressionBuilder) => {
   const extractMinute = `CAST(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60 AS INTEGER) > polling_frequency`;
@@ -92,7 +91,7 @@ const probingEnabledPredicate = (
 
 const addPredicateEservices = (
   queryBuilder: SelectQueryBuilder<EserviceViewEntities>,
-  filters: EServiceQueryFilters
+  filters: ApiSearchEservicesQuery
 ): void => {
   const { eserviceName, producerName, versionNumber, state } = filters;
 
@@ -316,17 +315,15 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     },
 
     async searchEservices(
-      filters: EServiceQueryFilters,
-      limit: number,
-      offset: number
+      filters: ApiSearchEservicesQuery
     ): Promise<ListResultEservices<EServiceContent>> {
       const [data, count] = await eserviceView
         .createQueryBuilder()
         .where((qb: SelectQueryBuilder<EserviceViewEntities>) =>
           addPredicateEservices(qb, filters)
         )
-        .skip(offset)
-        .take(limit)
+        .skip(filters.offset)
+        .take(filters.limit)
         .getManyAndCount();
 
       const result = z.array(EServiceContent).safeParse(data.map((d) => d));
@@ -342,8 +339,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
 
       return {
         content: result.data,
-        offset,
-        limit,
+        offset: filters.offset,
+        limit: filters.limit,
         totalElements: count,
       };
     },
@@ -432,9 +429,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     },
 
     async getEservicesProducers(
-      filters: EServiceProducersQueryFilters,
-      limit: number,
-      offset: number
+      filters: ApiGetProducersQuery,
     ): Promise<ListResultProducers<string>> {
       const data = await eservices
         .createQueryBuilder("eservice")
@@ -443,8 +438,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         })
         .orderBy("eservice.producerName", "ASC")
         .select(["eservice.producerName"])
-        .skip(offset)
-        .take(limit)
+        .skip(filters.offset)
+        .take(filters.limit)
         .getMany();
 
       const result = z

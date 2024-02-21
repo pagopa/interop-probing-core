@@ -7,12 +7,12 @@ import {
   EServiceProbingData,
   EserviceProbingUpdateLastRequest,
   EserviceSaveRequest,
-  EServiceQueryFilters,
-  EServiceProducersQueryFilters,
 } from "pagopa-interop-probing-models";
 import { EserviceQuery } from "./db/eserviceQuery.js";
 import {
+  ApiGetProducersQuery,
   ApiSaveEservicePayload,
+  ApiSearchEservicesQuery,
   ApiUpdateEserviceFrequencyPayload,
   ApiUpdateEserviceProbingStatePayload,
   ApiUpdateEserviceStatePayload,
@@ -154,12 +154,10 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
     },
 
     async searchEservices(
-      filters: EServiceQueryFilters,
-      limit: number,
-      offset: number
+      filters: ApiSearchEservicesQuery
     ): Promise<ListResultEservices<EServiceContent>> {
       logger.info("Retrieving eServices");
-      return await eserviceQuery.searchEservices(filters, limit, offset);
+      return await eserviceQuery.searchEservices(filters);
     },
 
     async getEserviceMainData(
@@ -185,12 +183,10 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
     },
 
     async getEservicesProducers(
-      filters: EServiceProducersQueryFilters,
-      limit: number,
-      offset: number
+      filters: ApiGetProducersQuery
     ): Promise<ListResultProducers<string>> {
       logger.info("Retrieving eServices Producers");
-      return await eserviceQuery.getEservicesProducers(filters, limit, offset);
+      return await eserviceQuery.getEservicesProducers(filters);
     },
   };
 }
