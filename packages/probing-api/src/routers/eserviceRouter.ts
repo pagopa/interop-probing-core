@@ -72,18 +72,7 @@ const eServiceRouter = (
     router
       .get("/eservices", async (req, res) => {
         try {
-          const { eserviceName, producerName, state, versionNumber } =
-            req.query;
-          const eservices = await operationsService.getEservices(
-            {
-              ...(eserviceName && { eserviceName }),
-              ...(producerName && { producerName }),
-              ...(state && { state }),
-              ...(versionNumber && { versionNumber: Number(versionNumber) }),
-            },
-            req.query.limit,
-            req.query.offset
-          );
+          const eservices = await operationsService.getEservices(req.query);
 
           return res
             .status(200)
@@ -126,13 +115,7 @@ const eServiceRouter = (
       })
       .get("/producers", async (req, res) => {
         try {
-          const producers = await operationsService.getEservicesProducers(
-            {
-              producerName: req.query.producerName,
-            },
-            req.query.limit,
-            req.query.offset
-          );
+          const producers = await operationsService.getEservicesProducers(req.query);
 
           return res.status(200).json(producers).end();
         } catch (error) {
