@@ -39,7 +39,7 @@ function useResolveError(fallbackProps: FallbackProps): UseResolveErrorReturnTyp
   )
 
   const backToHomeButton = (
-    <Link as="button" variant="contained" to="HOME">
+    <Link as="button" variant="contained" to="MONITORING_E_SERVICE_LIST">
       {t('actions.backToHome')}
     </Link>
   )
