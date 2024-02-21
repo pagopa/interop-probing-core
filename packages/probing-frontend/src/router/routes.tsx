@@ -81,9 +81,9 @@ export const router = createBrowserRouter(
       element: <RoutesWrapper />,
       children: reactRouterDOMRoutes,
     },
-    { path: '/', element: <components.Redirect to="HOME" /> },
+    { path: '/', element: <components.Redirect to="MONITORING_E_SERVICE_LIST" /> },
     { path: '/ripristino-password', element: <components.Redirect to="CREATE_PASSWORD" /> },
-    { path: '/*', element: <components.Redirect to="HOME" /> },
+    { path: '/*', element: <components.Redirect to="MONITORING_E_SERVICE_LIST" /> },
   ],
   { basename: '/' }
 )
