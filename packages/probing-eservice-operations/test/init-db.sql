@@ -1,3 +1,6 @@
+-- This SQL script creates the necessary database schema and tables for the probing application for unit test.
+-- Note: This script provides a temporary approach and should be replaced with a more robust solution in the future.
+
 CREATE SCHEMA IF NOT EXISTS probing;
 
 CREATE SEQUENCE IF NOT EXISTS probing.eservice_sequence START WITH 1 INCREMENT BY 1;
