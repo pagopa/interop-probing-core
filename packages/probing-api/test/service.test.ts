@@ -24,6 +24,7 @@ import {
   ApiGetProducersQuery,
 } from "../src/model/types.js";
 import {
+  EServiceContent,
   EServiceMainData,
   EServiceProbingData,
   eserviceInteropState,
@@ -337,17 +338,33 @@ describe("eService Router", () => {
       eserviceName: "eService 001",
       producerName: "eService producer 001",
       versionNumber: 1,
-      state: [eserviceMonitorState.online],
+      state: [eserviceMonitorState.online, eserviceMonitorState["n/d"]],
       offset: 0,
       limit: 2,
     };
 
+    const eservice: EServiceContent = {
+      eserviceName: "eService 001",
+      producerName: "eService producer 001",
+      versionNumber: 1,
+      eserviceRecordId: 1,
+      responseReceived: new Date().toISOString(),
+      state: eserviceInteropState.inactive,
+      lastRequest: "2024-02-22T12:00:00Z",
+      responseStatus: responseStatus.ok,
+      basePath: ["path"],
+      technology: "REST",
+      pollingFrequency: 60,
+      probingEnabled: true,
+      audience: ["audience"],
+    };
+
     vi.spyOn(operationsApiClient, "searchEservices").mockResolvedValue({
-      content: [],
+      content: [eservice],
       totalElements: 0,
       offset: 0,
       limit: 2,
-    } satisfies ApiSearchEservicesResponse);
+    });
 
     const response = await probingApiClient
       .get(`/eservices`)
@@ -363,7 +380,7 @@ describe("eService Router", () => {
       eserviceName: "eService 001",
       producerName: "eService producer 001",
       versionNumber: 1,
-      state: [eserviceMonitorState.offline],
+      state: [eserviceMonitorState.online, eserviceMonitorState.offline],
       offset: 0,
       limit: 2,
     };
