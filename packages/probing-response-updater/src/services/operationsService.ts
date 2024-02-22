@@ -7,7 +7,7 @@ import {
   makeApplicationError,
 } from "../model/domain/errors.js";
 
-export const responseUpdaterServiceBuilder = (operationsApiClient: ZodiosInstance<Api>) => {
+export const operationsServiceBuilder = (operationsApiClient: ZodiosInstance<Api>) => {
   return {
     async updateResponseReceived({
       params,
@@ -37,4 +37,4 @@ export const responseUpdaterServiceBuilder = (operationsApiClient: ZodiosInstanc
   };
 };
 
-export type ResponseUpdaterService = ReturnType<typeof responseUpdaterServiceBuilder>;
+export type OperationsService = ReturnType<typeof operationsServiceBuilder>;

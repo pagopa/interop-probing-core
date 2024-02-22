@@ -3,13 +3,13 @@ import { config } from "./utilities/config.js";
 import { createApiClient } from "../../probing-eservice-operations/src/model/generated/api.js";
 import { processMessage } from "./messagesHandler.js";
 import {
-  ResponseUpdaterService,
-  responseUpdaterServiceBuilder,
-} from "./services/responseUpdaterService.js";
+  OperationsService,
+  operationsServiceBuilder,
+} from "./services/operationsService.js";
 
 const operationsApiClient = createApiClient(config.operationsBaseUrl);
 
-const responseUpdaterService: ResponseUpdaterService = responseUpdaterServiceBuilder(operationsApiClient);
+const OperationsService: OperationsService = operationsServiceBuilder(operationsApiClient);
 
 const sqsClient: SQS.SQSClient = await SQS.instantiateClient(
   { region: config.awsRegion },
@@ -22,5 +22,5 @@ await SQS.runConsumer(
     queueUrl: config.sqsEndpointPollResultQueue,
     consumerPollingTimeout: config.consumerPollingTimeout,
   },
-  processMessage(responseUpdaterService)
+  processMessage(OperationsService)
 ).catch(logger.error);
