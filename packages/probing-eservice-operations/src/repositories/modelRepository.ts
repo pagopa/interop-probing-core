@@ -91,12 +91,18 @@ export class ModelRepository {
     this.eserviceView = this.entityManager.getRepository(EserviceView);
   }
 
-  public static async init(config: DbConfig): Promise<ModelRepository> {
+  public static async init(
+    config: DbConfig,
+    initDB: string | null = null
+  ): Promise<ModelRepository> {
     if (!ModelRepository.instance) {
       // eslint-disable-next-line functional/immutable-data
       ModelRepository.instance = new ModelRepository(config);
       const connectionStatus =
         await ModelRepository.instance.connection.initialize();
+      if (initDB) {
+        await ModelRepository.instance.entityManager.query(initDB);
+      }
       logger.info(
         `Database Connection Status: ${
           connectionStatus ? "Initialized" : "Not Initialized"
