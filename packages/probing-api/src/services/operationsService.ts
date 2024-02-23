@@ -15,7 +15,11 @@ import {
   ApiGetProducersResponse,
   ApiSearchEservicesQuery,
 } from "../model/types.js";
-import { fromPdndToMonitorState, isActive } from "../utilities/enumUtils.js";
+import {
+  fromECToMonitorState,
+  fromEPDToMonitorState,
+  isActive,
+} from "../utilities/enumUtils.js";
 import { z } from "zod";
 import { logger } from "pagopa-interop-probing-commons";
 import { ApiEServiceContent } from "../model/eservice.js";
@@ -89,16 +93,11 @@ export const operationsServiceBuilder = (
       });
 
       const content = [];
-      const result = z.array(ApiEServiceContent).safeParse(
-        data.content.map((d) => ({
-          eserviceRecordId: d.eserviceRecordId,
-          eserviceName: d.eserviceName,
-          producerName: d.producerName,
-          responseReceived: d.responseReceived,
-          state: fromPdndToMonitorState,
-          versionNumber: d.versionNumber,
-        }))
-      );
+      const mappedContent = data.content.map((el) => ({
+        ...el,
+        state: fromECToMonitorState(el),
+      }));
+      const result = z.array(ApiEServiceContent).safeParse(mappedContent);
 
       if (!result.success) {
         logger.error(
@@ -142,7 +141,7 @@ export const operationsServiceBuilder = (
       return {
         probingEnabled: data.probingEnabled,
         eserviceActive: isActive(data.state),
-        state: fromPdndToMonitorState(data),
+        state: fromEPDToMonitorState(data),
         ...(data.responseReceived && {
           responseReceived: data.responseReceived,
         }),

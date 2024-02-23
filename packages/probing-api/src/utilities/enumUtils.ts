@@ -5,6 +5,8 @@ import {
   responseStatus,
   EserviceStatus,
   EserviceMonitorState,
+  EServiceContent,
+  EServiceProbingData,
 } from "pagopa-interop-probing-models";
 import { config } from "./config.js";
 
@@ -16,20 +18,39 @@ const minutesDifferenceFromCurrentDate = (lastRequest: string) => {
   return (new Date().getTime() - new Date(lastRequest).getTime()) / (1000 * 60);
 };
 
-export function fromPdndToMonitorState({
-  responseStatus,
+export function fromECToMonitorState(
+  data: EServiceContent
+): EserviceMonitorState {
+  return handleState({
+    state: data.state,
+    probingEnabled: data.probingEnabled,
+    lastRequest: data.lastRequest,
+    responseReceived: data.responseReceived,
+    pollingFrequency: data.pollingFrequency,
+    responseStatus: data.responseStatus
+  });
+}
+
+export function fromEPDToMonitorState(
+  data: EServiceProbingData
+): EserviceMonitorState {
+  return handleState(data);
+}
+
+function handleState({
   state,
   probingEnabled,
-  responseReceived,
   lastRequest,
+  responseReceived,
   pollingFrequency,
+  responseStatus
 }: {
-  responseStatus: EserviceStatus;
-  state: EserviceInteropState;
-  probingEnabled: boolean;
-  responseReceived: string;
-  lastRequest: string;
-  pollingFrequency: number;
+  state: EserviceInteropState,
+  probingEnabled: boolean,
+  lastRequest?: string,
+  responseReceived?: string,
+  pollingFrequency: number,
+  responseStatus: EserviceStatus | undefined
 }): EserviceMonitorState {
   switch (state) {
     case eserviceInteropState.active:
@@ -80,7 +101,7 @@ export function checkND(
   );
 }
 
-export function checkOFFLINE(status: EserviceStatus) {
+export function checkOFFLINE(status: EserviceStatus | undefined) {
   return status === responseStatus.ko;
 }
 

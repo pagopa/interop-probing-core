@@ -371,7 +371,6 @@ describe("eService Router", () => {
       .set("Content-Type", "application/json")
       .query(searchEservices);
 
-    console.log(response, response);
     expect(response.status).toBe(200);
   });
 
