@@ -15,7 +15,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, sx }) => {
       sx={{
         px: 3,
         height: '100%',
-        py: 2,
+        py: 6,
         ...sx,
       }}
       bgcolor="#FAFAFA"

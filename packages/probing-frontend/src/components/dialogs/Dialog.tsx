@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { DialogBasic } from './DialogBasic'
 import type { DialogBasicProps, DialogProps, DialogSessionExpiredProps } from '@/types/dialog.types'
 import { DialogError } from './DialogError'

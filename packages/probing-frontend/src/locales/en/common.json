@@ -51,9 +51,13 @@
     }
   },
   "loginForm": {
+    "title": "Sign in",
+    "subtitle": "",
     "username": "Username",
     "password": "Password",
     "signIn": "Sign in",
+    "fieldRequired": "Password is mandatory",
+    "emailPattern": "Please insert a valid mail",
     "forgotPassword": "Forgot your password? <1>Click here</1> to reset it.",
     "clickHere": "Click here",
     "returnToList": "Return to e-service list"
@@ -64,17 +68,34 @@
     "newPassword": "New password",
     "newPasswordConfirm": "Confirm new password",
     "signIn": "Sign in",
-    "fieldRequired": "fieldRequired",
-    "passwordLengthError": "Password must be at least {{minLength}} characters long",
-    "passwordLowerCaseError": "Password must contain at least one lowercase letter",
-    "passwordUpperCaseError": "Password must contain at least one uppercase letter",
-    "passwordDigitError": "Password must contain at least one digit",
-    "passwordSpecialCharError": "Password must contain at least one special character",
-    "passwordMismatch": "Passwords do not match",
-    "passwordRequirements": "Password must meet the specified requirements"
+    "fieldRequired": "Password is mandatory",
+    "passwordLengthError": "Password is too short",
+    "passwordPatternError": "Password must contain at least one lowercase letter",
+    "notMatching": "Password not matching"
+  },
+  "restoreForm": {
+    "title": "Recover password",
+    "subtitle": "Your password must be at least 12 chatacters long and contain a lowercase letter, a uppercase letter, a number and a special character"
+  },
+  "recoverPasswordForm": {
+    "title": "Recover password",
+    "subtitle": "",
+    "email": "Email",
+    "emailPattern": "Please insert a valid mail",
+    "send": "Recover"
   },
   "homePage": {
     "title": "E-services status",
     "subtitle": "On this page, you can monitor the status of e-services provided by erogators on PDND Interoperabilità."
+  },
+  "EMAIL_SENT": {
+    "title": "You have a new message",
+    "subtitle": "If the email address you provided exists in our database, you will find password recovery instructions in your inbox (also check spam)",
+    "button": "Back to Home"
+  },
+  "PASSWORD_UPDATED": {
+    "title": "Password recovery completed",
+    "subtitle": "Your new password has been successfully saved",
+    "button": "Go to Login"
   }
 }

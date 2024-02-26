@@ -51,9 +51,13 @@
     }
   },
   "loginForm": {
+    "title": "Accedi",
+    "subtitle": "",
     "username": "Nome utente",
     "password": "Password",
     "signIn": "Accedi",
+    "fieldRequired": "Inserisci la password",
+    "emailPattern": "Inserisci una mail valida",
     "forgotPassword": "Hai dimenticato la password? <1>Clicca qui</1> per ripristinarla",
     "returnToList": "Torna alla lista degli e-service"
   },
@@ -62,10 +66,35 @@
     "subtitle": "La tua password deve essere lunga almeno 12 caratteri e contenere almeno una lettera minuscola, una maiuscola, un numero e un carattere speciale",
     "newPassword": "Nuova password",
     "newPasswordConfirm": "Conferma nuova password",
-    "signIn": "Accedi"
+    "signIn": "Accedi",
+    "passwordLengthError": "La password è troppo breve",
+    "passwordPatternError": "La password deve contenere almeno una maiuscola, una minuscola, un numero e un carattere speciale",
+    "fieldRequired": "Inserisci la password",
+    "notMatching": "Le due password non coincidono"
+  },
+  "restoreForm": {
+    "title": "Ripristino password",
+    "subtitle": "La tua password deve essere lunga almeno 12 caratteri e contenere almeno una lettera minuscola, una maiuscola, un numero e un carattere speciale"
+  },
+  "recoverPasswordForm": {
+    "title": "Recupero password",
+    "subtitle": "",
+    "email": "Email",
+    "emailPattern": "Inserisci una mail vaida",
+    "send": "Invia"
   },
   "homePage": {
     "title": "Stato degli e-service",
     "subtitle": "In questa pagina puoi monitorare lo stato degli e-service messi a disposizione degli erogatori su PDND Interoperabilità"
+  },
+  "EMAIL_SENT": {
+    "title": "Hai un nuovo messaggio",
+    "subtitle": "Se l'indirizzo che hai indicato esiste nel nostro database, troverai le istruzioni per il recupero password nella tua casella di posta (controlla anche lo spam)",
+    "button": "Torna alla home"
+  },
+  "PASSWORD_UPDATED": {
+    "title": "Ripristino password completato",
+    "subtitle": "La tua nuova password è stata salvata correttamente",
+    "button": "Vai alla login"
   }
 }
