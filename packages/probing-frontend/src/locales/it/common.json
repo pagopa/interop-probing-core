@@ -96,5 +96,21 @@
     "title": "Ripristino password completato",
     "subtitle": "La tua nuova password è stata salvata correttamente",
     "button": "Vai alla login"
-  }
+  },
+  "table": {
+    "serviceNameFilter": "Cerca per nome",
+    "serviceProducerFilter": "Cerca per erogatore",
+    "serviceVersionFilter": "Cerca per versione",
+    "serviceStateFilter": "Cerca stato",
+    "refresh": "Ricarica",
+    "eServiceName": "Nome e-service",
+    "version": "Versione",
+    "producer": "Erogatore",
+    "eServiceStatus": "Stato e-service",
+    "lastDetectionDate": "Data ultima rilevazione",
+    "readMore": "Approfondisci",
+    "loading": "Operazione in corso...",
+    "noDataLabel": "La ricerca non ha prodotto risultati"
+  },
+  "hour": "ore"
 }

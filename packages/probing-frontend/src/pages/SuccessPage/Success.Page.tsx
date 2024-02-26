@@ -21,7 +21,7 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({ parent }) => {
   const navigate = useNavigate()
 
   const handleSubmit = () => {
-    const targetRoute = parent === 'EMAIL_SENT' ? 'HOME' : 'LOGIN'
+    const targetRoute = parent === 'EMAIL_SENT' ? 'MONITORING_E_SERVICE_LIST' : 'LOGIN'
     navigate(targetRoute)
   }
 

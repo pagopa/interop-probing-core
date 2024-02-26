@@ -47,9 +47,9 @@ const acceptLanguageHeader: Record<LangCode, string> = {
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const sessionStorageToken = window.localStorage.getItem(STORAGE_KEY_SESSION_TOKEN)
-    if (sessionStorageToken) {
-      config.headers.Authorization = `Bearer ${sessionStorageToken}`
+    const localStorageToken = window.localStorage.getItem(STORAGE_KEY_SESSION_TOKEN)
+    if (localStorageToken) {
+      config.headers.Authorization = `Bearer ${localStorageToken}`
     }
 
     config.headers['Accept-Language'] = acceptLanguageHeader[i18next.language as LangCode]

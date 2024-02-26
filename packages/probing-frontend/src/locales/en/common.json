@@ -97,5 +97,21 @@
     "title": "Password recovery completed",
     "subtitle": "Your new password has been successfully saved",
     "button": "Go to Login"
-  }
+  },
+  "table": {
+    "serviceNameFilter": "Search for e-service's name",
+    "serviceProducerFilter": "Search for e-service's producer",
+    "serviceVersionFilter": "Search for e-service's version",
+    "serviceStateFilter": "Search for e-service's state",
+    "refresh": "Refresh",
+    "eServiceName": "E-service name",
+    "version": "Version",
+    "producer": "Producer",
+    "eServiceStatus": "E-service status",
+    "lastDetectionDate": "Last detection date",
+    "readMore": "Read more",
+    "loading": "Loading...",
+    "noDataLabel": "No results"
+  },
+  "hour": "hours"
 }

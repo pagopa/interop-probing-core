@@ -9,7 +9,7 @@ export const productSwitchItem: ProductSwitchItem = {
   linkType: 'internal',
 }
 export const STORAGE_KEY_SESSION_TOKEN = 'token'
-
+export const API_BASE_PATH = import.meta.env.VITE_BASE_PATH
 export const LANGUAGES = {
   it: { it: 'Italiano', en: 'Inglese' },
   en: { it: 'Italian', en: 'English' },

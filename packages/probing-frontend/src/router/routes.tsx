@@ -3,7 +3,7 @@ import type { InferRouteKey } from '@pagopa/interop-fe-commons'
 import { InteropRouterBuilder } from '@pagopa/interop-fe-commons'
 import { createBrowserRouter } from 'react-router-dom'
 import RoutesWrapper from './RoutesWrapper'
-import { HomePage } from '@/pages/HomePage/Home.page'
+import { MonitoringEServicesList } from '@/pages/MonitoringEServicesListPage/MonitoringEServicesList.page'
 import { LoginPage } from '@/pages/LoginPage/Login.Page'
 import { FirstAccessPage } from '@/pages/FirstAccessPage/FirstAccess.Page'
 import { RecoverPasswordPage } from '@/pages/RecoverPasswordPage/RecoverPassword.Page'
@@ -17,9 +17,9 @@ export const { routes, reactRouterDOMRoutes, hooks, components, utils } = new In
   languages: ['it', 'en'],
 })
   .addRoute({
-    key: 'HOME',
-    path: '/home',
-    element: <HomePage />,
+    key: 'MONITORING_E_SERVICE_LIST',
+    path: '/monitoraggio',
+    element: <MonitoringEServicesList />,
     public: true,
     authLevels: ['admin'],
   })
@@ -81,9 +81,9 @@ export const router = createBrowserRouter(
       element: <RoutesWrapper />,
       children: reactRouterDOMRoutes,
     },
-    { path: '/', element: <components.Redirect to="HOME" /> },
+    { path: '/', element: <components.Redirect to="MONITORING_E_SERVICE_LIST" /> },
     { path: '/ripristino-password', element: <components.Redirect to="CREATE_PASSWORD" /> },
-    { path: '/*', element: <components.Redirect to="HOME" /> },
+    { path: '/*', element: <components.Redirect to="MONITORING_E_SERVICE_LIST" /> },
   ],
   { basename: '/' }
 )
