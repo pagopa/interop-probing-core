@@ -1,4 +1,7 @@
-import { MonitoringQueries } from '@/api/monitoring/monitoring.hooks'
+import { Stack } from '@mui/system'
+import { Typography } from '@mui/material'
+import { useTranslation } from 'react-i18next'
+import { ChartWrapper } from './charts/ChartWrapper'
 
 export const MonitoringEserviceTelemetry = ({
   eserviceId,
@@ -7,15 +10,14 @@ export const MonitoringEserviceTelemetry = ({
   eserviceId: string
   pollingFrequency: number
 }) => {
-  const { data: eservicesTelemetry } = MonitoringQueries.useGetTelemetryData({
-    eserviceId,
-    pollingFrequency,
-  })
-  console.log(eservicesTelemetry)
+  const { t } = useTranslation('common', { keyPrefix: 'detailsPage' })
+
   return (
-    <div>
-      / / &nbsp;&nbsp;&nbsp;TO-DO TELEMETRY
-      {/* {JSON.stringify(eservicesTelemetry)} */}
-    </div>
+    <Stack spacing={1} sx={{ mt: 6, width: '100%', mx: 'auto' }}>
+      <Typography component={'h1'} variant="h5" sx={{ pb: 8 }}>
+        {t('historyTitle')}
+      </Typography>
+      <ChartWrapper eserviceId={eserviceId} pollingFrequency={pollingFrequency}></ChartWrapper>
+    </Stack>
   )
 }

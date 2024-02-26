@@ -113,6 +113,11 @@
     "loading": "Operazione in corso..."
   },
   "detailsPage": {
+    "titleOperativita": "Operatività",
+    "historyTitle": "Storico del monitoraggio",
+    "lineChartTitle": "Tempi di risposta",
+    "lineChartFailuresTitle": "Anomalie registrate",
+    "monitoringSuspended": "Monitoraggio sospeso",
     "subtitle": "In questa pagina puoi verificare lo stato dell'e-service in tempo reale ed esplorare lo storico delle performance",
     "producerName": "EROGATORE",
     "version": "VERSIONE",

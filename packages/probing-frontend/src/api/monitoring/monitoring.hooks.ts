@@ -12,6 +12,10 @@ import type {
 enum MonitoringQueryKeys {
   GetList = 'GetList',
   GetProducer = 'GetProducer',
+  GetEserviceData = 'GetEserviceData',
+  GetEserviceProbingData = 'GetEserviceProbingData',
+  GetTelemetryData = 'GetTelemetryData',
+  GetFilteredTelemetryData = 'GetFilteredTelemetryData',
 }
 
 function useGetList(params: { limit: number; offset: number }, config: UseQueryOptions<EService>) {
@@ -33,20 +37,20 @@ function useGetProducersList(
   })
 }
 
-function useGetEserviceData(params: { eServiceId: string }, config: UseQueryOptions<MainEservice>) {
+function useGetEserviceData(params: { eserviceId: string }, config: UseQueryOptions<MainEservice>) {
   return useQuery({
-    queryKey: ['GetEserviceData', params],
+    queryKey: [MonitoringQueryKeys.GetEserviceData, params],
     queryFn: () => MonitoringServices.getEserviceData<MainEservice>({ ...params, type: 'main' }),
     ...config,
   })
 }
 
 function useGetEserviceProbingData(
-  params: { eServiceId: string },
+  params: { eserviceId: string },
   config: UseQueryOptions<ProbingEservice>
 ) {
   return useQuery({
-    queryKey: ['GetEserviceProbingData', params],
+    queryKey: [MonitoringQueryKeys.GetEserviceProbingData, params],
     queryFn: () =>
       MonitoringServices.getEserviceData<ProbingEservice>({ ...params, type: 'probing' }),
     ...config,
@@ -54,11 +58,11 @@ function useGetEserviceProbingData(
 }
 
 function useGetTelemetryData(
-  params: { eServiceId: string; pollingFrequency: number },
+  params: { eserviceId: string; pollingFrequency: number },
   config: UseQueryOptions<TelemetryData>
 ) {
   return useQuery({
-    queryKey: ['GetEserviceProbingData', params],
+    queryKey: [MonitoringQueryKeys.GetTelemetryData, params],
     queryFn: () => MonitoringServices.getTelemetryData(params),
     ...config,
   })
@@ -67,11 +71,11 @@ function useGetTelemetryData(
 function useGetFilteredTelemetryData(
   params: { pollingFrequency: number; startDate: string; endDate: string },
   config: UseQueryOptions<unknown>,
-  eServiceId: string
+  eserviceId: string
 ) {
   return useQuery({
-    queryKey: ['GetEserviceProbingData', params],
-    queryFn: () => MonitoringServices.getFilteredTelemetryData(params, eServiceId),
+    queryKey: [MonitoringQueryKeys.GetFilteredTelemetryData, params],
+    queryFn: () => MonitoringServices.getFilteredTelemetryData(params, eserviceId),
     ...config,
   })
 }
@@ -79,4 +83,8 @@ function useGetFilteredTelemetryData(
 export const MonitoringQueries = {
   useGetList,
   useGetProducersList,
+  useGetEserviceData,
+  useGetEserviceProbingData,
+  useGetTelemetryData,
+  useGetFilteredTelemetryData,
 }

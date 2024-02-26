@@ -1,3 +1,5 @@
+type StatusType = 'OK' | 'N/D' | 'KO' | 'OFFLINE'
+
 export type EserviceContent = {
   eserviceRecordId: number
   eserviceName: string
@@ -16,12 +18,12 @@ export type EService = {
 
 export type Percentage = {
   value: number
-  status: 'OK' | 'N/D' | 'KO' | 'OFFLINE' // Assuming the possible status are OK, N/D, KO, and OFFLINE
+  status: StatusType // Assuming the possible status are OK, N/D, KO, and OFFLINE
 }
 
 export type TelemetryData = {
-  performances: unknown[] // TODO: type data
-  failures: unknown[] // TODO: type data
+  performances: ServicePerformance[]
+  failures: FailurePerformance[]
   percentages: Percentage[]
 }
 
@@ -36,7 +38,18 @@ export type MainEservice = {
 
 export type ProbingEservice = {
   probingEnabled: boolean
-  state: 'OK' | 'N/D' | 'KO' | 'OFFLINE' // Assuming the possible states are OK, N/D, KO, and OFFLINE
+  state: StatusType // Assuming the possible states are OK, N/D, KO, and OFFLINE
   responseReceived: string | null
   eserviceActive: boolean
+}
+
+export type ServicePerformance = {
+  responseTime: number
+  status: StatusType
+  time: string
+}
+
+export type FailurePerformance = {
+  status: Exclude<StatusType, 'OFFLINE'>
+  time: string
 }

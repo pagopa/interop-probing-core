@@ -31,7 +31,6 @@ const FooterLogin = () => {
           to={'MONITORING_E_SERVICE_LIST'}
           as="button"
           startIcon={<ArrowBackIcon />}
-          variant="naked"
           sx={{ my: 4 }}
         >
           {t('returnToList')}

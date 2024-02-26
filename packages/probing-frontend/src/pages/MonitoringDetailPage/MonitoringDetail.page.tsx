@@ -16,15 +16,18 @@ export const MonitoringDetailPage = () => {
 
   const { showOverlay, hideOverlay } = useLoadingOverlay()
   const { id: eserviceId } = useParams<'MONITORING_DETAIL'>()
-  const { data: eservicesDetail } = MonitoringQueries.useGetEserviceData({
-    eserviceId,
-  })
+  const { data: eservicesDetail } = MonitoringQueries.useGetEserviceData(
+    {
+      eserviceId,
+    },
+    { suspense: false }
+  )
 
   const {
     data: eservicesProbingDetail,
     isSuccess: isSuccessProbing,
     refetch,
-  } = MonitoringQueries.useGetEserviceProbingData({ eserviceId })
+  } = MonitoringQueries.useGetEserviceProbingData({ eserviceId }, { suspense: false })
 
   const hasValidData = isSuccessProbing && eservicesDetail
 
@@ -57,7 +60,7 @@ export const MonitoringDetailPage = () => {
         />
       )}
       <Box sx={{ my: 4 }}>
-        <Link to={'HOME'} as="button" startIcon={<ArrowBackIcon />} variant="naked">
+        <Link to={'MONITORING_E_SERVICE_LIST'} as="button" startIcon={<ArrowBackIcon />}>
           {t('returnToList')}
         </Link>
       </Box>

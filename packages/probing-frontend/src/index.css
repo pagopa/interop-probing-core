@@ -23,3 +23,8 @@ pre {
 fieldset {
   border: none;
 }
+
+.line-chart-container,
+.line-chart-container-failures {
+  font-family: 'Poppins', sans-serif;
+}
