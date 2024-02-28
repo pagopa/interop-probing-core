@@ -11,7 +11,7 @@ export const callerServiceBuilder = (apiClientHandler: ApiClientHandler) => {
       const beforeRequestTimestamp: number = Date.now();
 
       try {
-        const baseUrl = `${eservice.basePath[0]}/${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
+        const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
         logger.info(
           `Perfoming Telemetry ${eservice.technology} request with eserviceRecordId: ${eservice.eserviceRecordId}`

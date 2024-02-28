@@ -49,7 +49,7 @@ describe("caller service test", () => {
     vi.spyOn(clientHandler, "sendREST").mockRejectedValue(apiClientError);
 
     const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
-    const baseUrl = `${eservice.basePath[0]}/${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
+    const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
     const telemetryResult = await callerService.performRequest(
       decodeSQSMessage(validMessage)
@@ -61,7 +61,7 @@ describe("caller service test", () => {
     );
     expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
 
-    await expect(clientHandler.sendREST).toHaveBeenCalledWith(baseUrl);
+    await expect(clientHandler.sendREST).toHaveBeenCalledWith(baseUrl, eservice);
   });
 
   it("Test KO UNKNOWN_KO_REASON call probing - REST", async () => {
@@ -84,7 +84,7 @@ describe("caller service test", () => {
     vi.spyOn(clientHandler, "sendREST").mockRejectedValue(apiClientError);
 
     const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
-    const baseUrl = `${eservice.basePath[0]}/${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
+    const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
     const telemetryResult = await callerService.performRequest(
       decodeSQSMessage(validMessage)
@@ -96,7 +96,7 @@ describe("caller service test", () => {
     );
     expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
 
-    await expect(clientHandler.sendREST).toHaveBeenCalledWith(baseUrl);
+    await expect(clientHandler.sendREST).toHaveBeenCalledWith(baseUrl, eservice);
   });
 
   it("Test KO CONNECTION_TIMEOUT call probing - SOAP", async () => {
@@ -119,7 +119,7 @@ describe("caller service test", () => {
     vi.spyOn(clientHandler, "sendSOAP").mockRejectedValue(apiClientError);
 
     const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
-    const baseUrl = `${eservice.basePath[0]}/${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
+    const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
     const telemetryResult = await callerService.performRequest(
       decodeSQSMessage(validMessage)
@@ -131,7 +131,7 @@ describe("caller service test", () => {
     );
     expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
 
-    await expect(clientHandler.sendSOAP).toHaveBeenCalledWith(baseUrl);
+    await expect(clientHandler.sendSOAP).toHaveBeenCalledWith(baseUrl, eservice);
   });
 
   it("Test OK call probing - SOAP", async () => {
@@ -150,7 +150,7 @@ describe("caller service test", () => {
     vi.spyOn(clientHandler, "sendSOAP").mockResolvedValue(apiClientResponse);
 
     const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
-    const baseUrl = `${eservice.basePath[0]}/${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
+    const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
     const telemetryResult = await callerService.performRequest(
       decodeSQSMessage(validMessage)
@@ -159,6 +159,6 @@ describe("caller service test", () => {
     expect(telemetryResult.status).toBe("OK");
     expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
 
-    await expect(clientHandler.sendSOAP).toHaveBeenCalledWith(baseUrl);
+    await expect(clientHandler.sendSOAP).toHaveBeenCalledWith(baseUrl, eservice);
   });
 });

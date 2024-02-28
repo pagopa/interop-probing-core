@@ -8,6 +8,7 @@ import {
 import { config } from "./config.js";
 import { v4 as uuidv4 } from "uuid";
 import { callerConstants } from "./constants.js";
+import { logger } from "pagopa-interop-probing-commons";
 
 interface Claims {
   aud: string[];
@@ -38,11 +39,12 @@ export const kmsClientBuilder = () => {
 
         const signedTokenBuffer = signResult.Signature;
         if (!signedTokenBuffer) {
-          throw new Error("Failed to generate signature AWS KMS.");
+          throw new Error("Failed to generate signature.");
         }
 
         return `${token}.${Buffer.from(signedTokenBuffer).toString("base64")}`;
-      } catch (err) {
+      } catch (err: unknown) {
+        logger.error(`Error AWS KMS: ${err}`);
         throw err;
       }
     },
