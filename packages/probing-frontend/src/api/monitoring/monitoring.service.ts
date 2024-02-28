@@ -51,9 +51,9 @@ async function getFilteredTelemetryData(
     endDate: string
   },
   eserviceId: string
-): Promise<unknown> {
+): Promise<TelemetryData> {
   // TODO: type data
-  const response = await axiosInstance.get<unknown>(
+  const response = await axiosInstance.get<TelemetryData>(
     `${import.meta.env.VITE_BASE_PATH}/telemetryData/eservices/filtered/${eserviceId}`,
     { params }
   )

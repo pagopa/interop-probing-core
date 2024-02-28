@@ -53,3 +53,57 @@ export type FailurePerformance = {
   status: Exclude<StatusType, 'OFFLINE'>
   time: string
 }
+
+export const mockResponse: TelemetryData = {
+  performances: [
+    {
+      responseTime: 40,
+      status: 'OK' as const,
+      time: '2024-02-27T15:17:01.579Z',
+    },
+    {
+      responseTime: 70,
+      status: 'OK' as const,
+      time: '2024-02-27T19:33:07.271Z',
+    },
+    {
+      responseTime: 38,
+      status: 'OK' as const,
+      time: '2024-02-27T20:53:07.271Z',
+    },
+    {
+      responseTime: 58,
+      status: 'OK' as const,
+      time: '2024-02-27T23:03:07.271Z',
+    },
+    {
+      responseTime: 61,
+      status: 'OK' as const,
+      time: '2024-02-27T10:39:01.371Z',
+    },
+  ].sort((a, b) => a.time.localeCompare(b.time)),
+  failures: [
+    {
+      status: 'KO' as const,
+      time: '2024-01-26T00:30:00Z',
+    },
+    {
+      status: 'KO' as const,
+      time: '2024-02-26T05:30:00Z',
+    },
+    {
+      status: 'KO' as const,
+      time: '2024-02-26T10:30:00Z',
+    },
+  ],
+  percentages: [
+    {
+      value: 94.28572,
+      status: 'OK' as const,
+    },
+    {
+      value: 5.714286,
+      status: 'KO' as const,
+    },
+  ],
+}

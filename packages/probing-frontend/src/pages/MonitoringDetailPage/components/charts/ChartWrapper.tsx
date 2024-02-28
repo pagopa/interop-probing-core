@@ -1,11 +1,16 @@
-import type { TelemetryData, ServicePerformance } from '@/api/monitoring/monitoring.models'
-import { Stack } from '@mui/system'
+import type { ServicePerformance, FailurePerformance } from '@/api/monitoring/monitoring.models'
+import { Box, Stack } from '@mui/system'
 import type { ScaleTime, ScaleLinear } from 'd3'
 import { scaleTime, scaleLinear, max } from 'd3'
 import { BarChart } from './BarChart'
 import { FailuresChart } from './FailuresChart'
 import { MonitoringQueries } from '@/api/monitoring/monitoring.hooks'
 import LineChart from './LineChart'
+import { Filters, useFilters } from '@pagopa/interop-fe-commons'
+import { useJwt } from '@/hooks/useJwt'
+import { useTranslation } from 'react-i18next'
+
+const lastYear = new Date(new Date().setFullYear(new Date().getFullYear() - 1))
 
 export const ChartWrapper = ({
   eserviceId,
@@ -14,6 +19,9 @@ export const ChartWrapper = ({
   eserviceId: string
   pollingFrequency: number
 }) => {
+  const { t } = useTranslation('common', { keyPrefix: 'detailsPage' })
+  const jwt = useJwt()
+
   const { data: eservicesTelemetry } = MonitoringQueries.useGetTelemetryData(
     {
       eserviceId,
@@ -22,83 +30,98 @@ export const ChartWrapper = ({
     { suspense: false }
   )
 
-  console.log(eservicesTelemetry)
-  const mockResponse: TelemetryData = {
-    performances: [
-      {
-        responseTime: 40,
-        status: 'OK' as const,
-        time: '2024-02-25T15:17:01.579Z',
-      },
-      {
-        responseTime: 70,
-        status: 'OK' as const,
-        time: '2024-02-25T19:33:07.271Z',
-      },
-      {
-        responseTime: 38,
-        status: 'OK' as const,
-        time: '2024-02-25T20:53:07.271Z',
-      },
-      {
-        responseTime: 58,
-        status: 'OK' as const,
-        time: '2024-02-26T05:03:07.271Z',
-      },
-      {
-        responseTime: 61,
-        status: 'OK' as const,
-        time: '2024-02-26T10:39:01.371Z',
-      },
-    ],
-    failures: [
-      {
-        status: 'KO' as const,
-        time: '2024-02-26T00:30:00Z',
-      },
-      {
-        status: 'KO' as const,
-        time: '2024-02-26T05:30:00Z',
-      },
-      {
-        status: 'KO' as const,
-        time: '2024-02-26T10:30:00Z',
-      },
-    ],
-    percentages: [
-      {
-        value: 94.28572,
-        status: 'OK' as const,
-      },
-      {
-        value: 5.714286,
-        status: 'KO' as const,
-      },
-    ],
+  const {
+    filtersParams: { startDate, endDate },
+    ...handlers
+  } = useFilters<{ startDate: string; endDate: string }>([
+    {
+      name: 'startDate',
+      type: 'datepicker',
+      label: t('startDateTime'),
+      maxDate: new Date(),
+      minDate: lastYear,
+    },
+    {
+      name: 'endDate',
+      type: 'datepicker',
+      label: t('endDateTime'),
+      maxDate: new Date(),
+      minDate: lastYear,
+    },
+  ])
+
+  const { data: eservicesFilteredTelemetry } = MonitoringQueries.useGetFilteredTelemetryData(
+    { pollingFrequency, startDate, endDate },
+    eserviceId,
+    { suspense: false }
+  )
+
+  const responseTelemetry = eservicesFilteredTelemetry || eservicesTelemetry
+
+  const firstPerformanceTime = new Date(
+    getMinTime<ServicePerformance>(responseTelemetry?.performances)
+  )
+
+  const firstFailureTime = new Date(getMinTime<FailurePerformance>(responseTelemetry?.failures))
+
+  const x: (time: Date) => ScaleTime<number, number, never> = (time) => {
+    return scaleTime().range([0, 600]).domain([time, new Date()])
   }
 
-  const minTime = new Date(new Date().getTime() - 1.1 * 24 * 60 * 60 * 1000).setMinutes(0)
-  const maxTime = new Date()
-  //x scale
-  const x: ScaleTime<number, number, never> = scaleTime().range([0, 600]).domain([minTime, maxTime])
-
-  //y scale
   const y: ScaleLinear<number, number, never> = scaleLinear()
     .domain([
       0,
-      max(mockResponse.performances, (d: ServicePerformance) => {
+      max(responseTelemetry?.performances ?? [], (d: ServicePerformance) => {
         return d.responseTime + 10 || null
       }) || 10,
     ] as Array<number>)
     .range([300, 0])
 
   return (
-    <Stack direction={'row'} sx={{ flexWrap: 'wrap' }}>
-      <Stack direction="column" spacing={4}>
-        <LineChart data={mockResponse.performances} xScale={x} yScale={y}></LineChart>
-        <FailuresChart failures={mockResponse.failures} x={x}></FailuresChart>
+    <>
+      <Box sx={{ maxWidth: '100%' }}>{jwt && <Filters {...handlers} />}</Box>
+      <Stack direction={'row'} sx={{ flexWrap: 'wrap' }}>
+        <Stack direction="column" spacing={4}>
+          <LineChart
+            data={responseTelemetry?.performances ?? []}
+            xScale={x(firstPerformanceTime)}
+            yScale={y}
+          ></LineChart>
+          <FailuresChart
+            failures={responseTelemetry?.failures ?? []}
+            x={x(firstFailureTime)}
+          ></FailuresChart>
+        </Stack>
+        <BarChart data={responseTelemetry?.percentages ?? []}></BarChart>
       </Stack>
-      <BarChart data={mockResponse.percentages}></BarChart>
-    </Stack>
+    </>
   )
+}
+
+/**
+ * Get the minimum time from an array of performance data.
+ * @param data - An array of `FailurePerformance | ServicePerformance`
+ * @returns The minimum time in milliseconds.
+ */
+const getMinTime: <T extends FailurePerformance | ServicePerformance>(
+  data: Array<T> | undefined
+) => number = (data) => {
+  let timesInMilliseconds = [new Date().getTime()]
+
+  if (data) {
+    // Extract the times from the data and convert them to milliseconds
+    timesInMilliseconds = data.map((performance) => new Date(performance.time).getTime())
+  }
+
+  // Find the minimum time in milliseconds
+  const minTimeInMilliseconds = Math.min(...timesInMilliseconds)
+
+  // Subtract 0.1 days from the minimum time (used as a left padding)
+  const minTimeAdjusted = minTimeInMilliseconds - 0.1 * 24 * 60 * 60 * 1000
+
+  // Create a new Date object using the adjusted time and set minutes to 0
+  const minTimeDate = new Date(minTimeAdjusted)
+  minTimeDate.setMinutes(0)
+
+  return minTimeDate.getTime()
 }

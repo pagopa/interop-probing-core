@@ -70,12 +70,13 @@ function useGetTelemetryData(
 
 function useGetFilteredTelemetryData(
   params: { pollingFrequency: number; startDate: string; endDate: string },
-  config: UseQueryOptions<unknown>,
-  eserviceId: string
+  eserviceId: string,
+  config: UseQueryOptions<TelemetryData>
 ) {
   return useQuery({
     queryKey: [MonitoringQueryKeys.GetFilteredTelemetryData, params],
     queryFn: () => MonitoringServices.getFilteredTelemetryData(params, eserviceId),
+    enabled: !!(params.startDate || params.endDate),
     ...config,
   })
 }

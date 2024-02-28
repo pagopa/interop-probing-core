@@ -26,7 +26,7 @@ const LineChart: React.FC<IProps> = ({ data, xScale, yScale }) => {
     </g>
   )
 
-  const renderXTicks = () => {
+  const XTicks = () => {
     return (
       <g transform={`translate(0, 300)`} opacity="40%" fontSize={10} textAnchor="middle">
         {xScale.ticks().map((d: Date) => (
@@ -58,7 +58,7 @@ const LineChart: React.FC<IProps> = ({ data, xScale, yScale }) => {
     )
   }
 
-  const renderYTicks = () => {
+  const YTicks = () => {
     return (
       <g opacity="40%" fontSize={10} textAnchor="end">
         {yScale.ticks().map((d) => (
@@ -83,8 +83,8 @@ const LineChart: React.FC<IProps> = ({ data, xScale, yScale }) => {
       <svg className="line-chart-container" width={650} height={400} role="img">
         {header}
         <g className="scales" transform={`translate(50, 60)`}>
-          {renderXTicks()}
-          {renderYTicks()}
+          <XTicks />
+          <YTicks />
         </g>
         <path
           className="line"

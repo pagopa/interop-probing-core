@@ -136,6 +136,8 @@
     "active": "active",
     "suspended": "suspended",
     "loading": "Loading...",
+    "startDateTime": "Period start date and time",
+    "endDateTime": "Period end date and time",
     "alerts": {
       "monitoringSuspended": "Monitoring suspended",
       "versionSuspendedMessage": "The e-service is offline because this version is currently suspended",

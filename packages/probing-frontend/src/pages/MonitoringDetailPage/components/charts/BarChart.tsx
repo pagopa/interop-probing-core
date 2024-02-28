@@ -4,11 +4,6 @@ import { max, scaleLinear, scaleBand } from 'd3'
 import { ChartsLegend } from './ChartsLegend'
 import { Box } from '@mui/system'
 
-// margin convention often used with D3
-const margin = { top: 20, right: 100, bottom: 20, left: 30 }
-const width = 300
-const height = 200
-
 const color: { [key: string]: string } = {
   OK: '#17324D',
   'N/D': '#A2ADB8',
@@ -23,30 +18,14 @@ export const BarChart = ({ data }: { data: { status: string; value: number }[] }
     { label: 'E-service offline', color: '#FE6666' },
   ]
   const xMax: number = max(data, (d) => d.value) as number
-
-  // x scale
-  const x: ScaleLinear<number, number, never> = scaleLinear().domain([0, xMax]).range([0, width])
-
-  // x scale
+  const x: ScaleLinear<number, number, never> = scaleLinear().domain([0, xMax]).range([0, 300])
   const y: ScaleBand<string> = scaleBand()
     .domain(data.map((d) => d.status))
-    .rangeRound([0, height - margin.left])
+    .rangeRound([0, 170])
     .paddingInner(0.25)
 
-  // header of the chart
-  const header: JSX.Element = (
-    <g className="bar-header" transform={`translate(0, ${margin.top})`}>
-      <text>
-        <tspan fontFamily="Titillium Web" fontSize="18px" color="#17324D" fontWeight="700">
-          {t('titleOperativita')}
-        </tspan>
-      </text>
-    </g>
-  )
-
-  // bars and bars' titles
-  const bars: JSX.Element = (
-    <g transform={`translate(0, ${margin.top * 2.5})`}>
+  const Bars = () => (
+    <g transform={`translate(0, 50)`}>
       {data
         .filter((percentage) => percentage.value)
         .map((d: { status: string; value: number }) => (
@@ -77,14 +56,15 @@ export const BarChart = ({ data }: { data: { status: string; value: number }[] }
   return (
     <>
       <Box>
-        <svg
-          className="bar-chart-container"
-          width={width + margin.left + margin.right}
-          height={height + margin.top + margin.bottom}
-          role="img"
-        >
-          {header}
-          {bars}
+        <svg className="bar-chart-container" width={430} height={240} role="img">
+          <g className="bar-header" transform={`translate(0, 20)`}>
+            <text>
+              <tspan fontFamily="Titillium Web" fontSize="18px" color="#17324D" fontWeight="700">
+                {t('titleOperativita')}
+              </tspan>
+            </text>
+          </g>
+          {<Bars />}
         </svg>
         <ChartsLegend legendElements={legendElements} />
       </Box>
