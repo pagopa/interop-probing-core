@@ -3,9 +3,9 @@ import { logger } from "pagopa-interop-probing-commons";
 import { callerConstants } from "../utilities/constants.js";
 import { responseStatus, technology } from "pagopa-interop-probing-models";
 import { getKoReason } from "../utilities/errorMapper.js";
-import { ClientHandler } from "../utilities/clientHandler.js";
+import { ApiClientHandler } from "../utilities/apiClientHandler.js";
 
-export const callerServiceBuilder = (clientHandler: ClientHandler) => {
+export const callerServiceBuilder = (apiClientHandler: ApiClientHandler) => {
   return {
     async performRequest(eservice: EserviceContentDto): Promise<TelemetryDto> {
       const beforeRequestTimestamp: number = Date.now();
@@ -19,10 +19,10 @@ export const callerServiceBuilder = (clientHandler: ClientHandler) => {
 
         switch (eservice.technology) {
           case technology.soap:
-            await clientHandler.sendSOAP(baseUrl);
+            await apiClientHandler.sendSOAP(baseUrl, eservice);
             break;
           default:
-            await clientHandler.sendREST(baseUrl);
+            await apiClientHandler.sendREST(baseUrl, eservice);
         }
 
         return {

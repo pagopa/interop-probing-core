@@ -10,14 +10,19 @@ import {
   decodeSQSMessage,
 } from "../src/model/models.js";
 import {
-  ClientHandler,
-  clientBuilder,
-} from "../src/utilities/clientHandler.js";
+  ApiClientHandler,
+  apiClientBuilder,
+} from "../src/utilities/apiClientHandler.js";
 import { callerConstants } from "../src/utilities/constants.js";
 import { mockApiClientError, mockApiClientResponse } from "./utils.js";
+import {
+  KMSClientHandler,
+  kmsClientBuilder,
+} from "../src/utilities/kmsClientHandler.js";
 
 describe("caller service test", () => {
-  const clientHandler: ClientHandler = clientBuilder();
+  const kmsClientHandler: KMSClientHandler = kmsClientBuilder();
+  const clientHandler: ApiClientHandler = apiClientBuilder(kmsClientHandler);
   const callerService: CallerService = callerServiceBuilder(clientHandler);
 
   afterAll(() => {

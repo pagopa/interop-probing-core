@@ -9,14 +9,16 @@ import {
   ProducerService,
   producerServiceBuilder,
 } from "./services/producerService.js";
-import { clientBuilder, ClientHandler } from "./utilities/clientHandler.js";
+import { apiClientBuilder, ApiClientHandler } from "./utilities/apiClientHandler.js";
+import { kmsClientBuilder, KMSClientHandler } from "./utilities/kmsClientHandler.js";
 
 const sqsClient: SQS.SQSClient = await SQS.instantiateClient(
   { region: config.awsRegion },
   config.applicationName
 );
-const clientHandler: ClientHandler = clientBuilder();
-const callerService: CallerService = callerServiceBuilder(clientHandler);
+const kmsClientHandler: KMSClientHandler = kmsClientBuilder();
+const apiClientHandler: ApiClientHandler = apiClientBuilder(kmsClientHandler);
+const callerService: CallerService = callerServiceBuilder(apiClientHandler);
 const producerService: ProducerService = producerServiceBuilder(sqsClient);
 
 await SQS.runConsumer(
