@@ -1,13 +1,13 @@
 import { z } from "zod";
 import { EserviceStatus, EserviceTechnology, responseStatus } from "../eservice/eservice.js";
 
-export const PollingDto = z.object({
+export const UpdateResponseReceivedDto = z.object({
   eserviceRecordId: z.number().min(1),
   status: EserviceStatus,
   responseReceived: z.string().datetime({ offset: true }),
 });
 
-export type PollingDto = z.infer<typeof PollingDto>;
+export type UpdateResponseReceivedDto = z.infer<typeof UpdateResponseReceivedDto>;
 
 export const TelemetryOkDto = z.object({
   status: z.literal(responseStatus.ok),

@@ -6,7 +6,7 @@ import {
   makeApplicationError,
 } from "./model/domain/errors.js";
 import { ProducerService } from "./services/producerService.js";
-import { PollingDto, TelemetryDto } from "pagopa-interop-probing-models";
+import { UpdateResponseReceivedDto, TelemetryDto } from "pagopa-interop-probing-models";
 
 export function processMessage(
   callerService: CallerService,
@@ -17,7 +17,7 @@ export function processMessage(
       const telemetryResult: TelemetryDto = await callerService.performRequest(
         decodeSQSMessage(message)
       );
-      const pollingResult: PollingDto = {
+      const pollingResult: UpdateResponseReceivedDto = {
         eserviceRecordId: telemetryResult.eserviceRecordId,
         status: telemetryResult.status,
         responseReceived: new Date().toISOString(),
