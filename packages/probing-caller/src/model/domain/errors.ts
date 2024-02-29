@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { P, match } from "ts-pattern";
 import { ZodError } from "zod";
-import { AxiosError } from 'axios';
+import { AxiosError } from "axios";
 export class ApplicationError<T> extends Error {
   public code: T;
   public title: string;
@@ -12,12 +12,12 @@ export class ApplicationError<T> extends Error {
     code,
     title,
     detail,
-    status
+    status,
   }: {
     code: T;
     title: string;
     detail: string;
-    status?: number
+    status?: number;
   }) {
     super(detail);
     this.code = code;
@@ -53,13 +53,13 @@ export function makeApplicationErrorBuilder<T extends string>(errors: {
       code,
       title,
       detail,
-      status
+      status,
     }: ApplicationError<ErrorCodes>): AppError =>
       new AppError({
         code: allErrors[code],
         title,
         detail,
-        status
+        status,
       });
 
     return match<unknown, AppError>(error)
@@ -79,6 +79,8 @@ export const errorCodes = {
   genericError: "9999",
   callProbingEndpointError: "0001",
   decodeSQSMessageError: "0002",
+  matchTechnologyError: "0003",
+  buildJWTError: "0004",
 } as const;
 
 export type ErrorCodes = keyof typeof errorCodes;
@@ -118,5 +120,25 @@ export function decodeSQSMessageError(
     detail: `${detail}`,
     code: "decodeSQSMessageError",
     title: "Decode SQS Message error",
+  });
+}
+
+export function matchTechnologyError(
+  detail: string
+): ApplicationError<ErrorCodes> {
+  return new ApplicationError({
+    detail: `${detail}`,
+    code: "matchTechnologyError",
+    title: `Unrecognized technology`,
+  });
+}
+
+export function buildJWTError(
+  detail: string
+): ApplicationError<ErrorCodes> {
+  return new ApplicationError({
+    detail: `${detail}`,
+    code: "buildJWTError",
+    title: `Failed to build JWT token`,
   });
 }
