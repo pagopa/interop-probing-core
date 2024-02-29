@@ -17,8 +17,8 @@ const sqsClient: SQS.SQSClient = await SQS.instantiateClient(
   config.applicationName
 );
 const kmsClientHandler: KMSClientHandler = kmsClientBuilder();
-const apiClientHandler: ApiClientHandler = apiClientBuilder(kmsClientHandler);
-const callerService: CallerService = callerServiceBuilder(apiClientHandler);
+const apiClientHandler: ApiClientHandler = apiClientBuilder();
+const callerService: CallerService = callerServiceBuilder(apiClientHandler, kmsClientHandler);
 const producerService: ProducerService = producerServiceBuilder(sqsClient);
 
 await SQS.runConsumer(

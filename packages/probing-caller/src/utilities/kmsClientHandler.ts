@@ -9,6 +9,7 @@ import { config } from "./config.js";
 import { v4 as uuidv4 } from "uuid";
 import { callerConstants } from "./constants.js";
 import { logger } from "pagopa-interop-probing-commons";
+import { buildJWTError } from "../model/domain/errors.js";
 
 interface Claims {
   aud: string[];
@@ -36,7 +37,6 @@ export const kmsClientBuilder = () => {
 
         const signCommand = new SignCommand(signReq);
         const signResult: SignCommandOutput = await kms.send(signCommand);
-
         const signedTokenBuffer = signResult.Signature;
         if (!signedTokenBuffer) {
           throw new Error("Failed to generate signature.");
@@ -44,8 +44,8 @@ export const kmsClientBuilder = () => {
 
         return `${token}.${Buffer.from(signedTokenBuffer).toString("base64")}`;
       } catch (err: unknown) {
-        logger.error(`Error AWS KMS: ${err}`);
-        throw err;
+        logger.error(`Error building JWT token: ${err}`);
+        throw buildJWTError(`${err}`);
       }
     },
   };

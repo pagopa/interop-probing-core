@@ -1,26 +1,24 @@
 import axios, { AxiosResponse } from "axios";
-import { KMSClientHandler } from "./kmsClientHandler.js";
-import { EserviceContentDto } from "../model/models.js";
 
-export const apiClientBuilder = (kmsClientHandler: KMSClientHandler) => {
+export const apiClientBuilder = () => {
   return {
-    async sendREST(baseUrl: string, eservice: EserviceContentDto): Promise<AxiosResponse> {
+    async sendREST(baseUrl: string, token: string): Promise<AxiosResponse> {
       return await axios({
         method: "GET",
         url: baseUrl,
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${await kmsClientHandler.buildJWT(eservice.basePath)}`,
+          Authorization: `Bearer ${token}`,
         },
       });
     },
-    async sendSOAP(baseUrl: string, eservice: EserviceContentDto): Promise<AxiosResponse> {
+    async sendSOAP(baseUrl: string, token: string): Promise<AxiosResponse> {
       return await axios({
         method: "POST",
         url: baseUrl,
         headers: {
           "Content-Type": "text/xml",
-          Authorization: `Bearer ${await kmsClientHandler.buildJWT(eservice.basePath)}`,
+          Authorization: `Bearer ${token}`,
         },
       });
     },
