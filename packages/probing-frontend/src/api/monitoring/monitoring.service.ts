@@ -25,7 +25,7 @@ async function getEserviceData<EserviceResponse>({
   type: 'main' | 'probing'
 }): Promise<EserviceResponse> {
   const response = await axiosInstance.get<EserviceResponse>(
-    `${import.meta.env.VITE_BASE_PATH}/eservices/${type}Data/${eserviceId}`
+    `${API_BASE_PATH}/eservices/${type}Data/${eserviceId}`
   )
   return response.data
 }
@@ -38,7 +38,7 @@ async function getTelemetryData({
   pollingFrequency: number
 }): Promise<TelemetryData> {
   const response = await axiosInstance.get<TelemetryData>(
-    `${import.meta.env.VITE_BASE_PATH}/telemetryData/eservices/${eserviceId}`,
+    `${API_BASE_PATH}/telemetryData/eservices/${eserviceId}`,
     { params: { pollingFrequency } }
   )
   return response.data
@@ -54,7 +54,7 @@ async function getFilteredTelemetryData(
 ): Promise<TelemetryData> {
   // TODO: type data
   const response = await axiosInstance.get<TelemetryData>(
-    `${import.meta.env.VITE_BASE_PATH}/telemetryData/eservices/filtered/${eserviceId}`,
+    `${API_BASE_PATH}/telemetryData/eservices/filtered/${eserviceId}`,
     { params }
   )
   return response.data
