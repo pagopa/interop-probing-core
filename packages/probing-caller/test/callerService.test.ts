@@ -1,4 +1,4 @@
-import { afterAll, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   CallerService,
   callerServiceBuilder,
@@ -14,18 +14,26 @@ import {
   apiClientBuilder,
 } from "../src/utilities/apiClientHandler.js";
 import { callerConstants } from "../src/utilities/constants.js";
-import { mockApiClientError, mockApiClientResponse } from "./utils.js";
+import { mockApiClientError, mockApiClientResponse, mockJWT } from "./utils.js";
 import {
   KMSClientHandler,
   kmsClientBuilder,
 } from "../src/utilities/kmsClientHandler.js";
+import {
+  AppError,
+  buildJWTError,
+  makeApplicationError,
+} from "../src/model/domain/errors.js";
 
 describe("caller service test", () => {
   const kmsClientHandler: KMSClientHandler = kmsClientBuilder();
-  const clientHandler: ApiClientHandler = apiClientBuilder(kmsClientHandler);
-  const callerService: CallerService = callerServiceBuilder(clientHandler);
+  const apiClientHandler: ApiClientHandler = apiClientBuilder();
+  const callerService: CallerService = callerServiceBuilder(
+    apiClientHandler,
+    kmsClientHandler
+  );
 
-  afterAll(() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 
@@ -46,14 +54,16 @@ describe("caller service test", () => {
       "connect ECONNREFUSED ::1:80",
       "ECONNREFUSED"
     );
-    vi.spyOn(clientHandler, "sendREST").mockRejectedValue(apiClientError);
+
+    vi.spyOn(kmsClientHandler, "buildJWT").mockResolvedValue(mockJWT);
+    vi.spyOn(apiClientHandler, "sendREST").mockRejectedValue(apiClientError);
 
     const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
     const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
-    const telemetryResult = await callerService.performRequest(
-      decodeSQSMessage(validMessage)
-    );
+    const telemetryResult = await callerService.performRequest(eservice);
+
+    expect(kmsClientHandler.buildJWT).toHaveBeenCalledWith(eservice.audience);
 
     expect(telemetryResult.status).toBe("KO");
     expect((telemetryResult as TelemetryKoDto).koReason).toBe(
@@ -61,7 +71,7 @@ describe("caller service test", () => {
     );
     expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
 
-    await expect(clientHandler.sendREST).toHaveBeenCalledWith(baseUrl, eservice);
+    expect(apiClientHandler.sendREST).toHaveBeenCalledWith(baseUrl, mockJWT);
   });
 
   it("Test KO UNKNOWN_KO_REASON call probing - REST", async () => {
@@ -81,14 +91,13 @@ describe("caller service test", () => {
       "Bad Gateway",
       "ERR_BAD_RESPONSE"
     );
-    vi.spyOn(clientHandler, "sendREST").mockRejectedValue(apiClientError);
+    vi.spyOn(apiClientHandler, "sendREST").mockRejectedValue(apiClientError);
+    vi.spyOn(kmsClientHandler, "buildJWT").mockResolvedValue(mockJWT);
 
     const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
     const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
-    const telemetryResult = await callerService.performRequest(
-      decodeSQSMessage(validMessage)
-    );
+    const telemetryResult = await callerService.performRequest(eservice);
 
     expect(telemetryResult.status).toBe("KO");
     expect((telemetryResult as TelemetryKoDto).koReason).toBe(
@@ -96,7 +105,10 @@ describe("caller service test", () => {
     );
     expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
 
-    await expect(clientHandler.sendREST).toHaveBeenCalledWith(baseUrl, eservice);
+    await expect(apiClientHandler.sendREST).toHaveBeenCalledWith(
+      baseUrl,
+      mockJWT
+    );
   });
 
   it("Test KO CONNECTION_TIMEOUT call probing - SOAP", async () => {
@@ -116,14 +128,13 @@ describe("caller service test", () => {
       "connect ETIMEDOUT",
       "ETIMEDOUT"
     );
-    vi.spyOn(clientHandler, "sendSOAP").mockRejectedValue(apiClientError);
+    vi.spyOn(apiClientHandler, "sendSOAP").mockRejectedValue(apiClientError);
+    vi.spyOn(kmsClientHandler, "buildJWT").mockResolvedValue(mockJWT);
 
     const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
     const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
-    const telemetryResult = await callerService.performRequest(
-      decodeSQSMessage(validMessage)
-    );
+    const telemetryResult = await callerService.performRequest(eservice);
 
     expect(telemetryResult.status).toBe("KO");
     expect((telemetryResult as TelemetryKoDto).koReason).toBe(
@@ -131,7 +142,10 @@ describe("caller service test", () => {
     );
     expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
 
-    await expect(clientHandler.sendSOAP).toHaveBeenCalledWith(baseUrl, eservice);
+    await expect(apiClientHandler.sendSOAP).toHaveBeenCalledWith(
+      baseUrl,
+      mockJWT
+    );
   });
 
   it("Test OK call probing - SOAP", async () => {
@@ -147,18 +161,46 @@ describe("caller service test", () => {
     };
 
     const apiClientResponse = mockApiClientResponse(undefined);
-    vi.spyOn(clientHandler, "sendSOAP").mockResolvedValue(apiClientResponse);
+    vi.spyOn(apiClientHandler, "sendSOAP").mockResolvedValue(apiClientResponse);
+    vi.spyOn(kmsClientHandler, "buildJWT").mockResolvedValue(mockJWT);
 
     const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
     const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
-    const telemetryResult = await callerService.performRequest(
-      decodeSQSMessage(validMessage)
-    );
+    const telemetryResult = await callerService.performRequest(eservice);
 
     expect(telemetryResult.status).toBe("OK");
     expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
 
-    await expect(clientHandler.sendSOAP).toHaveBeenCalledWith(baseUrl, eservice);
+    await expect(apiClientHandler.sendSOAP).toHaveBeenCalledWith(
+      baseUrl,
+      mockJWT
+    );
+  });
+
+  it("Test build JWT throws error", async () => {
+    const validMessage: SQS.Message = {
+      MessageId: "12345",
+      ReceiptHandle: "receipt_handle_id",
+      Body: JSON.stringify({
+        eserviceRecordId: 1,
+        technology: "SOAP",
+        basePath: ["path1", "path2"],
+        audience: ["aud1", "path2"],
+      }),
+    };
+    const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
+
+    const mockBuildJwtError = makeApplicationError(
+      buildJWTError(`Failed to generate signature.`)
+    );
+    vi.spyOn(kmsClientHandler, "buildJWT").mockRejectedValue(mockBuildJwtError);
+
+    try {
+      await callerService.performRequest(eservice);
+    } catch (error) {
+      expect(error).toBeInstanceOf(AppError);
+      expect((error as AppError).code).toBe("0004");
+    }
   });
 });
