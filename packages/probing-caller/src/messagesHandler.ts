@@ -1,11 +1,12 @@
 import { SQS } from "pagopa-interop-probing-commons";
 import { CallerService } from "./services/callerService.js";
-import { PollingDto, TelemetryDto, decodeSQSMessage } from "./model/models.js";
+import { decodeSQSMessage } from "./model/models.js";
 import {
   ApplicationError,
   makeApplicationError,
 } from "./model/domain/errors.js";
 import { ProducerService } from "./services/producerService.js";
+import { PollingDto, TelemetryDto } from "pagopa-interop-probing-models";
 
 export function processMessage(
   callerService: CallerService,

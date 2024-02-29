@@ -1,6 +1,6 @@
 import { SQS } from "pagopa-interop-probing-commons";
 import { config } from "../utilities/config.js";
-import { PollingDto, TelemetryDto } from "../model/models.js";
+import { PollingDto, TelemetryDto } from "pagopa-interop-probing-models";
 
 export const producerServiceBuilder = (sqsClient: SQS.SQSClient) => {
   return {

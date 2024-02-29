@@ -1,12 +1,13 @@
-import {
-  EserviceContentDto,
-  TelemetryDto,
-  TelemetryKoDto,
-  TelemetryOkDto,
-} from "../model/models.js";
 import { logger } from "pagopa-interop-probing-commons";
 import { callerConstants } from "../utilities/constants.js";
-import { responseStatus, technology } from "pagopa-interop-probing-models";
+import {
+  responseStatus,
+  technology,
+  TelemetryDto,
+  EserviceContentDto,
+  TelemetryKoDto,
+  TelemetryOkDto,
+} from "pagopa-interop-probing-models";
 import { getKoReason } from "../utilities/errorMapper.js";
 import { ApiClientHandler } from "../utilities/apiClientHandler.js";
 import { KMSClientHandler } from "../utilities/kmsClientHandler.js";

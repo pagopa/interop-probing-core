@@ -4,11 +4,7 @@ import {
   callerServiceBuilder,
 } from "../src/services/callerService.js";
 import { SQS } from "pagopa-interop-probing-commons";
-import {
-  EserviceContentDto,
-  TelemetryKoDto,
-  decodeSQSMessage,
-} from "../src/model/models.js";
+import { decodeSQSMessage } from "../src/model/models.js";
 import {
   ApiClientHandler,
   apiClientBuilder,
@@ -24,6 +20,10 @@ import {
   buildJWTError,
   makeApplicationError,
 } from "../src/model/domain/errors.js";
+import {
+  EserviceContentDto,
+  TelemetryKoDto,
+} from "pagopa-interop-probing-models";
 
 describe("caller service test", () => {
   const kmsClientHandler: KMSClientHandler = kmsClientBuilder();

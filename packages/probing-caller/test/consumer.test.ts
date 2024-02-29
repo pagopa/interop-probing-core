@@ -2,9 +2,9 @@ import { describe, expect, it, vi, afterAll } from "vitest";
 import { processMessage } from "../src/messagesHandler.js";
 import { AppError } from "../src/model/domain/errors.js";
 import { SQS } from "pagopa-interop-probing-commons";
-import { TelemetryDto, decodeSQSMessage } from "../src/model/models.js";
+import { decodeSQSMessage } from "../src/model/models.js";
 import { callerConstants } from "../src/utilities/constants.js";
-import { responseStatus } from "pagopa-interop-probing-models";
+import { responseStatus, TelemetryDto } from "pagopa-interop-probing-models";
 
 describe("Consumer queue test", async () => {
   const telemetryResult: TelemetryDto = {
