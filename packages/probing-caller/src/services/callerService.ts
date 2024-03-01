@@ -15,7 +15,6 @@ import { match } from "ts-pattern";
 import {
   ApplicationError,
   makeApplicationError,
-  matchTechnologyError,
 } from "../model/domain/errors.js";
 
 export const callerServiceBuilder = (
@@ -46,11 +45,7 @@ export const callerServiceBuilder = (
             technology.rest,
             async () => await apiClientHandler.sendREST(baseUrl, token)
           )
-          .otherwise(() => {
-            throw matchTechnologyError(
-              `Unrecognized technology: '${eservice.technology}'`
-            );
-          });
+          .exhaustive();
 
         return {
           eserviceRecordId: eservice.eserviceRecordId,

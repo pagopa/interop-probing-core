@@ -10,7 +10,7 @@ import {
   apiClientBuilder,
 } from "../src/utilities/apiClientHandler.js";
 import { callerConstants } from "../src/utilities/constants.js";
-import { mockApiClientError, mockApiClientResponse, mockJWT } from "./utils.js";
+import { mockApiClientError, mockApiClientResponse } from "./utils.js";
 import {
   KMSClientHandler,
   kmsClientBuilder,
@@ -26,6 +26,7 @@ import {
 } from "pagopa-interop-probing-models";
 
 describe("caller service test", () => {
+  const mockJWT = `token`;
   const kmsClientHandler: KMSClientHandler = kmsClientBuilder();
   const apiClientHandler: ApiClientHandler = apiClientBuilder();
   const callerService: CallerService = callerServiceBuilder(

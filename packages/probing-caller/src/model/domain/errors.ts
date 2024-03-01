@@ -79,7 +79,6 @@ export const errorCodes = {
   genericError: "9999",
   callProbingEndpointError: "0001",
   decodeSQSMessageError: "0002",
-  matchTechnologyError: "0003",
   buildJWTError: "0004",
 } as const;
 
@@ -120,16 +119,6 @@ export function decodeSQSMessageError(
     detail: `${detail}`,
     code: "decodeSQSMessageError",
     title: "Decode SQS Message error",
-  });
-}
-
-export function matchTechnologyError(
-  detail: string
-): ApplicationError<ErrorCodes> {
-  return new ApplicationError({
-    detail: `${detail}`,
-    code: "matchTechnologyError",
-    title: `Unrecognized technology`,
   });
 }
 
