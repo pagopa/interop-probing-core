@@ -23,13 +23,10 @@ export const ChartWrapper = ({
   const { t } = useTranslation('common', { keyPrefix: 'detailsPage' })
   const jwt = useJwt()
 
-  const { data: eservicesTelemetry, isFetching } = MonitoringQueries.useGetTelemetryData(
-    {
-      eserviceId,
-      pollingFrequency,
-    },
-    { suspense: false }
-  )
+  const { data: eservicesTelemetry, isFetching } = MonitoringQueries.useGetTelemetryData({
+    eserviceId,
+    pollingFrequency,
+  })
 
   const {
     filtersParams: { startDate, endDate },
@@ -131,8 +128,8 @@ const getMinTime: <T extends FailurePerformance | ServicePerformance>(
   // Find the minimum time in milliseconds
   const minTimeInMilliseconds = Math.min(...timesInMilliseconds)
 
-  // Subtract 0.1 days from the minimum time (used as a left padding)
-  const minTimeAdjusted = minTimeInMilliseconds - 0.2 * 24 * 60 * 60 * 1000
+  // Subtract 0.05 days from the minimum time (used as a left padding)
+  const minTimeAdjusted = minTimeInMilliseconds - 0.05 * 24 * 60 * 60 * 1000
 
   // Create a new Date object using the adjusted time and set minutes to 0
   const minTimeDate = new Date(minTimeAdjusted)

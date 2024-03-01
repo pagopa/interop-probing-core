@@ -1,13 +1,7 @@
 import type { UseQueryOptions } from '@tanstack/react-query'
 import { useQuery } from '@tanstack/react-query'
 import MonitoringServices from './monitoring.service'
-import type { FilterOption } from '@pagopa/interop-fe-commons'
-import type {
-  EService,
-  MainEservice,
-  ProbingEservice,
-  TelemetryData,
-} from '@/api/monitoring/monitoring.models'
+import type { TelemetryData } from '@/api/monitoring/monitoring.models'
 
 enum MonitoringQueryKeys {
   GetList = 'GetList',
@@ -18,53 +12,38 @@ enum MonitoringQueryKeys {
   GetFilteredTelemetryData = 'GetFilteredTelemetryData',
 }
 
-function useGetList(params: { limit: number; offset: number }, config: UseQueryOptions<EService>) {
+function useGetList(params: { limit: number; offset: number }) {
   return useQuery({
     queryKey: [MonitoringQueryKeys.GetList, params],
     queryFn: () => MonitoringServices.getList(params),
-    ...config,
   })
 }
 
-function useGetProducersList(
-  params: { limit: number; offset: number; producerName: string },
-  config: UseQueryOptions<FilterOption[]>
-) {
+function useGetProducersList(params: { limit: number; offset: number; producerName: string }) {
   return useQuery({
     queryKey: [MonitoringQueryKeys.GetProducer, params],
     queryFn: () => MonitoringServices.getProducersList(params),
-    ...config,
   })
 }
 
-function useGetEserviceData(params: { eserviceId: string }, config: UseQueryOptions<MainEservice>) {
+function useGetEserviceData(params: { eserviceId: string }) {
   return useQuery({
     queryKey: [MonitoringQueryKeys.GetEserviceData, params],
-    queryFn: () => MonitoringServices.getEserviceData<MainEservice>({ ...params, type: 'main' }),
-    ...config,
+    queryFn: () => MonitoringServices.getEServiceMainData({ ...params }),
   })
 }
 
-function useGetEserviceProbingData(
-  params: { eserviceId: string },
-  config: UseQueryOptions<ProbingEservice>
-) {
+function useGetEserviceProbingData(params: { eserviceId: string }) {
   return useQuery({
     queryKey: [MonitoringQueryKeys.GetEserviceProbingData, params],
-    queryFn: () =>
-      MonitoringServices.getEserviceData<ProbingEservice>({ ...params, type: 'probing' }),
-    ...config,
+    queryFn: () => MonitoringServices.getEserviceProbingData({ ...params }),
   })
 }
 
-function useGetTelemetryData(
-  params: { eserviceId: string; pollingFrequency: number },
-  config: UseQueryOptions<TelemetryData>
-) {
+function useGetTelemetryData(params: { eserviceId: string; pollingFrequency: number }) {
   return useQuery({
     queryKey: [MonitoringQueryKeys.GetTelemetryData, params],
     queryFn: () => MonitoringServices.getTelemetryData(params),
-    ...config,
   })
 }
 

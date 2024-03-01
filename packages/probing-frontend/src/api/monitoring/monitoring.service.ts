@@ -1,5 +1,10 @@
 import axiosInstance from '@/config/axios'
-import type { EService, TelemetryData } from '@/api/monitoring/monitoring.models'
+import type {
+  EService,
+  MainEservice,
+  ProbingEservice,
+  TelemetryData,
+} from '@/api/monitoring/monitoring.models'
 import type { FilterOption } from '@pagopa/interop-fe-commons'
 import { API_BASE_PATH } from '@/config/constants'
 
@@ -17,15 +22,19 @@ async function getProducersList(params: { producerName: string }): Promise<Filte
   return response.data
 }
 
-async function getEserviceData<EserviceResponse>({
+async function getEServiceMainData({ eserviceId }: { eserviceId: string }): Promise<MainEservice> {
+  const response = await axiosInstance.get<MainEservice>(
+    `${API_BASE_PATH}/eservices/mainData/${eserviceId}`
+  )
+  return response.data
+}
+async function getEserviceProbingData({
   eserviceId,
-  type,
 }: {
   eserviceId: string
-  type: 'main' | 'probing'
-}): Promise<EserviceResponse> {
-  const response = await axiosInstance.get<EserviceResponse>(
-    `${API_BASE_PATH}/eservices/${type}Data/${eserviceId}`
+}): Promise<ProbingEservice> {
+  const response = await axiosInstance.get<ProbingEservice>(
+    `${API_BASE_PATH}/eservices/probingData/${eserviceId}`
   )
   return response.data
 }
@@ -63,8 +72,9 @@ async function getFilteredTelemetryData(
 const MonitoringServices = {
   getList,
   getProducersList,
-  getEserviceData,
   getTelemetryData,
+  getEserviceProbingData,
+  getEServiceMainData,
   getFilteredTelemetryData,
 }
 

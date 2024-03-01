@@ -14,6 +14,7 @@ import { MonitoringQueries } from '@/api/monitoring/monitoring.hooks'
 import { Skeleton } from '@mui/material'
 import { useLoadingOverlay } from '@/stores'
 import type { TFunction } from 'i18next'
+import { delayedPromise } from '@/utils/common.utils'
 
 const headLabels = (t: TFunction<'common', 'table'>): Array<string> => {
   return [
@@ -34,10 +35,11 @@ export const MonitoringTable = () => {
   const [producersAutocompleteTextInput, setProducersAutocompleteTextInput] =
     useAutocompleteTextInput()
 
-  const { data: producerOptions } = MonitoringQueries.useGetProducersList(
-    { offset: 0, limit: 20, producerName: producersAutocompleteTextInput },
-    { suspense: false }
-  )
+  const { data: producerOptions } = MonitoringQueries.useGetProducersList({
+    offset: 0,
+    limit: 20,
+    producerName: producersAutocompleteTextInput,
+  })
 
   const { filtersParams, ...handlers } = useFilters([
     {
@@ -74,16 +76,12 @@ export const MonitoringTable = () => {
     ...filtersParams,
   }
 
-  const {
-    data: eservices,
-    refetch,
-    isInitialLoading,
-  } = MonitoringQueries.useGetList(params, { suspense: false })
+  const { data: eservices, refetch, isInitialLoading } = MonitoringQueries.useGetList(params)
 
   const handleRefetch = async () => {
     showOverlay(t('loading'))
     // We want show the loading overlay for at least 1 second, to avoid flickering
-    await Promise.all([refetch(), new Promise((resolve) => setTimeout(resolve, 1000))])
+    await delayedPromise(refetch(), 1000)
     hideOverlay()
   }
 
