@@ -1,4 +1,4 @@
-import { ZodiosBodyByPath, ZodiosQueryParamsByPath, ZodiosResponseByPath } from "@zodios/core";
+import { ZodiosBodyByPath, ZodiosPathParamsByPath, ZodiosQueryParamsByPath, ZodiosResponseByPath } from "@zodios/core";
 import { api } from "./generated/api.js";
 
 export type Api = typeof api.api;
@@ -52,7 +52,7 @@ export type ApiSaveEserviceResponse = ZodiosResponseByPath<
   "/eservices/:eserviceId/versions/:versionId/saveEservice"
 >;
 
-export type ApiUpdateLastRequestQuery = ZodiosQueryParamsByPath<
+export type ApiUpdateLastRequestParams = ZodiosPathParamsByPath<
   Api,
   "post",
   "/eservices/:eserviceRecordId/updateLastRequest"
