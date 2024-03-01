@@ -42,7 +42,9 @@ export const kmsClientBuilder = () => {
           throw new Error("Failed to generate signature.");
         }
 
-        return `${token}.${Buffer.from(signedTokenBuffer).toString("base64")}`;
+        return removePadding(
+          `${token}.${Buffer.from(signedTokenBuffer).toString("base64")}`
+        );
       } catch (err: unknown) {
         logger.error(`Error building JWT token: ${err}`);
         throw buildJWTError(`${err}`);
@@ -69,6 +71,10 @@ function createHeader(): string {
   };
 
   return Buffer.from(JSON.stringify(obj)).toString("base64");
+}
+
+function removePadding(base64Text: string): string {
+  return base64Text.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
 }
 
 function createPayload(audience: string[]): string {
