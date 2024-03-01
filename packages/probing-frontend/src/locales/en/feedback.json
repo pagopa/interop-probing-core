@@ -1,0 +1,18 @@
+{
+  "auth": {
+    "loginSpinnerMessage": "Logging in. Please wait.",
+    "loginError": "Incorrect username or password. Please try again or reset your password.",
+    "loginTooManyRequests": "You have made too many incorrect attempts. For security reasons, access to this account is blocked for one hour.",
+    "logoutSuccessMessage": "Logout successful",
+    "loginSuccessMessage": "Login successful",
+    "resetError": "Something went wrong in processing the request. Please try again later",
+    "recoverError": "Something went wrong in processing the request. Please try again later",
+    "resetSuccessMessage": "Password updated successfully",
+    "recoverSpinnerMessage": "We are processing your request, please wait",
+    "resetSpinnerMessage": "We are processing your request, please wait",
+    "generic": {
+      "error": "The operation was unsuccessful, please try again",
+      "success": "Operation successful"
+    }
+  }
+}

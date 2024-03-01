@@ -5,7 +5,6 @@ import {
   genericError,
   EService,
   EServiceContent,
-  EserviceMonitorState,
   EServiceMainData,
   EServiceProbingData,
   ChangeEserviceProbingStateRequest,
@@ -34,18 +33,8 @@ import { SelectQueryBuilder } from "typeorm";
 import { EserviceView } from "../../repositories/entity/view/eservice.entity.js";
 import { config } from "../../utilities/config.js";
 import { WhereExpressionBuilder } from "typeorm/browser";
-import { ListResult } from "../../model/dbModels.js";
-
-export type EServiceQueryFilters = {
-  eserviceName: string | undefined;
-  producerName: string | undefined;
-  versionNumber: number | undefined;
-  state: EserviceMonitorState[] | undefined;
-};
-
-export type EServiceProducersQueryFilters = {
-  producerName: string | undefined;
-};
+import { ListResultEservices, ListResultProducers } from "../../model/dbModels.js";
+import { ApiGetProducersQuery, ApiSearchEservicesQuery } from "../../model/types.js";
 
 const probingDisabledPredicate = (queryBuilder: WhereExpressionBuilder) => {
   const extractMinute = `CAST(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60 AS INTEGER) > polling_frequency`;
@@ -102,7 +91,7 @@ const probingEnabledPredicate = (
 
 const addPredicateEservices = (
   queryBuilder: SelectQueryBuilder<EserviceViewEntities>,
-  filters: EServiceQueryFilters
+  filters: ApiSearchEservicesQuery
 ): void => {
   const { eserviceName, producerName, versionNumber, state } = filters;
 
@@ -325,23 +314,17 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       }
     },
 
-    async getEservices(
-      filters: EServiceQueryFilters,
-      limit: number,
-      offset: number
-    ): Promise<ListResult<EServiceContent>> {
-
-     
+    async searchEservices(
+      filters: ApiSearchEservicesQuery
+    ): Promise<ListResultEservices<EServiceContent>> {
       const [data, count] = await eserviceView
         .createQueryBuilder()
         .where((qb: SelectQueryBuilder<EserviceViewEntities>) =>
           addPredicateEservices(qb, filters)
         )
-        .skip(offset)
-        .take(limit)
+        .skip(filters.offset)
+        .take(filters.limit)
         .getManyAndCount();
-
-        console.log('DATA_____>', data);
 
       const result = z.array(EServiceContent).safeParse(data.map((d) => d));
       if (!result.success) {
@@ -356,8 +339,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
 
       return {
         content: result.data,
-        offset,
-        limit,
+        offset: filters.offset,
+        limit: filters.limit,
         totalElements: count,
       };
     },
@@ -409,7 +392,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     async getEservicesReadyForPolling(
       limit: number,
       offset: number
-    ): Promise<ListResult<PollingResource>> {
+    ): Promise<ListResultEservices<PollingResource>> {
       const [data, count] = await eserviceView
         .createQueryBuilder()
         .distinct(true)
@@ -428,9 +411,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         .take(limit)
         .getManyAndCount();
 
-      const result = z
-        .array(PollingResource)
-        .safeParse(data.map((d) => d));
+      const result = z.array(PollingResource).safeParse(data.map((d) => d));
       if (!result.success) {
         logger.error(
           `Unable to parse eservices ready for polling items: result ${JSON.stringify(
@@ -448,10 +429,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     },
 
     async getEservicesProducers(
-      filters: EServiceProducersQueryFilters,
-      limit: number,
-      offset: number
-    ): Promise<ListResult<string>> {
+      filters: ApiGetProducersQuery,
+    ): Promise<ListResultProducers<string>> {
       const data = await eservices
         .createQueryBuilder("eservice")
         .where("UPPER(eservice.producerName) LIKE UPPER(:producerName)", {
@@ -459,8 +438,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         })
         .orderBy("eservice.producerName", "ASC")
         .select(["eservice.producerName"])
-        .skip(offset)
-        .take(limit)
+        .skip(filters.offset)
+        .take(filters.limit)
         .getMany();
 
       const result = z

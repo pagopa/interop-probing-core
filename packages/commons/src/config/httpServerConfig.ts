@@ -12,7 +12,6 @@ export const HTTPServerConfig = z
   }));
 export type HTTPServerConfig = z.infer<typeof HTTPServerConfig>;
 
-export type CommonConfig = z.infer<typeof HTTPServerConfig>;
-
 export const httpServerConfig: () => HTTPServerConfig = () =>
 HTTPServerConfig.parse(process.env);
+

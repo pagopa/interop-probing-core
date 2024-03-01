@@ -4,7 +4,7 @@ import {
   EserviceTechnology,
 } from "pagopa-interop-probing-models";
 import { config } from "../../utilities/config.js";
-import moment from "moment-timezone";
+import { nowDateUTC } from "../../utilities/date.js";
 
 export interface EserviceSchema {
   eserviceRecordId?: number;
@@ -56,14 +56,8 @@ export interface EserviceSchema {
  * @property {number} lockVersion
  */
 export const eServiceDefaultValues = {
-  pollingStartTime: moment()
-    .tz("UTC")
-    .set({ hour: 0, minute: 0, seconds: 0 })
-    .format("HH:mm:ss"),
-  pollingEndTime: moment()
-    .tz("UTC")
-    .set({ hour: 23, minute: 59, seconds: 0 })
-    .format("HH:mm:ss"),
+  pollingStartTime: nowDateUTC(0, 0, 0),
+  pollingEndTime: nowDateUTC(23, 59, 0),
   pollingFrequency: 5,
   probingEnabled: true,
   lockVersion: 1,
