@@ -75,7 +75,11 @@ export const MonitoringEserviceProbing = ({
       />
       <MonitoringInformationContainer
         label="lastRelevationDate"
-        content={formatDateString(eservicesProbingDetail?.responseReceived ?? '') ?? 'N/D'}
+        content={
+          eservicesProbingDetail?.responseReceived
+            ? formatDateString(eservicesProbingDetail?.responseReceived)
+            : 'N/D'
+        }
       />
       <ProbingDataAlert eservicesProbingDetail={eservicesProbingDetail} />
     </Box>

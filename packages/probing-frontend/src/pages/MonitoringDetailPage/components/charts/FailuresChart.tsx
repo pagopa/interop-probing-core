@@ -1,4 +1,3 @@
-import { Box } from '@mui/system'
 import { useTranslation } from 'react-i18next'
 import type { ScaleTime } from 'd3'
 import { timeFormat } from 'd3'
@@ -63,20 +62,18 @@ export const FailuresChart = ({
   }
 
   return (
-    <Box>
-      <svg className="line-chart-container-failures" width={600} height={100} role="img">
-        {renderFailuresHeader()}
-        <g className="scales" transform={`translate(20,50)`}>
-          {renderXTicks()}
-          <g fontFamily="Poppins" opacity={0.4} fontSize={10} textAnchor="end">
-            <g opacity="1" className="tick">
-              <line stroke="currentColor" x2={0} strokeOpacity="0.2" />
-              <line stroke="currentColor" x2={600} strokeOpacity="0.2" />
-            </g>
+    <svg className="line-chart-container-failures" height={100} role="img">
+      {renderFailuresHeader()}
+      <g className="scales" transform={`translate(20,50)`}>
+        {renderXTicks()}
+        <g fontFamily="Poppins" opacity={0.4} fontSize={10} textAnchor="end">
+          <g opacity="1" className="tick">
+            <line stroke="currentColor" x2={0} strokeOpacity="0.2" />
+            <line stroke="currentColor" x2={600} strokeOpacity="0.2" />
           </g>
         </g>
-        {renderFailuresPoints()}
-      </svg>
-    </Box>
+      </g>
+      {renderFailuresPoints()}
+    </svg>
   )
 }

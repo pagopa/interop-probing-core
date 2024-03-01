@@ -1,22 +1,22 @@
-import React from 'react'
 import type { ScaleLinear, ScaleTime } from 'd3'
 import { line, timeFormat, curveCatmullRom } from 'd3'
 import { useTranslation } from 'react-i18next'
-import { Box } from '@mui/material'
 import type { ServicePerformance } from '@/api/monitoring/monitoring.models'
 
 const curveType = curveCatmullRom.alpha(0.5)
 
-interface IProps {
+const LineChart = ({
+  data,
+  xScale,
+  yScale,
+}: {
   data: Array<ServicePerformance>
   xScale: ScaleTime<number, number, never>
   yScale: ScaleLinear<number, number, never>
-}
-
-const LineChart: React.FC<IProps> = ({ data, xScale, yScale }) => {
+}) => {
   const { t } = useTranslation('common', { keyPrefix: 'detailsPage' })
 
-  const header = (
+  const LineChartHeader = () => (
     <g className="bar-header" transform={`translate(10, 20)`}>
       <text>
         <tspan fontFamily="Titillium Web" fontSize="18px" color="#17324D" fontWeight="700">
@@ -48,7 +48,7 @@ const LineChart: React.FC<IProps> = ({ data, xScale, yScale }) => {
               strokeOpacity="0.2"
               stroke="currentColor"
             />
-            <text y="15" dy="0.71em">
+            <text y="15" dy="0.75em">
               {timeFormat('%d / %m')(new Date(d))}
             </text>
             <text y="35">{timeFormat('%H:%M')(new Date(d))}</text>
@@ -79,23 +79,21 @@ const LineChart: React.FC<IProps> = ({ data, xScale, yScale }) => {
     .y((d) => yScale(d.responseTime ? d.responseTime : 0))
 
   return (
-    <Box>
-      <svg className="line-chart-container" width={650} height={400} role="img">
-        {header}
-        <g className="scales" transform={`translate(50, 60)`}>
-          <XTicks />
-          <YTicks />
-        </g>
-        <path
-          className="line"
-          stroke="#17324D"
-          strokeWidth="2"
-          fill="none"
-          d={createLine(data) || undefined}
-          transform={`translate(50, 60)`}
-        />
-      </svg>
-    </Box>
+    <svg className="line-chart-container" height={400} role="img">
+      <LineChartHeader />
+      <g className="scales" transform={`translate(50, 60)`}>
+        <XTicks />
+        <YTicks />
+      </g>
+      <path
+        className="line"
+        stroke="#17324D"
+        strokeWidth="2"
+        fill="none"
+        d={createLine(data) || undefined}
+        transform={`translate(50, 60)`}
+      />
+    </svg>
   )
 }
 

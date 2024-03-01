@@ -9,6 +9,7 @@ import LineChart from './LineChart'
 import { Filters, useFilters } from '@pagopa/interop-fe-commons'
 import { useJwt } from '@/hooks/useJwt'
 import { useTranslation } from 'react-i18next'
+import { PageContainerSkeleton } from '@/layout/PageContainer'
 
 const lastYear = new Date(new Date().setFullYear(new Date().getFullYear() - 1))
 
@@ -22,7 +23,7 @@ export const ChartWrapper = ({
   const { t } = useTranslation('common', { keyPrefix: 'detailsPage' })
   const jwt = useJwt()
 
-  const { data: eservicesTelemetry } = MonitoringQueries.useGetTelemetryData(
+  const { data: eservicesTelemetry, isFetching } = MonitoringQueries.useGetTelemetryData(
     {
       eserviceId,
       pollingFrequency,
@@ -50,11 +51,12 @@ export const ChartWrapper = ({
     },
   ])
 
-  const { data: eservicesFilteredTelemetry } = MonitoringQueries.useGetFilteredTelemetryData(
-    { pollingFrequency, startDate, endDate },
-    eserviceId,
-    { suspense: false }
-  )
+  const { data: eservicesFilteredTelemetry, isFetching: isFetchingFiltered } =
+    MonitoringQueries.useGetFilteredTelemetryData(
+      { pollingFrequency, startDate, endDate },
+      eserviceId,
+      { suspense: false }
+    )
 
   const responseTelemetry = eservicesFilteredTelemetry || eservicesTelemetry
 
@@ -65,7 +67,7 @@ export const ChartWrapper = ({
   const firstFailureTime = new Date(getMinTime<FailurePerformance>(responseTelemetry?.failures))
 
   const x: (time: Date) => ScaleTime<number, number, never> = (time) => {
-    return scaleTime().range([0, 600]).domain([time, new Date()])
+    return scaleTime().range([0, 530]).domain([time, new Date()])
   }
 
   const y: ScaleLinear<number, number, never> = scaleLinear()
@@ -75,25 +77,38 @@ export const ChartWrapper = ({
         return d.responseTime + 10 || null
       }) || 10,
     ] as Array<number>)
-    .range([300, 0])
+    .range([300, 20])
 
   return (
     <>
       <Box sx={{ maxWidth: '100%' }}>{jwt && <Filters {...handlers} />}</Box>
-      <Stack direction={'row'} sx={{ flexWrap: 'wrap' }}>
-        <Stack direction="column" spacing={4}>
-          <LineChart
-            data={responseTelemetry?.performances ?? []}
-            xScale={x(firstPerformanceTime)}
-            yScale={y}
-          ></LineChart>
-          <FailuresChart
-            failures={responseTelemetry?.failures ?? []}
-            x={x(firstFailureTime)}
-          ></FailuresChart>
+      {isFetching || isFetchingFiltered ? (
+        <PageContainerSkeleton />
+      ) : (
+        <Stack direction={'row'} sx={{ flexWrap: 'wrap' }}>
+          <Stack
+            direction="column"
+            spacing={6}
+            sx={{
+              width: '650px',
+              '@media (max-width: 600px)': {
+                width: '100%', // Width for screens smaller than 600px
+              },
+            }}
+          >
+            <LineChart
+              data={responseTelemetry?.performances ?? []}
+              xScale={x(firstPerformanceTime)}
+              yScale={y}
+            ></LineChart>
+            <FailuresChart
+              failures={responseTelemetry?.failures ?? []}
+              x={x(firstFailureTime)}
+            ></FailuresChart>
+          </Stack>
+          <BarChart data={responseTelemetry?.percentages ?? []}></BarChart>
         </Stack>
-        <BarChart data={responseTelemetry?.percentages ?? []}></BarChart>
-      </Stack>
+      )}
     </>
   )
 }
@@ -117,7 +132,7 @@ const getMinTime: <T extends FailurePerformance | ServicePerformance>(
   const minTimeInMilliseconds = Math.min(...timesInMilliseconds)
 
   // Subtract 0.1 days from the minimum time (used as a left padding)
-  const minTimeAdjusted = minTimeInMilliseconds - 0.1 * 24 * 60 * 60 * 1000
+  const minTimeAdjusted = minTimeInMilliseconds - 0.2 * 24 * 60 * 60 * 1000
 
   // Create a new Date object using the adjusted time and set minutes to 0
   const minTimeDate = new Date(minTimeAdjusted)
