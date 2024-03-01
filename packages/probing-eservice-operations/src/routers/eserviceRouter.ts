@@ -7,14 +7,13 @@ import { modelServiceBuilder } from "../services/db/dbService.js";
 import { eServiceServiceBuilder } from "../services/eserviceService.js";
 import { eserviceQueryBuilder } from "../services/db/eserviceQuery.js";
 import { api } from "../model/generated/api.js";
-import {
-  EServiceMainData,
-  EServiceProbingData,
-  EServiceContent,
-} from "pagopa-interop-probing-models";
+import { EServiceProbingData } from "pagopa-interop-probing-models";
 import { updateEServiceErrorMapper } from "../utilities/errorMappers.js";
 import { ModelRepository } from "../repositories/modelRepository.js";
-import { ListResultEservices } from "../model/dbModels.js";
+import {
+  ApiEserviceMainDataResponse,
+  ApiSearchEservicesResponse,
+} from "../model/types.js";
 
 const modelService = modelServiceBuilder(await ModelRepository.init(config));
 const eserviceQuery = eserviceQueryBuilder(modelService);
@@ -140,7 +139,7 @@ const eServiceRouter = (
             offset: eservices.offset,
             limit: eservices.limit,
             totalElements: eservices.totalElements,
-          } satisfies ListResultEservices<EServiceContent>)
+          } satisfies ApiSearchEservicesResponse)
           .end();
       } catch (error) {
         const errorRes = makeApiProblem(error, () => 500);
@@ -155,7 +154,7 @@ const eServiceRouter = (
 
         return res
           .status(200)
-          .json(eServiceMainData satisfies EServiceMainData)
+          .json(eServiceMainData satisfies ApiEserviceMainDataResponse)
           .end();
       } catch (error) {
         const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
@@ -200,14 +199,14 @@ const eServiceRouter = (
     .get("/eservices/polling", async (req, res) => {
       try {
         const eservices = await eServiceService.getEservicesReadyForPolling(
-          req.query.limit,
-          req.query.offset
+          req.query
         );
 
         return res
           .status(200)
           .json({
             content: eservices.content,
+            totalElements: eservices.totalElements,
           })
           .end();
       } catch (error) {

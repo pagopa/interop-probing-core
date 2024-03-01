@@ -18,7 +18,7 @@ import {
   responseStatus,
   PollingResource,
 } from "pagopa-interop-probing-models";
-import { Brackets } from "typeorm";
+import { Brackets, InsertResult, UpdateResult } from "typeorm";
 import { z } from "zod";
 import {
   ModelRepository,
@@ -33,8 +33,22 @@ import { SelectQueryBuilder } from "typeorm";
 import { EserviceView } from "../../repositories/entity/view/eservice.entity.js";
 import { config } from "../../utilities/config.js";
 import { WhereExpressionBuilder } from "typeorm/browser";
-import { ListResultEservices, ListResultProducers } from "../../model/dbModels.js";
-import { ApiGetProducersQuery, ApiSearchEservicesQuery } from "../../model/types.js";
+import {
+  ApiEserviceMainDataResponse,
+  ApiEserviceProbingDataResponse,
+  ApiGetEservicesReadyForPollingQuery,
+  ApiGetEservicesReadyForPollingResponse,
+  ApiGetProducersQuery,
+  ApiGetProducersResponse,
+  ApiSaveEserviceResponse,
+  ApiSearchEservicesQuery,
+  ApiSearchEservicesResponse,
+  ApiUpdateEserviceFrequencyResponse,
+  ApiUpdateEserviceProbingStateResponse,
+  ApiUpdateEserviceStateResponse,
+  ApiUpdateLastRequestResponse,
+  ApiUpdateResponseReceivedResponse,
+} from "../../model/types.js";
 
 const probingDisabledPredicate = (queryBuilder: WhereExpressionBuilder) => {
   const extractMinute = `CAST(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60 AS INTEGER) > polling_frequency`;
@@ -184,7 +198,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       eserviceId: string,
       versionId: string,
       eServiceUpdated: ChangeEserviceStateRequest
-    ): Promise<void> {
+    ): Promise<ApiUpdateEserviceStateResponse> {
       await eservices.update(
         { eserviceId, versionId },
         { state: eServiceUpdated.state }
@@ -195,7 +209,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       eserviceId: string,
       versionId: string,
       eServiceUpdated: ChangeEserviceProbingStateRequest
-    ): Promise<void> {
+    ): Promise<ApiUpdateEserviceProbingStateResponse> {
       await eservices.update(
         { eserviceId, versionId },
         { probingEnabled: eServiceUpdated.probingEnabled }
@@ -206,7 +220,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       eserviceId: string,
       versionId: string,
       eServiceUpdated: ChangeProbingFrequencyRequest
-    ): Promise<void> {
+    ): Promise<ApiUpdateEserviceFrequencyResponse> {
       await eservices.update(
         { eserviceId, versionId },
         { pollingFrequency: eServiceUpdated.pollingFrequency }
@@ -217,7 +231,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       eserviceId: string,
       versionId: string,
       eServiceUpdated: EserviceSaveRequest
-    ): Promise<void> {
+    ): Promise<ApiSaveEserviceResponse> {
       const updateEservice: EserviceSaveRequest = {
         eserviceName: eServiceUpdated.eserviceName,
         producerName: eServiceUpdated.producerName,
@@ -236,7 +250,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         .getOne();
 
       if (existingEservice) {
-        await eservices
+        const result: UpdateResult = await eservices
           .createQueryBuilder()
           .update()
           .set(updateEservice)
@@ -244,9 +258,12 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
             eserviceId,
             versionId,
           })
+          .returning("id")
           .execute();
+        const [eservice]: { id: string }[] = result.raw;
+        return Number(eservice.id);
       } else {
-        await eservices
+        const result: InsertResult = await eservices
           .createQueryBuilder()
           .insert()
           .values({
@@ -257,14 +274,17 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
             ...eServiceDefaultValues,
             ...updateEservice,
           })
+          .returning("id")
           .execute();
+        const [eservice]: { id: string }[] = result.raw;
+        return Number(eservice.id);
       }
     },
 
     async updateEserviceLastRequest(
       eserviceRecordId: number,
       eServiceUpdated: EserviceProbingUpdateLastRequest
-    ): Promise<void> {
+    ): Promise<ApiUpdateLastRequestResponse> {
       await eserviceProbingRequest.upsert(
         { eserviceRecordId, lastRequest: eServiceUpdated.lastRequest },
         {
@@ -277,7 +297,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     async updateResponseReceived(
       eserviceRecordId: number,
       eServiceUpdated: ChangeResponseReceived
-    ): Promise<void> {
+    ): Promise<ApiUpdateResponseReceivedResponse> {
       await eserviceProbingResponse.upsert(
         {
           eserviceRecordId,
@@ -316,7 +336,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
 
     async searchEservices(
       filters: ApiSearchEservicesQuery
-    ): Promise<ListResultEservices<EServiceContent>> {
+    ): Promise<ApiSearchEservicesResponse> {
       const [data, count] = await eserviceView
         .createQueryBuilder()
         .where((qb: SelectQueryBuilder<EserviceViewEntities>) =>
@@ -347,7 +367,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
 
     async getEserviceMainData(
       eserviceRecordId: number
-    ): Promise<EServiceMainData> {
+    ): Promise<ApiEserviceMainDataResponse> {
       const data = await eservices.findOne({ where: { eserviceRecordId } });
       if (!data) {
         throw eServiceMainDataByRecordIdNotFound(eserviceRecordId);
@@ -367,7 +387,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
 
     async getEserviceProbingData(
       eserviceRecordId: number
-    ): Promise<EServiceProbingData> {
+    ): Promise<ApiEserviceProbingDataResponse> {
       const data = await eserviceView.findOne({
         where: { eserviceRecordId },
         order: { eserviceRecordId: "ASC" },
@@ -390,9 +410,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     },
 
     async getEservicesReadyForPolling(
-      limit: number,
-      offset: number
-    ): Promise<ListResultEservices<PollingResource>> {
+      filters: ApiGetEservicesReadyForPollingQuery
+    ): Promise<ApiGetEservicesReadyForPollingResponse> {
       const [data, count] = await eserviceView
         .createQueryBuilder()
         .distinct(true)
@@ -407,8 +426,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         ])
         .from(EserviceView, "eserviceView") // Explicitly defining the 'from' clause is required to address select and the issue described here https://github.com/typeorm/typeorm/issues/1937.
         .orderBy("eserviceView.eserviceRecordId", "ASC")
-        .skip(offset)
-        .take(limit)
+        .skip(filters.offset)
+        .take(filters.limit)
         .getManyAndCount();
 
       const result = z.array(PollingResource).safeParse(data.map((d) => d));
@@ -429,8 +448,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     },
 
     async getEservicesProducers(
-      filters: ApiGetProducersQuery,
-    ): Promise<ListResultProducers<string>> {
+      filters: ApiGetProducersQuery
+    ): Promise<ApiGetProducersResponse> {
       const data = await eservices
         .createQueryBuilder("eservice")
         .where("UPPER(eservice.producerName) LIKE UPPER(:producerName)", {
