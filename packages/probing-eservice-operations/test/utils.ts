@@ -54,6 +54,6 @@ export const addEservice = async (
 export const getEservice = async (
   eserviceRecordId: number,
   repository: EserviceViewEntities
-): Promise<EserviceViewSchema | { [key: string]: string }> => {
-  return (await repository.findOneBy({ eserviceRecordId })) || {};
+): Promise<EserviceViewSchema | { [key: string]: string } > => {
+  return await repository.findOneBy({ eserviceRecordId }) || {};
 };
