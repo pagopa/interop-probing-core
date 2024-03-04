@@ -11,25 +11,25 @@ import { CATALOGUE_BASE_PATH } from '@/config/constants'
 export const MonitoringEserviceDetail = ({
   eservicesDetail,
 }: {
-  eservicesDetail: MainEservice | undefined
+  eservicesDetail: MainEservice
 }) => {
   const { t } = useTranslation('common', {
     keyPrefix: 'detailsPage',
   })
 
   const getExternalCatalogUrl = () => {
-    return `${CATALOGUE_BASE_PATH}ui/it/fruizione/catalogo-e-service/${eservicesDetail?.eserviceId}/${eservicesDetail?.versionId}`
+    return `${CATALOGUE_BASE_PATH}ui/it/fruizione/catalogo-e-service/${eservicesDetail.eserviceId}/${eservicesDetail.versionId}`
   }
 
   return (
     <Box sx={{ width: '100%', maxWidth: '600px' }}>
       <MonitoringInformationContainer
         label="producerName"
-        content={eservicesDetail?.producerName || ''}
+        content={eservicesDetail.producerName || ''}
       />
       <MonitoringInformationContainer
         label="version"
-        content={eservicesDetail?.versionNumber || ''}
+        content={eservicesDetail.versionNumber || ''}
       />
       <MonitoringInformationContainer
         label="eServiceTab"

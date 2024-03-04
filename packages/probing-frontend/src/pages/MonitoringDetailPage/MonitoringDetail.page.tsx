@@ -61,11 +61,13 @@ export const MonitoringDetailPage = () => {
               justifyContent: 'center',
             }}
           >
-            <MonitoringEserviceDetail eservicesDetail={eservicesDetail} />
-            <MonitoringEserviceProbing
-              eservicesProbingDetail={eservicesProbingDetail}
-              refetch={handleRefetch}
-            />
+            {eservicesDetail && <MonitoringEserviceDetail eservicesDetail={eservicesDetail} />}
+            {eservicesProbingDetail && (
+              <MonitoringEserviceProbing
+                eservicesProbingDetail={eservicesProbingDetail}
+                refetch={handleRefetch}
+              />
+            )}
           </Box>
           {hasValidData && (
             <MonitoringEserviceTelemetry

@@ -11,7 +11,7 @@ export const MonitoringEserviceProbing = ({
   eservicesProbingDetail,
   refetch,
 }: {
-  eservicesProbingDetail: ProbingEservice | undefined
+  eservicesProbingDetail: ProbingEservice
   refetch: () => Promise<void>
 }) => {
   const { t } = useTranslation('common', {
@@ -58,8 +58,8 @@ export const MonitoringEserviceProbing = ({
         content={
           <Chip
             size={'small'}
-            label={t(getChipLabel(eservicesProbingDetail?.probingEnabled ?? false))}
-            color={getChipColor(eservicesProbingDetail?.probingEnabled?.toString() ?? 'N/D')}
+            label={t(getChipLabel(eservicesProbingDetail.probingEnabled ?? false))}
+            color={getChipColor(eservicesProbingDetail.probingEnabled?.toString() ?? 'N/D')}
           />
         }
       />
@@ -68,16 +68,16 @@ export const MonitoringEserviceProbing = ({
         content={
           <Chip
             size={'small'}
-            label={eservicesProbingDetail?.state.toLowerCase() as keyof TranslationKeys}
-            color={getChipColor(eservicesProbingDetail?.state?.toString() ?? 'N/D')}
+            label={eservicesProbingDetail.state.toLowerCase() as keyof TranslationKeys}
+            color={getChipColor(eservicesProbingDetail.state?.toString() ?? 'N/D')}
           />
         }
       />
       <MonitoringInformationContainer
         label="lastRelevationDate"
         content={
-          eservicesProbingDetail?.responseReceived
-            ? formatDateString(eservicesProbingDetail?.responseReceived)
+          eservicesProbingDetail.responseReceived
+            ? formatDateString(eservicesProbingDetail.responseReceived)
             : 'N/D'
         }
       />
@@ -89,18 +89,18 @@ export const MonitoringEserviceProbing = ({
 const ProbingDataAlert = ({
   eservicesProbingDetail,
 }: {
-  eservicesProbingDetail: ProbingEservice | undefined
+  eservicesProbingDetail: ProbingEservice
 }) => {
   const { t } = useTranslation('common', { keyPrefix: 'detailsPage.alerts' })
 
   let message: keyof TranslationKeys['alerts'] = 'genericAlert'
 
   const isMonitoringSuspended =
-    eservicesProbingDetail?.probingEnabled === false && eservicesProbingDetail.state === 'N/D'
+    eservicesProbingDetail.probingEnabled === false && eservicesProbingDetail.state === 'N/D'
   const isVersionSuspended =
-    eservicesProbingDetail?.state === 'OFFLINE' && !eservicesProbingDetail.eserviceActive
+    eservicesProbingDetail.state === 'OFFLINE' && !eservicesProbingDetail.eserviceActive
   const isEserviceNotAnswering =
-    eservicesProbingDetail?.state === 'OFFLINE' && eservicesProbingDetail.eserviceActive
+    eservicesProbingDetail.state === 'OFFLINE' && eservicesProbingDetail.eserviceActive
 
   if (isMonitoringSuspended) {
     message = 'monitoringSystemSuspendedMessage'
