@@ -76,36 +76,34 @@ export const ChartWrapper = ({
     ] as Array<number>)
     .range([300, 20])
 
+  if (isFetching || isFetchingFiltered) return <PageContainerSkeleton />
+
   return (
     <>
       <Box sx={{ maxWidth: '100%' }}>{jwt && <Filters {...handlers} />}</Box>
-      {isFetching || isFetchingFiltered ? (
-        <PageContainerSkeleton />
-      ) : (
-        <Stack direction={'row'} sx={{ flexWrap: 'wrap' }}>
-          <Stack
-            direction="column"
-            spacing={6}
-            sx={{
-              width: '650px',
-              '@media (max-width: 600px)': {
-                width: '100%', // Width for screens smaller than 600px
-              },
-            }}
-          >
-            <LineChart
-              data={responseTelemetry?.performances ?? []}
-              xScale={x(firstPerformanceTime)}
-              yScale={y}
-            ></LineChart>
-            <FailuresChart
-              failures={responseTelemetry?.failures ?? []}
-              x={x(firstFailureTime)}
-            ></FailuresChart>
-          </Stack>
-          <BarChart data={responseTelemetry?.percentages ?? []}></BarChart>
+      <Stack direction={'row'} sx={{ flexWrap: 'wrap' }}>
+        <Stack
+          direction="column"
+          spacing={6}
+          sx={{
+            width: '650px',
+            '@media (max-width: 600px)': {
+              width: '100%', // Width for screens smaller than 600px
+            },
+          }}
+        >
+          <LineChart
+            data={responseTelemetry?.performances ?? []}
+            xScale={x(firstPerformanceTime)}
+            yScale={y}
+          ></LineChart>
+          <FailuresChart
+            failures={responseTelemetry?.failures ?? []}
+            x={x(firstFailureTime)}
+          ></FailuresChart>
         </Stack>
-      )}
+        <BarChart data={responseTelemetry?.percentages ?? []}></BarChart>
+      </Stack>
     </>
   )
 }
