@@ -17,7 +17,7 @@ export const MonitoringEserviceDetail = ({
     keyPrefix: 'detailsPage',
   })
 
-  const getUrl = () => {
+  const getExternalCatalogUrl = () => {
     return `${CATALOGUE_BASE_PATH}ui/it/fruizione/catalogo-e-service/${eservicesDetail?.eserviceId}/${eservicesDetail?.versionId}`
   }
 
@@ -41,7 +41,7 @@ export const MonitoringEserviceDetail = ({
             endIcon={<LaunchIcon />}
             component={Link}
             target="_blank"
-            to={getUrl()}
+            to={getExternalCatalogUrl()}
           >
             {t('viewInCatalog')}
           </ButtonNaked>
