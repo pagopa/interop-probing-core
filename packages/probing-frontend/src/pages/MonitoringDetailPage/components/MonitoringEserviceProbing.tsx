@@ -1,4 +1,4 @@
-import type { ProbingEservice } from '@/api/monitoring/monitoring.models'
+import type { ProbingEservice, ProbingStatusType } from '@/api/monitoring/monitoring.models'
 import { Alert, Box, Chip, Grid, Typography } from '@mui/material'
 import { ButtonNaked } from '@pagopa/mui-italia'
 import { useTranslation } from 'react-i18next'
@@ -18,7 +18,7 @@ export const MonitoringEserviceProbing = ({
     keyPrefix: 'detailsPage',
   })
 
-  const getChipColor = (value: string) => {
+  const getChipColor = (value: ProbingStatusType | 'true' | 'false') => {
     switch (value) {
       case 'ONLINE':
       case 'true':
@@ -28,15 +28,6 @@ export const MonitoringEserviceProbing = ({
         return 'error'
       case 'N/D':
         return 'warning'
-    }
-  }
-
-  const getChipLabel = (value: boolean) => {
-    switch (value) {
-      case true:
-        return 'active'
-      case false:
-        return 'suspended'
     }
   }
 
@@ -58,8 +49,10 @@ export const MonitoringEserviceProbing = ({
         content={
           <Chip
             size={'small'}
-            label={t(getChipLabel(eservicesProbingDetail.probingEnabled ?? false))}
-            color={getChipColor(eservicesProbingDetail.probingEnabled?.toString() ?? 'N/D')}
+            label={t(eservicesProbingDetail?.probingEnabled ? 'active' : 'suspended')}
+            color={getChipColor(
+              (eservicesProbingDetail.probingEnabled?.toString() as 'true' | 'false') ?? 'N/D'
+            )}
           />
         }
       />
@@ -69,7 +62,7 @@ export const MonitoringEserviceProbing = ({
           <Chip
             size={'small'}
             label={eservicesProbingDetail.state.toLowerCase() as keyof TranslationKeys}
-            color={getChipColor(eservicesProbingDetail.state?.toString() ?? 'N/D')}
+            color={getChipColor(eservicesProbingDetail.state ?? 'N/D')}
           />
         }
       />

@@ -39,49 +39,43 @@ export const MonitoringDetailPage = () => {
     hideOverlay()
   }
 
+  if (isInitialLoadingEservice || isInitialLoadingProbing) return <PageContainerSkeleton />
+
   return (
     <>
-      {isInitialLoadingEservice || isInitialLoadingProbing ? (
-        <>
-          <PageContainerSkeleton />
-        </>
-      ) : (
-        <>
-          <Typography variant="h4" component="h1" sx={{ mb: '20px' }}>
-            {eservicesDetail?.eserviceName}
-          </Typography>
-          <Typography variant="body1" component="p" sx={{ mb: '30px' }}>
-            {t('subtitle')}
-          </Typography>
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            {eservicesDetail && <MonitoringEserviceDetail eservicesDetail={eservicesDetail} />}
-            {eservicesProbingDetail && (
-              <MonitoringEserviceProbing
-                eservicesProbingDetail={eservicesProbingDetail}
-                refetch={handleRefetch}
-              />
-            )}
-          </Box>
-          {hasValidData && (
-            <MonitoringEserviceTelemetry
-              eserviceId={eserviceId}
-              pollingFrequency={eservicesDetail.pollingFrequency}
-            />
-          )}
-          <Box sx={{ my: 4 }}>
-            <Link to={'MONITORING_E_SERVICE_LIST'} as="button" startIcon={<ArrowBackIcon />}>
-              {t('returnToList')}
-            </Link>
-          </Box>
-        </>
+      <Typography variant="h4" component="h1" sx={{ mb: '20px' }}>
+        {eservicesDetail?.eserviceName}
+      </Typography>
+      <Typography variant="body1" component="p" sx={{ mb: '30px' }}>
+        {t('subtitle')}
+      </Typography>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {eservicesDetail && <MonitoringEserviceDetail eservicesDetail={eservicesDetail} />}
+        {eservicesProbingDetail && (
+          <MonitoringEserviceProbing
+            eservicesProbingDetail={eservicesProbingDetail}
+            refetch={handleRefetch}
+          />
+        )}
+      </Box>
+      {hasValidData && (
+        <MonitoringEserviceTelemetry
+          eserviceId={eserviceId}
+          pollingFrequency={eservicesDetail.pollingFrequency}
+        />
       )}
+      <Box sx={{ my: 4 }}>
+        <Link to={'MONITORING_E_SERVICE_LIST'} as="button" startIcon={<ArrowBackIcon />}>
+          {t('returnToList')}
+        </Link>
+      </Box>
     </>
   )
 }
