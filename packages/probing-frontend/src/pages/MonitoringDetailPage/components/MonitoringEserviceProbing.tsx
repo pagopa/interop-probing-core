@@ -18,13 +18,11 @@ export const MonitoringEserviceProbing = ({
     keyPrefix: 'detailsPage',
   })
 
-  const getChipColor = (value: ProbingStatusType | 'true' | 'false') => {
+  const getProbingStateChipColor = (value: ProbingStatusType) => {
     switch (value) {
       case 'ONLINE':
-      case 'true':
         return 'success'
       case 'OFFLINE':
-      case 'false':
         return 'error'
       case 'N/D':
         return 'warning'
@@ -50,9 +48,7 @@ export const MonitoringEserviceProbing = ({
           <Chip
             size={'small'}
             label={t(eservicesProbingDetail?.probingEnabled ? 'active' : 'suspended')}
-            color={getChipColor(
-              (eservicesProbingDetail.probingEnabled?.toString() as 'true' | 'false') ?? 'N/D'
-            )}
+            color={eservicesProbingDetail.probingEnabled ? 'success' : 'error'}
           />
         }
       />
@@ -62,7 +58,7 @@ export const MonitoringEserviceProbing = ({
           <Chip
             size={'small'}
             label={eservicesProbingDetail.state.toLowerCase() as keyof TranslationKeys}
-            color={getChipColor(eservicesProbingDetail.state ?? 'N/D')}
+            color={getProbingStateChipColor(eservicesProbingDetail.state ?? 'N/D')}
           />
         }
       />
