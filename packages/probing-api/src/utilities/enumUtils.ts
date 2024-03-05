@@ -21,14 +21,7 @@ const minutesDifferenceFromCurrentDate = (lastRequest: string) => {
 export function fromECToMonitorState(
   data: EServiceContent
 ): EserviceMonitorState {
-  return handleState({
-    state: data.state,
-    probingEnabled: data.probingEnabled,
-    lastRequest: data.lastRequest,
-    responseReceived: data.responseReceived,
-    pollingFrequency: data.pollingFrequency,
-    responseStatus: data.responseStatus
-  });
+  return handleState(data);
 }
 
 export function fromEPDToMonitorState(
@@ -43,14 +36,14 @@ function handleState({
   lastRequest,
   responseReceived,
   pollingFrequency,
-  responseStatus
+  responseStatus,
 }: {
-  state: EserviceInteropState,
-  probingEnabled: boolean,
-  lastRequest?: string,
-  responseReceived?: string,
-  pollingFrequency: number,
-  responseStatus: EserviceStatus | undefined
+  state: EserviceInteropState;
+  probingEnabled: boolean;
+  lastRequest?: string;
+  responseReceived?: string;
+  pollingFrequency: number;
+  responseStatus?: EserviceStatus | undefined;
 }): EserviceMonitorState {
   switch (state) {
     case eserviceInteropState.active:
@@ -109,11 +102,9 @@ export function isResponseReceivedBeforeLastRequest(
   responseReceived: string | undefined,
   lastRequest: string
 ) {
-  const defaultDate = !responseReceived
-    ? new Date(8640000000000000).toDateString()
-    : responseReceived;
+  if (!responseReceived) return false;
 
-  return isBefore(defaultDate, lastRequest);
+  return isBefore(responseReceived, lastRequest);
 }
 
 export function isBeenToLongRequest(

@@ -13,4 +13,6 @@ export const updateEServiceErrorMapper = (
 ): number =>
   match(error.code)
     .with("eServiceNotFound", () => HTTP_STATUS_NOT_FOUND)
+    .with("eServiceMainDataByRecordIdNotFound", () => HTTP_STATUS_NOT_FOUND)
+    .with("eServiceProbingDataByRecordIdNotFound", () => HTTP_STATUS_NOT_FOUND)
     .otherwise(() => HTTP_STATUS_INTERNAL_SERVER_ERROR);

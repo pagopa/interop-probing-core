@@ -3,6 +3,8 @@ import { AxiosError } from "axios";
 
 export const errorCodes = {
   eServiceNotFound: "0001",
+  eServiceMainDataByRecordIdNotFound: "0002",
+  eServiceProbingDataByRecordIdNotFound: "0003",
 };
 
 export type ErrorCodes = keyof typeof errorCodes;
@@ -37,7 +39,7 @@ export function eServiceMainDataByRecordIdNotFound(
 ): ApiError<ErrorCodes> {
   return new ApiError({
     detail: `EService main data by eserviceRecordId ${eserviceRecordId} not found`,
-    code: "eServiceNotFound",
+    code: "eServiceMainDataByRecordIdNotFound",
     title: "EService not found",
   });
 }
@@ -47,7 +49,7 @@ export function eServiceProbingDataByRecordIdNotFound(
 ): ApiError<ErrorCodes> {
   return new ApiError({
     detail: `EService probing data by eserviceRecordId ${eserviceRecordId} not found`,
-    code: "eServiceNotFound",
+    code: "eServiceProbingDataByRecordIdNotFound",
     title: "EService not found",
   });
 }
