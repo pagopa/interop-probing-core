@@ -4,7 +4,11 @@ import { ApiGetEservicesReadyForPollingQuery } from "../../probing-eservice-oper
 import { config } from "../src/utilities/config.js";
 import { EserviceContentDto } from "pagopa-interop-probing-models";
 import { mockApiClientError } from "./utils.js";
-import { AppError, apiGetEservicesReadyForPollingError, makeApplicationError } from "../src/model/domain/errors.js";
+import {
+  AppError,
+  apiGetEservicesReadyForPollingError,
+  makeApplicationError,
+} from "../src/model/domain/errors.js";
 
 describe("Process task test", async () => {
   const mockEservicesActive: EserviceContentDto[] = [
@@ -64,7 +68,6 @@ describe("Process task test", async () => {
   });
 
   it("Invoke processTask should throw an error when getEservicesReadyForPolling returns a response error", async () => {
-    
     const apiClientError = mockApiClientError(500, "Internal server error");
     const operationsClientError = makeApplicationError(
       apiGetEservicesReadyForPollingError(
@@ -73,15 +76,16 @@ describe("Process task test", async () => {
       )
     );
 
-    vi.spyOn(mockOperationsService, "getEservicesReadyForPolling").mockRejectedValueOnce(
-      operationsClientError
-    );
+    vi.spyOn(
+      mockOperationsService,
+      "getEservicesReadyForPolling"
+    ).mockRejectedValueOnce(operationsClientError);
 
     try {
       await processTask(mockOperationsService, mockProducerService);
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe('0002');
+      expect((error as AppError).code).toBe("0002");
       expect((error as AppError).status).toBe(500);
     }
   });
