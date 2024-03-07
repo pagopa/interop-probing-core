@@ -21,7 +21,7 @@ const serializeError = (error: unknown) => {
 };
 
 const processExit = async (exitStatusCode: number = 1): Promise<void> => {
-  logger.info(`Process exit with code ${exitStatusCode}`);
+  logger.error(`Process exit with code ${exitStatusCode}`);
   await new Promise((resolve) => setTimeout(resolve, 1000));
   process.exit(exitStatusCode);
 };
