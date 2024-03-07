@@ -9,7 +9,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { Typography } from '@mui/material'
 import { useLoadingOverlay } from '@/stores'
 import { delayedPromise } from '@/utils/common.utils'
-import { PageContainerSkeleton } from '@/layout/PageContainer'
+import { PageContainerSkeleton } from '@/components/layout/PageContainer'
 
 export const MonitoringDetailPage = () => {
   const { t } = useTranslation('common', {

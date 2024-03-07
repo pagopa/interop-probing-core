@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { RecoverPasswordForm } from './components/RecoverPasswordForm'
-import { LoginLayout } from '@/layout/LoginLayout'
+import { LoginLayout } from '@/components/layout/LoginLayout'
 
 export const RecoverPasswordPage = () => {
   const { t } = useTranslation('common')

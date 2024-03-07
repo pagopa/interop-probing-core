@@ -4,10 +4,10 @@ import { Box } from '@mui/material'
 import { Dialog } from '@/components/dialogs'
 import { useLocation } from '@/router'
 import { ErrorBoundary } from 'react-error-boundary'
-import { AppLayout } from '@/layout/AppLayout'
-import { Footer, Header } from '@/layout'
+import { AppLayout } from '@/components/layout/AppLayout'
+import { Footer, Header } from '@/components/layout'
 import { ErrorPage } from '@/pages/ErrorPage'
-import { PageContainerSkeleton } from '@/layout/PageContainer'
+import { PageContainerSkeleton } from '@/components/layout/PageContainer'
 const _RoutesWrapper: React.FC = () => {
   const { routeKey } = useLocation()
   return (

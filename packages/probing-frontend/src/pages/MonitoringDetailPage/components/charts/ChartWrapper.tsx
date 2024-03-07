@@ -9,7 +9,7 @@ import LineChart from './LineChart'
 import { Filters, useFilters } from '@pagopa/interop-fe-commons'
 import { useJwt } from '@/hooks/useJwt'
 import { useTranslation } from 'react-i18next'
-import { PageContainerSkeleton } from '@/layout/PageContainer'
+import { PageContainerSkeleton } from '@/components/layout/PageContainer'
 
 const lastYear = new Date(new Date().setFullYear(new Date().getFullYear() - 1))
 

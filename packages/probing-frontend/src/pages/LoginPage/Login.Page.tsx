@@ -3,7 +3,7 @@ import { Trans, useTranslation } from 'react-i18next'
 import { Link } from '@/router'
 import { LoginForm } from './components/LoginForm'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { LoginLayout } from '@/layout/LoginLayout'
+import { LoginLayout } from '@/components/layout/LoginLayout'
 
 export const LoginPage = () => {
   const { t } = useTranslation('common')

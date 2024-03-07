@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { FirstAccessForm } from './components/FirstAccessForm'
-import { LoginLayout } from '@/layout/LoginLayout'
+import { LoginLayout } from '@/components/layout/LoginLayout'
 
 export const FirstAccessPage = ({ isRecover = false }: { isRecover?: boolean }) => {
   const { t } = useTranslation('common')
