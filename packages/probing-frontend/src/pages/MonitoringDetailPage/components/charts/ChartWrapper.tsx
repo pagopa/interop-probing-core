@@ -23,7 +23,7 @@ export const ChartWrapper = ({
   const { t } = useTranslation('common', { keyPrefix: 'detailsPage' })
   const jwt = useJwt()
 
-  const { data: eservicesTelemetry, isFetching } = MonitoringQueries.useGetTelemetryData({
+  const { data: eservicesTelemetry, isInitialLoading } = MonitoringQueries.useGetTelemetryData({
     eserviceId,
     pollingFrequency,
   })
@@ -48,11 +48,10 @@ export const ChartWrapper = ({
     },
   ])
 
-  const { data: eservicesFilteredTelemetry, isFetching: isFetchingFiltered } =
+  const { data: eservicesFilteredTelemetry, isInitialLoading: isLoadingFilteredData } =
     MonitoringQueries.useGetFilteredTelemetryData(
       { pollingFrequency, startDate, endDate },
-      eserviceId,
-      { suspense: false }
+      eserviceId
     )
 
   const responseTelemetry = eservicesFilteredTelemetry || eservicesTelemetry
@@ -76,7 +75,7 @@ export const ChartWrapper = ({
     ] as Array<number>)
     .range([300, 20])
 
-  if (isFetching || isFetchingFiltered) return <PageContainerSkeleton />
+  if (isInitialLoading || isLoadingFilteredData) return <PageContainerSkeleton />
 
   return (
     <>
