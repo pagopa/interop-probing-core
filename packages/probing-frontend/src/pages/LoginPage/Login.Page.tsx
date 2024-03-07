@@ -30,6 +30,7 @@ const FooterLogin = () => {
         <Link
           to={'MONITORING_E_SERVICE_LIST'}
           as="button"
+          variant="naked"
           startIcon={<ArrowBackIcon />}
           sx={{ my: 4 }}
         >

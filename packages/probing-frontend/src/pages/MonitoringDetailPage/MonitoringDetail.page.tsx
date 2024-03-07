@@ -72,7 +72,12 @@ export const MonitoringDetailPage = () => {
         />
       )}
       <Box sx={{ my: 4 }}>
-        <Link to={'MONITORING_E_SERVICE_LIST'} as="button" startIcon={<ArrowBackIcon />}>
+        <Link
+          to={'MONITORING_E_SERVICE_LIST'}
+          as="button"
+          variant="naked"
+          startIcon={<ArrowBackIcon />}
+        >
           {t('returnToList')}
         </Link>
       </Box>
