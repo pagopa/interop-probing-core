@@ -95,13 +95,10 @@ export const ChartWrapper = ({
             data={responseTelemetry?.performances ?? []}
             xScale={x(firstPerformanceTime)}
             yScale={y}
-          ></LineChart>
-          <FailuresChart
-            failures={responseTelemetry?.failures ?? []}
-            x={x(firstFailureTime)}
-          ></FailuresChart>
+          />
+          <FailuresChart failures={responseTelemetry?.failures ?? []} x={x(firstFailureTime)} />
         </Stack>
-        <BarChart data={responseTelemetry?.percentages ?? []}></BarChart>
+        <BarChart data={responseTelemetry?.percentages ?? []} />
       </Stack>
     </>
   )

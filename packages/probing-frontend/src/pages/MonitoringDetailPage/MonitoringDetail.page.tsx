@@ -61,7 +61,7 @@ export const MonitoringDetailPage = () => {
         {eservicesProbingDetail && (
           <MonitoringEserviceProbing
             eservicesProbingDetail={eservicesProbingDetail}
-            refetch={handleRefetch}
+            onRefetch={handleRefetch}
           />
         )}
       </Box>

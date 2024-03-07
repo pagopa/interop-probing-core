@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next'
 import type { ScaleTime } from 'd3'
 import { timeFormat } from 'd3'
 import type { FailurePerformance } from '@/api/monitoring/monitoring.models'
+import { CHART_COLORS } from './commons'
 
 export const FailuresChart = ({
   failures,
@@ -11,12 +12,6 @@ export const FailuresChart = ({
   x: ScaleTime<number, number, never>
 }) => {
   const { t } = useTranslation('common', { keyPrefix: 'detailsPage' })
-
-  const color = {
-    OK: '#17324D',
-    'N/D': '#A2ADB8',
-    KO: '#FE6666',
-  }
 
   const renderXTicks = () => {
     return (
@@ -54,7 +49,7 @@ export const FailuresChart = ({
             cx={x(new Date(failure.time))}
             cy={index > 0 && failure.time === failures[index - 1].time ? -8 : 0}
             r="3"
-            fill={color[failure.status]}
+            fill={CHART_COLORS[failure.status]}
           />
         ))}
       </g>

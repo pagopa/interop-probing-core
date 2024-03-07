@@ -1,24 +1,26 @@
-import type { ProbingEservice, ProbingStatusType } from '@/api/monitoring/monitoring.models'
+import type {
+  ProbingEServiceMonitorState,
+  ProbingEservice,
+} from '@/api/monitoring/monitoring.models'
 import { Alert, Box, Chip, Grid, Typography } from '@mui/material'
 import { ButtonNaked } from '@pagopa/mui-italia'
 import { useTranslation } from 'react-i18next'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import { formatDateString } from '@/utils/date.utils'
-import type { TranslationKeys } from './MonitoringInformationContainer'
 import { MonitoringInformationContainer } from './MonitoringInformationContainer'
 
 export const MonitoringEserviceProbing = ({
   eservicesProbingDetail,
-  refetch,
+  onRefetch,
 }: {
   eservicesProbingDetail: ProbingEservice
-  refetch: () => Promise<void>
+  onRefetch: () => Promise<void>
 }) => {
   const { t } = useTranslation('common', {
     keyPrefix: 'detailsPage',
   })
 
-  const getProbingStateChipColor = (value: ProbingStatusType) => {
+  const getProbingStateChipColor = (value: ProbingEServiceMonitorState) => {
     switch (value) {
       case 'ONLINE':
         return 'success'
@@ -33,17 +35,12 @@ export const MonitoringEserviceProbing = ({
     <Box sx={{ mt: '40px', width: '100%', maxWidth: '600px' }}>
       <Typography variant="h5">{t('realTimeTitle')}</Typography>
       <Grid container sx={{ p: 2, my: 2, backgroundColor: '#F2F2F2', justifyContent: 'end' }}>
-        <ButtonNaked
-          color="primary"
-          onClick={() => refetch()}
-          size="small"
-          startIcon={<RefreshIcon />}
-        >
+        <ButtonNaked color="primary" onClick={onRefetch} size="small" startIcon={<RefreshIcon />}>
           {t('refresh')}
         </ButtonNaked>
       </Grid>
       <MonitoringInformationContainer
-        label="monitoringState"
+        label={t('monitoringState')}
         content={
           <Chip
             size={'small'}
@@ -53,12 +50,12 @@ export const MonitoringEserviceProbing = ({
         }
       />
       <MonitoringInformationContainer
-        label="eserviceState"
+        label={t('eserviceState')}
         content={
           <Chip
             size={'small'}
-            label={eservicesProbingDetail.state.toLowerCase() as keyof TranslationKeys}
-            color={getProbingStateChipColor(eservicesProbingDetail.state ?? 'N/D')}
+            label={eservicesProbingDetail.state.toLowerCase()}
+            color={getProbingStateChipColor(eservicesProbingDetail.state)}
           />
         }
       />
@@ -81,27 +78,27 @@ const ProbingDataAlert = ({
   eservicesProbingDetail: ProbingEservice
 }) => {
   const { t } = useTranslation('common', { keyPrefix: 'detailsPage.alerts' })
+  const { probingEnabled, state, eserviceActive } = eservicesProbingDetail
 
-  let message: keyof TranslationKeys['alerts'] = 'genericAlert'
+  const isMonitoringSuspended = state === 'N/D' && !probingEnabled
+  const isVersionSuspended = state === 'OFFLINE' && !eserviceActive
+  const isEserviceNotAnswering = state === 'OFFLINE' && eserviceActive
 
-  const isMonitoringSuspended =
-    eservicesProbingDetail.probingEnabled === false && eservicesProbingDetail.state === 'N/D'
-  const isVersionSuspended =
-    eservicesProbingDetail.state === 'OFFLINE' && !eservicesProbingDetail.eserviceActive
-  const isEserviceNotAnswering =
-    eservicesProbingDetail.state === 'OFFLINE' && eservicesProbingDetail.eserviceActive
+  let message = ''
 
   if (isMonitoringSuspended) {
-    message = 'monitoringSystemSuspendedMessage'
+    message = t('monitoringSystemSuspendedMessage')
   } else if (isVersionSuspended) {
-    message = 'versionSuspendedMessage'
+    message = t('versionSuspendedMessage')
   } else if (isEserviceNotAnswering) {
-    message = 'eserviceNotAnswerMessage'
+    message = t('eserviceNotAnswerMessage')
   }
+
+  if (!message) return null
 
   return (
     <Alert sx={{ width: '100%' }} severity="warning">
-      {t(message)}
+      {message}
     </Alert>
   )
 }

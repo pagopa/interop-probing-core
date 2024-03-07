@@ -1,4 +1,5 @@
-export type ProbingStatusType = 'OK' | 'N/D' | 'KO' | 'OFFLINE' | 'ONLINE'
+export type ProbingResponseStatus = 'OK' | 'KO' | 'N/D'
+export type ProbingEServiceMonitorState = 'N/D' | 'OFFLINE' | 'ONLINE'
 
 export type EserviceContent = {
   eserviceRecordId: number
@@ -18,7 +19,7 @@ export type EService = {
 
 export type Percentage = {
   value: number
-  status: ProbingStatusType // Assuming the possible status are OK, N/D, KO, and OFFLINE
+  status: ProbingResponseStatus
 }
 
 export type TelemetryData = {
@@ -38,18 +39,18 @@ export type MainEservice = {
 
 export type ProbingEservice = {
   probingEnabled: boolean
-  state: ProbingStatusType // Assuming the possible states are OK, N/D, KO, and OFFLINE
+  state: ProbingEServiceMonitorState
   responseReceived: string | null
   eserviceActive: boolean
 }
 
 export type ServicePerformance = {
   responseTime: number
-  status: ProbingStatusType
+  status: ProbingResponseStatus
   time: string
 }
 
 export type FailurePerformance = {
-  status: Exclude<ProbingStatusType, 'OFFLINE' | 'ONLINE'>
+  status: ProbingResponseStatus
   time: string
 }

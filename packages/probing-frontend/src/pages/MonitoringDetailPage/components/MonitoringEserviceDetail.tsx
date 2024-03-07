@@ -24,15 +24,15 @@ export const MonitoringEserviceDetail = ({
   return (
     <Box sx={{ width: '100%', maxWidth: '600px' }}>
       <MonitoringInformationContainer
-        label="producerName"
+        label={t('producerName')}
         content={eservicesDetail.producerName || ''}
       />
       <MonitoringInformationContainer
-        label="version"
+        label={t('version')}
         content={eservicesDetail.versionNumber || ''}
       />
       <MonitoringInformationContainer
-        label="eServiceTab"
+        label={t('eServiceTab')}
         content={
           <ButtonNaked
             color="primary"
