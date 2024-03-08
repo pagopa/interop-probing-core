@@ -79,18 +79,9 @@ export const ChartWrapper = ({
 
   return (
     <>
-      <Box sx={{ maxWidth: '100%' }}>{jwt && <Filters {...handlers} />}</Box>
+      <Box sx={{ width: '100%' }}>{jwt && <Filters {...handlers} />}</Box>
       <Stack direction={'row'} sx={{ flexWrap: 'wrap' }}>
-        <Stack
-          direction="column"
-          spacing={6}
-          sx={{
-            width: '650px',
-            '@media (max-width: 600px)': {
-              width: '100%', // Width for screens smaller than 600px
-            },
-          }}
-        >
+        <Stack direction="column" flexGrow={2}>
           <LineChart
             data={responseTelemetry?.performances ?? []}
             xScale={x(firstPerformanceTime)}
@@ -98,7 +89,9 @@ export const ChartWrapper = ({
           />
           <FailuresChart failures={responseTelemetry?.failures ?? []} x={x(firstFailureTime)} />
         </Stack>
-        <BarChart data={responseTelemetry?.percentages ?? []} />
+        <Stack>
+          <BarChart data={responseTelemetry?.percentages ?? []} />
+        </Stack>
       </Stack>
     </>
   )

@@ -3,7 +3,7 @@ import { Link, useParams } from '@/router'
 import { MonitoringEserviceTelemetry } from './components/MonitoringEserviceTelemetry'
 import { MonitoringEserviceProbing } from './components/MonitoringEserviceProbing'
 import { MonitoringEserviceDetail } from './components/MonitoringEserviceDetail'
-import { Box } from '@mui/system'
+import { Box, Stack } from '@mui/system'
 import { useTranslation } from 'react-i18next'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { Typography } from '@mui/material'
@@ -43,12 +43,14 @@ export const MonitoringDetailPage = () => {
 
   return (
     <>
-      <Typography variant="h4" component="h1" sx={{ mb: '20px' }}>
-        {eservicesDetail?.eserviceName}
-      </Typography>
-      <Typography variant="body1" component="p" sx={{ mb: '30px' }}>
-        {t('subtitle')}
-      </Typography>
+      <Stack spacing={1} sx={{ mb: 6, maxWidth: 620, mx: 'auto' }}>
+        <Typography variant="h4" component="h1">
+          {eservicesDetail?.eserviceName}
+        </Typography>
+        <Typography variant="body1" component="p" sx={{ mb: '30px' }}>
+          {t('subtitle')}
+        </Typography>
+      </Stack>
       <Box
         sx={{
           display: 'flex',

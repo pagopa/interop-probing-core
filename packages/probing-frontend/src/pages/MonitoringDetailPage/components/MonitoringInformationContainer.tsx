@@ -10,7 +10,7 @@ export const MonitoringInformationContainer = ({
 }) => {
   return (
     <InformationContainer
-      sx={{ minWidth: '500px', mb: '20px', textAlign: 'left' }}
+      sx={{ minWidth: '400px', mb: '20px', textAlign: 'left' }}
       label={label}
       content={
         <Typography component="h3" variant="caption-semibold">

@@ -13,7 +13,7 @@ export const MonitoringEserviceTelemetry = ({
   const { t } = useTranslation('common', { keyPrefix: 'detailsPage' })
 
   return (
-    <Stack spacing={1} sx={{ mt: 6, width: '100%', mx: 'auto' }}>
+    <Stack spacing={1} sx={{ mt: 20, width: '100%', mx: 'auto' }}>
       <Typography component={'h1'} variant="h5" sx={{ pb: 8 }}>
         {t('historyTitle')}
       </Typography>

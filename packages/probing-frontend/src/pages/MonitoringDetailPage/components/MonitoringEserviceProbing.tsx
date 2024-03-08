@@ -60,7 +60,7 @@ export const MonitoringEserviceProbing = ({
         }
       />
       <MonitoringInformationContainer
-        label="lastRelevationDate"
+        label={t('lastRelevationDate')}
         content={
           eservicesProbingDetail.responseReceived
             ? formatDateString(eservicesProbingDetail.responseReceived)

@@ -1,7 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import { max, scaleLinear, scaleBand } from 'd3'
 import { ChartsLegend } from './ChartsLegend'
-import { Box } from '@mui/system'
 import type { Percentage } from '@/api/monitoring/monitoring.models'
 import { CHART_COLORS } from './commons'
 
@@ -22,7 +21,7 @@ export const BarChart = ({ data }: { data: Array<Percentage> }) => {
     .paddingInner(0.25)
 
   const Bars = () => (
-    <g transform="translate(0, 50)">
+    <g transform="translate(15, 50)">
       {data
         .filter((percentage) => percentage.value)
         .map((d) => (
@@ -40,19 +39,17 @@ export const BarChart = ({ data }: { data: Array<Percentage> }) => {
 
   return (
     <>
-      <Box>
-        <svg className="bar-chart-container" width={430} height={240} role="img">
-          <g className="bar-header" transform="translate(0, 20)">
-            <text>
-              <tspan fontFamily="Titillium Web" fontSize="18px" color="#17324D" fontWeight="700">
-                {t('titleOperativita')}
-              </tspan>
-            </text>
-          </g>
-          <Bars />
-        </svg>
-        <ChartsLegend legendElements={legendElements} />
-      </Box>
+      <svg height={240} role="img" display="block">
+        <g transform="translate(15, 17)">
+          <text>
+            <tspan fontFamily="Titillium Web" fontSize="18px" color="#17324D" fontWeight="700">
+              {t('titleOperativita')}
+            </tspan>
+          </text>
+        </g>
+        <Bars />
+      </svg>
+      <ChartsLegend legendElements={legendElements} />
     </>
   )
 }

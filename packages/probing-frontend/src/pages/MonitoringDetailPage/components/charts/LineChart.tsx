@@ -79,7 +79,7 @@ const LineChart = ({
     .y((d) => yScale(d.responseTime ? d.responseTime : 0))
 
   return (
-    <svg className="line-chart-container" height={400} role="img">
+    <svg className="line-chart-container" display="block" height={430} width="100%">
       <LineChartHeader />
       <g className="scales" transform={`translate(50, 60)`}>
         <XTicks />

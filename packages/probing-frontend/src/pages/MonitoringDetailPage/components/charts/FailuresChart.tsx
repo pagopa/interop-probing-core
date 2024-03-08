@@ -13,7 +13,7 @@ export const FailuresChart = ({
 }) => {
   const { t } = useTranslation('common', { keyPrefix: 'detailsPage' })
 
-  const renderXTicks = () => {
+  const XTicks = () => {
     return (
       <g opacity="40%" fontSize={10} textAnchor="middle">
         {x.ticks().map((d) => (
@@ -28,7 +28,7 @@ export const FailuresChart = ({
     )
   }
 
-  const renderFailuresHeader = () => {
+  const FailuresPoints = () => {
     return (
       <g className="failures-header" transform={`translate(0, 15)`}>
         <text>
@@ -40,7 +40,7 @@ export const FailuresChart = ({
     )
   }
 
-  const renderFailuresPoints = () => {
+  const FailuresHeader = () => {
     return (
       <g className="points" transform={`translate(20, 50)`}>
         {failures.map((failure, index) => (
@@ -57,10 +57,10 @@ export const FailuresChart = ({
   }
 
   return (
-    <svg className="line-chart-container-failures" height={100} role="img">
-      {renderFailuresHeader()}
+    <svg className="line-chart-container-failures" height={100} width="100%" role="img">
+      <FailuresHeader />
       <g className="scales" transform={`translate(20,50)`}>
-        {renderXTicks()}
+        <XTicks />
         <g fontFamily="Poppins" opacity={0.4} fontSize={10} textAnchor="end">
           <g opacity="1" className="tick">
             <line stroke="currentColor" x2={0} strokeOpacity="0.2" />
@@ -68,7 +68,7 @@ export const FailuresChart = ({
           </g>
         </g>
       </g>
-      {renderFailuresPoints()}
+      <FailuresPoints />
     </svg>
   )
 }
