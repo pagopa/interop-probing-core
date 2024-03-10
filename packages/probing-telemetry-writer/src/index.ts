@@ -5,10 +5,16 @@ import {
   TelemetryWriteService,
   telemetryWriteServiceBuilder,
 } from "./services/telemetryService.js";
-import { timestreamWriteClientBuilder } from "./utilities/timestreamWriteClientHandler.js";
+import {
+  TimestreamWriteClientHandler,
+  timestreamWriteClientBuilder,
+} from "./utilities/timestreamWriteClientHandler.js";
 
-const timestreamWriteClient = timestreamWriteClientBuilder()
-const telemetryService: TelemetryWriteService = telemetryWriteServiceBuilder(timestreamWriteClient);
+const timestreamWriteClient: TimestreamWriteClientHandler =
+  timestreamWriteClientBuilder();
+const telemetryService: TelemetryWriteService = telemetryWriteServiceBuilder(
+  timestreamWriteClient
+);
 
 const sqsClient: SQS.SQSClient = await SQS.instantiateClient(
   { region: config.awsRegion },
