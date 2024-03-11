@@ -151,7 +151,7 @@ export const operationsServiceBuilder = (
     async getEservicesProducers(
       filters: ApiGetProducersQuery
     ): Promise<ApiGetProducersResponse> {
-      const { content = [] } = await operationsApiClient.getEservicesProducers({
+      const { content } = await operationsApiClient.getEservicesProducers({
         queries: filters,
       });
 
