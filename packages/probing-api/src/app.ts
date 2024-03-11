@@ -1,9 +1,9 @@
 import { zodiosCtx } from "pagopa-interop-probing-commons";
+import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
 import eServiceRouter from "./routers/eserviceRouter.js";
 import { config } from "./utilities/config.js";
-import { createApiClient as createOperationsApiClient } from "../../probing-eservice-operations/src/model/generated/api.js";
 
-const operationsApiClient = createOperationsApiClient(config.operationsBaseUrl);
+const operationsApiClient = createApiClient(config.operationsBaseUrl);
 
 const app = zodiosCtx.app();
 

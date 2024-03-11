@@ -5,7 +5,7 @@ import {
   ApiUpdateEserviceProbingStatePayload,
   ApiUpdateEserviceStatePayload,
   ApiUpdateResponseReceivedPayload,
-} from "../../../probing-eservice-operations/src/model/types.js";
+} from "pagopa-interop-probing-eservice-operations-client";
 import { genericError } from "pagopa-interop-probing-models";
 import {
   ApiGetEserviceMainDataResponse,

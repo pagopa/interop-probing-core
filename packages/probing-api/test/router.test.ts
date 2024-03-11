@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { zodiosCtx } from "pagopa-interop-probing-commons";
-import eServiceRouter from "../src/routers/eserviceRouter.js";
 import supertest from "supertest";
 import { v4 as uuidv4 } from "uuid";
-import { createApiClient as createOperationsApiClient } from "../../probing-eservice-operations/src/model/generated/api.js";
+import { zodiosCtx } from "pagopa-interop-probing-commons";
+import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
+import eServiceRouter from "../src/routers/eserviceRouter.js";
 import { config } from "../src/utilities/config.js";
 import { mockOperationsApiClientError, nowDateUTC } from "./utils.js";
 import {
@@ -32,7 +32,7 @@ import {
   responseStatus,
 } from "pagopa-interop-probing-models";
 
-const operationsApiClient = createOperationsApiClient(config.operationsBaseUrl);
+const operationsApiClient = createApiClient(config.operationsBaseUrl);
 const app = zodiosCtx.app();
 app.use(eServiceRouter(zodiosCtx)(operationsApiClient));
 

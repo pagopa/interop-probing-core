@@ -2,12 +2,12 @@ import { ZodiosEndpointDefinitions, ZodiosInstance } from "@zodios/core";
 import { ZodiosRouter } from "@zodios/express";
 import { resolveOperationsApiClientProblem } from "../model/domain/errors.js";
 import { ExpressContext, ZodiosContext } from "pagopa-interop-probing-commons";
+import { Api } from "pagopa-interop-probing-eservice-operations-client";
 import {
   OperationsService,
   operationsServiceBuilder,
 } from "../services/operationsService.js";
 import { api } from "../model/generated/api.js";
-import { Api } from "../../../probing-eservice-operations/src/model/types.js";
 
 const eServiceRouter = (
   ctx: ZodiosContext
@@ -115,7 +115,9 @@ const eServiceRouter = (
       })
       .get("/producers", async (req, res) => {
         try {
-          const producers = await operationsService.getEservicesProducers(req.query);
+          const producers = await operationsService.getEservicesProducers(
+            req.query
+          );
 
           return res.status(200).json(producers).end();
         } catch (error) {
