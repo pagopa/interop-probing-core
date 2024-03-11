@@ -1,0 +1,38 @@
+{
+  "name": "pagopa-interop-probing-eservice-operations-client",
+  "private": true,
+  "version": "1.0.0",
+  "description": "PagoPA probing eservice operations client",
+  "main": "dist",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:autofix": "eslint . --ext .ts,.tsx --fix",
+    "format:check": "prettier --check src",
+    "format:write": "prettier --write src",
+    "start": "node --watch --no-warnings --loader ts-node/esm ./src/index.ts",
+    "build": "tsc",
+    "generate-client": "mkdir -p ./src/model/generated && pnpm openapi-zod-client '../../probing-eservice-operations/open-api/api-eservice-operations-interop-v1.yaml' -o './src/model/generated/client.ts'",
+    "clean-generated": "pnpm exec rm ./src/model/generated/client.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@pagopa/eslint-config": "^3.0.0",
+    "prettier": "^2.8.8",
+    "ts-node": "^10.9.1",
+    "typescript": "5.2.2"
+  },
+  "dependencies": {
+    "@zodios/core": "^10.9.2",
+    "@zodios/express": "^10.6.1",
+    "openapi-zod-client": "^1.7.1",
+    "ts-pattern": "^5.0.1",
+    "typeorm": "^0.3.17",
+    "zod": "^3.21.4"
+  }
+}
