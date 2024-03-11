@@ -5,8 +5,11 @@ import { useTranslation } from 'react-i18next'
 import type { EserviceContent } from '../../../api/monitoring/monitoring.models'
 import { ButtonNaked } from '@pagopa/mui-italia'
 import { useNavigate } from '@/router'
+import React from 'react'
 
-export const MonitoringTableRow = ({ row }: { row: EserviceContent }) => {
+type MonitoringTableRowProps = { row: EserviceContent }
+
+export const MonitoringTableRow: React.FC<MonitoringTableRowProps> = ({ row }) => {
   const { t } = useTranslation('common')
   const navigate = useNavigate()
   return (

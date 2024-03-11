@@ -4,13 +4,12 @@ import { timeFormat } from 'd3'
 import type { FailurePerformance } from '@/api/monitoring/monitoring.models'
 import { CHART_COLORS } from './commons'
 
-export const FailuresChart = ({
-  failures,
-  x,
-}: {
+type FailuresChartProps = {
   failures: FailurePerformance[]
   x: ScaleTime<number, number, never>
-}) => {
+}
+
+export const FailuresChart: React.FC<FailuresChartProps> = ({ failures, x }) => {
   const { t } = useTranslation('common', { keyPrefix: 'detailsPage' })
 
   const XTicks = () => {

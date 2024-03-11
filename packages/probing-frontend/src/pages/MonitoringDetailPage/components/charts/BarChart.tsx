@@ -4,7 +4,11 @@ import { ChartsLegend } from './ChartsLegend'
 import type { Percentage } from '@/api/monitoring/monitoring.models'
 import { CHART_COLORS } from './commons'
 
-export const BarChart = ({ data }: { data: Array<Percentage> }) => {
+type BarChartProps = {
+  data: Array<Percentage>
+}
+
+export const BarChart: React.FC<BarChartProps> = ({ data }) => {
   const { t } = useTranslation('common', { keyPrefix: 'detailsPage' })
 
   const legendElements = [

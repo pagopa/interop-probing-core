@@ -11,7 +11,7 @@ import { useLoadingOverlay } from '@/stores'
 import { delayedPromise } from '@/utils/common.utils'
 import { PageContainerSkeleton } from '@/components/layout/PageContainer'
 
-export const MonitoringDetailPage = () => {
+export const MonitoringDetailPage: React.FC = () => {
   const { t } = useTranslation('common', {
     keyPrefix: 'detailsPage',
   })

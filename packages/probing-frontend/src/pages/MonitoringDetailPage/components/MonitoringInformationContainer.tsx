@@ -1,12 +1,14 @@
 import { Typography } from '@mui/material'
 import { InformationContainer } from '@pagopa/interop-fe-commons'
 
-export const MonitoringInformationContainer = ({
-  label,
-  content,
-}: {
+type MonitoringInformationContainerProps = {
   label: string
   content: JSX.Element | string | number
+}
+
+export const MonitoringInformationContainer: React.FC<MonitoringInformationContainerProps> = ({
+  label,
+  content,
 }) => {
   return (
     <InformationContainer

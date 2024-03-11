@@ -11,15 +11,14 @@ import { useJwt } from '@/hooks/useJwt'
 import { useTranslation } from 'react-i18next'
 import { PageContainerSkeleton } from '@/components/layout/PageContainer'
 
-const lastYear = new Date(new Date().setFullYear(new Date().getFullYear() - 1))
-
-export const ChartWrapper = ({
-  eserviceId,
-  pollingFrequency,
-}: {
+type ChartWrapperProps = {
   eserviceId: string
   pollingFrequency: number
-}) => {
+}
+
+const lastYear = new Date(new Date().setFullYear(new Date().getFullYear() - 1))
+
+export const ChartWrapper: React.FC<ChartWrapperProps> = ({ eserviceId, pollingFrequency }) => {
   const { t } = useTranslation('common', { keyPrefix: 'detailsPage' })
   const jwt = useJwt()
 

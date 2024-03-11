@@ -1,10 +1,10 @@
 import { Box, List, ListItem, Typography } from '@mui/material'
 
-export const ChartsLegend = ({
-  legendElements,
-}: {
+type ChartsLegendProps = {
   legendElements: { label: string; color: string }[]
-}) => {
+}
+
+export const ChartsLegend: React.FC<ChartsLegendProps> = ({ legendElements }) => {
   return (
     <List sx={{ minWidth: 400 }}>
       {legendElements.map((item) => (

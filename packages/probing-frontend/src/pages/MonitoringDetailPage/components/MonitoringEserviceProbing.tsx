@@ -9,7 +9,12 @@ import RefreshIcon from '@mui/icons-material/Refresh'
 import { formatDateString } from '@/utils/date.utils'
 import { MonitoringInformationContainer } from './MonitoringInformationContainer'
 
-export const MonitoringEserviceProbing = ({
+type MonitoringEserviceProbingProps = {
+  eservicesProbingDetail: ProbingEservice
+  onRefetch: () => Promise<void>
+}
+
+export const MonitoringEserviceProbing: React.FC<MonitoringEserviceProbingProps> = ({
   eservicesProbingDetail,
   onRefetch,
 }: {
@@ -72,11 +77,11 @@ export const MonitoringEserviceProbing = ({
   )
 }
 
-const ProbingDataAlert = ({
-  eservicesProbingDetail,
-}: {
+type ProbingDataAlertProps = {
   eservicesProbingDetail: ProbingEservice
-}) => {
+}
+
+const ProbingDataAlert: React.FC<ProbingDataAlertProps> = ({ eservicesProbingDetail }) => {
   const { t } = useTranslation('common', { keyPrefix: 'detailsPage.alerts' })
   const { probingEnabled, state, eserviceActive } = eservicesProbingDetail
 

@@ -3,17 +3,15 @@ import { line, timeFormat, curveCatmullRom } from 'd3'
 import { useTranslation } from 'react-i18next'
 import type { ServicePerformance } from '@/api/monitoring/monitoring.models'
 
-const curveType = curveCatmullRom.alpha(0.5)
-
-const LineChart = ({
-  data,
-  xScale,
-  yScale,
-}: {
+type LineChartProps = {
   data: Array<ServicePerformance>
   xScale: ScaleTime<number, number, never>
   yScale: ScaleLinear<number, number, never>
-}) => {
+}
+
+const curveType = curveCatmullRom.alpha(0.5)
+
+const LineChart: React.FC<LineChartProps> = ({ data, xScale, yScale }) => {
   const { t } = useTranslation('common', { keyPrefix: 'detailsPage' })
 
   const LineChartHeader = () => (

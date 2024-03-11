@@ -7,7 +7,7 @@ import { Button } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
-export const RecoverPasswordForm = () => {
+export const RecoverPasswordForm: React.FC = () => {
   const { t } = useTranslation('common', {
     keyPrefix: 'recoverPasswordForm',
   })

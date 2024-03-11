@@ -27,7 +27,7 @@ const headLabels = (t: TFunction<'common', 'table'>): Array<string> => {
   ]
 }
 
-export const MonitoringTable = () => {
+export const MonitoringTable: React.FC = () => {
   const { t } = useTranslation('common', { keyPrefix: 'table' })
   const { paginationParams, paginationProps, getTotalPageCount } = usePagination({ limit: 10 })
   const { showOverlay, hideOverlay } = useLoadingOverlay()
@@ -120,7 +120,7 @@ export const MonitoringTable = () => {
   )
 }
 
-const TableSkeleton = () => {
+const TableSkeleton: React.FC = () => {
   const { t } = useTranslation('common', { keyPrefix: 'table' })
 
   const generateSkeleton = () => {

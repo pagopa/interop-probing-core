@@ -8,10 +8,12 @@ import { Link } from 'react-router-dom'
 import { MonitoringInformationContainer } from './MonitoringInformationContainer'
 import { CATALOGUE_BASE_PATH } from '@/config/constants'
 
-export const MonitoringEserviceDetail = ({
-  eservicesDetail,
-}: {
+type MonitoringEserviceDetailProps = {
   eservicesDetail: MainEservice
+}
+
+export const MonitoringEserviceDetail: React.FC<MonitoringEserviceDetailProps> = ({
+  eservicesDetail,
 }) => {
   const { t } = useTranslation('common', {
     keyPrefix: 'detailsPage',

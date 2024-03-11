@@ -6,8 +6,9 @@ import { InputWrapper } from '@/components/shared/InputWrapper'
 import { useNavigate } from '@/router'
 import { AuthHooks } from '@/api/auth/auth.hooks'
 import { passwordRules } from '@/config/constants'
+import React from 'react'
 
-export const LoginForm = () => {
+export const LoginForm: React.FC = () => {
   const navigate = useNavigate()
   const { t } = useTranslation('common', {
     keyPrefix: 'loginForm',

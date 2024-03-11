@@ -2,13 +2,16 @@ import { Stack } from '@mui/system'
 import { Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { ChartWrapper } from './charts/ChartWrapper'
+import React from 'react'
 
-export const MonitoringEserviceTelemetry = ({
-  eserviceId,
-  pollingFrequency,
-}: {
+type MonitoringEserviceTelemetryProps = {
   eserviceId: string
   pollingFrequency: number
+}
+
+export const MonitoringEserviceTelemetry: React.FC<MonitoringEserviceTelemetryProps> = ({
+  eserviceId,
+  pollingFrequency,
 }) => {
   const { t } = useTranslation('common', { keyPrefix: 'detailsPage' })
 

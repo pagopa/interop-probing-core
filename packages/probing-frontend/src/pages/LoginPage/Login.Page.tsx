@@ -5,7 +5,7 @@ import { LoginForm } from './components/LoginForm'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { LoginLayout } from '@/components/layout/LoginLayout'
 
-export const LoginPage = () => {
+export const LoginPage: React.FC = () => {
   const { t } = useTranslation('common')
   return (
     <>
@@ -17,7 +17,7 @@ export const LoginPage = () => {
   )
 }
 
-const FooterLogin = () => {
+const FooterLogin: React.FC = () => {
   const { t } = useTranslation('common', {
     keyPrefix: 'loginForm',
   })
