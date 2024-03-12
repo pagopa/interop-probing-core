@@ -32,7 +32,6 @@
     "@zodios/express": "^10.6.1",
     "openapi-zod-client": "^1.7.1",
     "ts-pattern": "^5.0.1",
-    "typeorm": "^0.3.17",
     "zod": "^3.21.4"
   }
 }
