@@ -5,24 +5,15 @@ import {
   ApiUpdateEserviceProbingStatePayload,
   ApiUpdateEserviceStatePayload,
   ApiUpdateResponseReceivedPayload,
-} from "pagopa-interop-probing-eservice-operations-client";
-import { genericError } from "pagopa-interop-probing-models";
-import {
-  ApiGetEserviceMainDataResponse,
-  ApiGetEserviceProbingDataResponse,
-  ApiSearchEservicesResponse,
-  ApiGetProducersQuery,
   ApiGetProducersResponse,
+  ApiGetEserviceProbingDataResponse,
+  ApiGetEserviceMainDataResponse,
+  ApiSearchEservicesResponse,
+} from "pagopa-interop-probing-eservice-operations-client";
+import {
+  ApiGetProducersQuery,
   ApiSearchEservicesQuery,
 } from "../model/types.js";
-import {
-  fromECToMonitorState,
-  fromEPDToMonitorState,
-  isActive,
-} from "../utilities/enumUtils.js";
-import { z } from "zod";
-import { logger } from "pagopa-interop-probing-commons";
-import { ApiEServiceContent } from "../model/eservice.js";
 
 export const operationsServiceBuilder = (
   operationsApiClient: ZodiosInstance<Api>
@@ -85,38 +76,12 @@ export const operationsServiceBuilder = (
     async getEservices(
       filters: ApiSearchEservicesQuery
     ): Promise<ApiSearchEservicesResponse> {
-      const data = await operationsApiClient.searchEservices({
+      return await operationsApiClient.searchEservices({
         queries: {
           ...filters,
           ...{ versionNumber: Number(filters.versionNumber) || undefined },
         },
       });
-
-      const content = [];
-      const mappedContent = data.content.map((el) => ({
-        ...el,
-        state: fromECToMonitorState(el),
-      }));
-      const result = z.array(ApiEServiceContent).safeParse(mappedContent);
-
-      if (!result.success) {
-        logger.error(
-          `Unable to parse eservices items: result ${JSON.stringify(
-            result
-          )} - data ${JSON.stringify(data.content)} `
-        );
-
-        throw genericError("Unable to parse eservices items");
-      } else {
-        content.push(...result.data);
-      }
-
-      return {
-        content,
-        offset: filters.offset,
-        limit: filters.limit,
-        totalElements: data.totalElements,
-      };
     },
 
     async getEserviceMainData(
@@ -132,30 +97,19 @@ export const operationsServiceBuilder = (
     async getEserviceProbingData(
       eserviceRecordId: number
     ): Promise<ApiGetEserviceProbingDataResponse> {
-      const data = await operationsApiClient.getEserviceProbingData({
+      return await operationsApiClient.getEserviceProbingData({
         params: {
           eserviceRecordId,
         },
       });
-
-      return {
-        probingEnabled: data.probingEnabled,
-        eserviceActive: isActive(data.state),
-        state: fromEPDToMonitorState(data),
-        ...(data.responseReceived && {
-          responseReceived: data.responseReceived,
-        }),
-      };
     },
 
     async getEservicesProducers(
       filters: ApiGetProducersQuery
     ): Promise<ApiGetProducersResponse> {
-      const { content } = await operationsApiClient.getEservicesProducers({
+      return await operationsApiClient.getEservicesProducers({
         queries: filters,
       });
-
-      return content.map((el) => ({ label: el, value: el }));
     },
   };
 };

@@ -1,4 +1,8 @@
-import { ZodiosBodyByPath, ZodiosQueryParamsByPath } from "@zodios/core";
+import {
+  ZodiosBodyByPath,
+  ZodiosQueryParamsByPath,
+  ZodiosResponseByPath,
+} from "@zodios/core";
 import { api } from "./model/generated/client.js";
 
 export type Api = typeof api.api;
@@ -49,4 +53,28 @@ export type ApiGetProducersQuery = ZodiosQueryParamsByPath<
   Api,
   "get",
   "/producers"
+>;
+
+export type ApiGetProducersResponse = ZodiosResponseByPath<
+  Api,
+  "get",
+  "/producers"
+>;
+
+export type ApiGetEserviceProbingDataResponse = ZodiosResponseByPath<
+  Api,
+  "get",
+  "/eservices/probingData/:eserviceRecordId"
+>;
+
+export type ApiGetEserviceMainDataResponse = ZodiosResponseByPath<
+  Api,
+  "get",
+  "/eservices/mainData/:eserviceRecordId"
+>;
+
+export type ApiSearchEservicesResponse = ZodiosResponseByPath<
+  Api,
+  "get",
+  "/eservices"
 >;
