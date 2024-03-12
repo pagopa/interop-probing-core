@@ -43,6 +43,12 @@ export type ApiUpdateResponseReceivedPayload = ZodiosBodyByPath<
   "/eservices/:eserviceRecordId/updateResponseReceived"
 >;
 
+export type ApiUpdateResponseReceivedResponse = ZodiosResponseByPath<
+  Api,
+  "post",
+  "/eservices/:eserviceRecordId/updateResponseReceived"
+>;
+
 export type ApiSearchEservicesQuery = ZodiosQueryParamsByPath<
   Api,
   "get",
