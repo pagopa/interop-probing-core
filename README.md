@@ -19,3 +19,7 @@ Build the project:
 ```
 pnpm build
 ```
+
+## Working with the REST API
+
+All array query parameters for REST API must be passed with brackets for proper functionality, following the format: `?parameterName[]=value1&parameterName[]=value2` .

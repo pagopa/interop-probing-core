@@ -1,5 +1,22 @@
 /* eslint-disable max-classes-per-file */
 import { P, match } from "ts-pattern";
+import { z } from "zod";
+
+export const ProblemError = z.object({
+  code: z.string(),
+  detail: z.string(),
+});
+
+export const Problem = z.object({
+  type: z.string(),
+  status: z.number(),
+  title: z.string(),
+  correlationId: z.string().optional(),
+  detail: z.string(),
+  errors: z.array(ProblemError),
+});
+
+export type Problem = z.infer<typeof Problem>;
 
 export class ApiError<T> extends Error {
   public code: T;
@@ -25,20 +42,6 @@ export class ApiError<T> extends Error {
     this.correlationId = correlationId;
   }
 }
-
-export type ProblemError = {
-  code: string;
-  detail: string;
-};
-
-export type Problem = {
-  type: string;
-  status: number;
-  title: string;
-  correlationId?: string;
-  detail: string;
-  errors: ProblemError[];
-};
 
 export function makeApiProblemBuilder<T extends string>(errors: {
   [K in T]: string;
