@@ -34,7 +34,7 @@ import { EserviceView } from "../../repositories/entity/view/eservice.entity.js"
 import { config } from "../../utilities/config.js";
 import { WhereExpressionBuilder } from "typeorm/browser";
 import { ListResultEservices, ListResultProducers } from "../../model/dbModels.js";
-import { ApiGetProducersQuery, ApiSearchEservicesQuery } from "../../model/types.js";
+import { ApiGetProducersQuery, ApiSearchEservicesQuery } from "pagopa-interop-probing-eservice-operations-client";
 
 const probingDisabledPredicate = (queryBuilder: WhereExpressionBuilder) => {
   const extractMinute = `CAST(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60 AS INTEGER) > polling_frequency`;

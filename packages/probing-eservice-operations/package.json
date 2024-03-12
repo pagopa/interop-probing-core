@@ -40,6 +40,7 @@
     "openapi-zod-client": "^1.7.1",
     "pagopa-interop-probing-commons": "workspace:*",
     "pagopa-interop-probing-models": "workspace:*",
+    "pagopa-interop-probing-eservice-operations-client": "workspace:*",
     "pg": "^8.11.3",
     "ts-pattern": "^5.0.1",
     "typeorm": "^0.3.17",

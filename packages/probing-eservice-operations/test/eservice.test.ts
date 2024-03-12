@@ -51,7 +51,7 @@ import { EserviceProbingResponseSchema } from "../src/repositories/entity/eservi
 import { z } from "zod";
 import { nowDateUTC } from "../src/utilities/date.js";
 import { resolve } from 'path';
-import { ApiGetProducersQuery, ApiSearchEservicesQuery } from "../src/model/types.js";
+import { ApiGetProducersQuery, ApiSearchEservicesQuery } from "pagopa-interop-probing-eservice-operations-client";
 
 describe("database test", async () => {
   let eservices: EserviceEntities;
