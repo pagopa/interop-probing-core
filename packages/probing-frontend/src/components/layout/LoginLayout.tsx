@@ -1,15 +1,13 @@
 import { Paper, Typography } from '@mui/material'
 import { Box } from '@mui/system'
 
-export const LoginLayout = ({
-  children,
-  title,
-  description,
-}: {
+type LoginLayoutProps = {
   children: React.ReactNode
   title: string
   description: string
-}) => {
+}
+
+export const LoginLayout: React.FC<LoginLayoutProps> = ({ children, title, description }) => {
   return (
     <Box
       sx={{

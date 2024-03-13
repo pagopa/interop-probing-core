@@ -3,9 +3,9 @@ import { Trans, useTranslation } from 'react-i18next'
 import { Link } from '@/router'
 import { LoginForm } from './components/LoginForm'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { LoginLayout } from '@/layout/LoginLayout'
+import { LoginLayout } from '@/components/layout/LoginLayout'
 
-export const LoginPage = () => {
+export const LoginPage: React.FC = () => {
   const { t } = useTranslation('common')
   return (
     <>
@@ -17,7 +17,7 @@ export const LoginPage = () => {
   )
 }
 
-const FooterLogin = () => {
+const FooterLogin: React.FC = () => {
   const { t } = useTranslation('common', {
     keyPrefix: 'loginForm',
   })
@@ -30,8 +30,8 @@ const FooterLogin = () => {
         <Link
           to={'MONITORING_E_SERVICE_LIST'}
           as="button"
-          startIcon={<ArrowBackIcon />}
           variant="naked"
+          startIcon={<ArrowBackIcon />}
           sx={{ my: 4 }}
         >
           {t('returnToList')}

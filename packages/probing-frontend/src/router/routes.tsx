@@ -9,6 +9,7 @@ import { FirstAccessPage } from '@/pages/FirstAccessPage/FirstAccess.Page'
 import { RecoverPasswordPage } from '@/pages/RecoverPasswordPage/RecoverPassword.Page'
 import { SuccessPage } from '@/pages/SuccessPage/Success.Page'
 import { NotFoundPage } from '@/pages/NotFoundPage'
+import { MonitoringDetailPage } from '@/pages/MonitoringDetailPage/MonitoringDetail.page'
 
 export const { routes, reactRouterDOMRoutes, hooks, components, utils } = new InteropRouterBuilder<
   LangCode,
@@ -20,6 +21,13 @@ export const { routes, reactRouterDOMRoutes, hooks, components, utils } = new In
     key: 'MONITORING_E_SERVICE_LIST',
     path: '/monitoraggio',
     element: <MonitoringEServicesList />,
+    public: true,
+    authLevels: ['admin'],
+  })
+  .addRoute({
+    key: 'MONITORING_DETAIL',
+    path: '/monitoring/:id',
+    element: <MonitoringDetailPage />,
     public: true,
     authLevels: ['admin'],
   })
