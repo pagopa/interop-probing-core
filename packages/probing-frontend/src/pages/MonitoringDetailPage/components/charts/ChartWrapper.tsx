@@ -9,6 +9,7 @@ import LineChart from './LineChart'
 import { Filters, useFilters } from '@pagopa/interop-fe-commons'
 import { useJwt } from '@/hooks/useJwt'
 import { useTranslation } from 'react-i18next'
+import { ChartWrapperSkeleton } from '../../MonitoringDetail.page'
 
 type ChartWrapperProps = {
   eserviceId: string
@@ -75,7 +76,7 @@ export const ChartWrapper: React.FC<ChartWrapperProps> = ({ eserviceId, pollingF
 
   // TODO: Add proper skeleton
   const _isLoading = isInitialLoading || isLoadingFilteredData
-  // if (isInitialLoading || isLoadingFilteredData) return <PageContainerSkeleton />
+  if (_isLoading) return <ChartWrapperSkeleton />
 
   return (
     <>

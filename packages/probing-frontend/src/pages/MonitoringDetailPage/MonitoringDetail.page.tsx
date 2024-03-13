@@ -3,12 +3,13 @@ import { Link, useParams } from '@/router'
 import { MonitoringEserviceTelemetry } from './components/MonitoringEserviceTelemetry'
 import { MonitoringEserviceProbing } from './components/MonitoringEserviceProbing'
 import { MonitoringEserviceDetail } from './components/MonitoringEserviceDetail'
-import { Box } from '@mui/system'
+import { Box, Stack } from '@mui/system'
 import { useTranslation } from 'react-i18next'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
 import { useLoadingOverlay } from '@/stores'
 import { delayedPromise } from '@/utils/common.utils'
 import { PageContainer } from '@/components/layout/PageContainer'
+import { Skeleton } from '@mui/material'
 
 export const MonitoringDetailPage: React.FC = () => {
   const { t } = useTranslation('common', {
@@ -40,12 +41,10 @@ export const MonitoringDetailPage: React.FC = () => {
 
   const isLoading = isInitialLoadingEservice || isInitialLoadingProbing
 
+  if (isLoading) return <DetailPageSkeleton />
+
   return (
-    <PageContainer
-      title={eservicesDetail?.eserviceName}
-      description={t('subtitle')}
-      isLoading={isLoading}
-    >
+    <PageContainer title={eservicesDetail?.eserviceName} description={t('subtitle')}>
       <Box
         sx={{
           display: 'flex',
@@ -79,5 +78,37 @@ export const MonitoringDetailPage: React.FC = () => {
         </Link>
       </Box>
     </PageContainer>
+  )
+}
+
+const DetailPageSkeleton = () => {
+  return (
+    <>
+      <Stack spacing={1} sx={{ mb: 6, maxWidth: 620, mx: 'auto' }}>
+        <Skeleton height="30px" />
+        <Box>
+          <Skeleton height="250px" />
+        </Box>
+        <Skeleton height="100px" />
+        <Skeleton height="280px" />
+      </Stack>
+      <ChartWrapperSkeleton />
+    </>
+  )
+}
+
+export const ChartWrapperSkeleton = () => {
+  return (
+    <Stack direction="row" flexWrap={'wrap'} width={'100%'}>
+      <Stack direction="column" flexGrow={2}>
+        <Skeleton height="40px" />
+        <Skeleton height="430px" />
+        <Skeleton height="50px" />
+      </Stack>
+      <Stack flexGrow={1} ml={10}>
+        <Skeleton height="40px" />
+        <Skeleton height="430px" />
+      </Stack>
+    </Stack>
   )
 }
