@@ -1,7 +1,7 @@
 import type { UseQueryOptions } from '@tanstack/react-query'
 import { useQuery } from '@tanstack/react-query'
 import MonitoringServices from './monitoring.service'
-import type { TelemetryData } from '@/api/monitoring/monitoring.models'
+import type { EService, TelemetryData } from '@/api/monitoring/monitoring.models'
 
 enum MonitoringQueryKeys {
   GetList = 'GetList',
@@ -12,10 +12,11 @@ enum MonitoringQueryKeys {
   GetFilteredTelemetryData = 'GetFilteredTelemetryData',
 }
 
-function useGetList(params: { limit: number; offset: number }) {
+function useGetList(params: { limit: number; offset: number }, config?: UseQueryOptions<EService>) {
   return useQuery({
     queryKey: [MonitoringQueryKeys.GetList, params],
     queryFn: () => MonitoringServices.getList(params),
+    ...config,
   })
 }
 

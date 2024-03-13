@@ -15,6 +15,7 @@ import { Skeleton } from '@mui/material'
 import { useLoadingOverlay } from '@/stores'
 import type { TFunction } from 'i18next'
 import { delayedPromise } from '@/utils/common.utils'
+import React from 'react'
 
 const headLabels = (t: TFunction<'common', 'table'>): Array<string> => {
   return [
@@ -29,6 +30,7 @@ const headLabels = (t: TFunction<'common', 'table'>): Array<string> => {
 
 export const MonitoringTable: React.FC = () => {
   const { t } = useTranslation('common', { keyPrefix: 'table' })
+  const totalEServicesRef = React.useRef<number | undefined>()
   const { paginationParams, paginationProps, getTotalPageCount } = usePagination({ limit: 10 })
   const { showOverlay, hideOverlay } = useLoadingOverlay()
 
@@ -76,7 +78,12 @@ export const MonitoringTable: React.FC = () => {
     ...filtersParams,
   }
 
-  const { data: eservices, refetch, isInitialLoading } = MonitoringQueries.useGetList(params)
+  const { data: eservices, refetch, isLoading } = MonitoringQueries.useGetList(params)
+
+  // We want to keep the totalElements in a ref, so that we can use it in the Pagination component even if the eservices data is re-fetched
+  if (!totalEServicesRef.current) {
+    totalEServicesRef.current = eservices?.totalElements
+  }
 
   const handleRefetch = async () => {
     showOverlay(t('loading'))
@@ -101,7 +108,7 @@ export const MonitoringTable: React.FC = () => {
         }
       />
 
-      {isInitialLoading ? (
+      {isLoading ? (
         <TableSkeleton />
       ) : (
         <Table
@@ -115,7 +122,7 @@ export const MonitoringTable: React.FC = () => {
         </Table>
       )}
 
-      <Pagination {...paginationProps} totalPages={getTotalPageCount(eservices?.totalElements)} />
+      <Pagination {...paginationProps} totalPages={getTotalPageCount(totalEServicesRef.current)} />
     </>
   )
 }
@@ -124,11 +131,17 @@ const TableSkeleton: React.FC = () => {
   const { t } = useTranslation('common', { keyPrefix: 'table' })
 
   const generateSkeleton = () => {
-    return headLabels(t).map((label) => <Skeleton key={label} />)
+    return headLabels(t).map((label) => <Skeleton sx={{ my: 0.5 }} key={label} />)
   }
 
   return (
     <Table headLabels={headLabels(t)}>
+      <TableRow cellData={generateSkeleton()} />
+      <TableRow cellData={generateSkeleton()} />
+      <TableRow cellData={generateSkeleton()} />
+      <TableRow cellData={generateSkeleton()} />
+      <TableRow cellData={generateSkeleton()} />
+      <TableRow cellData={generateSkeleton()} />
       <TableRow cellData={generateSkeleton()} />
       <TableRow cellData={generateSkeleton()} />
       <TableRow cellData={generateSkeleton()} />
