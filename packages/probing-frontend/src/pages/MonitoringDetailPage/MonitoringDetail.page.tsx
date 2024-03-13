@@ -3,13 +3,12 @@ import { Link, useParams } from '@/router'
 import { MonitoringEserviceTelemetry } from './components/MonitoringEserviceTelemetry'
 import { MonitoringEserviceProbing } from './components/MonitoringEserviceProbing'
 import { MonitoringEserviceDetail } from './components/MonitoringEserviceDetail'
-import { Box, Stack } from '@mui/system'
+import { Box } from '@mui/system'
 import { useTranslation } from 'react-i18next'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { Typography } from '@mui/material'
 import { useLoadingOverlay } from '@/stores'
 import { delayedPromise } from '@/utils/common.utils'
-import { PageContainerSkeleton } from '@/components/layout/PageContainer'
+import { PageContainer } from '@/components/layout/PageContainer'
 
 export const MonitoringDetailPage: React.FC = () => {
   const { t } = useTranslation('common', {
@@ -39,18 +38,14 @@ export const MonitoringDetailPage: React.FC = () => {
     hideOverlay()
   }
 
-  if (isInitialLoadingEservice || isInitialLoadingProbing) return <PageContainerSkeleton />
+  const isLoading = isInitialLoadingEservice || isInitialLoadingProbing
 
   return (
-    <>
-      <Stack spacing={1} sx={{ mb: 6, maxWidth: 620, mx: 'auto' }}>
-        <Typography variant="h4" component="h1">
-          {eservicesDetail?.eserviceName}
-        </Typography>
-        <Typography variant="body1" component="p" sx={{ mb: '30px' }}>
-          {t('subtitle')}
-        </Typography>
-      </Stack>
+    <PageContainer
+      title={eservicesDetail?.eserviceName}
+      description={t('subtitle')}
+      isLoading={isLoading}
+    >
       <Box
         sx={{
           display: 'flex',
@@ -83,6 +78,6 @@ export const MonitoringDetailPage: React.FC = () => {
           {t('returnToList')}
         </Link>
       </Box>
-    </>
+    </PageContainer>
   )
 }
