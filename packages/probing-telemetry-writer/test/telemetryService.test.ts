@@ -27,18 +27,17 @@ describe("Telemetry service test", () => {
 
   it("invoke writeRecord service should not throw error", async () => {
     const telemetry: TelemetryKoDto = {
-      eserviceRecordId: 1,
+      eserviceRecordId: 2,
       checkTime: Date.now().toString(),
       status: responseStatus.ko,
-      koReason: "Connection refused",
-      responseTime: 16,
+      koReason: "Connection error",
     };
 
     vi.spyOn(timestreamWriteClient, "writeRecord").mockResolvedValue(undefined);
 
     await expect(
-      async () => await telemetryService.writeRecord(telemetry)
-    ).not.toThrowError();
+      telemetryService.writeRecord(telemetry)
+    ).resolves.not.toThrow();
   });
 
   it("invoke writeRecord service should throw error", async () => {
@@ -50,11 +49,7 @@ describe("Telemetry service test", () => {
     };
 
     vi.spyOn(timestreamWriteClient, "writeRecord").mockRejectedValue(
-      makeApplicationError(
-        writeRecordTimestreamError(
-          "Generic error"
-        )
-      )
+      makeApplicationError(writeRecordTimestreamError("Generic error"))
     );
 
     try {
