@@ -42,7 +42,9 @@ export const kmsClientBuilder = () => {
           throw new Error("Failed to generate signature.");
         }
 
-        return `${token}.${removePadding(Buffer.from(signedTokenBuffer).toString("base64"))}`;
+        return removePadding(
+          `${token}.${Buffer.from(signedTokenBuffer).toString("base64")}`
+        );
       } catch (err: unknown) {
         logger.error(`Error building JWT token: ${err}`);
         throw buildJWTError(`${err}`);
