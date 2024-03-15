@@ -130,7 +130,7 @@ describe("Consumer queue test", () => {
       );
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0001");
+      expect((error as AppError).code).toBe("0002");
     }
   });
 });

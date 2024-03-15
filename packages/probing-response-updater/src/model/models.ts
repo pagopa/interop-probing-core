@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { EserviceStatus } from "pagopa-interop-probing-models";
+import { EserviceStatus, UpdateResponseReceivedDto } from "pagopa-interop-probing-models";
 import { SQS } from "pagopa-interop-probing-commons";
 import { decodeSQSMessageError } from "./domain/errors.js";
 
@@ -14,16 +14,6 @@ export const ChangeResponseReceived = z.object({
 });
 
 export type ChangeResponseReceived = z.infer<typeof ChangeResponseReceived>;
-
-const UpdateResponseReceivedDto = z.object({
-  eserviceRecordId: z.number(),
-  responseReceived: z.string(),
-  status: EserviceStatus,
-});
-
-export type UpdateResponseReceivedDto = z.infer<
-  typeof UpdateResponseReceivedDto
->;
 
 const MessageSchema = z.object({
   value: z.preprocess(
