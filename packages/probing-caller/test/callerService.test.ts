@@ -179,6 +179,37 @@ describe("caller service test", () => {
     );
   });
 
+  it("Test OK call probing - REST", async () => {
+    const validMessage: SQS.Message = {
+      MessageId: "12345",
+      ReceiptHandle: "receipt_handle_id",
+      Body: JSON.stringify({
+        eserviceRecordId: 1,
+        technology: "REST",
+        basePath: ["path1", "path2"],
+        audience: ["aud1", "path2"],
+      }),
+    };
+
+    const apiClientResponse = mockApiClientResponse(undefined);
+    vi.spyOn(apiClientHandler, "sendREST").mockResolvedValue(apiClientResponse);
+    vi.spyOn(kmsClientHandler, "buildJWT").mockResolvedValue(mockJWT);
+
+    const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
+    const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
+
+    const telemetryResult = await callerService.performRequest(eservice);
+
+    expect(telemetryResult.status).toBe("OK");
+    expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
+
+    await expect(apiClientHandler.sendREST).toHaveBeenCalledWith(
+      baseUrl,
+      mockJWT
+    );
+  });
+
+
   it("Test build JWT throws error", async () => {
     const validMessage: SQS.Message = {
       MessageId: "12345",
@@ -202,6 +233,31 @@ describe("caller service test", () => {
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0004");
+    }
+  });
+
+  it("Test generic error performRequest", async () => {
+    const validMessage: SQS.Message = {
+      MessageId: "12345",
+      ReceiptHandle: "receipt_handle_id",
+      Body: JSON.stringify({
+        eserviceRecordId: 1,
+        technology: "SOAP",
+        basePath: ["path1", "path2"],
+        audience: ["aud1", "path2"],
+      }),
+    };
+
+    vi.spyOn(apiClientHandler, "sendSOAP").mockRejectedValue(new Error('Generic Error'));
+    vi.spyOn(kmsClientHandler, "buildJWT").mockResolvedValue(mockJWT);
+
+    const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
+    
+    try {
+      await callerService.performRequest(eservice);
+    } catch(error) {
+      expect(error).toBeInstanceOf(AppError);
+      expect((error as AppError).code).toBe("9999");
     }
   });
 });

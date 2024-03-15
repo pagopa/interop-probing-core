@@ -5,7 +5,7 @@ export function mockApiClientError(
   statusText: string,
   errorCode?: string
 ): AxiosError {
-  const mockAxiosError = new Error(statusText) as AxiosError;
+  const mockAxiosError = new AxiosError(statusText);
   mockAxiosError.code = errorCode || "EUNKNOWN";
   mockAxiosError.response = {
     status: status,

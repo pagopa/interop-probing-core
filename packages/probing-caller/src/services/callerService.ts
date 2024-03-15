@@ -12,10 +12,8 @@ import { getKoReason } from "../utilities/errorMapper.js";
 import { ApiClientHandler } from "../utilities/apiClientHandler.js";
 import { KMSClientHandler } from "../utilities/kmsClientHandler.js";
 import { match } from "ts-pattern";
-import {
-  ApplicationError,
-  makeApplicationError,
-} from "../model/domain/errors.js";
+import { makeApplicationError } from "../model/domain/errors.js";
+import { AxiosError } from "axios";
 
 export const callerServiceBuilder = (
   apiClientHandler: ApiClientHandler,
@@ -23,7 +21,7 @@ export const callerServiceBuilder = (
 ) => {
   return {
     async performRequest(eservice: EserviceContentDto): Promise<TelemetryDto> {
-      const beforeRequestTimestamp: number = Date.now();
+      let beforeRequestTimestamp!: number;
 
       try {
         const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
@@ -37,37 +35,43 @@ export const callerServiceBuilder = (
         );
 
         await match(eservice.technology)
-          .with(
-            technology.soap,
-            async () => await apiClientHandler.sendSOAP(baseUrl, token)
-          )
-          .with(
-            technology.rest,
-            async () => await apiClientHandler.sendREST(baseUrl, token)
-          )
+          .with(technology.soap, async () => {
+            beforeRequestTimestamp = Date.now();
+            await apiClientHandler.sendSOAP(baseUrl, token);
+          })
+          .with(technology.rest, async () => {
+            beforeRequestTimestamp = Date.now();
+            await apiClientHandler.sendREST(baseUrl, token);
+          })
           .exhaustive();
 
-        return {
+        const telemetry: TelemetryOkDto = {
           eserviceRecordId: eservice.eserviceRecordId,
           checkTime: beforeRequestTimestamp.toString(),
           status: responseStatus.ok,
           responseTime: Date.now() - beforeRequestTimestamp,
-        } satisfies TelemetryOkDto;
+        };
+
+        return telemetry;
       } catch (error: unknown) {
-        if (error instanceof ApplicationError) {
+        if (error instanceof AxiosError) {
+          const koReason: string = getKoReason(error);
+
+          const telemetry: TelemetryKoDto = {
+            eserviceRecordId: eservice.eserviceRecordId,
+            checkTime: beforeRequestTimestamp.toString(),
+            status: responseStatus.ko,
+            koReason,
+          };
+
+          if (koReason !== callerConstants.CONNECTION_TIMEOUT_KO_REASON) {
+            telemetry.responseTime = Date.now() - beforeRequestTimestamp;
+          }
+
+          return telemetry;
+        } else {
           throw makeApplicationError(error);
         }
-
-        return {
-          eserviceRecordId: eservice.eserviceRecordId,
-          checkTime: beforeRequestTimestamp.toString(),
-          status: responseStatus.ko,
-          koReason: getKoReason(error),
-          ...(getKoReason(error) !==
-            callerConstants.CONNECTION_TIMEOUT_KO_REASON && {
-            responseTime: Date.now() - beforeRequestTimestamp,
-          }),
-        } satisfies TelemetryKoDto;
       }
     },
   };

@@ -42,9 +42,7 @@ export const kmsClientBuilder = () => {
           throw new Error("Failed to generate signature.");
         }
 
-        return removePadding(
-          `${token}.${Buffer.from(signedTokenBuffer).toString("base64")}`
-        );
+        return `${token}.${removePadding(Buffer.from(signedTokenBuffer).toString("base64"))}`;
       } catch (err: unknown) {
         logger.error(`Error building JWT token: ${err}`);
         throw buildJWTError(`${err}`);
@@ -66,7 +64,7 @@ function createHeader(): string {
   const obj = {
     typ: "at+jwt",
     use: "sig",
-    alg: callerConstants.JWT_SIGNING_ALGORITHM,
+    alg: callerConstants.JWT_HEADER_ALGORITHM,
     kid: config.jwtPayloadKidKms,
   };
 
@@ -85,7 +83,7 @@ function createPayload(audience: string[]): string {
     sub: config.jwtPayloadSubject,
     nbf: currentTimeInSeconds,
     iss: config.jwtPayloadIssuer,
-    exp: Math.floor(Date.now() / 1000 + config.jwtPayloadExpireTimeInSec),
+    exp: currentTimeInSeconds + config.jwtPayloadExpireTimeInSec,
     iat: currentTimeInSeconds,
     jti: uuidv4(),
   };
