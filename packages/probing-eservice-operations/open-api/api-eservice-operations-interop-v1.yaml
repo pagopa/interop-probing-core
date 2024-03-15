@@ -1035,6 +1035,8 @@ components:
 
     SearchProducerNameResponse:
       type: object
+      required:
+        - content
       properties:
         content:
           title: list of producers names

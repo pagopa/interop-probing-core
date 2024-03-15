@@ -1,6 +1,6 @@
 import { afterAll, describe, expect, it, vi } from "vitest";
 import { responseStatus } from "pagopa-interop-probing-models";
-import { createApiClient } from "../../probing-eservice-operations/src/model/generated/api.js";
+import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
 import {
   OperationsService,
   operationsServiceBuilder,

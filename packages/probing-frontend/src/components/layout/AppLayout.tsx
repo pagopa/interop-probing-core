@@ -19,7 +19,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, sx }) => {
       }}
       bgcolor="#FAFAFA"
     >
-      <Box sx={{ maxWidth: 1120, mx: 'auto', height: '100%' }}>{children}</Box>
+      <Box sx={{ maxWidth: 1600, mx: 'auto', height: '100%' }}>{children}</Box>
     </Box>
   )
 }
