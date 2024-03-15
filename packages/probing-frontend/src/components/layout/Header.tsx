@@ -4,7 +4,7 @@ import { AuthHooks } from '@/api/auth/auth.hooks'
 import { RootLink, assistanceLink, documentationLink, productSwitchItem } from '@/config/constants'
 import { useJwt } from '@/hooks/useJwt'
 
-export const Header = () => {
+export const Header: React.FC = () => {
   const { mutate: logout } = AuthHooks.useLogout()
   const navigate = useNavigate()
   const handleLogin = () => {

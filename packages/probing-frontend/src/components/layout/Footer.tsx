@@ -6,6 +6,7 @@ import { Typography } from '@mui/material'
 import { Footer as MUIItaliaFooter } from '@pagopa/mui-italia'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
+import React from 'react'
 
 type FooterLinksTypeMulti = Omit<FooterLinksType, 'label' | 'ariaLabel'> & { labelKey?: string }
 
@@ -27,7 +28,7 @@ const LegalInfo = (
     CAP 00187 - n. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009
   </>
 )
-export const Footer = () => {
+export const Footer: React.FC = () => {
   const { t, i18n } = useTranslation('common', { keyPrefix: 'footer' })
   const navigate = useNavigate()
   const switchLang = useSwitchPathLang()
