@@ -67,7 +67,7 @@ export const MonitoringDetailPage: React.FC = () => {
           pollingFrequency={eservicesDetail.pollingFrequency}
         />
       )}
-      <Box sx={{ my: 4 }}>
+      <Box sx={{}}>
         <Link
           to={'MONITORING_E_SERVICE_LIST'}
           as="button"
@@ -92,7 +92,14 @@ const DetailPageSkeleton = () => {
         <Skeleton height="100px" />
         <Skeleton height="280px" />
       </Stack>
-      <ChartWrapperSkeleton />
+      <Stack alignItems={'center'} gap={4}>
+        <Skeleton
+          height="50px"
+          width={'100%'}
+          sx={{ maxWidth: 620, display: 'flex', justifySelf: 'center' }}
+        />
+        <ChartWrapperSkeleton />
+      </Stack>
     </>
   )
 }
@@ -100,14 +107,14 @@ const DetailPageSkeleton = () => {
 export const ChartWrapperSkeleton = () => {
   return (
     <Stack direction="row" flexWrap={'wrap'} width={'100%'}>
-      <Stack direction="column" flexGrow={2}>
+      <Stack direction="column" flexGrow={2} gap={4}>
         <Skeleton height="40px" />
-        <Skeleton height="430px" />
+        <Skeleton height="250px" sx={{ transform: 'scale(1, 1)' }} />
         <Skeleton height="50px" />
       </Stack>
-      <Stack flexGrow={1} ml={10}>
+      <Stack flexGrow={1} ml={10} gap={4}>
         <Skeleton height="40px" />
-        <Skeleton height="430px" />
+        <Skeleton height="250px" sx={{ transform: 'scale(1, 1)' }} />
       </Stack>
     </Stack>
   )
