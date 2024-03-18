@@ -74,7 +74,6 @@ export const ChartWrapper: React.FC<ChartWrapperProps> = ({ eserviceId, pollingF
     ] as Array<number>)
     .range([300, 20])
 
-  // TODO: Add proper skeleton
   const _isLoading = isInitialLoading || isLoadingFilteredData
   if (_isLoading) return <ChartWrapperSkeleton />
 

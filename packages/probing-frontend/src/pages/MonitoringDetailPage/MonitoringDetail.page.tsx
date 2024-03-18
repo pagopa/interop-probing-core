@@ -39,9 +39,8 @@ export const MonitoringDetailPage: React.FC = () => {
     hideOverlay()
   }
 
-  const isLoading = isInitialLoadingEservice || isInitialLoadingProbing
-
-  if (isLoading) return <DetailPageSkeleton />
+  const _isLoading = isInitialLoadingEservice || isInitialLoadingProbing
+  if (_isLoading) return <DetailPageSkeleton />
 
   return (
     <PageContainer title={eservicesDetail?.eserviceName} description={t('subtitle')}>
@@ -67,7 +66,7 @@ export const MonitoringDetailPage: React.FC = () => {
           pollingFrequency={eservicesDetail.pollingFrequency}
         />
       )}
-      <Box sx={{}}>
+      <Box>
         <Link
           to={'MONITORING_E_SERVICE_LIST'}
           as="button"
@@ -81,7 +80,7 @@ export const MonitoringDetailPage: React.FC = () => {
   )
 }
 
-const DetailPageSkeleton = () => {
+const DetailPageSkeleton: React.FC = () => {
   return (
     <>
       <Stack spacing={1} sx={{ mb: 6, maxWidth: 620, mx: 'auto' }}>
@@ -104,7 +103,7 @@ const DetailPageSkeleton = () => {
   )
 }
 
-export const ChartWrapperSkeleton = () => {
+export const ChartWrapperSkeleton: React.FC = () => {
   return (
     <Stack direction="row" flexWrap={'wrap'} width={'100%'}>
       <Stack direction="column" flexGrow={2} gap={4}>
