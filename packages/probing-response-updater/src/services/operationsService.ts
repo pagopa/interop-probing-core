@@ -1,6 +1,6 @@
 import { UpdateResponseReceivedApi } from "../model/models.js";
 import { ZodiosInstance } from "@zodios/core";
-import { Api } from "../../../probing-eservice-operations/src/model/types.js";
+import { Api } from "pagopa-interop-probing-eservice-operations-client";
 import { logger } from "pagopa-interop-probing-commons";
 import {
   apiUpdateResponseReceivedError,

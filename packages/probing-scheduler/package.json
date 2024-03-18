@@ -35,6 +35,7 @@
     "node-cron": "^3.0.3",
     "pagopa-interop-probing-commons": "workspace:*",
     "pagopa-interop-probing-models": "workspace:*",
+    "pagopa-interop-probing-eservice-operations-client": "workspace:*",
     "ts-pattern": "^5.0.1",
     "zod": "^3.21.4"
   }

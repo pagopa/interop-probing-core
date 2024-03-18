@@ -4,7 +4,7 @@ import {
   OperationsService,
   operationsServiceBuilder,
 } from "./services/operationsService.js";
-import { createApiClient } from "../../probing-eservice-operations/src/model/generated/api.js";
+import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
 import { processTask } from "./processTask.js";
 import {
   ProducerService,

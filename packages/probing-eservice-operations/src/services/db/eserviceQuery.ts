@@ -23,7 +23,7 @@ import {
   ApiUpdateEserviceStateResponse,
   ApiUpdateEserviceProbingStateResponse,
   ApiUpdateEserviceFrequencyResponse,
-} from "../../model/types.js";
+} from "pagopa-interop-probing-eservice-operations-client";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function eserviceQueryBuilder(modelService: ModelService) {

@@ -54,7 +54,7 @@ import { resolve } from "path";
 import {
   ApiGetProducersQuery,
   ApiSearchEservicesQuery,
-} from "../src/model/types.js";
+} from "pagopa-interop-probing-eservice-operations-client";
 
 describe("database test", async () => {
   let eservices: EserviceEntities;

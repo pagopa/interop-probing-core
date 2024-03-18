@@ -48,7 +48,7 @@ import {
   ApiUpdateEserviceStateResponse,
   ApiUpdateLastRequestResponse,
   ApiUpdateResponseReceivedResponse,
-} from "../../model/types.js";
+} from "pagopa-interop-probing-eservice-operations-client";
 
 const probingDisabledPredicate = (queryBuilder: WhereExpressionBuilder) => {
   const extractMinute = `CAST(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60 AS INTEGER) > polling_frequency`;

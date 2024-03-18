@@ -8,7 +8,7 @@ import { config } from "./utilities/config.js";
 import {
   ApiUpdateLastRequestParams,
   ApiUpdateLastRequestPayload,
-} from "../../probing-eservice-operations/src/model/types.js";
+} from "pagopa-interop-probing-eservice-operations-client";
 
 export async function processTask(
   operationsService: OperationsService,

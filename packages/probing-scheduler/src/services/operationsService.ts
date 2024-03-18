@@ -6,7 +6,7 @@ import {
   ApiUpdateLastRequestParams,
   ApiUpdateLastRequestPayload,
   ApiUpdateLastRequestResponse,
-} from "../../../probing-eservice-operations/src/model/types.js";
+} from "pagopa-interop-probing-eservice-operations-client";
 import {
   apiGetEservicesReadyForPollingError,
   apiUpdateLastRequestError,

@@ -26,7 +26,7 @@ import {
   ApiUpdateLastRequestResponse,
   ApiUpdateResponseReceivedPayload,
   ApiUpdateResponseReceivedResponse,
-} from "../model/types.js";
+} from "pagopa-interop-probing-eservice-operations-client";
 import { eServiceNotFound } from "../model/domain/errors.js";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, max-params

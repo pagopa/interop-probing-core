@@ -10,10 +10,6 @@ import { api } from "../model/generated/api.js";
 import { EServiceProbingData } from "pagopa-interop-probing-models";
 import { updateEServiceErrorMapper } from "../utilities/errorMappers.js";
 import { ModelRepository } from "../repositories/modelRepository.js";
-import {
-  ApiEserviceMainDataResponse,
-  ApiSearchEservicesResponse,
-} from "../model/types.js";
 
 const modelService = modelServiceBuilder(await ModelRepository.init(config));
 const eserviceQuery = eserviceQueryBuilder(modelService);
@@ -94,7 +90,7 @@ const eServiceRouter = (
       async (req, res) => {
         try {
           await eServiceService.updateEserviceLastRequest(
-            req.params.eserviceRecordId,
+            Number(req.params.eserviceRecordId),
             req.body
           );
           return res.status(204).end();
@@ -109,7 +105,7 @@ const eServiceRouter = (
       async (req, res) => {
         try {
           await eServiceService.updateResponseReceived(
-            req.params.eserviceRecordId,
+            Number(req.params.eserviceRecordId),
             req.body
           );
           return res.status(204).end();
@@ -139,7 +135,7 @@ const eServiceRouter = (
             offset: eservices.offset,
             limit: eservices.limit,
             totalElements: eservices.totalElements,
-          } satisfies ApiSearchEservicesResponse)
+          })
           .end();
       } catch (error) {
         const errorRes = makeApiProblem(error, () => 500);
@@ -149,13 +145,10 @@ const eServiceRouter = (
     .get("/eservices/mainData/:eserviceRecordId", async (req, res) => {
       try {
         const eServiceMainData = await eServiceService.getEserviceMainData(
-          req.params.eserviceRecordId
+          Number(req.params.eserviceRecordId)
         );
 
-        return res
-          .status(200)
-          .json(eServiceMainData satisfies ApiEserviceMainDataResponse)
-          .end();
+        return res.status(200).json(eServiceMainData).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
         return res.status(errorRes.status).json(errorRes).end();
@@ -165,7 +158,7 @@ const eServiceRouter = (
       try {
         const eServiceProbingData =
           await eServiceService.getEserviceProbingData(
-            req.params.eserviceRecordId
+            Number(req.params.eserviceRecordId)
           );
 
         return res

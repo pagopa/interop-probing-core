@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
 import { processTask } from "../src/processTask.js";
-import { ApiGetEservicesReadyForPollingQuery } from "../../probing-eservice-operations/src/model/types.js";
+import { ApiGetEservicesReadyForPollingQuery } from "pagopa-interop-probing-eservice-operations-client";
 import { config } from "../src/utilities/config.js";
 import { EserviceContentDto } from "pagopa-interop-probing-models";
 import { mockApiClientError } from "./utils.js";
