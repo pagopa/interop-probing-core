@@ -7,8 +7,6 @@ const probingSchedulerConfig = AWSConfig.and(LoggerConfig).and(
       INTEROP_PROBING_SCHEDULER_NAME: z.string(),
       API_OPERATIONS_BASEURL: z.string(),
       SQS_ENDPOINT_POLL_QUEUE: z.string(),
-      AWS_REGION: z.string(),
-      LOG_LEVEL: z.string(),
       SCHEDULER_LIMIT: z.coerce.number().min(1),
       SCHEDULER_CRON_EXPRESSION: z.string(),
     })
