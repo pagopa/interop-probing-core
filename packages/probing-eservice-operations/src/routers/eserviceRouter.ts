@@ -7,7 +7,6 @@ import { modelServiceBuilder } from "../services/db/dbService.js";
 import { eServiceServiceBuilder } from "../services/eserviceService.js";
 import { eserviceQueryBuilder } from "../services/db/eserviceQuery.js";
 import { api } from "../model/generated/api.js";
-import { EServiceProbingData } from "pagopa-interop-probing-models";
 import { updateEServiceErrorMapper } from "../utilities/errorMappers.js";
 import { ModelRepository } from "../repositories/modelRepository.js";
 
@@ -163,7 +162,7 @@ const eServiceRouter = (
 
         return res
           .status(200)
-          .json(eServiceProbingData satisfies EServiceProbingData)
+          .json(eServiceProbingData)
           .end();
       } catch (error) {
         const errorRes = makeApiProblem(error, updateEServiceErrorMapper);

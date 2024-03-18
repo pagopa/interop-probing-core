@@ -1,6 +1,6 @@
 import { UpdateResponseReceivedApi } from "../model/models.js";
 import { ZodiosInstance } from "@zodios/core";
-import { Api } from "pagopa-interop-probing-eservice-operations-client";
+import { Api, ApiUpdateResponseReceivedResponse } from "pagopa-interop-probing-eservice-operations-client";
 import { logger } from "pagopa-interop-probing-commons";
 import {
   apiUpdateResponseReceivedError,
@@ -12,7 +12,7 @@ export const operationsServiceBuilder = (operationsApiClient: ZodiosInstance<Api
     async updateResponseReceived({
       params,
       payload,
-    }: UpdateResponseReceivedApi): Promise<void> {
+    }: UpdateResponseReceivedApi): Promise<ApiUpdateResponseReceivedResponse> {
       try {
         await operationsApiClient.updateResponseReceived(
           {
