@@ -7,7 +7,6 @@
       "dependsOn": [
         "^build",
         "generate-model",
-        "generate-protobuf",
         "//#infra:start"
       ]
     },
