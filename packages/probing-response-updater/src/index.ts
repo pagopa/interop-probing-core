@@ -1,6 +1,6 @@
 import { logger, SQS } from "pagopa-interop-probing-commons";
 import { config } from "./utilities/config.js";
-import { createApiClient } from "../../probing-eservice-operations/src/model/generated/api.js";
+import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
 import { processMessage } from "./messagesHandler.js";
 import {
   OperationsService,

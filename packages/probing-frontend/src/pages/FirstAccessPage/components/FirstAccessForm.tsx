@@ -8,7 +8,7 @@ import { passwordRules } from '@/config/constants'
 import { AuthHooks } from '@/api/auth/auth.hooks'
 import { useNavigate } from '@/router'
 
-export const FirstAccessForm = () => {
+export const FirstAccessForm: React.FC = () => {
   const { t } = useTranslation('common', {
     keyPrefix: 'firstAccessForm',
   })

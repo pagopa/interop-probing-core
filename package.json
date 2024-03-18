@@ -21,7 +21,8 @@
     "lint:autofix": "turbo lint:autofix",
     "format:check": "turbo format:check",
     "format:write": "turbo format:write",
-    "generate-model": "turbo generate-model"
+    "generate-model": "turbo generate-model",
+    "generate-client": "turbo generate-client"
   },
   "devDependencies": {
     "@tsconfig/node-lts": "^20.1.0",

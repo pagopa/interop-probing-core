@@ -18,7 +18,7 @@ import {
   ApiUpdateEserviceStatePayload,
   ApiUpdateLastRequestPayload,
   ApiUpdateResponseReceivedPayload,
-} from "../model/types.js";
+} from "pagopa-interop-probing-eservice-operations-client";
 import { eServiceNotFound } from "../model/domain/errors.js";
 import { ListResultEservices, ListResultProducers } from "../model/dbModels.js";
 
