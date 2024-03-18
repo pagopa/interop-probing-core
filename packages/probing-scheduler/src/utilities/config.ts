@@ -1,7 +1,7 @@
 import { AWSConfig, LoggerConfig } from "pagopa-interop-probing-commons";
 import { z } from "zod";
 
-const probingCallerConfig = AWSConfig.and(LoggerConfig).and(
+const probingSchedulerConfig = AWSConfig.and(LoggerConfig).and(
   z
     .object({
       INTEROP_PROBING_SCHEDULER_NAME: z.string(),
@@ -16,15 +16,13 @@ const probingCallerConfig = AWSConfig.and(LoggerConfig).and(
       applicationName: c.INTEROP_PROBING_SCHEDULER_NAME,
       operationsBaseUrl: c.API_OPERATIONS_BASEURL,
       sqsEndpointPollQueue: c.SQS_ENDPOINT_POLL_QUEUE,
-      awsRegion: c.AWS_REGION,
-      logLevel: c.LOG_LEVEL,
       schedulerLimit: c.SCHEDULER_LIMIT,
       schedulerCronExpression: c.SCHEDULER_CRON_EXPRESSION,
     }))
 );
 
-export type ProbingCallerConfig = z.infer<typeof probingCallerConfig>;
+export type ProbingSchedulerConfig = z.infer<typeof probingSchedulerConfig>;
 
-export const config: ProbingCallerConfig = {
-  ...probingCallerConfig.parse(process.env),
+export const config: ProbingSchedulerConfig = {
+  ...probingSchedulerConfig.parse(process.env),
 };
