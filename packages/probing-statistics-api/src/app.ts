@@ -13,9 +13,9 @@ import {
   timestreamQueryClientBuilder,
 } from "./utilities/timestreamQueryClientHandler.js";
 import { config } from "./utilities/config.js";
-import cors from "cors";
 import helmet from "helmet";
-import express from 'express';
+import express from "express";
+import cors, { CorsOptions } from "cors";
 
 const timestreamQueryClient: TimestreamQueryClientHandler =
   timestreamQueryClientBuilder();
@@ -58,7 +58,7 @@ app.use(helmet.noSniff());
 app.use(helmet.xssFilter());
 app.use(helmet.frameguard({ action: "deny" }));
 
-const corsOptions = {
+const corsOptions: CorsOptions = {
   origin: config.corsOriginAllowed,
   methods: ["POST", "PUT", "GET", "OPTIONS", "DELETE"],
   allowedHeaders: "*",
