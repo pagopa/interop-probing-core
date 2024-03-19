@@ -4,7 +4,7 @@ import {
   EserviceProbingResponseEntities,
   EserviceViewEntities,
 } from "../src/repositories/modelRepository.js";
-import { ObjectLiteral } from "typeorm";
+import { InsertResult, ObjectLiteral } from "typeorm";
 import { EserviceSchema } from "../src/repositories/entity/eservice.entity.js";
 import { EserviceProbingRequestSchema } from "../src/repositories/entity/eservice_probing_request.entity.js";
 import { EserviceProbingResponseSchema } from "../src/repositories/entity/eservice_probing_response.entity.js";
@@ -36,8 +36,8 @@ export const addEserviceProbingResponse = async (
 export const addEservice = async (
   data: EserviceSchema,
   repository: EserviceEntities
-): Promise<{ id: string }> => {
-  const results = await repository
+): Promise<number> => {
+  const result: InsertResult = await repository
     .createQueryBuilder()
     .insert()
     .values({
@@ -47,8 +47,9 @@ export const addEservice = async (
     })
     .returning("id")
     .execute();
-  const [result] = results.raw;
-  return result;
+
+  const [eservice]: { id: string }[] = result.raw;
+  return Number(eservice.id);
 };
 
 export const getEservice = async (
