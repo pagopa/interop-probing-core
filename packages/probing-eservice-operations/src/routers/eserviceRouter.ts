@@ -6,15 +6,9 @@ import { config } from "../utilities/config.js";
 import { modelServiceBuilder } from "../services/db/dbService.js";
 import { eServiceServiceBuilder } from "../services/eserviceService.js";
 import { eserviceQueryBuilder } from "../services/db/eserviceQuery.js";
-import { api } from "pagopa-interop-probing-eservice-operations-client";
-import {
-  EServiceMainData,
-  EServiceProbingData,
-  EServiceContent,
-} from "pagopa-interop-probing-models";
+import { api } from "../model/generated/api.js";
 import { updateEServiceErrorMapper } from "../utilities/errorMappers.js";
 import { ModelRepository } from "../repositories/modelRepository.js";
-import { ListResultEservices } from "../model/dbModels.js";
 
 const modelService = modelServiceBuilder(await ModelRepository.init(config));
 const eserviceQuery = eserviceQueryBuilder(modelService);
@@ -95,7 +89,7 @@ const eServiceRouter = (
       async (req, res) => {
         try {
           await eServiceService.updateEserviceLastRequest(
-            req.params.eserviceRecordId,
+            Number(req.params.eserviceRecordId),
             req.body
           );
           return res.status(204).end();
@@ -110,7 +104,7 @@ const eServiceRouter = (
       async (req, res) => {
         try {
           await eServiceService.updateResponseReceived(
-            req.params.eserviceRecordId,
+            Number(req.params.eserviceRecordId),
             req.body
           );
           return res.status(204).end();
@@ -140,7 +134,7 @@ const eServiceRouter = (
             offset: eservices.offset,
             limit: eservices.limit,
             totalElements: eservices.totalElements,
-          } satisfies ListResultEservices<EServiceContent>)
+          })
           .end();
       } catch (error) {
         const errorRes = makeApiProblem(error, () => 500);
@@ -150,13 +144,10 @@ const eServiceRouter = (
     .get("/eservices/mainData/:eserviceRecordId", async (req, res) => {
       try {
         const eServiceMainData = await eServiceService.getEserviceMainData(
-          req.params.eserviceRecordId
+          Number(req.params.eserviceRecordId)
         );
 
-        return res
-          .status(200)
-          .json(eServiceMainData satisfies EServiceMainData)
-          .end();
+        return res.status(200).json(eServiceMainData).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
         return res.status(errorRes.status).json(errorRes).end();
@@ -166,12 +157,12 @@ const eServiceRouter = (
       try {
         const eServiceProbingData =
           await eServiceService.getEserviceProbingData(
-            req.params.eserviceRecordId
+            Number(req.params.eserviceRecordId)
           );
 
         return res
           .status(200)
-          .json(eServiceProbingData satisfies EServiceProbingData)
+          .json(eServiceProbingData)
           .end();
       } catch (error) {
         const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
@@ -200,14 +191,14 @@ const eServiceRouter = (
     .get("/eservices/polling", async (req, res) => {
       try {
         const eservices = await eServiceService.getEservicesReadyForPolling(
-          req.query.limit,
-          req.query.offset
+          req.query
         );
 
         return res
           .status(200)
           .json({
             content: eservices.content,
+            totalElements: eservices.totalElements,
           })
           .end();
       } catch (error) {
