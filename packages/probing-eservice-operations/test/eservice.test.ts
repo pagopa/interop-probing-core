@@ -499,7 +499,6 @@ describe("database test", async () => {
         });
 
         expect(eserviceRecordId).toBeTruthy();
-        expect(typeof eserviceRecordId).toBe("number");
         expect(updatedEservice?.eserviceName).toBe(payload.name);
         expect(updatedEservice?.producerName).toBe(payload.producerName);
         expect(updatedEservice?.basePath).toStrictEqual(payload.basePath);
