@@ -20,6 +20,7 @@ import {
   ApiStatisticsEservicesParams,
   ApiStatisticsEservicesQuery,
 } from "../src/model/types.js";
+import { mockTimestreamResponseQuery } from "./utils.js";
 
 const timestreamQueryClient: TimestreamQueryClientHandler =
   timestreamQueryClientBuilder();
@@ -48,6 +49,10 @@ describe("eService Router", () => {
       pollingFrequency: 3,
     };
 
+    vi.spyOn(timestreamQueryClient, "query").mockResolvedValue([
+      mockTimestreamResponseQuery,
+    ]);
+
     const response = await probingApiClient
       .get(`/telemetryData/eservices/${params.eserviceRecordId}`)
       .set("Content-Type", "application/json")
@@ -66,6 +71,10 @@ describe("eService Router", () => {
       startDate: "2024-03-13 21:00:00.57",
       endDate: "2024-03-13 23:30:59.57",
     };
+
+    vi.spyOn(timestreamQueryClient, "query").mockResolvedValue([
+      mockTimestreamResponseQuery,
+    ]);
 
     const response = await probingApiClient
       .get(`/telemetryData/eservices/${params.eserviceRecordId}`)
