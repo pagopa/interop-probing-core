@@ -21,8 +21,8 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@pagopa/eslint-config": "^3.0.0",
+    "@types/cors": "^2.8.17",
     "@types/dotenv-flow": "^3.2.0",
-    "@types/express": "^4.17.17",
     "@types/node": "^20.3.1",
     "@types/supertest": "^6.0.2",
     "prettier": "^2.8.8",
@@ -34,10 +34,13 @@
   "dependencies": {
     "@aws-sdk/client-timestream-query": "^3.529.1",
     "@tsconfig/node-lts": "^20.1.0",
+    "@types/express": "^4.17.17",
     "@zodios/core": "^10.9.2",
     "@zodios/express": "^10.6.1",
+    "cors": "^2.8.5",
     "dotenv-flow": "^3.2.0",
     "express": "^4.18.2",
+    "helmet": "^7.1.0",
     "openapi-zod-client": "^1.7.1",
     "pagopa-interop-probing-commons": "workspace:*",
     "pagopa-interop-probing-models": "workspace:*",
