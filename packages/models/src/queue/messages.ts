@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { EserviceStatus, EserviceTechnology, responseStatus } from "../eservice/eservice.js";
+import {
+  EserviceInteropState,
+  EserviceStatus,
+  EserviceTechnology,
+  responseStatus,
+} from "../eservice/eservice.js";
 
 export const UpdateResponseReceivedDto = z.object({
   eserviceRecordId: z.number().min(1),
@@ -7,7 +12,9 @@ export const UpdateResponseReceivedDto = z.object({
   responseReceived: z.string().datetime({ offset: true }),
 });
 
-export type UpdateResponseReceivedDto = z.infer<typeof UpdateResponseReceivedDto>;
+export type UpdateResponseReceivedDto = z.infer<
+  typeof UpdateResponseReceivedDto
+>;
 
 export const TelemetryOkDto = z.object({
   status: z.literal(responseStatus.ok),
@@ -43,3 +50,17 @@ export const EserviceContentDto = z.object({
 });
 
 export type EserviceContentDto = z.infer<typeof EserviceContentDto>;
+
+export const EserviceDto = z.object({
+  name: z.string().max(255),
+  eserviceId: z.string().uuid(),
+  versionId: z.string().uuid(),
+  technology: EserviceTechnology,
+  state: EserviceInteropState,
+  basePath: z.array(z.string()).nonempty().max(2048),
+  producerName: z.string().max(255),
+  versionNumber: z.number().int().min(1),
+  audience: z.array(z.string()).nonempty().max(2048),
+});
+
+export type EserviceDto = z.infer<typeof EserviceDto>;
