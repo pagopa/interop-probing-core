@@ -52,7 +52,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 
-app.use(healthRouter)
+app.use(healthRouter);
 app.use(eServiceRouter(zodiosCtx)(operationsApiClient));
 
 export default app;
