@@ -1,4 +1,4 @@
-import { Box } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 import { Trans, useTranslation } from 'react-i18next'
 import { Link } from '@/router'
 import { LoginForm } from './components/LoginForm'
@@ -8,12 +8,12 @@ import { LoginLayout } from '@/components/layout/LoginLayout'
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation('common')
   return (
-    <>
+    <Stack sx={{ height: '100%', justifyContent: 'center' }}>
       <LoginLayout title={t('loginForm.title')} description={t('loginForm.subtitle')}>
         <LoginForm />
       </LoginLayout>
       <FooterLogin />
-    </>
+    </Stack>
   )
 }
 
@@ -23,10 +23,12 @@ const FooterLogin: React.FC = () => {
   })
   return (
     <>
-      <Trans components={{ 1: <Link to="RECOVER_PASSWORD" target="_blank" /> }}>
-        {t('forgotPassword')}
-      </Trans>
-      <Box>
+      <Stack alignItems="center">
+        <Box>
+          <Trans components={{ 1: <Link to="RECOVER_PASSWORD" target="_blank" /> }}>
+            {t('forgotPassword')}
+          </Trans>
+        </Box>
         <Link
           to={'MONITORING_E_SERVICE_LIST'}
           as="button"
@@ -36,7 +38,7 @@ const FooterLogin: React.FC = () => {
         >
           {t('returnToList')}
         </Link>
-      </Box>
+      </Stack>
     </>
   )
 }

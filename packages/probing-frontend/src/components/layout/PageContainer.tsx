@@ -8,7 +8,7 @@ type PageContainerIntro = {
 
 export const PageContainerIntro: React.FC<PageContainerIntro> = ({ title, description }) => {
   return (
-    <Stack spacing={1} sx={{ mb: 6, maxWidth: 620, mx: 'auto' }}>
+    <Stack spacing={1} sx={{ mb: 6, maxWidth: 620, mx: 'auto', textAlign: 'center' }}>
       <Typography variant="h4" component="h1">
         {title}
       </Typography>
@@ -44,15 +44,16 @@ export const PageContainer: React.FC<PageContainerProps> = ({
 
 export const PageContainerIntroSkeleton: React.FC = () => {
   return (
-    <Stack direction="row" alignItems="end" spacing={2}>
-      <Box sx={{ flex: 1 }}>
-        <Typography component="h1" variant="h4">
-          <Skeleton />
-        </Typography>
-        <Typography component="p" variant="body1" sx={{ mt: 1, mb: 0 }}>
-          <Skeleton />
-        </Typography>
-      </Box>
+    <Stack spacing={1} sx={{ mb: 6, maxWidth: 620, mx: 'auto', textAlign: 'center' }}>
+      <Typography variant="h4" component="h1">
+        <Skeleton />
+      </Typography>
+      <Typography variant="body1" component="p">
+        <Stack component="span" alignItems={'center'}>
+          <Skeleton width="100%" />
+          <Skeleton width="60%" />
+        </Stack>
+      </Typography>
     </Stack>
   )
 }

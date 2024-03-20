@@ -1,6 +1,6 @@
 import React from 'react'
 import { Outlet } from 'react-router-dom'
-import { Box } from '@mui/material'
+import { Box, Stack } from '@mui/material'
 import { Dialog } from '@/components/dialogs'
 import { useLocation } from '@/router'
 import { ErrorBoundary } from 'react-error-boundary'
@@ -11,7 +11,7 @@ import { ErrorPage } from '@/pages/ErrorPage'
 const _RoutesWrapper: React.FC = () => {
   const { routeKey } = useLocation()
   return (
-    <>
+    <Stack sx={{ height: '100%' }}>
       <Header />
       <AppLayout>
         <ErrorBoundary key={routeKey} FallbackComponent={ErrorPage}>
@@ -19,7 +19,7 @@ const _RoutesWrapper: React.FC = () => {
         </ErrorBoundary>
       </AppLayout>
       <Footer />
-    </>
+    </Stack>
   )
 }
 

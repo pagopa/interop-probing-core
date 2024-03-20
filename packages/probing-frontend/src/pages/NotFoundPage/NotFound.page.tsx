@@ -7,7 +7,7 @@ export const NotFoundPage: React.FC = () => {
   const { t } = useTranslation('error')
 
   return (
-    <Box>
+    <Box sx={{ textAlign: 'center' }}>
       <Stack direction="row" alignItems="end" spacing={2}>
         <Box sx={{ flex: 1 }}>
           <Typography component="h1" variant="h4">

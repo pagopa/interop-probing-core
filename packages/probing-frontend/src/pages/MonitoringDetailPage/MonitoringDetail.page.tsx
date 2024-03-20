@@ -2,7 +2,10 @@ import { MonitoringQueries } from '@/api/monitoring/monitoring.hooks'
 import { Link, useParams } from '@/router'
 import { MonitoringEserviceTelemetry } from './components/MonitoringEserviceTelemetry'
 import { MonitoringEserviceProbing } from './components/MonitoringEserviceProbing'
-import { MonitoringEserviceDetail } from './components/MonitoringEserviceDetail'
+import {
+  MonitoringEserviceDetail,
+  MonitoringEserviceDetailSkeleton,
+} from './components/MonitoringEserviceDetail'
 import { Box, Stack } from '@mui/system'
 import { useTranslation } from 'react-i18next'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
@@ -39,8 +42,8 @@ export const MonitoringDetailPage: React.FC = () => {
     hideOverlay()
   }
 
-  const _isLoading = isInitialLoadingEservice || isInitialLoadingProbing
-  if (_isLoading) return <DetailPageSkeleton />
+  const isLoading = isInitialLoadingEservice || isInitialLoadingProbing
+  if (isLoading) return <DetailPageSkeleton />
 
   return (
     <PageContainer title={eservicesDetail?.eserviceName} description={t('subtitle')}>
@@ -66,7 +69,7 @@ export const MonitoringDetailPage: React.FC = () => {
           pollingFrequency={eservicesDetail.pollingFrequency}
         />
       )}
-      <Box>
+      <Stack alignItems="center" sx={{ mt: 8 }}>
         <Link
           to={'MONITORING_E_SERVICE_LIST'}
           as="button"
@@ -75,7 +78,7 @@ export const MonitoringDetailPage: React.FC = () => {
         >
           {t('returnToList')}
         </Link>
-      </Box>
+      </Stack>
     </PageContainer>
   )
 }
@@ -83,7 +86,19 @@ export const MonitoringDetailPage: React.FC = () => {
 const DetailPageSkeleton: React.FC = () => {
   return (
     <>
-      <Stack spacing={1} sx={{ mb: 6, maxWidth: 620, mx: 'auto' }}>
+      <PageContainer isLoading>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <MonitoringEserviceDetailSkeleton />
+        </Box>
+      </PageContainer>
+      {/* <Stack spacing={1} sx={{ mb: 6, maxWidth: 620, mx: 'auto' }}>
         <Skeleton height="30px" />
         <Box>
           <Skeleton height="250px" />
@@ -98,7 +113,7 @@ const DetailPageSkeleton: React.FC = () => {
           sx={{ maxWidth: 620, display: 'flex', justifySelf: 'center' }}
         />
         <ChartWrapperSkeleton />
-      </Stack>
+      </Stack> */}
     </>
   )
 }
