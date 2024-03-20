@@ -1,7 +1,10 @@
 import { MonitoringQueries } from '@/api/monitoring/monitoring.hooks'
 import { Link, useParams } from '@/router'
 import { MonitoringEserviceTelemetry } from './components/MonitoringEserviceTelemetry'
-import { MonitoringEserviceProbing } from './components/MonitoringEserviceProbing'
+import {
+  MonitoringEserviceProbing,
+  MonitoringEserviceProbingSkeleton,
+} from './components/MonitoringEserviceProbing'
 import {
   MonitoringEserviceDetail,
   MonitoringEserviceDetailSkeleton,
@@ -13,6 +16,7 @@ import { PageContainer } from '@/components/layout/PageContainer'
 import { Skeleton } from '@mui/material'
 import { useHandleRefetch } from '@/hooks/useRefetch'
 import type { ProbingEservice } from '@/api/monitoring/monitoring.models'
+import { ChartWrapperSkeleton } from './components/charts/ChartWrapper'
 
 export const MonitoringDetailPage: React.FC = () => {
   const { t } = useTranslation('common', {
@@ -90,39 +94,26 @@ const DetailPageSkeleton: React.FC = () => {
         >
           <MonitoringEserviceDetailSkeleton />
         </Box>
-      </PageContainer>
-      {/* <Stack spacing={1} sx={{ mb: 6, maxWidth: 620, mx: 'auto' }}>
-        <Skeleton height="30px" />
-        <Box>
-          <Skeleton height="250px" />
+        <Box
+          sx={{
+            mt: 5,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Skeleton width={'300px'} height={40} sx={{ mb: 2 }} />
+          <MonitoringEserviceProbingSkeleton />
         </Box>
-        <Skeleton height="100px" />
-        <Skeleton height="280px" />
-      </Stack>
-      <Stack alignItems={'center'} gap={4}>
-        <Skeleton
-          height="50px"
-          width={'100%'}
-          sx={{ maxWidth: 620, display: 'flex', justifySelf: 'center' }}
-        />
+        <Stack sx={{ mt: 30, pb: 4, textAlign: 'center', alignItems: 'center' }}>
+          <Skeleton sx={{ height: '60px', width: '400px' }} />
+        </Stack>
         <ChartWrapperSkeleton />
-      </Stack> */}
+        <Stack alignItems="center" sx={{ mt: 10 }}>
+          <Skeleton sx={{ height: '30px', width: '200px' }} />
+        </Stack>
+      </PageContainer>
     </>
-  )
-}
-
-export const ChartWrapperSkeleton: React.FC = () => {
-  return (
-    <Stack direction="row" flexWrap={'wrap'} width={'100%'}>
-      <Stack direction="column" flexGrow={2} gap={4}>
-        <Skeleton height="40px" />
-        <Skeleton height="250px" sx={{ transform: 'scale(1, 1)' }} />
-        <Skeleton height="50px" />
-      </Stack>
-      <Stack flexGrow={1} ml={10} gap={4}>
-        <Skeleton height="40px" />
-        <Skeleton height="250px" sx={{ transform: 'scale(1, 1)' }} />
-      </Stack>
-    </Stack>
   )
 }

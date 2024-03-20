@@ -2,7 +2,7 @@ import type {
   ProbingEServiceMonitorState,
   ProbingEservice,
 } from '@/api/monitoring/monitoring.models'
-import { Alert, Box, Chip, Grid, Stack, Typography } from '@mui/material'
+import { Alert, Box, Chip, Grid, Skeleton, Stack, Typography } from '@mui/material'
 import { ButtonNaked } from '@pagopa/mui-italia'
 import { useTranslation } from 'react-i18next'
 import RefreshIcon from '@mui/icons-material/Refresh'
@@ -109,5 +109,14 @@ const ProbingDataAlert: React.FC<ProbingDataAlertProps> = ({ eservicesProbingDet
     <Alert sx={{ width: '100%' }} severity="warning">
       {message}
     </Alert>
+  )
+}
+
+export const MonitoringEserviceProbingSkeleton: React.FC = () => {
+  return (
+    <Skeleton
+      variant="rectangular"
+      sx={{ width: '100%', minWidth: '420px', maxWidth: '600px', height: 200 }}
+    />
   )
 }

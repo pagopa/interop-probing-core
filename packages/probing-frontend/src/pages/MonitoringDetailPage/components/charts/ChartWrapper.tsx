@@ -9,7 +9,7 @@ import LineChart from './LineChart'
 import { Filters, useFilters } from '@pagopa/interop-fe-commons'
 import { useJwt } from '@/hooks/useJwt'
 import { useTranslation } from 'react-i18next'
-import { ChartWrapperSkeleton } from '../../MonitoringDetail.page'
+import { Skeleton } from '@mui/material'
 
 type ChartWrapperProps = {
   eserviceId: string
@@ -106,8 +106,9 @@ const getMinTime: <T extends FailurePerformance | ServicePerformance>(
   data: Array<T> | undefined
 ) => number = (data) => {
   let timesInMilliseconds = [new Date().getTime()]
-
+  let timeToSubtract = 0.5
   if (data && data.length > 0) {
+    timeToSubtract = 0.05
     // Extract the times from the data and convert them to milliseconds
     timesInMilliseconds = data.map((performance) => new Date(performance.time).getTime())
   }
@@ -116,11 +117,32 @@ const getMinTime: <T extends FailurePerformance | ServicePerformance>(
   const minTimeInMilliseconds = Math.min(...timesInMilliseconds)
 
   // Subtract 0.05 days from the minimum time (used as a left padding)
-  const minTimeAdjusted = minTimeInMilliseconds - 0.05 * 24 * 60 * 60 * 1000
+  const minTimeAdjusted = minTimeInMilliseconds - timeToSubtract * 24 * 60 * 60 * 1000
 
   // Create a new Date object using the adjusted time and set minutes to 0
   const minTimeDate = new Date(minTimeAdjusted)
   minTimeDate.setMinutes(0)
 
   return minTimeDate.getTime()
+}
+
+export const ChartWrapperSkeleton: React.FC = () => {
+  return (
+    <Stack spacing={1} sx={{ width: '100%', mx: 'auto', flexWrap: 'wrap' }}>
+      <Stack direction="row" width={'100%'} flexWrap={'wrap'}>
+        <Stack direction="column" flexGrow={2}>
+          <Skeleton sx={{ mb: '40px', height: '40px', width: '160px' }} />
+          <Skeleton variant="rectangular" sx={{ height: '337px', width: '590px' }} />
+          <Skeleton variant="rectangular" sx={{ mt: '30px', height: '20px', width: '160px' }} />
+          <Skeleton variant="rectangular" sx={{ mt: '20px', height: '10px', width: '600px' }} />
+        </Stack>
+        <Box display="flex" flexDirection="column">
+          <Skeleton sx={{ height: '40px', width: '140px' }} />
+          <Box alignSelf="flex-end">
+            <Skeleton variant="rectangular" sx={{ mt: '130px', height: '180px', width: '370px' }} />
+          </Box>
+        </Box>
+      </Stack>
+    </Stack>
+  )
 }

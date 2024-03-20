@@ -8,7 +8,7 @@ import { LoginLayout } from '@/components/layout/LoginLayout'
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation('common')
   return (
-    <Stack sx={{ height: '100%', justifyContent: 'center' }}>
+    <Stack sx={{ width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
       <LoginLayout title={t('loginForm.title')} description={t('loginForm.subtitle')}>
         <LoginForm />
       </LoginLayout>
