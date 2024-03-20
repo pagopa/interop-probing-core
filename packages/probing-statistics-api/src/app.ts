@@ -1,5 +1,6 @@
 import { zodiosCtx } from "pagopa-interop-probing-commons";
 import statisticsRouter from "./routers/statisticsRouter.js";
+import healthRouter from "./routers/healthRouter.js";
 import {
   TimestreamService,
   timestreamServiceBuilder,
@@ -68,6 +69,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 
+app.use(healthRouter);
 app.use(statisticsRouter(zodiosCtx)(statisticsService));
 
 export default app;
