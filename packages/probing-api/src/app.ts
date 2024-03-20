@@ -1,7 +1,7 @@
 import { zodiosCtx } from "pagopa-interop-probing-commons";
 import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
 import eServiceRouter from "./routers/eserviceRouter.js";
-import healthRouter from "./routers/HealthRouter.js";
+import healthRouter from "./routers/healthRouter.js";
 import { config } from "./utilities/config.js";
 import helmet from "helmet";
 import express from "express";
