@@ -2,12 +2,12 @@ import type {
   ProbingEServiceMonitorState,
   ProbingEservice,
 } from '@/api/monitoring/monitoring.models'
-import { Alert, Box, Chip, Grid, Typography } from '@mui/material'
+import { Alert, Box, Chip, Grid, Stack, Typography } from '@mui/material'
 import { ButtonNaked } from '@pagopa/mui-italia'
 import { useTranslation } from 'react-i18next'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import { formatDateString } from '@/utils/date.utils'
-import { MonitoringInformationContainer } from './MonitoringInformationContainer'
+import { InformationContainer } from '@pagopa/interop-fe-commons'
 
 type MonitoringEserviceProbingProps = {
   eservicesProbingDetail: ProbingEservice
@@ -37,42 +37,46 @@ export const MonitoringEserviceProbing: React.FC<MonitoringEserviceProbingProps>
   }
 
   return (
-    <Box sx={{ mt: '40px', width: '100%', maxWidth: '600px' }}>
-      <Typography variant="h5">{t('realTimeTitle')}</Typography>
+    <Box sx={{ mt: '40px', width: '100%', minWidth: '400px', maxWidth: '600px' }}>
+      <Typography component="h2" variant="h5" sx={{ textAlign: 'center' }}>
+        {t('realTimeTitle')}
+      </Typography>
       <Grid container sx={{ p: 2, my: 2, backgroundColor: '#F2F2F2', justifyContent: 'end' }}>
         <ButtonNaked color="primary" onClick={onRefetch} size="small" startIcon={<RefreshIcon />}>
           {t('refresh')}
         </ButtonNaked>
       </Grid>
-      <MonitoringInformationContainer
-        label={t('monitoringState')}
-        content={
-          <Chip
-            size={'small'}
-            label={t(eservicesProbingDetail?.probingEnabled ? 'active' : 'suspended')}
-            color={eservicesProbingDetail.probingEnabled ? 'success' : 'error'}
-          />
-        }
-      />
-      <MonitoringInformationContainer
-        label={t('eserviceState')}
-        content={
-          <Chip
-            size={'small'}
-            label={eservicesProbingDetail.state.toLowerCase()}
-            color={getProbingStateChipColor(eservicesProbingDetail.state)}
-          />
-        }
-      />
-      <MonitoringInformationContainer
-        label={t('lastRelevationDate')}
-        content={
-          eservicesProbingDetail.responseReceived
-            ? formatDateString(eservicesProbingDetail.responseReceived)
-            : 'N/D'
-        }
-      />
-      <ProbingDataAlert eservicesProbingDetail={eservicesProbingDetail} />
+      <Stack spacing={3}>
+        <InformationContainer
+          label={t('monitoringState')}
+          content={
+            <Chip
+              size={'small'}
+              label={t(eservicesProbingDetail?.probingEnabled ? 'active' : 'suspended')}
+              color={eservicesProbingDetail.probingEnabled ? 'success' : 'error'}
+            />
+          }
+        />
+        <InformationContainer
+          label={t('eserviceState')}
+          content={
+            <Chip
+              size={'small'}
+              label={eservicesProbingDetail.state.toLowerCase()}
+              color={getProbingStateChipColor(eservicesProbingDetail.state)}
+            />
+          }
+        />
+        <InformationContainer
+          label={t('lastRelevationDate')}
+          content={
+            eservicesProbingDetail.responseReceived
+              ? formatDateString(eservicesProbingDetail.responseReceived)
+              : 'N/D'
+          }
+        />
+        <ProbingDataAlert eservicesProbingDetail={eservicesProbingDetail} />
+      </Stack>
     </Box>
   )
 }

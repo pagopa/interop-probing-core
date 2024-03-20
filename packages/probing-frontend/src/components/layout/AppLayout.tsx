@@ -13,6 +13,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children, sx }) => {
     <Box
       component="main"
       sx={{
+        height: '100%',
         px: 3,
         py: 6,
         ...sx,

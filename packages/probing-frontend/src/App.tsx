@@ -1,4 +1,3 @@
-import '@/App.css'
 import { RouterProvider } from '@/router'
 import { ToastNotification } from '@/components/layout/ToastNotification'
 import { LoadingOverlay } from '@/components/layout/LoadingOverlay'
