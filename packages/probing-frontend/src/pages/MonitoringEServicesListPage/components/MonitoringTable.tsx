@@ -12,10 +12,10 @@ import RefreshIcon from '@mui/icons-material/Refresh'
 import { MonitoringTableRow } from './MonitoringTableRow'
 import { MonitoringQueries } from '@/api/monitoring/monitoring.hooks'
 import { Skeleton } from '@mui/material'
-import { useLoadingOverlay } from '@/stores'
 import type { TFunction } from 'i18next'
-import { delayedPromise } from '@/utils/common.utils'
 import React from 'react'
+import type { EService } from '@/api/monitoring/monitoring.models'
+import { useHandleRefetch } from '@/hooks/useRefetch'
 
 const headLabels = (t: TFunction<'common', 'table'>): Array<string> => {
   return [
@@ -32,8 +32,6 @@ export const MonitoringTable: React.FC = () => {
   const { t } = useTranslation('common', { keyPrefix: 'table' })
   const totalEServicesRef = React.useRef<number | undefined>()
   const { paginationParams, paginationProps, getTotalPageCount } = usePagination({ limit: 10 })
-  const { showOverlay, hideOverlay } = useLoadingOverlay()
-
   const [producersAutocompleteTextInput, setProducersAutocompleteTextInput] =
     useAutocompleteTextInput()
 
@@ -85,12 +83,7 @@ export const MonitoringTable: React.FC = () => {
     totalEServicesRef.current = eservices?.totalElements
   }
 
-  const handleRefetch = async () => {
-    showOverlay(t('loading'))
-    // We want show the loading overlay for at least 1 second, to avoid flickering
-    await delayedPromise(refetch(), 1000)
-    hideOverlay()
-  }
+  const handleRefetch = useHandleRefetch<EService>(refetch)
 
   return (
     <>

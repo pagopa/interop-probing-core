@@ -107,7 +107,7 @@ const getMinTime: <T extends FailurePerformance | ServicePerformance>(
 ) => number = (data) => {
   let timesInMilliseconds = [new Date().getTime()]
 
-  if (data) {
+  if (data && data.length > 0) {
     // Extract the times from the data and convert them to milliseconds
     timesInMilliseconds = data.map((performance) => new Date(performance.time).getTime())
   }

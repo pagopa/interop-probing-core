@@ -6,17 +6,16 @@ import { MonitoringEserviceDetail } from './components/MonitoringEserviceDetail'
 import { Box, Stack } from '@mui/system'
 import { useTranslation } from 'react-i18next'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { useLoadingOverlay } from '@/stores'
-import { delayedPromise } from '@/utils/common.utils'
 import { PageContainer } from '@/components/layout/PageContainer'
 import { Skeleton } from '@mui/material'
+import { useHandleRefetch } from '@/hooks/useRefetch'
+import type { ProbingEservice } from '@/api/monitoring/monitoring.models'
 
 export const MonitoringDetailPage: React.FC = () => {
   const { t } = useTranslation('common', {
     keyPrefix: 'detailsPage',
   })
 
-  const { showOverlay, hideOverlay } = useLoadingOverlay()
   const { id: eserviceId } = useParams<'MONITORING_DETAIL'>()
   const { data: eservicesDetail, isInitialLoading: isInitialLoadingEservice } =
     MonitoringQueries.useGetEserviceData({
@@ -31,13 +30,7 @@ export const MonitoringDetailPage: React.FC = () => {
   } = MonitoringQueries.useGetEserviceProbingData({ eserviceId })
 
   const hasValidData = isSuccessProbing && eservicesDetail
-
-  const handleRefetch = async () => {
-    showOverlay(t('loading'))
-    // We want show the loading overlay for at least 1 second, to avoid flickering
-    await delayedPromise(refetch(), 1000)
-    hideOverlay()
-  }
+  const handleRefetch = useHandleRefetch<ProbingEservice>(refetch)
 
   const _isLoading = isInitialLoadingEservice || isInitialLoadingProbing
   if (_isLoading) return <DetailPageSkeleton />
