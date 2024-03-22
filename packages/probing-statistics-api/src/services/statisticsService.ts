@@ -26,8 +26,6 @@ import {
   truncatedTo,
 } from "../utilities/date.js";
 
-// config.graphFailurePrecision
-// config.graphFailureTolerance
 
 export const statisticsServiceBuilder = (
   timestreamService: TimestreamService
