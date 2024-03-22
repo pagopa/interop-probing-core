@@ -13,11 +13,11 @@ export const operationsServiceBuilder = (
   return {
     async saveEservice({ params, payload }: SaveEserviceApi): Promise<void> {
       try {
-        await operationsApiClient.saveEservice(payload, { params });
-
         logger.info(
           `Saving eService with eserviceId/versionId: ${params.eserviceId}/${params.versionId}`
         );
+
+        await operationsApiClient.saveEservice(payload, { params });
       } catch (error: unknown) {
         throw makeApplicationError(
           apiSaveEserviceError(
