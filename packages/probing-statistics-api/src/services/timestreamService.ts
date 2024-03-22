@@ -1,6 +1,11 @@
 import { StatisticContent } from "../model/statistic.js";
 import { config } from "../utilities/config.js";
-import { changeDateFormat, TimeFormat } from "../utilities/date.js";
+import {
+  changeDateFormat,
+  DateUnit,
+  timeBetween,
+  TimeFormat,
+} from "../utilities/date.js";
 import {
   TimestreamQueryClientHandler,
   parseQueryResult,
@@ -24,9 +29,10 @@ export const timestreamServiceBuilder = (
       let months: number = 1;
 
       if (startDate && endDate) {
-        const daysDifference: number = Math.round(
-          (new Date(endDate).getTime() - new Date(startDate).getTime()) /
-            (1000 * 60 * 60 * 24)
+        const daysDifference: number = timeBetween(
+          startDate,
+          endDate,
+          DateUnit.DAYS
         );
         months += Math.round(daysDifference / 30);
         if (months > config.graphMaxMonths) {
@@ -69,7 +75,7 @@ function buildQueryString(
   const endTime: string = endDate
     ? ` '${changeDateFormat(endDate, TimeFormat.YY_MM_DD_HH_MM)}'`
     : "now() ";
-  
+
   return `
         WITH binned_timeseries AS (
           SELECT binned_timestamp, status, avg_response_time

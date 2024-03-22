@@ -5,6 +5,17 @@ export enum TimeFormat {
   YY_MM_DD_HH_MM = "yyyy-MM-dd HH:mm",
 }
 
+export enum DateUnit {
+  MILLIS = "MILLIS",
+  SECONDS = "SECONDS",
+  MINUTES = "MINUTES",
+  HOURS = "HOURS",
+  DAYS = "DAYS",
+  WEEKS = "WEEKS",
+  MONTHS = "MONTHS",
+  YEARS = "YEARS",
+}
+
 export function changeDateFormat(
   dateString: string,
   format: TimeFormat
@@ -48,73 +59,38 @@ function getDateComponents(dateString: string): {
   return { year, month, day, hours, minutes, seconds, milliseconds };
 }
 
-export enum DateUnit {
-  MILLIS,
-  SECONDS,
-  MINUTES,
-  HOURS,
-  DAYS,
-  WEEKS,
-  MONTHS,
-  YEARS,
+export function timeUnitToMS(value: number, unit: DateUnit.HOURS): number {
+  return match(unit)
+    .with(DateUnit.HOURS, () => value * 60 * 60 * 1000)
+    .exhaustive();
 }
 
-export function timeUnitToMS(value: number, unit: DateUnit): number {
-  switch (unit) {
-    case DateUnit.HOURS:
-      return value * 60 * 60 * 1000;
-    default:
-      throw new Error("Unsupported date unit");
-  }
-}
-
-export function truncatedTo(dateString: string, unit: DateUnit): Date {
+export function truncatedTo(
+  dateString: string,
+  unit: DateUnit.HOURS | DateUnit.DAYS
+): Date {
   const dateToTruncate = new Date(dateString);
 
-  switch (unit) {
-    case DateUnit.HOURS:
-      return new Date(dateToTruncate.setUTCMinutes(0, 0, 0));
-    case DateUnit.DAYS:
-      return new Date(dateToTruncate.setUTCHours(0, 0, 0));
-    default:
-      throw new Error("Unsupported Date Unit");
-  }
+  return match(unit)
+    .with(DateUnit.HOURS, () => new Date(dateToTruncate.setUTCMinutes(0, 0, 0)))
+    .with(DateUnit.DAYS, () => new Date(dateToTruncate.setUTCHours(0, 0, 0)))
+    .exhaustive();
 }
 
 export function timeBetween(
   startDate: string,
   endDate: string,
-  unit: DateUnit
+  unit: DateUnit.DAYS | DateUnit.WEEKS
 ): number {
   const start: Date = new Date(startDate);
   const end: Date = new Date(endDate);
 
-  switch (unit) {
-    case DateUnit.MILLIS:
-      return end.getTime() - start.getTime();
-    case DateUnit.SECONDS:
-      return (end.getTime() - start.getTime()) / 1000;
-    case DateUnit.MINUTES:
-      return (end.getTime() - start.getTime()) / (1000 * 60);
-    case DateUnit.HOURS:
-      return (end.getTime() - start.getTime()) / (1000 * 60 * 60);
-    case DateUnit.DAYS:
-      return Math.floor(
-        (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
-      );
-    case DateUnit.WEEKS:
-      return Math.floor(
-        (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 7)
-      );
-    case DateUnit.MONTHS:
-      return (
-        (end.getFullYear() - start.getFullYear()) * 12 +
-        end.getMonth() -
-        start.getMonth()
-      );
-    case DateUnit.YEARS:
-      return end.getFullYear() - start.getFullYear();
-    default:
-      throw new Error("Unsupported Date Unit");
-  }
+  return match(unit)
+    .with(DateUnit.DAYS, () =>
+      Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
+    )
+    .with(DateUnit.WEEKS, () =>
+      Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 7))
+    )
+    .exhaustive();
 }
