@@ -18,7 +18,7 @@ import {
   StatisticContent,
   TelemetryStatus,
 } from "../model/statistic.js";
-import { changeDateFormat, timeFormat } from "./date.js";
+import { changeDateFormat, TimeFormat } from "./date.js";
 import { match } from "ts-pattern";
 
 export const timestreamQueryClientBuilder = () => {
@@ -90,7 +90,7 @@ function parseRow(columnInfo: ColumnInfo[], row: Row): StatisticContent {
 
         rowData.time = changeDateFormat(
           columnValue,
-          timeFormat.YY_MM_DD_HH_MM_SS
+          TimeFormat.YY_MM_DD_HH_MM_SS
         );
       })
       .with("status", () => {

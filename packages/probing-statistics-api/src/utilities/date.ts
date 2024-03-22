@@ -1,17 +1,28 @@
-export namespace timeFormat {
-  export const YY_MM_DD_HH_MM_SS: string = "yyyy-MM-dd HH:mm:ss.SSSSSSSSS";
-  export const YY_MM_DD_HH_MM: string = "yyyy-MM-dd HH:mm";
+import { match } from "ts-pattern";
+
+export enum TimeFormat {
+  YY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss.SSSSSSSSS",
+  YY_MM_DD_HH_MM = "yyyy-MM-dd HH:mm",
 }
 
-export function changeDateFormat(dateString: string, format: string): string {
+export function changeDateFormat(
+  dateString: string,
+  format: TimeFormat
+): string {
   const { year, month, day, hours, minutes, seconds, milliseconds } =
     getDateComponents(dateString);
 
-  if (format === timeFormat.YY_MM_DD_HH_MM) {
-    return `${year}-${month}-${day} ${hours}:${minutes}`;
-  } else {
-    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`;
-  }
+  return match(format)
+    .with(
+      TimeFormat.YY_MM_DD_HH_MM,
+      () => `${year}-${month}-${day} ${hours}:${minutes}`
+    )
+    .with(
+      TimeFormat.YY_MM_DD_HH_MM_SS,
+      () =>
+        `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`
+    )
+    .exhaustive();
 }
 
 function getDateComponents(dateString: string): {
@@ -50,10 +61,10 @@ export enum DateUnit {
 
 export function timeUnitToMS(value: number, unit: DateUnit): number {
   switch (unit) {
-      case DateUnit.HOURS:
-          return value * 60 * 60 * 1000;
-      default:
-          throw new Error('Unsupported date unit');
+    case DateUnit.HOURS:
+      return value * 60 * 60 * 1000;
+    default:
+      throw new Error("Unsupported date unit");
   }
 }
 

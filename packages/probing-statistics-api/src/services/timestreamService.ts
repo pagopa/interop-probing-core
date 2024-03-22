@@ -1,6 +1,6 @@
 import { StatisticContent } from "../model/statistic.js";
 import { config } from "../utilities/config.js";
-import { changeDateFormat, timeFormat } from "../utilities/date.js";
+import { changeDateFormat, TimeFormat } from "../utilities/date.js";
 import {
   TimestreamQueryClientHandler,
   parseQueryResult,
@@ -64,10 +64,10 @@ function buildQueryString(
   endDate?: string
 ): string {
   const startTime: string = startDate
-    ? ` '${changeDateFormat(startDate, timeFormat.YY_MM_DD_HH_MM)}'`
+    ? ` '${changeDateFormat(startDate, TimeFormat.YY_MM_DD_HH_MM)}'`
     : "ago(1d) ";
   const endTime: string = endDate
-    ? ` '${changeDateFormat(endDate, timeFormat.YY_MM_DD_HH_MM)}'`
+    ? ` '${changeDateFormat(endDate, TimeFormat.YY_MM_DD_HH_MM)}'`
     : "now() ";
   
   return `

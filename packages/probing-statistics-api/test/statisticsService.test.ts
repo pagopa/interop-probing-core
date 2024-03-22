@@ -13,7 +13,7 @@ import {
   timestreamQueryClientBuilder,
 } from "../src/utilities/timestreamQueryClientHandler.js";
 import { mockTimestreamResponseQuery } from "./utils.js";
-import { DateUnit, changeDateFormat, timeBetween, timeFormat, truncatedTo } from "../src/utilities/date.js";
+import { DateUnit, changeDateFormat, timeBetween, TimeFormat, truncatedTo } from "../src/utilities/date.js";
 
 describe("Statistics service test", () => {
   const timestreamQueryClient: TimestreamQueryClientHandler =
@@ -93,7 +93,7 @@ describe("Statistics service test", () => {
     )}`
 
     expect(performances[0].time).toBe('2024-03-13 21:00:00.000000000');
-    expect(performances[performances.length - 1].time).toBe(changeDateFormat(nowTrucanted, timeFormat.YY_MM_DD_HH_MM_SS));
+    expect(performances[performances.length - 1].time).toBe(changeDateFormat(nowTrucanted, TimeFormat.YY_MM_DD_HH_MM_SS));
 
     expect(failures.some(el => el.status === 'KO')).toBe(true);
     expect(failures.some(el => el.status === 'N/D')).toBe(true);

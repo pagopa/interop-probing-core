@@ -21,11 +21,10 @@ import {
   DateUnit,
   changeDateFormat,
   timeBetween,
-  timeFormat,
+  TimeFormat,
   timeUnitToMS,
   truncatedTo,
 } from "../utilities/date.js";
-
 
 export const statisticsServiceBuilder = (
   timestreamService: TimestreamService
@@ -132,7 +131,7 @@ function calculatePerformances(
         responseTime: average,
         time: changeDateFormat(
           new Date(startDateZero).toISOString(),
-          timeFormat.YY_MM_DD_HH_MM_SS
+          TimeFormat.YY_MM_DD_HH_MM_SS
         ),
       });
 
