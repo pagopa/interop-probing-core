@@ -58,7 +58,7 @@ export const EserviceDto = z.object({
   technology: EserviceTechnology,
   state: EserviceInteropState,
   basePath: z.array(z.string()).nonempty().max(2048),
-  producerName: z.string().max(255),
+  producerName: z.string().max(2048),
   versionNumber: z.number().int().min(1),
   audience: z.array(z.string()).nonempty().max(2048),
 });
