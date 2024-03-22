@@ -26,7 +26,7 @@ export async function processTask(
       });
       totalElements = data.totalElements;
 
-      const completableFutures = data.content.map(async (eservice) => {
+      const promises = data.content.map(async (eservice) => {
         const params: ApiUpdateLastRequestParams = {
           eserviceRecordId: eservice.eserviceRecordId,
         };
@@ -36,7 +36,7 @@ export async function processTask(
         await operationsService.updateLastRequest({ params, payload });
         await producerService.sendToCallerQueue(eservice);
       });
-      await Promise.all(completableFutures);
+      await Promise.all(promises);
 
       offset += limit;
     } while (offset < totalElements);
