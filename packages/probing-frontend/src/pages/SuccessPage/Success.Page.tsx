@@ -28,11 +28,15 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({ parent }) => {
   return (
     <Stack
       spacing={4}
-      alignItems="center"
       component="main"
-      my={9}
-      mx={'auto'}
-      sx={{ maxWidth: '600px' }}
+      sx={{
+        maxWidth: '600px',
+        height: '100%',
+        width: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        mx: 'auto',
+      }}
     >
       <SuccessElement
         title={t('title')}

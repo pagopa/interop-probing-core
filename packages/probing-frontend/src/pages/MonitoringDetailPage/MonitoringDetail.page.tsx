@@ -1,21 +1,28 @@
 import { MonitoringQueries } from '@/api/monitoring/monitoring.hooks'
 import { Link, useParams } from '@/router'
 import { MonitoringEserviceTelemetry } from './components/MonitoringEserviceTelemetry'
-import { MonitoringEserviceProbing } from './components/MonitoringEserviceProbing'
-import { MonitoringEserviceDetail } from './components/MonitoringEserviceDetail'
-import { Box } from '@mui/system'
+import {
+  MonitoringEserviceProbing,
+  MonitoringEserviceProbingSkeleton,
+} from './components/MonitoringEserviceProbing'
+import {
+  MonitoringEserviceDetail,
+  MonitoringEserviceDetailSkeleton,
+} from './components/MonitoringEserviceDetail'
+import { Box, Stack } from '@mui/system'
 import { useTranslation } from 'react-i18next'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import { useLoadingOverlay } from '@/stores'
-import { delayedPromise } from '@/utils/common.utils'
 import { PageContainer } from '@/components/layout/PageContainer'
+import { Skeleton } from '@mui/material'
+import { useHandleRefetch } from '@/hooks/useRefetch'
+import type { ProbingEservice } from '@/api/monitoring/monitoring.models'
+import { ChartWrapperSkeleton } from './components/charts/ChartWrapper'
 
 export const MonitoringDetailPage: React.FC = () => {
   const { t } = useTranslation('common', {
     keyPrefix: 'detailsPage',
   })
 
-  const { showOverlay, hideOverlay } = useLoadingOverlay()
   const { id: eserviceId } = useParams<'MONITORING_DETAIL'>()
   const { data: eservicesDetail, isInitialLoading: isInitialLoadingEservice } =
     MonitoringQueries.useGetEserviceData({
@@ -30,22 +37,13 @@ export const MonitoringDetailPage: React.FC = () => {
   } = MonitoringQueries.useGetEserviceProbingData({ eserviceId })
 
   const hasValidData = isSuccessProbing && eservicesDetail
-
-  const handleRefetch = async () => {
-    showOverlay(t('loading'))
-    // We want show the loading overlay for at least 1 second, to avoid flickering
-    await delayedPromise(refetch(), 1000)
-    hideOverlay()
-  }
+  const handleRefetch = useHandleRefetch<ProbingEservice>(refetch)
 
   const isLoading = isInitialLoadingEservice || isInitialLoadingProbing
+  if (isLoading) return <DetailPageSkeleton />
 
   return (
-    <PageContainer
-      title={eservicesDetail?.eserviceName}
-      description={t('subtitle')}
-      isLoading={isLoading}
-    >
+    <PageContainer title={eservicesDetail?.eserviceName} description={t('subtitle')}>
       <Box
         sx={{
           display: 'flex',
@@ -68,7 +66,7 @@ export const MonitoringDetailPage: React.FC = () => {
           pollingFrequency={eservicesDetail.pollingFrequency}
         />
       )}
-      <Box sx={{ my: 4 }}>
+      <Stack alignItems="center" sx={{ mt: 8 }}>
         <Link
           to={'MONITORING_E_SERVICE_LIST'}
           as="button"
@@ -77,7 +75,45 @@ export const MonitoringDetailPage: React.FC = () => {
         >
           {t('returnToList')}
         </Link>
-      </Box>
+      </Stack>
     </PageContainer>
+  )
+}
+
+const DetailPageSkeleton: React.FC = () => {
+  return (
+    <>
+      <PageContainer isLoading>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <MonitoringEserviceDetailSkeleton />
+        </Box>
+        <Box
+          sx={{
+            mt: 5,
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <Skeleton width={'300px'} height={40} sx={{ mb: 2 }} />
+          <MonitoringEserviceProbingSkeleton />
+        </Box>
+        <Stack sx={{ mt: 30, pb: 4, textAlign: 'center', alignItems: 'center' }}>
+          <Skeleton sx={{ height: '60px', width: '400px' }} />
+        </Stack>
+        <ChartWrapperSkeleton />
+        <Stack alignItems="center" sx={{ mt: 10 }}>
+          <Skeleton sx={{ height: '30px', width: '200px' }} />
+        </Stack>
+      </PageContainer>
+    </>
   )
 }

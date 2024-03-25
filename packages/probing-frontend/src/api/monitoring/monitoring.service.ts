@@ -61,7 +61,6 @@ async function getFilteredTelemetryData(
   },
   eserviceId: string
 ): Promise<TelemetryData> {
-  // TODO: type data
   const response = await axiosInstance.get<TelemetryData>(
     `${API_BASE_PATH}/telemetryData/eservices/filtered/${eserviceId}`,
     { params }

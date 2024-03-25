@@ -17,10 +17,10 @@ export const MonitoringEserviceTelemetry: React.FC<MonitoringEserviceTelemetryPr
 
   return (
     <Stack spacing={1} sx={{ mt: 20, width: '100%', mx: 'auto' }}>
-      <Typography component={'h1'} variant="h5" sx={{ pb: 8 }}>
+      <Typography component="h2" variant="h5" sx={{ pb: 8, textAlign: 'center' }}>
         {t('historyTitle')}
       </Typography>
-      <ChartWrapper eserviceId={eserviceId} pollingFrequency={pollingFrequency}></ChartWrapper>
+      <ChartWrapper eserviceId={eserviceId} pollingFrequency={pollingFrequency} />
     </Stack>
   )
 }
