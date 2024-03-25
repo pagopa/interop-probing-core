@@ -8,14 +8,14 @@ type AppLayoutProps = {
   sx?: SxProps
 }
 
-export const AppLayout: React.FC<AppLayoutProps> = ({ children, sx }) => {
+export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
   return (
     <Box
       component="main"
       sx={{
         px: 3,
-        py: 6,
-        ...sx,
+        py: 4,
+        flexGrow: 1,
       }}
       bgcolor="#FAFAFA"
     >

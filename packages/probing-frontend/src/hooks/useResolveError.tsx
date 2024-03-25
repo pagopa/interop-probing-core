@@ -48,7 +48,7 @@ function useResolveError(fallbackProps: FallbackProps): UseResolveErrorReturnTyp
     content = (
       <>
         {!!(import.meta.env.MODE === 'development') && (
-          <CodeBlock code={error?.stack || error.message || error?.name} />
+          <CodeBlock code={error?.stack || error.message || error?.name} sx={{ mb: 4 }} />
         )}
         {reloadPageButton}
       </>

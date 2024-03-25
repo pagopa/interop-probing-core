@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material'
+import { Box, Button, Stack } from '@mui/material'
 import type { FieldValues } from 'react-hook-form'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -56,22 +56,20 @@ export const FirstAccessForm: React.FC = () => {
     <Box noValidate component="form" onSubmit={handleSubmit(onSubmit)}>
       <InputWrapper error={errors['newPassword'] as { message: string }}>
         <MUITextField
-          sx={{ mb: 2, my: 2 }}
           id="newPassword"
           label={t('newPassword')}
           type="password"
-          required={true}
+          required
           autoComplete="newPassword"
           {...register('newPassword', newPasswordValidators)}
-        ></MUITextField>
+        />
       </InputWrapper>
       <InputWrapper error={errors['newPasswordConfirm'] as { message: string }}>
         <MUITextField
-          sx={{ mb: 2 }}
           id="newPasswordConfirm"
           label={t('newPasswordConfirm')}
           type="password"
-          required={true}
+          required
           autoComplete="newPasswordConfirm"
           {...register('newPasswordConfirm', {
             required: { value: true, message: t('fieldRequired') },
@@ -80,12 +78,14 @@ export const FirstAccessForm: React.FC = () => {
               checkPasswords: (value) => watch('newPassword') === value || t('notMatching'),
             },
           })}
-        ></MUITextField>
+        />
       </InputWrapper>
 
-      <Button variant="contained" type="submit" sx={{ width: 95, mt: 2 }}>
-        {t('signIn')}
-      </Button>
+      <Stack alignItems="center">
+        <Button variant="contained" type="submit">
+          {t('signIn')}
+        </Button>
+      </Stack>
     </Box>
   )
 }

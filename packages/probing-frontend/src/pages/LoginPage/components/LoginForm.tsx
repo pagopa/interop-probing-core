@@ -1,4 +1,4 @@
-import { Box, Button } from '@mui/material'
+import { Box, Button, Stack } from '@mui/material'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { TextField as MUITextField } from '@mui/material'
@@ -45,7 +45,7 @@ export const LoginForm: React.FC = () => {
           {...register('username', {
             pattern: { value: passwordRules.email, message: t('emailPattern') },
           })}
-        ></MUITextField>
+        />
       </InputWrapper>
       <InputWrapper error={errors['password'] as { message: string }}>
         <MUITextField
@@ -55,11 +55,13 @@ export const LoginForm: React.FC = () => {
           type="password"
           required={true}
           {...register('password', { required: true || t('fieldRequired') })}
-        ></MUITextField>
+        />
       </InputWrapper>
-      <Button disabled={!isValid} variant="contained" type="submit" size="medium">
-        {t('signIn')}
-      </Button>
+      <Stack alignItems="center">
+        <Button disabled={!isValid} variant="contained" type="submit" size="medium">
+          {t('signIn')}
+        </Button>
+      </Stack>
     </Box>
   )
 }

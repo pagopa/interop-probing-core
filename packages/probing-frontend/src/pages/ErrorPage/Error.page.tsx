@@ -6,7 +6,7 @@ import { Stack, Typography } from '@mui/material'
 const ErrorPage: React.FC<FallbackProps> = (props) => {
   const { title, description, content } = useResolveError(props)
   return (
-    <Stack justifyContent="center" alignItems="center" spacing={4} sx={{ height: '100%', py: 2 }}>
+    <Stack justifyContent="center" alignItems="center" sx={{ width: '100%', height: '100%' }}>
       <Stack spacing={1} sx={{ textAlign: 'center', maxWidth: 560, mx: 'auto' }}>
         <Typography variant="h3" component="h1">
           {title}
