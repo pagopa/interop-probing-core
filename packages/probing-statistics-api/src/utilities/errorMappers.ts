@@ -8,10 +8,11 @@ type ErrorCodes = LocalErrorCodes | CommonErrorCodes;
 
 const { HTTP_STATUS_INTERNAL_SERVER_ERROR } = constants;
 
-export const statisticsErrorMapper = (
-  error: ApiError<ErrorCodes>
-): number =>
+export const statisticsErrorMapper = (error: ApiError<ErrorCodes>): number =>
   match(error.code)
-    .with("missingScalarValueTelemetry", () => HTTP_STATUS_INTERNAL_SERVER_ERROR)
+    .with(
+      "missingScalarValueTelemetry",
+      () => HTTP_STATUS_INTERNAL_SERVER_ERROR
+    )
     .with("queryTimestreamError", () => HTTP_STATUS_INTERNAL_SERVER_ERROR)
     .otherwise(() => HTTP_STATUS_INTERNAL_SERVER_ERROR);

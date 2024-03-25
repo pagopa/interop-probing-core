@@ -122,9 +122,7 @@ export function decodeSQSMessageError(
   });
 }
 
-export function buildJWTError(
-  detail: string
-): ApplicationError<ErrorCodes> {
+export function buildJWTError(detail: string): ApplicationError<ErrorCodes> {
   return new ApplicationError({
     detail: `${detail}`,
     code: "buildJWTError",

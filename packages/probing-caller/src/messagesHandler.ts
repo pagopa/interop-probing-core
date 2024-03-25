@@ -6,7 +6,10 @@ import {
   makeApplicationError,
 } from "./model/domain/errors.js";
 import { ProducerService } from "./services/producerService.js";
-import { UpdateResponseReceivedDto, TelemetryDto } from "pagopa-interop-probing-models";
+import {
+  UpdateResponseReceivedDto,
+  TelemetryDto,
+} from "pagopa-interop-probing-models";
 
 export function processMessage(
   callerService: CallerService,

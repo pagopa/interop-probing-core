@@ -17,7 +17,9 @@ const probingEserviceRegistryReaderConfig = AWSConfig.and(LoggerConfig).and(
     }))
 );
 
-export type ProbingEserviceRegistryReaderConfig = z.infer<typeof probingEserviceRegistryReaderConfig>;
+export type ProbingEserviceRegistryReaderConfig = z.infer<
+  typeof probingEserviceRegistryReaderConfig
+>;
 
 export const config: ProbingEserviceRegistryReaderConfig = {
   ...probingEserviceRegistryReaderConfig.parse(process.env),

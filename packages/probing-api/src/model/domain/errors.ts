@@ -1,4 +1,8 @@
-import { ApiError, makeApiProblemBuilder, Problem } from "pagopa-interop-probing-models";
+import {
+  ApiError,
+  makeApiProblemBuilder,
+  Problem,
+} from "pagopa-interop-probing-models";
 import { AxiosError } from "axios";
 
 export const errorCodes = {

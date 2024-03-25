@@ -22,10 +22,10 @@ export const callerServiceBuilder = (
       logger.info(
         `Perfoming Telemetry ${eservice.technology} request with eserviceRecordId: ${eservice.eserviceRecordId}`
       );
-      
+
       const token: string = await kmsClientHandler.buildJWT(eservice.audience);
       const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
-        
+
       const beforeRequestTimestamp: number = Date.now();
 
       try {
@@ -50,7 +50,7 @@ export const callerServiceBuilder = (
         return telemetry;
       } catch (error: unknown) {
         const koReason: string = getKoReason(error);
-        
+
         const telemetry: TelemetryKoDto = {
           eserviceRecordId: eservice.eserviceRecordId,
           checkTime: beforeRequestTimestamp.toString(),

@@ -30,7 +30,7 @@ export const EserviceProbingRequest =
         lazy: true,
         joinColumn: {
           name: "eservices_record_id",
-          referencedColumnName: "eserviceRecordId"
+          referencedColumnName: "eserviceRecordId",
         },
       },
     },

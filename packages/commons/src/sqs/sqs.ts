@@ -110,8 +110,4 @@ export const deleteMessage = async (
   await sqsClient.send(deleteCommand);
 };
 
-export {
-  SQSClient,
-  SQSClientConfig,
-  Message,
-};
+export { SQSClient, SQSClientConfig, Message };

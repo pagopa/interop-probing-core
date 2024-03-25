@@ -13,7 +13,11 @@ const MessageSchema = z.object({
 export function decodeSQSMessage(message: SQS.Message): TelemetryDto {
   const parsed = MessageSchema.safeParse({ value: message.Body });
   if (!parsed.success) {
-    throw decodeSQSMessageError(`Failed to decode SQS message with MessageId: ${message.MessageId}. Error details: ${JSON.stringify(parsed.error)}`)
+    throw decodeSQSMessageError(
+      `Failed to decode SQS message with MessageId: ${
+        message.MessageId
+      }. Error details: ${JSON.stringify(parsed.error)}`
+    );
   }
 
   return parsed.data.value;

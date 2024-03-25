@@ -1,4 +1,8 @@
-import { ZodiosPathParamsByPath, ZodiosQueryParamsByPath, ZodiosResponseByPath } from "@zodios/core";
+import {
+  ZodiosPathParamsByPath,
+  ZodiosQueryParamsByPath,
+  ZodiosResponseByPath,
+} from "@zodios/core";
 import { api } from "./generated/api.js";
 
 export type Api = typeof api.api;

@@ -25,9 +25,7 @@ const telemetryWriterConfig = AWSConfig.and(ConsumerConfig)
       }))
   );
 
-export type TelemetryWriterConfig = z.infer<
-  typeof telemetryWriterConfig
->;
+export type TelemetryWriterConfig = z.infer<typeof telemetryWriterConfig>;
 
 export const config: TelemetryWriterConfig = {
   ...telemetryWriterConfig.parse(process.env),
