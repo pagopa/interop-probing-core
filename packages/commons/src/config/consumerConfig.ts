@@ -8,7 +8,6 @@ export const ConsumerConfig = z
     consumerPollingTimeout: c.CONSUMER_POLLING_TIMEOUT_IN_SECONDS,
   }));
 
-
 export type ConsumerConfig = z.infer<typeof ConsumerConfig>;
 
 export const consumerConfig: () => ConsumerConfig = () =>

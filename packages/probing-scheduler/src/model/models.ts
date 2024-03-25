@@ -1,7 +1,5 @@
 import { z } from "zod";
-import {
-  EserviceContentDto
-} from "pagopa-interop-probing-models";
+import { EserviceContentDto } from "pagopa-interop-probing-models";
 import { SQS } from "pagopa-interop-probing-commons";
 import { decodeSQSMessageError } from "./domain/errors.js";
 

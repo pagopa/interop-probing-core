@@ -10,7 +10,7 @@ export type ErrorCodes = keyof typeof errorCodes;
 export const makeApiProblem = makeApiProblemBuilder(errorCodes);
 
 export function missingScalarValueTelemetry(
-  columnName: string,
+  columnName: string
 ): ApiError<ErrorCodes> {
   return new ApiError({
     detail: `Missing Telemetry ScalarValue for ${columnName} column`,
@@ -19,9 +19,7 @@ export function missingScalarValueTelemetry(
   });
 }
 
-export function queryTimestreamError(
-  detail: string
-): ApiError<ErrorCodes> {
+export function queryTimestreamError(detail: string): ApiError<ErrorCodes> {
   return new ApiError({
     detail: `${detail}`,
     code: "queryTimestreamError",

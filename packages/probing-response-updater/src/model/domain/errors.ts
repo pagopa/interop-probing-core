@@ -1,7 +1,7 @@
 /* eslint-disable max-classes-per-file */
 import { P, match } from "ts-pattern";
 import { ZodError } from "zod";
-import { AxiosError } from 'axios';
+import { AxiosError } from "axios";
 export class ApplicationError<T> extends Error {
   public code: T;
   public title: string;
@@ -12,12 +12,12 @@ export class ApplicationError<T> extends Error {
     code,
     title,
     detail,
-    status
+    status,
   }: {
     code: T;
     title: string;
     detail: string;
-    status?: number
+    status?: number;
   }) {
     super(detail);
     this.code = code;
@@ -53,13 +53,13 @@ export function makeApplicationErrorBuilder<T extends string>(errors: {
       code,
       title,
       detail,
-      status
+      status,
     }: ApplicationError<ErrorCodes>): AppError =>
       new AppError({
         code: allErrors[code],
         title,
         detail,
-        status
+        status,
       });
 
     return match<unknown, AppError>(error)

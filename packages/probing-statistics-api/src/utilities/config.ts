@@ -31,4 +31,6 @@ const statisticsApiConfig = HTTPServerConfig.and(LoggerConfig)
 
 export type StatisticsApiConfig = z.infer<typeof statisticsApiConfig>;
 
-export const config: StatisticsApiConfig = statisticsApiConfig.parse(process.env);
+export const config: StatisticsApiConfig = statisticsApiConfig.parse(
+  process.env
+);

@@ -1,5 +1,3 @@
-
-
 export const telemetryConstants = {
   ESERVICE_RECORD_ID_DIMENSION: "eservice_record_id",
   KO_REASON_DIMENSION: "ko_reason",

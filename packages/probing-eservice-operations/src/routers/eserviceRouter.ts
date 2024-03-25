@@ -160,10 +160,7 @@ const eServiceRouter = (
             Number(req.params.eserviceRecordId)
           );
 
-        return res
-          .status(200)
-          .json(eServiceProbingData)
-          .end();
+        return res.status(200).json(eServiceProbingData).end();
       } catch (error) {
         const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
         return res.status(errorRes.status).json(errorRes).end();

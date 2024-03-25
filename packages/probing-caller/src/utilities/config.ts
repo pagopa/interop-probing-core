@@ -35,9 +35,7 @@ const probingCallerConfig = AWSConfig.and(ConsumerConfig)
       }))
   );
 
-export type ProbingCallerConfig = z.infer<
-  typeof probingCallerConfig
->;
+export type ProbingCallerConfig = z.infer<typeof probingCallerConfig>;
 
 export const config: ProbingCallerConfig = {
   ...probingCallerConfig.parse(process.env),

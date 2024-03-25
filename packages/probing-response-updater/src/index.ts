@@ -9,7 +9,8 @@ import {
 
 const operationsApiClient = createApiClient(config.operationsBaseUrl);
 
-const OperationsService: OperationsService = operationsServiceBuilder(operationsApiClient);
+const OperationsService: OperationsService =
+  operationsServiceBuilder(operationsApiClient);
 
 const sqsClient: SQS.SQSClient = await SQS.instantiateClient(
   { region: config.awsRegion },

@@ -1,5 +1,8 @@
 import { z } from "zod";
-import { EserviceStatus, UpdateResponseReceivedDto } from "pagopa-interop-probing-models";
+import {
+  EserviceStatus,
+  UpdateResponseReceivedDto,
+} from "pagopa-interop-probing-models";
 import { SQS } from "pagopa-interop-probing-commons";
 import { decodeSQSMessageError } from "./domain/errors.js";
 
@@ -22,10 +25,16 @@ const MessageSchema = z.object({
   ),
 });
 
-export function decodeSQSMessage(message: SQS.Message): UpdateResponseReceivedApi {
+export function decodeSQSMessage(
+  message: SQS.Message
+): UpdateResponseReceivedApi {
   const parsed = MessageSchema.safeParse({ value: message.Body });
   if (!parsed.success) {
-    throw decodeSQSMessageError(`Failed to decode SQS message with MessageId: ${message.MessageId}. Error details: ${JSON.stringify(parsed.error)}`)
+    throw decodeSQSMessageError(
+      `Failed to decode SQS message with MessageId: ${
+        message.MessageId
+      }. Error details: ${JSON.stringify(parsed.error)}`
+    );
   }
 
   const { eserviceRecordId, responseReceived, status } = parsed.data.value;
