@@ -30,7 +30,6 @@
   },
   "ignorePatterns": [
     ".eslintrc",
-
     "vitest.config.ts",
     "**/dist"
   ]
