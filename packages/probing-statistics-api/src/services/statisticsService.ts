@@ -27,12 +27,12 @@ import {
 } from "../utilities/date.js";
 
 export const statisticsServiceBuilder = (
-  timestreamService: TimestreamService
+  timestreamService: TimestreamService,
 ) => {
   return {
     async statisticsEservices(
       params: ApiStatisticsEservicesParams,
-      query: ApiStatisticsEservicesQuery
+      query: ApiStatisticsEservicesQuery,
     ): Promise<ApiStatisticsEservicesResponse> {
       const content = await timestreamService.findStatistics({
         eserviceRecordId: params.eserviceRecordId,
@@ -43,7 +43,7 @@ export const statisticsServiceBuilder = (
     },
     async filteredStatisticsEservices(
       params: ApiFilteredStatisticsEservicesParams,
-      query: ApiFilteredStatisticsEservicesQuery
+      query: ApiFilteredStatisticsEservicesQuery,
     ): Promise<ApiFilteredStatisticsEservicesResponse> {
       const content = await timestreamService.findStatistics({
         eserviceRecordId: params.eserviceRecordId,
@@ -62,7 +62,7 @@ export type StatisticsService = ReturnType<typeof statisticsServiceBuilder>;
 function calculatePerformances(
   values: StatisticContent[],
   startDate: string | null,
-  endDate: string | null
+  endDate: string | null,
 ): ApiStatisticsEservicesResponse {
   const failures: FailureContent[] = [];
   const performances: PerformanceContent[] = [];
@@ -84,7 +84,7 @@ function calculatePerformances(
     // Remove the minute and seconds from the date that will be used to group the telemetries
     let startDateZero: Date = truncatedTo(
       values[0].time,
-      granularityPerWeeks !== 1 ? DateUnit.DAYS : DateUnit.HOURS
+      granularityPerWeeks !== 1 ? DateUnit.DAYS : DateUnit.HOURS,
     );
 
     while (startDateZero.getTime() < now.getTime()) {
@@ -100,7 +100,7 @@ function calculatePerformances(
                 timeUnitToMS(innerGranularity, DateUnit.HOURS) &&
             (time >= innerStartDateZero || time === innerStartDateZero)
           );
-        }
+        },
       );
 
       const responseTimes = hourStatistic
@@ -112,7 +112,7 @@ function calculatePerformances(
           responseTimes.length || 0.0;
 
       const numberOfFailures: number = hourStatistic.filter(
-        (el) => el.status !== telemetryStatus.ok
+        (el) => el.status !== telemetryStatus.ok,
       ).length;
 
       // if the point contains a fraction of KO and N/D which is bigger of the one
@@ -131,7 +131,7 @@ function calculatePerformances(
         responseTime: average,
         time: changeDateFormat(
           new Date(startDateZero).toISOString(),
-          TimeFormat.YY_MM_DD_HH_MM_SS
+          TimeFormat.YY_MM_DD_HH_MM_SS,
         ),
       });
 
@@ -139,7 +139,7 @@ function calculatePerformances(
 
       startDateZero = new Date(
         startDateZero.getTime() +
-          timeUnitToMS(granularityPerWeeks, DateUnit.HOURS)
+          timeUnitToMS(granularityPerWeeks, DateUnit.HOURS),
       );
     }
   }
@@ -156,7 +156,7 @@ function calculateFailures(values: StatisticContent[]): FailureContent[] {
 
   for (const status of Object.values(telemetryFailureStatus)) {
     const numberOfFailures: number = values.filter(
-      (el) => el.status === status
+      (el) => el.status === status,
     ).length;
 
     // If the partition contains a bigger fraction of KO or N/D which is bigger of the one

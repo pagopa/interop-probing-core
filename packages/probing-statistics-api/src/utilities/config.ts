@@ -26,11 +26,11 @@ const statisticsApiConfig = HTTPServerConfig.and(LoggerConfig)
         graphFailureTolerance: c.GRAPH_FAILURE_TOLERANCE,
         graphMaxMonths: c.GRAPH_MAX_MONTHS,
         corsOriginAllowed: c.CORS_ORIGIN_ALLOWED,
-      }))
+      })),
   );
 
 export type StatisticsApiConfig = z.infer<typeof statisticsApiConfig>;
 
 export const config: StatisticsApiConfig = statisticsApiConfig.parse(
-  process.env
+  process.env,
 );

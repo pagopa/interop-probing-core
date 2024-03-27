@@ -48,7 +48,7 @@ export const timestreamQueryClientBuilder = () => {
         return queryResponses;
       } catch (error) {
         logger.error(
-          `An error occurred while attempting to retrieve records from Timestream: ${error}`
+          `An error occurred while attempting to retrieve records from Timestream: ${error}`,
         );
         throw queryTimestreamError(`${error}`);
       }
@@ -90,7 +90,7 @@ function parseRow(columnInfo: ColumnInfo[], row: Row): StatisticContent {
 
         rowData.time = changeDateFormat(
           columnValue,
-          TimeFormat.YY_MM_DD_HH_MM_SS
+          TimeFormat.YY_MM_DD_HH_MM_SS,
         );
       })
       .with("status", () => {

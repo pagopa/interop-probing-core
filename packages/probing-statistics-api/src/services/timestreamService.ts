@@ -12,7 +12,7 @@ import {
 } from "../utilities/timestreamQueryClientHandler.js";
 
 export const timestreamServiceBuilder = (
-  timestreamQueryClient: TimestreamQueryClientHandler
+  timestreamQueryClient: TimestreamQueryClientHandler,
 ) => {
   return {
     async findStatistics({
@@ -32,7 +32,7 @@ export const timestreamServiceBuilder = (
         const daysDifference: number = timeBetween(
           startDate,
           endDate,
-          DateUnit.DAYS
+          DateUnit.DAYS,
         );
         months += Math.round(daysDifference / 30);
         if (months > config.graphMaxMonths) {
@@ -45,12 +45,11 @@ export const timestreamServiceBuilder = (
         eserviceRecordId,
         pollingFrequency,
         startDate,
-        endDate
+        endDate,
       );
 
-      const queryResponseIterator = await timestreamQueryClient.query(
-        queryString
-      );
+      const queryResponseIterator =
+        await timestreamQueryClient.query(queryString);
       const content: StatisticContent[] = [];
       for await (const queryResponse of queryResponseIterator) {
         content.push(...parseQueryResult(queryResponse));
@@ -67,7 +66,7 @@ function buildQueryString(
   eserviceRecordId: number,
   pollingFrequency: number,
   startDate?: string,
-  endDate?: string
+  endDate?: string,
 ): string {
   const startTime: string = startDate
     ? ` '${changeDateFormat(startDate, TimeFormat.YY_MM_DD_HH_MM)}'`

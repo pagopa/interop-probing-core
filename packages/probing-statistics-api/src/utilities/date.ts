@@ -18,7 +18,7 @@ export enum DateUnit {
 
 export function changeDateFormat(
   dateString: string,
-  format: TimeFormat
+  format: TimeFormat,
 ): string {
   const { year, month, day, hours, minutes, seconds, milliseconds } =
     getDateComponents(dateString);
@@ -26,12 +26,12 @@ export function changeDateFormat(
   return match(format)
     .with(
       TimeFormat.YY_MM_DD_HH_MM,
-      () => `${year}-${month}-${day} ${hours}:${minutes}`
+      () => `${year}-${month}-${day} ${hours}:${minutes}`,
     )
     .with(
       TimeFormat.YY_MM_DD_HH_MM_SS,
       () =>
-        `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`
+        `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`,
     )
     .exhaustive();
 }
@@ -67,7 +67,7 @@ export function timeUnitToMS(value: number, unit: DateUnit.HOURS): number {
 
 export function truncatedTo(
   dateString: string,
-  unit: DateUnit.HOURS | DateUnit.DAYS
+  unit: DateUnit.HOURS | DateUnit.DAYS,
 ): Date {
   const dateToTruncate = new Date(dateString);
 
@@ -80,17 +80,17 @@ export function truncatedTo(
 export function timeBetween(
   startDate: string,
   endDate: string,
-  unit: DateUnit.DAYS | DateUnit.WEEKS
+  unit: DateUnit.DAYS | DateUnit.WEEKS,
 ): number {
   const start: Date = new Date(startDate);
   const end: Date = new Date(endDate);
 
   return match(unit)
     .with(DateUnit.DAYS, () =>
-      Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
+      Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)),
     )
     .with(DateUnit.WEEKS, () =>
-      Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 7))
+      Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24 * 7)),
     )
     .exhaustive();
 }
