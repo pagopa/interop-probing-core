@@ -32,7 +32,7 @@ const probingCallerConfig = AWSConfig.and(ConsumerConfig)
         jwtPayloadIssuer: c.JWT_PAYLOAD_ISSUER,
         jwtPayloadSubject: c.JWT_PAYLOAD_SUBJECT,
         jwtPayloadKidKms: c.JWT_PAYLOAD_KID_KMS,
-      }))
+      })),
   );
 
 export type ProbingCallerConfig = z.infer<typeof probingCallerConfig>;

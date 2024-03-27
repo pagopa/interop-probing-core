@@ -3,7 +3,7 @@ import { AxiosError, AxiosRequestHeaders, AxiosResponse } from "axios";
 export function mockApiClientError(
   status: number,
   statusText: string,
-  errorCode?: string
+  errorCode?: string,
 ): AxiosError {
   const mockAxiosError = new AxiosError(statusText);
   mockAxiosError.code = errorCode || "EUNKNOWN";
@@ -22,7 +22,7 @@ export function mockApiClientError(
 export function mockApiClientResponse<T>(
   data: T,
   status: number = 200,
-  statusText: string = "OK"
+  statusText: string = "OK",
 ): AxiosResponse<T> {
   return {
     data: data,

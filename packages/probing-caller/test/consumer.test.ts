@@ -43,19 +43,19 @@ describe("Consumer queue test", async () => {
     await expect(async () => {
       await processMessage(
         mockProbingCallerService,
-        mockProducerService
+        mockProducerService,
       )(validMessage);
 
       await expect(
-        mockProbingCallerService.performRequest
+        mockProbingCallerService.performRequest,
       ).toHaveBeenCalledWith(decodeSQSMessage(validMessage));
 
       await expect(
-        mockProducerService.sendToTelemetryWriterQueue
+        mockProducerService.sendToTelemetryWriterQueue,
       ).toHaveBeenCalledWith(telemetryResult);
 
       await expect(
-        mockProducerService.sendToResponseUpdaterQueue
+        mockProducerService.sendToResponseUpdaterQueue,
       ).toHaveBeenCalled();
     }).not.toThrowError();
   });
@@ -66,7 +66,7 @@ describe("Consumer queue test", async () => {
     try {
       await processMessage(
         mockProbingCallerService,
-        mockProducerService
+        mockProducerService,
       )(invalidMessage);
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);

@@ -20,13 +20,13 @@ import {
 
 const sqsClient: SQS.SQSClient = await SQS.instantiateClient(
   { region: config.awsRegion },
-  config.applicationName
+  config.applicationName,
 );
 const kmsClientHandler: KMSClientHandler = kmsClientBuilder();
 const apiClientHandler: ApiClientHandler = apiClientBuilder();
 const callerService: CallerService = callerServiceBuilder(
   apiClientHandler,
-  kmsClientHandler
+  kmsClientHandler,
 );
 const producerService: ProducerService = producerServiceBuilder(sqsClient);
 
@@ -36,5 +36,5 @@ await SQS.runConsumer(
     queueUrl: config.sqsEndpointPollQueue,
     consumerPollingTimeout: config.consumerPollingTimeout,
   },
-  processMessage(callerService, producerService)
+  processMessage(callerService, producerService),
 ).catch(logger.error);
