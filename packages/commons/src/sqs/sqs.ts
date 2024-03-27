@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 import {
   SQSClient,
   ReceiveMessageCommand,
@@ -12,11 +13,11 @@ import { ConsumerConfig } from "../config/consumerConfig.js";
 
 const { captureAWSv3Client, Segment } = pkg;
 
-const serializeError = (error: unknown) => {
+const serializeError = (error: unknown): string => {
   try {
     return JSON.stringify(error, Object.getOwnPropertyNames(error));
   } catch (e) {
-    return error;
+    return `${error}`;
   }
 };
 
@@ -28,7 +29,7 @@ const processExit = async (exitStatusCode: number = 1): Promise<void> => {
 
 export const instantiateClient = (
   config: SQSClientConfig,
-  awsXraySegmentName: string
+  awsXraySegmentName: string,
 ): SQSClient => {
   const sqsClient = new SQSClient({
     region: config.region,
@@ -40,7 +41,7 @@ export const instantiateClient = (
 const processQueue = async (
   sqsClient: SQSClient,
   config: { queueUrl: string } & ConsumerConfig,
-  consumerHandler: (messagePayload: Message) => Promise<void>
+  consumerHandler: (messagePayload: Message) => Promise<void>,
 ): Promise<void> => {
   const command = new ReceiveMessageCommand({
     QueueUrl: config.queueUrl,
@@ -53,7 +54,7 @@ const processQueue = async (
     for (const message of Messages) {
       if (!message.ReceiptHandle) {
         throw new Error(
-          `ReceiptHandle not found in Message: ${JSON.stringify(message)}`
+          `ReceiptHandle not found in Message: ${JSON.stringify(message)}`,
         );
       }
 
@@ -66,7 +67,7 @@ const processQueue = async (
 export const runConsumer = async (
   sqsClient: SQSClient,
   config: { queueUrl: string } & ConsumerConfig,
-  consumerHandler: (messagePayload: Message) => Promise<void>
+  consumerHandler: (messagePayload: Message) => Promise<void>,
 ): Promise<void> => {
   logger.info(`Consumer processing on Queue: ${config.queueUrl}`);
 
@@ -77,7 +78,7 @@ export const runConsumer = async (
       logger.error(
         `Generic error occurs processing Queue: ${
           config.queueUrl
-        }. Details: ${serializeError(e)}`
+        }. Details: ${serializeError(e)}`,
       );
       await processExit();
     }
@@ -87,7 +88,7 @@ export const runConsumer = async (
 export const sendMessage = async (
   sqsClient: SQSClient,
   queueUrl: string,
-  messageBody: string
+  messageBody: string,
 ): Promise<void> => {
   const command = new SendMessageCommand({
     QueueUrl: queueUrl,
@@ -100,7 +101,7 @@ export const sendMessage = async (
 export const deleteMessage = async (
   sqsClient: SQSClient,
   queueUrl: string,
-  receiptHandle: string
+  receiptHandle: string,
 ): Promise<void> => {
   const deleteCommand = new DeleteMessageCommand({
     QueueUrl: queueUrl,

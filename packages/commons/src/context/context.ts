@@ -1,4 +1,3 @@
-/* eslint-disable functional/immutable-data */
 import { AsyncLocalStorage } from "async_hooks";
 import { NextFunction, Request, Response } from "express";
 import { zodiosContext } from "@zodios/express";
@@ -27,7 +26,7 @@ export const getContext = (): AppContext => {
 export const globalContextMiddleware = (
   _req: Request,
   _res: Response,
-  next: NextFunction
+  next: NextFunction,
 ): void => {
   globalStore.run(defaultAppContext, () => defaultAppContext);
   next();
