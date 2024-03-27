@@ -26,7 +26,7 @@ describe("Consumer queue test", () => {
     }).not.toThrowError();
 
     expect(
-      mockResponseUpdaterService.updateResponseReceived
+      mockResponseUpdaterService.updateResponseReceived,
     ).toHaveBeenCalledWith(decodeSQSMessage(validMessage));
   });
 
@@ -54,7 +54,7 @@ describe("Consumer queue test", () => {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0002");
       expect(
-        mockResponseUpdaterService.updateResponseReceived
+        mockResponseUpdaterService.updateResponseReceived,
       ).not.toBeCalled();
     }
   });
@@ -64,7 +64,7 @@ describe("Consumer queue test", () => {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
       Body: JSON.stringify(
-        sqsMessages.messageChangeResponseReceivedNoEserviceRecordId
+        sqsMessages.messageChangeResponseReceivedNoEserviceRecordId,
       ),
     };
 
@@ -74,7 +74,7 @@ describe("Consumer queue test", () => {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0002");
       expect(
-        mockResponseUpdaterService.updateResponseReceived
+        mockResponseUpdaterService.updateResponseReceived,
       ).not.toBeCalled();
     }
   });
@@ -84,7 +84,7 @@ describe("Consumer queue test", () => {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
       Body: JSON.stringify(
-        sqsMessages.messageChangeResponseReceivedNoResponseReceived
+        sqsMessages.messageChangeResponseReceivedNoResponseReceived,
       ),
     };
 
@@ -94,7 +94,7 @@ describe("Consumer queue test", () => {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0002");
       expect(
-        mockResponseUpdaterService.updateResponseReceived
+        mockResponseUpdaterService.updateResponseReceived,
       ).not.toBeCalled();
     }
   });
@@ -112,7 +112,7 @@ describe("Consumer queue test", () => {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("0002");
       expect(
-        mockResponseUpdaterService.updateResponseReceived
+        mockResponseUpdaterService.updateResponseReceived,
       ).not.toBeCalled();
     }
   });
@@ -126,7 +126,7 @@ describe("Consumer queue test", () => {
 
     try {
       await processMessage(mockResponseUpdaterService)(
-        badFormattedResponseReceived
+        badFormattedResponseReceived,
       );
     } catch (error) {
       expect(error).toBeInstanceOf(AppError);

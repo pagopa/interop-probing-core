@@ -21,19 +21,19 @@ export type ChangeResponseReceived = z.infer<typeof ChangeResponseReceived>;
 const MessageSchema = z.object({
   value: z.preprocess(
     (v) => (v != null ? JSON.parse(v.toString()) : null),
-    UpdateResponseReceivedDto
+    UpdateResponseReceivedDto,
   ),
 });
 
 export function decodeSQSMessage(
-  message: SQS.Message
+  message: SQS.Message,
 ): UpdateResponseReceivedApi {
   const parsed = MessageSchema.safeParse({ value: message.Body });
   if (!parsed.success) {
     throw decodeSQSMessageError(
       `Failed to decode SQS message with MessageId: ${
         message.MessageId
-      }. Error details: ${JSON.stringify(parsed.error)}`
+      }. Error details: ${JSON.stringify(parsed.error)}`,
     );
   }
 
