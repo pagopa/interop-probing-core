@@ -15,12 +15,16 @@ export const bucketServiceBuilder = (s3Client: S3Client) => {
         };
 
         const s3Object = await s3Client.send(
-          new GetObjectCommand(getObjectParams)
+          new GetObjectCommand(getObjectParams),
         );
 
-        const data = JSON.parse(
-          (await streamToBuffer(s3Object.Body)).toString()
-        );
+        if (!s3Object.Body) {
+          throw new Error("No body found in S3 object");
+        }
+
+        const byteArray = await s3Object.Body.transformToByteArray();
+        const buffer = Buffer.from(byteArray);
+        const data = JSON.parse(buffer.toString());
 
         const result = z
           .array(EserviceDto)
@@ -31,12 +35,12 @@ export const bucketServiceBuilder = (s3Client: S3Client) => {
             `Unable to parse eservices from S3 Bucket ${
               config.bucketS3Name
             } Key ${config.bucketS3Key}: result ${JSON.stringify(
-              result
-            )} - data ${JSON.stringify(data)} `
+              result,
+            )} - data ${JSON.stringify(data)} `,
           );
 
           throw new Error(
-            `Unable to parse eservices from S3 Bucket ${config.bucketS3Name} Key ${config.bucketS3Key}`
+            `Unable to parse eservices from S3 Bucket ${config.bucketS3Name} Key ${config.bucketS3Key}`,
           );
         }
 
@@ -49,11 +53,3 @@ export const bucketServiceBuilder = (s3Client: S3Client) => {
 };
 
 export type BucketService = ReturnType<typeof bucketServiceBuilder>;
-
-async function streamToBuffer(stream: any): Promise<Buffer> {
-  const chunks = [];
-  for await (const chunk of stream) {
-    chunks.push(chunk);
-  }
-  return Buffer.concat(chunks);
-}
