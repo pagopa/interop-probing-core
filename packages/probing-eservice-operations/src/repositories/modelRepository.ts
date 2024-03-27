@@ -83,20 +83,19 @@ export class ModelRepository {
     this.entityManager = this.connection.createEntityManager();
     this.eservices = this.entityManager.getRepository(Eservice);
     this.eserviceProbingRequest = this.entityManager.getRepository(
-      EserviceProbingRequest
+      EserviceProbingRequest,
     );
     this.eserviceProbingResponse = this.entityManager.getRepository(
-      EserviceProbingResponse
+      EserviceProbingResponse,
     );
     this.eserviceView = this.entityManager.getRepository(EserviceView);
   }
 
   public static async init(
     config: DbConfig,
-    initDB: string | null = null
+    initDB: string | null = null,
   ): Promise<ModelRepository> {
     if (!ModelRepository.instance) {
-      // eslint-disable-next-line functional/immutable-data
       ModelRepository.instance = new ModelRepository(config);
       const connectionStatus =
         await ModelRepository.instance.connection.initialize();
@@ -106,7 +105,7 @@ export class ModelRepository {
       logger.info(
         `Database Connection Status: ${
           connectionStatus ? "Initialized" : "Not Initialized"
-        }`
+        }`,
       );
     }
 

@@ -1,5 +1,3 @@
-/* eslint-disable functional/no-let */
-/* eslint-disable @typescript-eslint/no-floating-promises */
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import {
   ModelRepository,
@@ -100,7 +98,7 @@ describe("database test", async () => {
         ...eServiceDefaultValues,
         ...partialEserviceData,
       } satisfies EserviceSchema,
-      modelRepository.eservices
+      modelRepository.eservices,
     );
 
     if (!dataOptions.disableCreationProbingRequest) {
@@ -110,7 +108,7 @@ describe("database test", async () => {
           lastRequest: "2024-01-25T00:51:05.733Z",
           ...partialProbingRequestData,
         } satisfies EserviceProbingRequestSchema,
-        modelRepository.eserviceProbingRequest
+        modelRepository.eserviceProbingRequest,
       );
     }
 
@@ -122,13 +120,13 @@ describe("database test", async () => {
           responseReceived: "2024-01-25T00:51:05.736Z",
           ...partialProbingResponseData,
         } satisfies EserviceProbingResponseSchema,
-        modelRepository.eserviceProbingResponse
+        modelRepository.eserviceProbingResponse,
       );
     }
 
     const { versionId, eserviceId } = await getEservice(
       eserviceRecordId,
-      modelRepository.eserviceView
+      modelRepository.eserviceView,
     );
 
     return {
@@ -263,14 +261,14 @@ describe("database test", async () => {
       it("e-service main data has been retrieved and MainDataEserviceResponse is created", async () => {
         const eservice = await createEservice();
         const result = await eserviceService.getEserviceMainData(
-          eservice.eserviceRecordId
+          eservice.eserviceRecordId,
         );
         expect(result).toBeTruthy();
       });
 
       it("e-service should not be found and an `eServiceProbingDataByRecordIdNotFound` should be thrown", async () => {
         await expect(
-          async () => await eserviceService.getEserviceMainData(99)
+          async () => await eserviceService.getEserviceMainData(99),
         ).rejects.toThrowError(eServiceMainDataByRecordIdNotFound(99));
       });
     });
@@ -279,14 +277,14 @@ describe("database test", async () => {
       it("e-service probing data has been retrieved and MainDataEserviceResponse is created", async () => {
         const eservice = await createEservice();
         const result = await eserviceService.getEserviceProbingData(
-          eservice.eserviceRecordId
+          eservice.eserviceRecordId,
         );
         expect(result).toBeTruthy();
       });
 
       it("e-service should not be found and an `eServiceProbingDataByRecordIdNotFound` should be thrown", async () => {
         await expect(
-          async () => await eserviceService.getEserviceProbingData(99)
+          async () => await eserviceService.getEserviceProbingData(99),
         ).rejects.toThrowError(eServiceProbingDataByRecordIdNotFound(99));
       });
     });
@@ -346,9 +344,8 @@ describe("database test", async () => {
         };
         await createEservice();
         await createEservice();
-        const producers = await eserviceService.getEservicesProducers(
-          eServiceProducer1
-        );
+        const producers =
+          await eserviceService.getEservicesProducers(eServiceProducer1);
 
         expect(producers.content.length).toBe(2);
       });
@@ -378,7 +375,7 @@ describe("database test", async () => {
           async () =>
             await eserviceService.updateEserviceState(eserviceId, versionId, {
               eServiceState: eserviceInteropState.active,
-            })
+            }),
         ).rejects.toThrowError(eServiceNotFound(eserviceId, versionId));
       });
     });
@@ -394,7 +391,7 @@ describe("database test", async () => {
           versionId,
           {
             probingEnabled: true,
-          }
+          },
         );
 
         const result = await eservices.findOneBy({
@@ -416,8 +413,8 @@ describe("database test", async () => {
               versionId,
               {
                 probingEnabled: true,
-              }
-            )
+              },
+            ),
         ).rejects.toThrowError(eServiceNotFound(eserviceId, versionId));
       });
     });
@@ -467,8 +464,8 @@ describe("database test", async () => {
                 frequency: payload.frequency,
                 startTime: payload.startTime,
                 endTime: payload.endTime,
-              }
-            )
+              },
+            ),
         ).rejects.toThrowError(eServiceNotFound(eserviceId, versionId));
       });
     });
@@ -490,7 +487,7 @@ describe("database test", async () => {
         const eserviceRecordId = await eserviceService.saveEservice(
           eserviceId,
           versionId,
-          payload
+          payload,
         );
 
         const updatedEservice = await eservices.findOneBy({
@@ -542,7 +539,7 @@ describe("database test", async () => {
 
         await eserviceService.updateEserviceLastRequest(
           eserviceRecordId,
-          payload
+          payload,
         );
 
         const updatedEservice = await eserviceProbingRequest.findOneBy({
@@ -569,7 +566,7 @@ describe("database test", async () => {
 
         await eserviceService.updateEserviceLastRequest(
           eserviceRecordId,
-          payload
+          payload,
         );
 
         const updatedEservice = await eserviceProbingRequest.findOneBy({

@@ -13,7 +13,7 @@ import { EserviceViewSchema } from "../src/repositories/entity/view/eservice.ent
 
 export const addEserviceProbingRequest = async (
   data: EserviceProbingRequestSchema,
-  repository: EserviceProbingRequestEntities
+  repository: EserviceProbingRequestEntities,
 ): Promise<ObjectLiteral[]> => {
   const result = await repository.upsert(data, {
     skipUpdateIfNoValuesChanged: true,
@@ -24,7 +24,7 @@ export const addEserviceProbingRequest = async (
 
 export const addEserviceProbingResponse = async (
   data: EserviceProbingResponseSchema,
-  repository: EserviceProbingResponseEntities
+  repository: EserviceProbingResponseEntities,
 ): Promise<ObjectLiteral[]> => {
   const result = await repository.upsert(data, {
     skipUpdateIfNoValuesChanged: true,
@@ -35,7 +35,7 @@ export const addEserviceProbingResponse = async (
 
 export const addEservice = async (
   data: EserviceSchema,
-  repository: EserviceEntities
+  repository: EserviceEntities,
 ): Promise<number> => {
   const result: InsertResult = await repository
     .createQueryBuilder()
@@ -54,7 +54,7 @@ export const addEservice = async (
 
 export const getEservice = async (
   eserviceRecordId: number,
-  repository: EserviceViewEntities
-): Promise<EserviceViewSchema | { [key: string]: string } > => {
-  return await repository.findOneBy({ eserviceRecordId }) || {};
+  repository: EserviceViewEntities,
+): Promise<EserviceViewSchema | { [key: string]: string }> => {
+  return (await repository.findOneBy({ eserviceRecordId })) || {};
 };

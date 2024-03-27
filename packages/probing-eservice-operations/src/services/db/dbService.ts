@@ -1,5 +1,3 @@
-/* eslint-disable no-constant-condition */
-/* eslint-disable functional/no-let */
 import { logger } from "pagopa-interop-probing-commons";
 import {
   genericError,
@@ -57,7 +55,7 @@ const probingDisabledPredicate = (queryBuilder: WhereExpressionBuilder) => {
   queryBuilder.orWhere(`last_request IS NULL`);
   queryBuilder.orWhere(
     `((${extractMinute}) AND (response_received < last_request))`,
-    { minOfTolleranceMultiplier: config.minOfTolleranceMultiplier }
+    { minOfTolleranceMultiplier: config.minOfTolleranceMultiplier },
   );
   queryBuilder.orWhere(`response_received IS NULL`);
 };
@@ -67,7 +65,10 @@ const probingEnabledPredicate = (
   {
     isStateOffline,
     isStateOnline,
-  }: { isStateOffline: boolean | undefined; isStateOnline: boolean | undefined }
+  }: {
+    isStateOffline: boolean | undefined;
+    isStateOnline: boolean | undefined;
+  },
 ) => {
   const predicates: string[] = [];
 
@@ -99,13 +100,13 @@ const probingEnabledPredicate = (
   queryBuilder.andWhere(`response_received IS NOT NULL`);
   queryBuilder.andWhere(
     `((${extractMinute}) OR (response_received > last_request))`,
-    { minOfTolleranceMultiplier: config.minOfTolleranceMultiplier }
+    { minOfTolleranceMultiplier: config.minOfTolleranceMultiplier },
   );
 };
 
 const addPredicateEservices = (
   queryBuilder: SelectQueryBuilder<EserviceViewEntities>,
-  filters: ApiSearchEservicesQuery
+  filters: ApiSearchEservicesQuery,
 ): void => {
   const { eserviceName, producerName, versionNumber, state } = filters;
 
@@ -141,14 +142,14 @@ const addPredicateEservices = (
               isStateOffline,
               isStateOnline,
             });
-          })
+          }),
         );
         subQb.orWhere(
           new Brackets((subQb2) => {
             probingDisabledPredicate(subQb2);
-          })
+          }),
         );
-      })
+      }),
     );
 
     queryBuilder.orderBy({ id: "ASC" });
@@ -160,7 +161,7 @@ const addPredicateEservices = (
           isStateOffline,
           isStateOnline,
         });
-      })
+      }),
     );
     queryBuilder.orderBy({ id: "ASC" });
   }
@@ -168,7 +169,7 @@ const addPredicateEservices = (
 
 const addPredicateEservicesReadyForPolling = (
   queryBuilder: SelectQueryBuilder<EserviceViewEntities>,
-  entityAlias: string
+  entityAlias: string,
 ): void => {
   const makeInterval = `(DATE_TRUNC('minute', ${entityAlias}.last_request) + MAKE_INTERVAL(mins => ${entityAlias}.polling_frequency))`;
   const compareTimestampInterval = `CURRENT_TIME BETWEEN ${entityAlias}.polling_start_time AND ${entityAlias}.polling_end_time`;
@@ -181,7 +182,7 @@ const addPredicateEservicesReadyForPolling = (
       probingEnabled: true,
     })
     .andWhere(
-      `((${entityAlias}.last_request IS NULL AND ${entityAlias}.response_received IS NULL) OR ((${makeInterval} <= CURRENT_TIMESTAMP) AND (${entityAlias}.last_request <= ${entityAlias}.response_received)))`
+      `((${entityAlias}.last_request IS NULL AND ${entityAlias}.response_received IS NULL) OR ((${makeInterval} <= CURRENT_TIMESTAMP) AND (${entityAlias}.last_request <= ${entityAlias}.response_received)))`,
     )
     .andWhere(compareTimestampInterval);
 };
@@ -197,40 +198,40 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     async updateEserviceState(
       eserviceId: string,
       versionId: string,
-      eServiceUpdated: ChangeEserviceStateRequest
+      eServiceUpdated: ChangeEserviceStateRequest,
     ): Promise<ApiUpdateEserviceStateResponse> {
       await eservices.update(
         { eserviceId, versionId },
-        { state: eServiceUpdated.state }
+        { state: eServiceUpdated.state },
       );
     },
 
     async updateEserviceProbingState(
       eserviceId: string,
       versionId: string,
-      eServiceUpdated: ChangeEserviceProbingStateRequest
+      eServiceUpdated: ChangeEserviceProbingStateRequest,
     ): Promise<ApiUpdateEserviceProbingStateResponse> {
       await eservices.update(
         { eserviceId, versionId },
-        { probingEnabled: eServiceUpdated.probingEnabled }
+        { probingEnabled: eServiceUpdated.probingEnabled },
       );
     },
 
     async updateEserviceFrequency(
       eserviceId: string,
       versionId: string,
-      eServiceUpdated: ChangeProbingFrequencyRequest
+      eServiceUpdated: ChangeProbingFrequencyRequest,
     ): Promise<ApiUpdateEserviceFrequencyResponse> {
       await eservices.update(
         { eserviceId, versionId },
-        { pollingFrequency: eServiceUpdated.pollingFrequency }
+        { pollingFrequency: eServiceUpdated.pollingFrequency },
       );
     },
 
     async saveEservice(
       eserviceId: string,
       versionId: string,
-      eServiceUpdated: EserviceSaveRequest
+      eServiceUpdated: EserviceSaveRequest,
     ): Promise<ApiSaveEserviceResponse> {
       const updateEservice: EserviceSaveRequest = {
         eserviceName: eServiceUpdated.eserviceName,
@@ -283,20 +284,20 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
 
     async updateEserviceLastRequest(
       eserviceRecordId: number,
-      eServiceUpdated: EserviceProbingUpdateLastRequest
+      eServiceUpdated: EserviceProbingUpdateLastRequest,
     ): Promise<ApiUpdateLastRequestResponse> {
       await eserviceProbingRequest.upsert(
         { eserviceRecordId, lastRequest: eServiceUpdated.lastRequest },
         {
           skipUpdateIfNoValuesChanged: true,
           conflictPaths: ["eserviceRecordId"],
-        }
+        },
       );
     },
 
     async updateResponseReceived(
       eserviceRecordId: number,
-      eServiceUpdated: ChangeResponseReceived
+      eServiceUpdated: ChangeResponseReceived,
     ): Promise<ApiUpdateResponseReceivedResponse> {
       await eserviceProbingResponse.upsert(
         {
@@ -307,13 +308,13 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         {
           skipUpdateIfNoValuesChanged: true,
           conflictPaths: ["eserviceRecordId"],
-        }
+        },
       );
     },
 
     async getEServiceByIdAndVersion(
       eserviceId: string,
-      versionId: string
+      versionId: string,
     ): Promise<EService | undefined> {
       const data = await eservices.findOne({
         where: { eserviceId, versionId },
@@ -325,8 +326,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         if (!result.success) {
           logger.error(
             `Unable to parse eservice item: result ${JSON.stringify(
-              result
-            )} - data ${JSON.stringify(data)} `
+              result,
+            )} - data ${JSON.stringify(data)} `,
           );
           throw genericError("Unable to parse eservice item");
         }
@@ -335,12 +336,12 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     },
 
     async searchEservices(
-      filters: ApiSearchEservicesQuery
+      filters: ApiSearchEservicesQuery,
     ): Promise<ApiSearchEservicesResponse> {
       const [data, count] = await eserviceView
         .createQueryBuilder()
         .where((qb: SelectQueryBuilder<EserviceViewEntities>) =>
-          addPredicateEservices(qb, filters)
+          addPredicateEservices(qb, filters),
         )
         .skip(filters.offset)
         .take(filters.limit)
@@ -350,8 +351,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       if (!result.success) {
         logger.error(
           `Unable to parse eservices items: result ${JSON.stringify(
-            result
-          )} - data ${JSON.stringify(data)} `
+            result,
+          )} - data ${JSON.stringify(data)} `,
         );
 
         throw genericError("Unable to parse eservices items");
@@ -366,7 +367,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     },
 
     async getEserviceMainData(
-      eserviceRecordId: number
+      eserviceRecordId: number,
     ): Promise<ApiEserviceMainDataResponse> {
       const data = await eservices.findOne({ where: { eserviceRecordId } });
       if (!data) {
@@ -376,8 +377,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         if (!result.success) {
           logger.error(
             `Unable to parse eservice mainData item: result ${JSON.stringify(
-              result
-            )} - data ${JSON.stringify(data)} `
+              result,
+            )} - data ${JSON.stringify(data)} `,
           );
           throw genericError("Unable to parse eservice mainData item");
         }
@@ -386,7 +387,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     },
 
     async getEserviceProbingData(
-      eserviceRecordId: number
+      eserviceRecordId: number,
     ): Promise<ApiEserviceProbingDataResponse> {
       const data = await eserviceView.findOne({
         where: { eserviceRecordId },
@@ -399,8 +400,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         if (!result.success) {
           logger.error(
             `Unable to parse eservice probingData item: result ${JSON.stringify(
-              result
-            )} - data ${JSON.stringify(data)} `
+              result,
+            )} - data ${JSON.stringify(data)} `,
           );
 
           throw genericError("Unable to parse eservice probingData item");
@@ -410,13 +411,13 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     },
 
     async getEservicesReadyForPolling(
-      filters: ApiGetEservicesReadyForPollingQuery
+      filters: ApiGetEservicesReadyForPollingQuery,
     ): Promise<ApiGetEservicesReadyForPollingResponse> {
       const [data, count] = await eserviceView
         .createQueryBuilder()
         .distinct(true)
         .where((qb: SelectQueryBuilder<EserviceViewEntities>) =>
-          addPredicateEservicesReadyForPolling(qb, "eserviceView")
+          addPredicateEservicesReadyForPolling(qb, "eserviceView"),
         )
         .select([
           "eserviceView.eserviceRecordId",
@@ -434,8 +435,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       if (!result.success) {
         logger.error(
           `Unable to parse eservices ready for polling items: result ${JSON.stringify(
-            result
-          )} - data ${JSON.stringify(data)} `
+            result,
+          )} - data ${JSON.stringify(data)} `,
         );
 
         throw genericError("Unable to parse eservices ready for polling items");
@@ -448,7 +449,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     },
 
     async getEservicesProducers(
-      filters: ApiGetProducersQuery
+      filters: ApiGetProducersQuery,
     ): Promise<ApiGetProducersResponse> {
       const data = await eservices
         .createQueryBuilder("eservice")
@@ -467,8 +468,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       if (!result.success) {
         logger.error(
           `Unable to parse eservices producers items: result ${JSON.stringify(
-            result
-          )} - data ${JSON.stringify(data)} `
+            result,
+          )} - data ${JSON.stringify(data)} `,
         );
 
         throw genericError("Unable to parse eservices producers items");
