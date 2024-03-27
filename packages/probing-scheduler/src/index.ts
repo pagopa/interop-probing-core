@@ -14,7 +14,7 @@ import cron from "node-cron";
 
 const sqsClient: SQS.SQSClient = await SQS.instantiateClient(
   { region: config.awsRegion },
-  config.applicationName
+  config.applicationName,
 );
 const operationsApiClient = createApiClient(config.operationsBaseUrl);
 const operationsService: OperationsService =
@@ -27,6 +27,6 @@ cron
     () => processTask(operationsService, producerService),
     {
       scheduled: true,
-    }
+    },
   )
   .start();

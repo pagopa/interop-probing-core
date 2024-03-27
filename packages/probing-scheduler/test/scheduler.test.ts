@@ -47,23 +47,23 @@ describe("Process task test", async () => {
     await processTask(mockOperationsService, mockProducerService);
 
     await expect(
-      mockOperationsService.getEservicesReadyForPolling
+      mockOperationsService.getEservicesReadyForPolling,
     ).toHaveBeenCalledWith(query);
 
     await expect(
-      mockOperationsService.getEservicesReadyForPolling
+      mockOperationsService.getEservicesReadyForPolling,
     ).toHaveBeenCalledTimes(4);
 
     await expect(mockOperationsService.updateLastRequest).toHaveBeenCalledTimes(
-      4
+      4,
     );
 
     await expect(mockProducerService.sendToCallerQueue).toHaveBeenCalledTimes(
-      4
+      4,
     );
 
     await expect(mockProducerService.sendToCallerQueue).toHaveBeenCalledWith(
-      mockEservicesActive[0]
+      mockEservicesActive[0],
     );
   });
 
@@ -72,13 +72,13 @@ describe("Process task test", async () => {
     const operationsClientError = makeApplicationError(
       apiGetEservicesReadyForPollingError(
         `Error API getEservicesReadyForPolling. Details: ${apiClientError}`,
-        apiClientError
-      )
+        apiClientError,
+      ),
     );
 
     vi.spyOn(
       mockOperationsService,
-      "getEservicesReadyForPolling"
+      "getEservicesReadyForPolling",
     ).mockRejectedValueOnce(operationsClientError);
 
     try {

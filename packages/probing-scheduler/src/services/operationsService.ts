@@ -14,11 +14,11 @@ import {
 } from "../model/domain/errors.js";
 
 export const operationsServiceBuilder = (
-  operationsApiClient: ZodiosInstance<Api>
+  operationsApiClient: ZodiosInstance<Api>,
 ) => {
   return {
     async getEservicesReadyForPolling(
-      query: ApiGetEservicesReadyForPollingQuery
+      query: ApiGetEservicesReadyForPollingQuery,
     ): Promise<ApiGetEservicesReadyForPollingResponse> {
       try {
         return await operationsApiClient.getEservicesReadyForPolling({
@@ -28,8 +28,8 @@ export const operationsServiceBuilder = (
         throw makeApplicationError(
           apiGetEservicesReadyForPollingError(
             `Error API getEservicesReadyForPolling. Details: ${error}`,
-            error
-          )
+            error,
+          ),
         );
       }
     },
@@ -46,8 +46,8 @@ export const operationsServiceBuilder = (
         throw makeApplicationError(
           apiUpdateLastRequestError(
             `Error API updateLastRequest. Details: ${error}`,
-            error
-          )
+            error,
+          ),
         );
       }
     },
