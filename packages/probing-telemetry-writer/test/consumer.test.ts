@@ -31,9 +31,9 @@ describe("Consumer queue test", () => {
       await processMessage(mockTelemetryService)(validMessage);
     }).not.toThrowError();
 
-    expect(
-      mockTelemetryService.writeRecord
-    ).toHaveBeenCalledWith(decodeSQSMessage(validMessage));
+    expect(mockTelemetryService.writeRecord).toHaveBeenCalledWith(
+      decodeSQSMessage(validMessage),
+    );
   });
 
   it("given invalid message, method should throw an error", async () => {
@@ -46,5 +46,4 @@ describe("Consumer queue test", () => {
       expect((error as AppError).code).toBe("0001");
     }
   });
-
 });

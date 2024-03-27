@@ -18,7 +18,7 @@ import { timestreamWriteClientBuilder } from "../src/utilities/timestreamWriteCl
 describe("Telemetry service test", () => {
   const timestreamWriteClient = timestreamWriteClientBuilder();
   const telemetryService: TelemetryWriteService = telemetryWriteServiceBuilder(
-    timestreamWriteClient
+    timestreamWriteClient,
   );
 
   afterEach(() => {
@@ -36,7 +36,7 @@ describe("Telemetry service test", () => {
     vi.spyOn(timestreamWriteClient, "writeRecord").mockResolvedValue(undefined);
 
     await expect(
-      telemetryService.writeRecord(telemetry)
+      telemetryService.writeRecord(telemetry),
     ).resolves.not.toThrow();
   });
 
@@ -49,7 +49,7 @@ describe("Telemetry service test", () => {
     };
 
     vi.spyOn(timestreamWriteClient, "writeRecord").mockRejectedValue(
-      makeApplicationError(writeRecordTimestreamError("Generic error"))
+      makeApplicationError(writeRecordTimestreamError("Generic error")),
     );
 
     try {

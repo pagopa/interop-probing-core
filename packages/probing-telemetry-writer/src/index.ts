@@ -13,12 +13,12 @@ import {
 const timestreamWriteClient: TimestreamWriteClientHandler =
   timestreamWriteClientBuilder();
 const telemetryService: TelemetryWriteService = telemetryWriteServiceBuilder(
-  timestreamWriteClient
+  timestreamWriteClient,
 );
 
 const sqsClient: SQS.SQSClient = await SQS.instantiateClient(
   { region: config.awsRegion },
-  config.applicationName
+  config.applicationName,
 );
 
 await SQS.runConsumer(
@@ -27,5 +27,5 @@ await SQS.runConsumer(
     queueUrl: config.sqsEndpointTelemetryResultQueue,
     consumerPollingTimeout: config.consumerPollingTimeout,
   },
-  processMessage(telemetryService)
+  processMessage(telemetryService),
 );
