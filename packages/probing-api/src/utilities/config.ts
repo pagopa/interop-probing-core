@@ -18,7 +18,7 @@ const apiConfig = HTTPServerConfig.and(LoggerConfig)
         operationsBaseUrl: c.API_OPERATIONS_BASEURL,
         minOfTolleranceMultiplier: c.TOLERANCE_MULTIPLIER_IN_MINUTES,
         corsOriginAllowed: c.CORS_ORIGIN_ALLOWED,
-      }))
+      })),
   );
 
 export type ApiConfig = z.infer<typeof apiConfig>;
