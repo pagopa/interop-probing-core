@@ -14,7 +14,7 @@ const OperationsService: OperationsService =
 
 const sqsClient: SQS.SQSClient = SQS.instantiateClient(
   { region: config.awsRegion },
-  config.applicationName
+  config.applicationName,
 );
 
 await SQS.runConsumer(
@@ -23,5 +23,5 @@ await SQS.runConsumer(
     queueUrl: config.sqsEndpointServicesQueue,
     consumerPollingTimeout: config.consumerPollingTimeout,
   },
-  processMessage(OperationsService)
+  processMessage(OperationsService),
 ).catch(logger.error);

@@ -36,11 +36,11 @@ describe("Consumer queue test", () => {
     };
 
     expect(
-      processMessage(mockOperationsService)(validMessage)
+      processMessage(mockOperationsService)(validMessage),
     ).resolves.not.toThrow();
 
     expect(mockOperationsService.saveEservice).toHaveBeenCalledWith(
-      decodeSQSMessage(validMessage)
+      decodeSQSMessage(validMessage),
     );
   });
 

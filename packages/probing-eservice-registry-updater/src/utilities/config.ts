@@ -18,7 +18,7 @@ const eServiceRegistryUpdaterConfig = AWSConfig.and(ConsumerConfig)
         applicationName: c.INTEROP_PROBING_ESERVICE_REGISTRY_UPDATER_NAME,
         sqsEndpointServicesQueue: c.SQS_ENDPOINT_SERVICES_QUEUE,
         operationsBaseUrl: c.API_OPERATIONS_BASEURL,
-      }))
+      })),
   );
 
 export type EServiceRegistryUpdaterConfig = z.infer<
