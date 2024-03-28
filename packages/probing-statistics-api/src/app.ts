@@ -21,7 +21,7 @@ import cors, { CorsOptions } from "cors";
 const timestreamQueryClient: TimestreamQueryClientHandler =
   timestreamQueryClientBuilder();
 const timestreamService: TimestreamService = timestreamServiceBuilder(
-  timestreamQueryClient
+  timestreamQueryClient,
 );
 const statisticsService: StatisticsService =
   statisticsServiceBuilder(timestreamService);
@@ -43,7 +43,7 @@ app.use(
       frameAncestors: ["'none'"],
       formAction: ["'self'"],
     },
-  })
+  }),
 );
 
 app.use(cors());
@@ -52,7 +52,7 @@ app.use(
   helmet.hsts({
     includeSubDomains: true,
     maxAge: 10886400,
-  })
+  }),
 );
 
 app.use(helmet.noSniff());

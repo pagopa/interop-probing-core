@@ -18,7 +18,7 @@ const eServiceResponseUpdaterConfig = AWSConfig.and(ConsumerConfig)
         applicationName: c.INTEROP_PROBING_RESPONSE_UPDATER_NAME,
         sqsEndpointPollResultQueue: c.SQS_ENDPOINT_POLL_RESULT_QUEUE,
         operationsBaseUrl: c.API_OPERATIONS_BASEURL,
-      }))
+      })),
   );
 
 export type EServiceResponseUpdaterConfig = z.infer<

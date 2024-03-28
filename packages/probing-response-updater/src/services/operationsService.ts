@@ -11,7 +11,7 @@ import {
 } from "../model/domain/errors.js";
 
 export const operationsServiceBuilder = (
-  operationsApiClient: ZodiosInstance<Api>
+  operationsApiClient: ZodiosInstance<Api>,
 ) => {
   return {
     async updateResponseReceived({
@@ -24,18 +24,18 @@ export const operationsServiceBuilder = (
             status: payload.status,
             responseReceived: payload.responseReceived,
           },
-          { params: { eserviceRecordId: params.eserviceRecordId } }
+          { params: { eserviceRecordId: params.eserviceRecordId } },
         );
 
         logger.info(
-          `Updating eService response received with eserviceRecordId: ${params.eserviceRecordId} and responseReceived: ${payload.responseReceived}`
+          `Updating eService response received with eserviceRecordId: ${params.eserviceRecordId} and responseReceived: ${payload.responseReceived}`,
         );
       } catch (error: unknown) {
         throw makeApplicationError(
           apiUpdateResponseReceivedError(
             `Error updating eService response received with eserviceRecordId: ${params.eserviceRecordId}. Details: ${error}`,
-            error
-          )
+            error,
+          ),
         );
       }
     },

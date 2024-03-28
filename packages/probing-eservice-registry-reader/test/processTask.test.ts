@@ -24,17 +24,17 @@ describe("Process task test", async () => {
     await processTask(mockBucketService, mockProducerService);
 
     expect(mockProducerService.sendToServicesQueue).toHaveBeenCalledTimes(
-      mockBucketObject.length
+      mockBucketObject.length,
     );
   });
 
   it("Invoke processTask should throw an error code 0001", async () => {
     const mockReadObjectS3BucketError = readObjectS3BucketError(
-      `Unable to parse eservices from S3 Bucket ${config.bucketS3Name} Key ${config.bucketS3Key}`
+      `Unable to parse eservices from S3 Bucket ${config.bucketS3Name} Key ${config.bucketS3Key}`,
     );
 
     vi.spyOn(mockBucketService, "readObject").mockRejectedValueOnce(
-      mockReadObjectS3BucketError
+      mockReadObjectS3BucketError,
     );
 
     try {

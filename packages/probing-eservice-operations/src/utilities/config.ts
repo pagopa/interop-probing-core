@@ -18,7 +18,7 @@ const eServiceOperationsConfig = HTTPServerConfig.and(LoggerConfig)
       .transform((c) => ({
         minOfTolleranceMultiplier: c.TOLERANCE_MULTIPLIER_IN_MINUTES,
         schemaName: c.SCHEMA_NAME,
-      }))
+      })),
   );
 
 export type EServiceOperationsConfig = z.infer<typeof eServiceOperationsConfig>;

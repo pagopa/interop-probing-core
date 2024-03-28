@@ -16,102 +16,100 @@ import {
 } from "../model/types.js";
 
 export const operationsServiceBuilder = (
-  operationsApiClient: ZodiosInstance<Api>
-) => {
-  return {
-    async updateResponseReceived(
-      eserviceRecordId: number,
-      payload: ApiUpdateResponseReceivedPayload
-    ): Promise<void> {
-      await operationsApiClient.updateResponseReceived(
-        {
-          status: payload.status,
-          responseReceived: payload.responseReceived,
-        },
-        { params: { eserviceRecordId } }
-      );
-    },
+  operationsApiClient: ZodiosInstance<Api>,
+) => ({
+  async updateResponseReceived(
+    eserviceRecordId: number,
+    payload: ApiUpdateResponseReceivedPayload,
+  ): Promise<void> {
+    await operationsApiClient.updateResponseReceived(
+      {
+        status: payload.status,
+        responseReceived: payload.responseReceived,
+      },
+      { params: { eserviceRecordId } },
+    );
+  },
 
-    async updateEserviceState(
-      eserviceId: string,
-      versionId: string,
-      payload: ApiUpdateEserviceStatePayload
-    ): Promise<void> {
-      await operationsApiClient.updateEserviceState(
-        {
-          eServiceState: payload.eServiceState,
-        },
-        { params: { eserviceId, versionId } }
-      );
-    },
+  async updateEserviceState(
+    eserviceId: string,
+    versionId: string,
+    payload: ApiUpdateEserviceStatePayload,
+  ): Promise<void> {
+    await operationsApiClient.updateEserviceState(
+      {
+        eServiceState: payload.eServiceState,
+      },
+      { params: { eserviceId, versionId } },
+    );
+  },
 
-    async updateEserviceProbingState(
-      eserviceId: string,
-      versionId: string,
-      payload: ApiUpdateEserviceProbingStatePayload
-    ): Promise<void> {
-      await operationsApiClient.updateEserviceProbingState(
-        {
-          probingEnabled: payload.probingEnabled,
-        },
-        { params: { eserviceId, versionId } }
-      );
-    },
+  async updateEserviceProbingState(
+    eserviceId: string,
+    versionId: string,
+    payload: ApiUpdateEserviceProbingStatePayload,
+  ): Promise<void> {
+    await operationsApiClient.updateEserviceProbingState(
+      {
+        probingEnabled: payload.probingEnabled,
+      },
+      { params: { eserviceId, versionId } },
+    );
+  },
 
-    async updateEserviceFrequency(
-      eserviceId: string,
-      versionId: string,
-      payload: ApiUpdateEserviceFrequencyPayload
-    ): Promise<void> {
-      await operationsApiClient.updateEserviceFrequency(
-        {
-          frequency: payload.frequency,
-          startTime: payload.startTime,
-          endTime: payload.endTime,
-        },
-        { params: { eserviceId, versionId } }
-      );
-    },
+  async updateEserviceFrequency(
+    eserviceId: string,
+    versionId: string,
+    payload: ApiUpdateEserviceFrequencyPayload,
+  ): Promise<void> {
+    await operationsApiClient.updateEserviceFrequency(
+      {
+        frequency: payload.frequency,
+        startTime: payload.startTime,
+        endTime: payload.endTime,
+      },
+      { params: { eserviceId, versionId } },
+    );
+  },
 
-    async getEservices(
-      filters: ApiSearchEservicesQuery
-    ): Promise<ApiSearchEservicesResponse> {
-      return await operationsApiClient.searchEservices({
-        queries: {
-          ...filters,
-          ...{ versionNumber: Number(filters.versionNumber) || undefined },
-        },
-      });
-    },
+  async getEservices(
+    filters: ApiSearchEservicesQuery,
+  ): Promise<ApiSearchEservicesResponse> {
+    return await operationsApiClient.searchEservices({
+      queries: {
+        ...filters,
+        ...{ versionNumber: Number(filters.versionNumber) || undefined },
+      },
+    });
+  },
 
-    async getEserviceMainData(
-      eserviceRecordId: number
-    ): Promise<ApiGetEserviceMainDataResponse> {
-      return await operationsApiClient.getEserviceMainData({
-        params: {
-          eserviceRecordId,
-        },
-      });
-    },
+  async getEserviceMainData(
+    eserviceRecordId: number,
+  ): Promise<ApiGetEserviceMainDataResponse> {
+    return await operationsApiClient.getEserviceMainData({
+      params: {
+        eserviceRecordId,
+      },
+    });
+  },
 
-    async getEserviceProbingData(
-      eserviceRecordId: number
-    ): Promise<ApiGetEserviceProbingDataResponse> {
-      return await operationsApiClient.getEserviceProbingData({
-        params: {
-          eserviceRecordId,
-        },
-      });
-    },
+  async getEserviceProbingData(
+    eserviceRecordId: number,
+  ): Promise<ApiGetEserviceProbingDataResponse> {
+    return await operationsApiClient.getEserviceProbingData({
+      params: {
+        eserviceRecordId,
+      },
+    });
+  },
 
-    async getEservicesProducers(
-      filters: ApiGetProducersQuery
-    ): Promise<ApiGetProducersResponse> {
-      return await operationsApiClient.getEservicesProducers({
-        queries: filters,
-      });
-    },
-  };
-};
+  async getEservicesProducers(
+    filters: ApiGetProducersQuery,
+  ): Promise<ApiGetProducersResponse> {
+    return await operationsApiClient.getEservicesProducers({
+      queries: filters,
+    });
+  },
+});
 
 export type OperationsService = ReturnType<typeof operationsServiceBuilder>;

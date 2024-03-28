@@ -7,7 +7,7 @@ import { BucketService } from "./services/bucketService.js";
 
 export async function processTask(
   bucketService: BucketService,
-  producerService: ProducerService
+  producerService: ProducerService,
 ): Promise<void> {
   try {
     const eservices = await bucketService.readObject();
@@ -19,8 +19,8 @@ export async function processTask(
       e instanceof ApplicationError
         ? e
         : new Error(
-            `Unexpected error processing task registry reader. Details: ${e}`
-          )
+            `Unexpected error processing task registry reader. Details: ${e}`,
+          ),
     );
   }
 }

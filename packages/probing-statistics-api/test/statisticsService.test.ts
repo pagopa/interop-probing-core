@@ -13,13 +13,19 @@ import {
   timestreamQueryClientBuilder,
 } from "../src/utilities/timestreamQueryClientHandler.js";
 import { mockTimestreamResponseQuery } from "./utils.js";
-import { DateUnit, changeDateFormat, timeBetween, TimeFormat, truncatedTo } from "../src/utilities/date.js";
+import {
+  DateUnit,
+  changeDateFormat,
+  timeBetween,
+  TimeFormat,
+  truncatedTo,
+} from "../src/utilities/date.js";
 
 describe("Statistics service test", () => {
   const timestreamQueryClient: TimestreamQueryClientHandler =
     timestreamQueryClientBuilder();
   const timestreamService: TimestreamService = timestreamServiceBuilder(
-    timestreamQueryClient
+    timestreamQueryClient,
   );
   const statisticsService: StatisticsService =
     statisticsServiceBuilder(timestreamService);
@@ -44,7 +50,7 @@ describe("Statistics service test", () => {
     const { performances, failures, percentages } =
       await statisticsService.statisticsEservices(
         telemetryParams,
-        telemetryQuery
+        telemetryQuery,
       );
 
     expect(performances.length).greaterThan(0);
@@ -70,7 +76,7 @@ describe("Statistics service test", () => {
     const { performances, failures, percentages } =
       await statisticsService.filteredStatisticsEservices(
         telemetryParams,
-        telemetryQuery
+        telemetryQuery,
       );
 
     expect(performances.length).greaterThan(0);
@@ -80,8 +86,12 @@ describe("Statistics service test", () => {
     let granularityPerWeeks: number = 1;
 
     if (telemetryQuery.startDate && telemetryQuery.endDate) {
-     
-      granularityPerWeeks = timeBetween(telemetryQuery.startDate, telemetryQuery.endDate, DateUnit.WEEKS) * 6;
+      granularityPerWeeks =
+        timeBetween(
+          telemetryQuery.startDate,
+          telemetryQuery.endDate,
+          DateUnit.WEEKS,
+        ) * 6;
       if (granularityPerWeeks < 1) {
         granularityPerWeeks = 1;
       }
@@ -89,17 +99,19 @@ describe("Statistics service test", () => {
 
     const nowTrucanted: string = `${truncatedTo(
       new Date().toISOString(),
-      granularityPerWeeks !== 1 ? DateUnit.DAYS : DateUnit.HOURS
-    )}`
+      granularityPerWeeks !== 1 ? DateUnit.DAYS : DateUnit.HOURS,
+    )}`;
 
-    expect(performances[0].time).toBe('2024-03-13 21:00:00.000000000');
-    expect(performances[performances.length - 1].time).toBe(changeDateFormat(nowTrucanted, TimeFormat.YY_MM_DD_HH_MM_SS));
+    expect(performances[0].time).toBe("2024-03-13 21:00:00.000000000");
+    expect(performances[performances.length - 1].time).toBe(
+      changeDateFormat(nowTrucanted, TimeFormat.YY_MM_DD_HH_MM_SS),
+    );
 
-    expect(failures.some(el => el.status === 'KO')).toBe(true);
-    expect(failures.some(el => el.status === 'N/D')).toBe(true);
+    expect(failures.some((el) => el.status === "KO")).toBe(true);
+    expect(failures.some((el) => el.status === "N/D")).toBe(true);
 
-    expect(percentages.find(el => el.status === 'OK')?.value).toBe(20);
-    expect(percentages.find(el => el.status === 'KO')?.value).toBe(40);
-    expect(percentages.find(el => el.status === 'N/D')?.value).toBe(40);
+    expect(percentages.find((el) => el.status === "OK")?.value).toBe(20);
+    expect(percentages.find((el) => el.status === "KO")?.value).toBe(40);
+    expect(percentages.find((el) => el.status === "N/D")?.value).toBe(40);
   });
 });

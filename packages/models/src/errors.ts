@@ -47,13 +47,13 @@ export function makeApiProblemBuilder<T extends string>(errors: {
   [K in T]: string;
 }): (
   error: unknown,
-  httpMapper: (apiError: ApiError<T | CommonErrorCodes>) => number
+  httpMapper: (apiError: ApiError<T | CommonErrorCodes>) => number,
 ) => Problem {
   const allErrors = { ...errorCodes, ...errors };
   return (error, httpMapper) => {
     const makeProblem = (
       httpStatus: number,
-      { code, title, detail, correlationId }: ApiError<T | CommonErrorCodes>
+      { code, title, detail, correlationId }: ApiError<T | CommonErrorCodes>,
     ): Problem => ({
       type: "about:blank",
       title,
@@ -70,7 +70,7 @@ export function makeApiProblemBuilder<T extends string>(errors: {
 
     return match<unknown, Problem>(error)
       .with(P.instanceOf(ApiError<T | CommonErrorCodes>), (error) =>
-        makeProblem(httpMapper(error), error)
+        makeProblem(httpMapper(error), error),
       )
       .otherwise(() => makeProblem(500, genericError("Unexpected error")));
   };

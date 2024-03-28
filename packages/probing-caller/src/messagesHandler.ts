@@ -13,12 +13,12 @@ import {
 
 export function processMessage(
   callerService: CallerService,
-  producerService: ProducerService
+  producerService: ProducerService,
 ): (message: SQS.Message) => Promise<void> {
   return async (message: SQS.Message): Promise<void> => {
     try {
       const telemetryResult: TelemetryDto = await callerService.performRequest(
-        decodeSQSMessage(message)
+        decodeSQSMessage(message),
       );
       const pollingResult: UpdateResponseReceivedDto = {
         eserviceRecordId: telemetryResult.eserviceRecordId,
@@ -33,8 +33,8 @@ export function processMessage(
         e instanceof ApplicationError
           ? e
           : new Error(
-              `Unexpected error handling message with MessageId: ${message.MessageId}. Details: ${e}`
-            )
+              `Unexpected error handling message with MessageId: ${message.MessageId}. Details: ${e}`,
+            ),
       );
     }
   };

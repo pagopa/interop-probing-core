@@ -28,10 +28,10 @@ export const customFormat = winston.format.printf(
       .split("\n")
       .map(
         (line: string) =>
-          `${timestamp} ${level.toUpperCase()} - [CID=${correlationId}] ${line}`
+          `${timestamp} ${level.toUpperCase()} - [CID=${correlationId}] ${line}`,
       );
     return lines.join("\n");
-  }
+  },
 );
 
 export const logger = winston.createLogger({
@@ -45,7 +45,7 @@ export const logger = winston.createLogger({
     winston.format.timestamp(),
     winston.format.json(),
     winston.format.errors({ stack: true }),
-    customFormat
+    customFormat,
   ),
   silent: process.env.NODE_ENV === "test",
 });

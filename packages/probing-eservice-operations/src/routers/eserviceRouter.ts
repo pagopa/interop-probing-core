@@ -15,7 +15,7 @@ const eserviceQuery = eserviceQueryBuilder(modelService);
 const eServiceService = eServiceServiceBuilder(eserviceQuery);
 
 const eServiceRouter = (
-  ctx: ZodiosContext
+  ctx: ZodiosContext,
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const eServiceRouter = ctx.router(api.api);
 
@@ -27,14 +27,14 @@ const eServiceRouter = (
           await eServiceService.updateEserviceState(
             req.params.eserviceId,
             req.params.versionId,
-            req.body
+            req.body,
           );
           return res.status(204).end();
         } catch (error) {
           const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
           return res.status(errorRes.status).json(errorRes).end();
         }
-      }
+      },
     )
     .post(
       "/eservices/:eserviceId/versions/:versionId/probing/updateState",
@@ -43,14 +43,14 @@ const eServiceRouter = (
           await eServiceService.updateEserviceProbingState(
             req.params.eserviceId,
             req.params.versionId,
-            req.body
+            req.body,
           );
           return res.status(204).end();
         } catch (error) {
           const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
           return res.status(errorRes.status).json(errorRes).end();
         }
-      }
+      },
     )
     .post(
       "/eservices/:eserviceId/versions/:versionId/updateFrequency",
@@ -59,14 +59,14 @@ const eServiceRouter = (
           await eServiceService.updateEserviceFrequency(
             req.params.eserviceId,
             req.params.versionId,
-            req.body
+            req.body,
           );
           return res.status(204).end();
         } catch (error) {
           const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
           return res.status(errorRes.status).json(errorRes).end();
         }
-      }
+      },
     )
     .put(
       "/eservices/:eserviceId/versions/:versionId/saveEservice",
@@ -75,14 +75,14 @@ const eServiceRouter = (
           await eServiceService.saveEservice(
             req.params.eserviceId,
             req.params.versionId,
-            req.body
+            req.body,
           );
           return res.status(200).end();
         } catch (error) {
           const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
           return res.status(errorRes.status).json(errorRes).end();
         }
-      }
+      },
     )
     .post(
       "/eservices/:eserviceRecordId/updateLastRequest",
@@ -90,14 +90,14 @@ const eServiceRouter = (
         try {
           await eServiceService.updateEserviceLastRequest(
             Number(req.params.eserviceRecordId),
-            req.body
+            req.body,
           );
           return res.status(204).end();
         } catch (error) {
           const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
           return res.status(errorRes.status).json(errorRes).end();
         }
-      }
+      },
     )
     .post(
       "/eservices/:eserviceRecordId/updateResponseReceived",
@@ -105,14 +105,14 @@ const eServiceRouter = (
         try {
           await eServiceService.updateResponseReceived(
             Number(req.params.eserviceRecordId),
-            req.body
+            req.body,
           );
           return res.status(204).end();
         } catch (error) {
           const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
           return res.status(errorRes.status).json(errorRes).end();
         }
-      }
+      },
     );
 
   eServiceRouter
@@ -144,7 +144,7 @@ const eServiceRouter = (
     .get("/eservices/mainData/:eserviceRecordId", async (req, res) => {
       try {
         const eServiceMainData = await eServiceService.getEserviceMainData(
-          Number(req.params.eserviceRecordId)
+          Number(req.params.eserviceRecordId),
         );
 
         return res.status(200).json(eServiceMainData).end();
@@ -157,7 +157,7 @@ const eServiceRouter = (
       try {
         const eServiceProbingData =
           await eServiceService.getEserviceProbingData(
-            Number(req.params.eserviceRecordId)
+            Number(req.params.eserviceRecordId),
           );
 
         return res.status(200).json(eServiceProbingData).end();
@@ -188,7 +188,7 @@ const eServiceRouter = (
     .get("/eservices/polling", async (req, res) => {
       try {
         const eservices = await eServiceService.getEservicesReadyForPolling(
-          req.query
+          req.query,
         );
 
         return res

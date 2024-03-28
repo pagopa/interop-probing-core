@@ -1,6 +1,9 @@
 import { AxiosError, AxiosRequestHeaders } from "axios";
 
-export function mockApiClientError(status: number, statusText: string): AxiosError {
+export function mockApiClientError(
+  status: number,
+  statusText: string,
+): AxiosError {
   const mockAxiosError = new AxiosError(statusText);
   mockAxiosError.response = {
     status: status,

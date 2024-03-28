@@ -7,7 +7,7 @@ import {
 } from "./model/domain/errors.js";
 
 export function processMessage(
-  service: TelemetryWriteService
+  service: TelemetryWriteService,
 ): (message: SQS.Message) => Promise<void> {
   return async (message: SQS.Message): Promise<void> => {
     try {
@@ -17,8 +17,8 @@ export function processMessage(
         e instanceof ApplicationError
           ? e
           : new Error(
-              `Unexpected error handling message with MessageId: ${message.MessageId}. Details: ${e}`
-            )
+              `Unexpected error handling message with MessageId: ${message.MessageId}. Details: ${e}`,
+            ),
       );
     }
   };

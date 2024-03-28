@@ -31,7 +31,7 @@ describe("caller service test", () => {
   const apiClientHandler: ApiClientHandler = apiClientBuilder();
   const callerService: CallerService = callerServiceBuilder(
     apiClientHandler,
-    kmsClientHandler
+    kmsClientHandler,
   );
 
   afterEach(() => {
@@ -53,7 +53,7 @@ describe("caller service test", () => {
     const apiClientError = mockApiClientError(
       500,
       "connect ECONNREFUSED ::1:80",
-      "ECONNREFUSED"
+      "ECONNREFUSED",
     );
 
     vi.spyOn(kmsClientHandler, "buildJWT").mockResolvedValue(mockJWT);
@@ -68,7 +68,7 @@ describe("caller service test", () => {
 
     expect(telemetryResult.status).toBe("KO");
     expect((telemetryResult as TelemetryKoDto).koReason).toBe(
-      callerConstants.CONNECTION_REFUSED_KO_REASON
+      callerConstants.CONNECTION_REFUSED_KO_REASON,
     );
     expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
 
@@ -90,7 +90,7 @@ describe("caller service test", () => {
     const apiClientError = mockApiClientError(
       502,
       "Bad Gateway",
-      "ERR_BAD_RESPONSE"
+      "ERR_BAD_RESPONSE",
     );
     vi.spyOn(apiClientHandler, "sendREST").mockRejectedValue(apiClientError);
     vi.spyOn(kmsClientHandler, "buildJWT").mockResolvedValue(mockJWT);
@@ -102,13 +102,13 @@ describe("caller service test", () => {
 
     expect(telemetryResult.status).toBe("KO");
     expect((telemetryResult as TelemetryKoDto).koReason).toBe(
-      callerConstants.UNKNOWN_KO_REASON
+      callerConstants.UNKNOWN_KO_REASON,
     );
     expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
 
     await expect(apiClientHandler.sendREST).toHaveBeenCalledWith(
       baseUrl,
-      mockJWT
+      mockJWT,
     );
   });
 
@@ -127,7 +127,7 @@ describe("caller service test", () => {
     const apiClientError = mockApiClientError(
       500,
       "connect ETIMEDOUT",
-      "ETIMEDOUT"
+      "ETIMEDOUT",
     );
     vi.spyOn(apiClientHandler, "sendSOAP").mockRejectedValue(apiClientError);
     vi.spyOn(kmsClientHandler, "buildJWT").mockResolvedValue(mockJWT);
@@ -139,13 +139,13 @@ describe("caller service test", () => {
 
     expect(telemetryResult.status).toBe("KO");
     expect((telemetryResult as TelemetryKoDto).koReason).toBe(
-      callerConstants.CONNECTION_TIMEOUT_KO_REASON
+      callerConstants.CONNECTION_TIMEOUT_KO_REASON,
     );
     expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
 
     await expect(apiClientHandler.sendSOAP).toHaveBeenCalledWith(
       baseUrl,
-      mockJWT
+      mockJWT,
     );
   });
 
@@ -175,7 +175,7 @@ describe("caller service test", () => {
 
     await expect(apiClientHandler.sendSOAP).toHaveBeenCalledWith(
       baseUrl,
-      mockJWT
+      mockJWT,
     );
   });
 
@@ -205,10 +205,9 @@ describe("caller service test", () => {
 
     await expect(apiClientHandler.sendREST).toHaveBeenCalledWith(
       baseUrl,
-      mockJWT
+      mockJWT,
     );
   });
-
 
   it("Test build JWT throws error", async () => {
     const validMessage: SQS.Message = {
@@ -224,7 +223,7 @@ describe("caller service test", () => {
     const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
 
     const mockBuildJwtError = makeApplicationError(
-      buildJWTError(`Failed to generate signature.`)
+      buildJWTError(`Failed to generate signature.`),
     );
     vi.spyOn(kmsClientHandler, "buildJWT").mockRejectedValue(mockBuildJwtError);
 
@@ -248,14 +247,16 @@ describe("caller service test", () => {
       }),
     };
 
-    vi.spyOn(apiClientHandler, "sendSOAP").mockRejectedValue(new Error('Generic Error'));
+    vi.spyOn(apiClientHandler, "sendSOAP").mockRejectedValue(
+      new Error("Generic Error"),
+    );
     vi.spyOn(kmsClientHandler, "buildJWT").mockResolvedValue(mockJWT);
 
     const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
-    
+
     try {
       await callerService.performRequest(eservice);
-    } catch(error) {
+    } catch (error) {
       expect(error).toBeInstanceOf(AppError);
       expect((error as AppError).code).toBe("9999");
     }

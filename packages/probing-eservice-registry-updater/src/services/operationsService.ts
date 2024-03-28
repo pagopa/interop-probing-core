@@ -8,13 +8,13 @@ import {
 } from "../model/domain/errors.js";
 
 export const operationsServiceBuilder = (
-  operationsApiClient: ZodiosInstance<Api>
+  operationsApiClient: ZodiosInstance<Api>,
 ) => {
   return {
     async saveEservice({ params, payload }: SaveEserviceApi): Promise<void> {
       try {
         logger.info(
-          `Saving eService with eserviceId/versionId: ${params.eserviceId}/${params.versionId}`
+          `Saving eService with eserviceId/versionId: ${params.eserviceId}/${params.versionId}`,
         );
 
         await operationsApiClient.saveEservice(payload, { params });
@@ -22,8 +22,8 @@ export const operationsServiceBuilder = (
         throw makeApplicationError(
           apiSaveEserviceError(
             `Error saving eService with eserviceId/versionId: ${params.eserviceId}/${params.versionId}}. Details: ${error}`,
-            error
-          )
+            error,
+          ),
         );
       }
     },

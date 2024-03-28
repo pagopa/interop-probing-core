@@ -25,7 +25,7 @@ import { mockTimestreamResponseQuery } from "./utils.js";
 const timestreamQueryClient: TimestreamQueryClientHandler =
   timestreamQueryClientBuilder();
 const timestreamService: TimestreamService = timestreamServiceBuilder(
-  timestreamQueryClient
+  timestreamQueryClient,
 );
 const statisticsService: StatisticsService =
   statisticsServiceBuilder(timestreamService);

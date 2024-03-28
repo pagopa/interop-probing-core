@@ -13,7 +13,7 @@ describe("Timestream service test", () => {
   const timestreamQueryClient: TimestreamQueryClientHandler =
     timestreamQueryClientBuilder();
   const timestreamService: TimestreamService = timestreamServiceBuilder(
-    timestreamQueryClient
+    timestreamQueryClient,
   );
 
   afterEach(() => {
@@ -28,10 +28,12 @@ describe("Timestream service test", () => {
       endDate: "2024-03-13 23:30:59.57",
     };
 
-    vi.spyOn(timestreamQueryClient, "query").mockResolvedValue([mockTimestreamResponseQuery]);
+    vi.spyOn(timestreamQueryClient, "query").mockResolvedValue([
+      mockTimestreamResponseQuery,
+    ]);
 
     await expect(
-      timestreamService.findStatistics(telemetryQuery)
+      timestreamService.findStatistics(telemetryQuery),
     ).resolves.not.toThrow();
 
     const content = await timestreamService.findStatistics(telemetryQuery);

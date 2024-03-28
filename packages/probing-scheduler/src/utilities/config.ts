@@ -16,7 +16,7 @@ const probingSchedulerConfig = AWSConfig.and(LoggerConfig).and(
       sqsEndpointPollQueue: c.SQS_ENDPOINT_POLL_QUEUE,
       schedulerLimit: c.SCHEDULER_LIMIT,
       schedulerCronExpression: c.SCHEDULER_CRON_EXPRESSION,
-    }))
+    })),
 );
 
 export type ProbingSchedulerConfig = z.infer<typeof probingSchedulerConfig>;

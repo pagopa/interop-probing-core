@@ -13,7 +13,7 @@ import { processTask } from "./processTask.js";
 
 const sqsClient: SQS.SQSClient = SQS.instantiateClient(
   { region: config.awsRegion },
-  config.applicationName
+  config.applicationName,
 );
 const s3client: S3Client = new S3Client({ region: config.awsRegion });
 

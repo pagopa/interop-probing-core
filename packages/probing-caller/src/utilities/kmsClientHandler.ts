@@ -43,7 +43,7 @@ export const kmsClientBuilder = () => {
         }
 
         return removePadding(
-          `${token}.${Buffer.from(signedTokenBuffer).toString("base64")}`
+          `${token}.${Buffer.from(signedTokenBuffer).toString("base64")}`,
         );
       } catch (err: unknown) {
         logger.error(`Error building JWT token: ${err}`);

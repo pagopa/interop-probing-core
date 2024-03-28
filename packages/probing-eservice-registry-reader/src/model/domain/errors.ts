@@ -63,12 +63,12 @@ export function makeApplicationErrorBuilder<T extends string>(errors: {
     return match<unknown, AppError>(error)
       .with(P.instanceOf(AppError), (applicationError) => applicationError)
       .with(P.instanceOf(ApplicationError<ErrorCodes>), (applicationError) =>
-        makeApplicationError(applicationError)
+        makeApplicationError(applicationError),
       )
       .otherwise((e) =>
         makeApplicationError(
-          genericError(e instanceof Error ? `${e.message}` : `${e}`)
-        )
+          genericError(e instanceof Error ? `${e.message}` : `${e}`),
+        ),
       );
   };
 }
@@ -91,7 +91,7 @@ export function genericError(detail: string): ApplicationError<ErrorCodes> {
 }
 
 export function readObjectS3BucketError(
-  detail: unknown
+  detail: unknown,
 ): ApplicationError<ErrorCodes> {
   return new ApplicationError({
     detail: `${detail}`,

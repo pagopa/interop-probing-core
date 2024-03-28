@@ -1,11 +1,11 @@
+import helmet from "helmet";
+import express from "express";
+import cors, { CorsOptions } from "cors";
 import { zodiosCtx } from "pagopa-interop-probing-commons";
 import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
 import eServiceRouter from "./routers/eserviceRouter.js";
 import healthRouter from "./routers/healthRouter.js";
 import { config } from "./utilities/config.js";
-import helmet from "helmet";
-import express from "express";
-import cors, { CorsOptions } from "cors";
 
 const operationsApiClient = createApiClient(config.operationsBaseUrl);
 
@@ -26,7 +26,7 @@ app.use(
       frameAncestors: ["'none'"],
       formAction: ["'self'"],
     },
-  })
+  }),
 );
 
 app.use(cors());
@@ -35,7 +35,7 @@ app.use(
   helmet.hsts({
     includeSubDomains: true,
     maxAge: 10886400,
-  })
+  }),
 );
 
 app.use(helmet.noSniff());

@@ -18,7 +18,7 @@ export function mockOperationsApiClientError(error: Problem): AxiosError {
 export function nowDateUTC(
   hour: number,
   minute: number,
-  seconds: number = 0
+  seconds: number = 0,
 ): string {
   const utcDate: Date = new Date();
 

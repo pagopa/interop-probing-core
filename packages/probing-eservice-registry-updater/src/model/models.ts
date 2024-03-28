@@ -11,7 +11,7 @@ export interface SaveEserviceApi {
 const MessageSchema = z.object({
   value: z.preprocess(
     (v) => (v != null ? JSON.parse(v.toString()) : null),
-    EserviceDto
+    EserviceDto,
   ),
 });
 
@@ -21,7 +21,7 @@ export function decodeSQSMessage(message: SQS.Message): SaveEserviceApi {
     throw decodeSQSMessageError(
       `Failed to decode SQS message with MessageId: ${
         message.MessageId
-      }. Error details: ${JSON.stringify(parsed.error)}`
+      }. Error details: ${JSON.stringify(parsed.error)}`,
     );
   }
 

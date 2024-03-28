@@ -3,7 +3,7 @@ import { TimestreamWriteClientHandler } from "../utilities/timestreamWriteClient
 import { makeApplicationError } from "../model/domain/errors.js";
 
 export const telemetryWriteServiceBuilder = (
-  timestreamWriteClient: TimestreamWriteClientHandler
+  timestreamWriteClient: TimestreamWriteClientHandler,
 ) => {
   return {
     async writeRecord(telemetry: TelemetryDto): Promise<void> {

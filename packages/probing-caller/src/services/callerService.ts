@@ -15,12 +15,12 @@ import { match } from "ts-pattern";
 
 export const callerServiceBuilder = (
   apiClientHandler: ApiClientHandler,
-  kmsClientHandler: KMSClientHandler
+  kmsClientHandler: KMSClientHandler,
 ) => {
   return {
     async performRequest(eservice: EserviceContentDto): Promise<TelemetryDto> {
       logger.info(
-        `Perfoming Telemetry ${eservice.technology} request with eserviceRecordId: ${eservice.eserviceRecordId}`
+        `Perfoming Telemetry ${eservice.technology} request with eserviceRecordId: ${eservice.eserviceRecordId}`,
       );
 
       const token: string = await kmsClientHandler.buildJWT(eservice.audience);
@@ -32,11 +32,11 @@ export const callerServiceBuilder = (
         await match(eservice.technology)
           .with(
             technology.soap,
-            async () => await apiClientHandler.sendSOAP(baseUrl, token)
+            async () => await apiClientHandler.sendSOAP(baseUrl, token),
           )
           .with(
             technology.rest,
-            async () => await apiClientHandler.sendREST(baseUrl, token)
+            async () => await apiClientHandler.sendREST(baseUrl, token),
           )
           .exhaustive();
 

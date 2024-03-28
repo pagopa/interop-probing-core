@@ -1,7 +1,4 @@
-
-import {
-  QueryResponse
-} from "@aws-sdk/client-timestream-query";
+import { QueryResponse } from "@aws-sdk/client-timestream-query";
 
 export const mockTimestreamResponseQuery: QueryResponse = {
   ColumnInfo: [

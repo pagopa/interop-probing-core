@@ -11,16 +11,16 @@ export const producerServiceBuilder = (sqsClient: SQS.SQSClient) => {
       await SQS.sendMessage(
         sqsClient,
         config.sqsEndpointTelemetryResultQueue,
-        JSON.stringify(message)
+        JSON.stringify(message),
       );
     },
     async sendToResponseUpdaterQueue(
-      message: UpdateResponseReceivedDto
+      message: UpdateResponseReceivedDto,
     ): Promise<void> {
       await SQS.sendMessage(
         sqsClient,
         config.sqsEndpointPollResultQueue,
-        JSON.stringify(message)
+        JSON.stringify(message),
       );
     },
   };

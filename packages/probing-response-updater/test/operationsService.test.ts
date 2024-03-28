@@ -23,7 +23,7 @@ describe("eService service test", () => {
     const eserviceRecordId = 1;
     const status = responseStatus.ok;
     const responseReceived = new Date(
-      Date.now() - new Date().getTimezoneOffset() * 60000
+      Date.now() - new Date().getTimezoneOffset() * 60000,
     ).toISOString();
 
     vi.spyOn(apiClient, "updateResponseReceived").mockResolvedValue(undefined);
@@ -36,7 +36,7 @@ describe("eService service test", () => {
             status,
             responseReceived,
           },
-        })
+        }),
     ).not.toThrowError();
   });
 
@@ -44,13 +44,13 @@ describe("eService service test", () => {
     const eserviceRecordId = 1;
     const status = responseStatus.ok;
     const responseReceived = new Date(
-      Date.now() - new Date().getTimezoneOffset() * 60000
+      Date.now() - new Date().getTimezoneOffset() * 60000,
     ).toISOString();
 
     const apiClientError = mockApiClientError(500, "Internal server error");
 
     vi.spyOn(apiClient, "updateResponseReceived").mockRejectedValueOnce(
-      apiClientError
+      apiClientError,
     );
 
     try {

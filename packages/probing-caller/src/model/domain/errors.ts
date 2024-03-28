@@ -65,12 +65,12 @@ export function makeApplicationErrorBuilder<T extends string>(errors: {
     return match<unknown, AppError>(error)
       .with(P.instanceOf(AppError), (applicationError) => applicationError)
       .with(P.instanceOf(ApplicationError<ErrorCodes>), (applicationError) =>
-        makeApplicationError(applicationError)
+        makeApplicationError(applicationError),
       )
       .otherwise((e) =>
         makeApplicationError(
-          genericError(e instanceof Error ? `${e.message}` : `${e}`)
-        )
+          genericError(e instanceof Error ? `${e.message}` : `${e}`),
+        ),
       );
   };
 }
@@ -96,7 +96,7 @@ export function genericError(detail: string): ApplicationError<ErrorCodes> {
 
 export function callProbingEndpointError(
   detail: string,
-  error: unknown
+  error: unknown,
 ): ApplicationError<ErrorCodes> {
   const status = (error as AxiosError).response?.status;
   const zodiosErrorCause = (error as ZodError)?.cause;
@@ -113,7 +113,7 @@ export function callProbingEndpointError(
 }
 
 export function decodeSQSMessageError(
-  detail: string
+  detail: string,
 ): ApplicationError<ErrorCodes> {
   return new ApplicationError({
     detail: `${detail}`,

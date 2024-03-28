@@ -41,7 +41,7 @@ export const timestreamWriteClientBuilder = () => {
         await client.send(command);
       } catch (error) {
         logger.error(
-          `An error occurred while attempting to write a record to Timestream: ${error}`
+          `An error occurred while attempting to write a record to Timestream: ${error}`,
         );
         throw writeRecordTimestreamError(`${error}`);
       }

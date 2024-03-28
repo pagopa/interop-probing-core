@@ -6,7 +6,7 @@ import { decodeSQSMessageError } from "./domain/errors.js";
 const MessageSchema = z.object({
   value: z.preprocess(
     (v) => (v != null ? JSON.parse(v.toString()) : null),
-    TelemetryDto
+    TelemetryDto,
   ),
 });
 
@@ -16,7 +16,7 @@ export function decodeSQSMessage(message: SQS.Message): TelemetryDto {
     throw decodeSQSMessageError(
       `Failed to decode SQS message with MessageId: ${
         message.MessageId
-      }. Error details: ${JSON.stringify(parsed.error)}`
+      }. Error details: ${JSON.stringify(parsed.error)}`,
     );
   }
 

@@ -12,7 +12,7 @@ import {
 
 export async function processTask(
   operationsService: OperationsService,
-  producerService: ProducerService
+  producerService: ProducerService,
 ): Promise<void> {
   try {
     const limit: number = config.schedulerLimit;
@@ -44,7 +44,9 @@ export async function processTask(
     throw makeApplicationError(
       e instanceof ApplicationError
         ? e
-        : new Error(`Unexpected error processing scheduled task. Details: ${e}`)
+        : new Error(
+            `Unexpected error processing scheduled task. Details: ${e}`,
+          ),
     );
   }
 }

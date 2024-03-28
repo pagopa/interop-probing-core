@@ -8,7 +8,7 @@ export const producerServiceBuilder = (sqsClient: SQS.SQSClient) => {
       await SQS.sendMessage(
         sqsClient,
         config.sqsEndpointServicesQueue,
-        JSON.stringify(message)
+        JSON.stringify(message),
       );
     },
   };

@@ -10,22 +10,20 @@ import {
 } from "pagopa-interop-probing-models";
 import { config } from "./config.js";
 
-const isBefore = (responseReceived: string, lastRequest: string) => {
-  return new Date(responseReceived).getTime() < new Date(lastRequest).getTime();
-};
+const isBefore = (responseReceived: string, lastRequest: string): boolean =>
+  new Date(responseReceived).getTime() < new Date(lastRequest).getTime();
 
-const minutesDifferenceFromCurrentDate = (lastRequest: string) => {
-  return (new Date().getTime() - new Date(lastRequest).getTime()) / (1000 * 60);
-};
+const minutesDifferenceFromCurrentDate = (lastRequest: string): number =>
+  (new Date().getTime() - new Date(lastRequest).getTime()) / (1000 * 60);
 
 export function fromECToMonitorState(
-  data: EServiceContent
+  data: EServiceContent,
 ): EserviceMonitorState {
   return handleState(data);
 }
 
 export function fromEPDToMonitorState(
-  data: EServiceProbingData
+  data: EServiceProbingData,
 ): EserviceMonitorState {
   return handleState(data);
 }
@@ -51,18 +49,18 @@ function handleState({
         probingEnabled,
         responseReceived,
         lastRequest,
-        pollingFrequency
+        pollingFrequency,
       )
         ? eserviceMonitorState["n/d"]
         : checkOFFLINE(responseStatus)
-        ? eserviceMonitorState.offline
-        : eserviceMonitorState.online;
+          ? eserviceMonitorState.offline
+          : eserviceMonitorState.online;
     case eserviceInteropState.inactive:
       return checkND(
         probingEnabled,
         responseReceived,
         lastRequest,
-        pollingFrequency
+        pollingFrequency,
       )
         ? eserviceMonitorState["n/d"]
         : eserviceMonitorState.offline;
@@ -71,7 +69,7 @@ function handleState({
   }
 }
 
-export function isActive(viewState: EserviceInteropState) {
+export function isActive(viewState: EserviceInteropState): boolean {
   return viewState === eserviceInteropState.active;
 }
 
@@ -79,30 +77,32 @@ export function checkND(
   probingEnabled: boolean,
   responseReceived: string | undefined,
   lastRequest: string | undefined,
-  pollingFrequency: number
-) {
+  pollingFrequency: number,
+): boolean {
   return (
     !probingEnabled ||
     !lastRequest ||
     (isBeenToLongRequest(
       lastRequest,
       pollingFrequency,
-      config.minOfTolleranceMultiplier
+      config.minOfTolleranceMultiplier,
     ) &&
       isResponseReceivedBeforeLastRequest(responseReceived, lastRequest)) ||
     !responseReceived
   );
 }
 
-export function checkOFFLINE(status: EserviceStatus | undefined) {
+export function checkOFFLINE(status: EserviceStatus | undefined): boolean {
   return status === responseStatus.ko;
 }
 
 export function isResponseReceivedBeforeLastRequest(
   responseReceived: string | undefined,
-  lastRequest: string
-) {
-  if (!responseReceived) return false;
+  lastRequest: string,
+): boolean {
+  if (!responseReceived) {
+    return false;
+  }
 
   return isBefore(responseReceived, lastRequest);
 }
@@ -110,9 +110,11 @@ export function isResponseReceivedBeforeLastRequest(
 export function isBeenToLongRequest(
   lastRequest: string,
   pollingFrequency: number,
-  toleranceMultiplierInMinutes: number
-) {
-  if (!pollingFrequency) return false;
+  toleranceMultiplierInMinutes: number,
+): boolean {
+  if (!pollingFrequency) {
+    return false;
+  }
 
   const timeDifferenceMinutes = minutesDifferenceFromCurrentDate(lastRequest);
   const toleranceThreshold = pollingFrequency * toleranceMultiplierInMinutes;

@@ -22,7 +22,7 @@ const telemetryWriterConfig = AWSConfig.and(ConsumerConfig)
         timestreamRetries: c.TIMESTREAM_RETRIES,
         timestreamTable: c.TIMESTREAM_TABLE,
         timestreamDatabase: c.TIMESTREAM_DATABASE,
-      }))
+      })),
   );
 
 export type TelemetryWriterConfig = z.infer<typeof telemetryWriterConfig>;

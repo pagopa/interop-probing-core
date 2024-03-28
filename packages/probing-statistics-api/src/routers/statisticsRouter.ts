@@ -7,9 +7,9 @@ import { api } from "../model/generated/api.js";
 import { statisticsErrorMapper } from "../utilities/errorMappers.js";
 
 const statisticsRouter = (
-  ctx: ZodiosContext
+  ctx: ZodiosContext,
 ): ((
-  statisticsService: StatisticsService
+  statisticsService: StatisticsService,
 ) => ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext>) => {
   return (statisticsService: StatisticsService) => {
     const router = ctx.router(api.api);
@@ -19,7 +19,7 @@ const statisticsRouter = (
         try {
           const telemetryData = await statisticsService.statisticsEservices(
             req.params,
-            req.query
+            req.query,
           );
 
           return res.status(200).json(telemetryData).end();
@@ -35,7 +35,7 @@ const statisticsRouter = (
             const telemetryData =
               await statisticsService.filteredStatisticsEservices(
                 req.params,
-                req.query
+                req.query,
               );
 
             return res.status(200).json(telemetryData).end();
@@ -43,7 +43,7 @@ const statisticsRouter = (
             const errorRes = makeApiProblem(error, statisticsErrorMapper);
             return res.status(errorRes.status).json(errorRes).end();
           }
-        }
+        },
       );
 
     return router;
