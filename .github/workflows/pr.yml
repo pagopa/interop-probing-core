@@ -1,7 +1,9 @@
 name: CI
 on:
   push:
-    branches: "probing-gh-actions"
+    branches:
+      - "develop"
+      - "main"
   pull_request:
 
 jobs:
