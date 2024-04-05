@@ -2,7 +2,11 @@ name: "Build & Push"
 
 on:
   push:
-    branches: "probing-gh-actions"
+    branches:
+      - "develop"
+      - "main"
+    paths:
+      - "packages/**"
 
 jobs:
   build_push_image:
