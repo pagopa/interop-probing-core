@@ -2,11 +2,7 @@ name: "Build & Push"
 
 on:
   push:
-    branches:
-      - "develop"
-      - "main"
-    paths:
-      - "packages/**"
+    branches: "probing-gh-actions"
 
 jobs:
   build_push_image:
@@ -22,6 +18,22 @@ jobs:
         include:
           - image_name: probing-api
             dockerfile_path: packages/probing-api
+          - image_name: probing-caller
+            dockerfile_path: packages/probing-caller
+          - image_name: probing-eservice-operations
+            dockerfile_path: packages/probing-eservice-operations
+          - image_name: probing-eservice-registry-reader
+            dockerfile_path: packages/probing-eservice-registry-reader
+          - image_name: probing-eservice-registry-updater
+            dockerfile_path: packages/probing-eservice-registry-updater
+          - image_name: probing-response-updater
+            dockerfile_path: packages/probing-response-updater
+          - image_name: probing-scheduler
+            dockerfile_path: packages/probing-scheduler
+          - image_name: probing-statistics-api
+            dockerfile_path: packages/probing-statistics-api
+          - image_name: probing-telemetry-writer
+            dockerfile_path: packages/probing-telemetry-writer
 
     steps:
       - name: Checkout repository
