@@ -62,4 +62,4 @@ jobs:
           file: ${{ matrix.dockerfile_path }}/Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ matrix.image_name }}:${{ env.NORM_TAG }}
+            ghcr.io/interop-be-${{ matrix.image_name }}:${{ env.NORM_TAG }}
