@@ -22,6 +22,5 @@ COPY ./packages/models /app/packages/models
 RUN pnpm build
 
 WORKDIR /app/packages/probing-statistics-api
-EXPOSE 3000
 
 CMD [ "node", "." ]
