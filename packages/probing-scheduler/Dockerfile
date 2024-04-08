@@ -25,6 +25,5 @@ COPY ./packages/clients/eservice-operations /app/packages/clients/eservice-opera
 RUN pnpm build
 
 WORKDIR /app/packages/probing-scheduler
-EXPOSE 3000
 
 CMD [ "node", "." ]
