@@ -10,4 +10,3 @@ app.disable("x-powered-by");
 app.use(eServiceRouter(zodiosCtx));
 
 export default app;
-console.log("ok")
