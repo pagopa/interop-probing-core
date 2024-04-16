@@ -2,7 +2,7 @@
   "name": "pagopa-interop-probing-telemetry-writer",
   "version": "1.0.0",
   "description": "PagoPA probing telemetry writer",
-  "main": "dist/src",
+  "main": "dist",
   "type": "module",
   "scripts": {
     "test": "vitest --config ./test/vitest.config.ts",

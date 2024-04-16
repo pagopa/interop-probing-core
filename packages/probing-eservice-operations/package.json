@@ -2,7 +2,7 @@
   "name": "pagopa-interop-probing-eservice-operations",
   "version": "1.0.0",
   "description": "PagoPA probing eservice operations",
-  "main": "dist/src",
+  "main": "dist",
   "type": "module",
   "scripts": {
     "test": "vitest --config ./test/vitest.config.ts",
