@@ -3,12 +3,12 @@ name: "Build & Push"
 on:
   push:
     branches:
-      - "develop"
-      - "main"
+      - 'develop'
+      - 'main'
     tags:
-      - "*"
+      - '*'
     paths:
-      - "packages/**"
+      - 'packages/**'
 
 jobs:
   build_push_image:
