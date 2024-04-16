@@ -20,6 +20,7 @@ import {
   isActive,
 } from "../utilities/enumUtils.js";
 import { ApiEServiceContent } from "../model/eservice.js";
+import validationErrorHandler from "../utilities/validationErrorHandler.js";
 
 const eServiceRouter =
   (
@@ -30,7 +31,9 @@ const eServiceRouter =
   (operationsApiClient: ZodiosInstance<Api>) => {
     const operationsService: OperationsService =
       operationsServiceBuilder(operationsApiClient);
-    const router = ctx.router(api.api);
+    const router = ctx.router(api.api, {
+      validationErrorHandler,
+    });
 
     router
       .post(
