@@ -5,6 +5,7 @@ import { ExpressContext, ZodiosContext } from "pagopa-interop-probing-commons";
 import { StatisticsService } from "../services/statisticsService.js";
 import { api } from "../model/generated/api.js";
 import { statisticsErrorMapper } from "../utilities/errorMappers.js";
+import validationErrorHandler from "../utilities/validationErrorHandler.js";
 
 const statisticsRouter = (
   ctx: ZodiosContext,
@@ -12,7 +13,9 @@ const statisticsRouter = (
   statisticsService: StatisticsService,
 ) => ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext>) => {
   return (statisticsService: StatisticsService) => {
-    const router = ctx.router(api.api);
+    const router = ctx.router(api.api, {
+      validationErrorHandler,
+    });
 
     router
       .get("/telemetryData/eservices/:eserviceRecordId", async (req, res) => {
