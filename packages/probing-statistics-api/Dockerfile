@@ -20,6 +20,7 @@ COPY ./packages/commons /app/packages/commons
 COPY ./packages/models /app/packages/models
 
 RUN pnpm build
+RUN rm -rf /app/packages/probing-statistics-api/dist/test
 
 WORKDIR /app/packages/probing-statistics-api
 
