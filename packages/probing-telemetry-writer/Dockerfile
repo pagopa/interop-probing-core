@@ -16,12 +16,11 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 COPY tsconfig.json /app/
 COPY turbo.json /app/
 COPY ./packages/probing-telemetry-writer /app/packages/probing-telemetry-writer
-RUN rm -rf /app/packages/probing-telemetry-writer/dist
-COPY ./packages/probing-telemetry-writer/dist/src /app/packages/probing-telemetry-writer/dist
 COPY ./packages/commons /app/packages/commons
 COPY ./packages/models /app/packages/models
 
 RUN pnpm build
+RUN rm -rf /app/packages/probing-telemetry-writer/dist/test
 
 WORKDIR /app/packages/probing-telemetry-writer
 

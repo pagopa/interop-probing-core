@@ -2,7 +2,7 @@
   "name": "pagopa-interop-probing-statistics-api",
   "version": "1.0.0",
   "description": "PagoPA probing statistics api",
-  "main": "dist",
+  "main": "dist/src",
   "type": "module",
   "scripts": {
     "test": "vitest --config ./test/vitest.config.ts",

@@ -16,12 +16,11 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 COPY tsconfig.json /app/
 COPY turbo.json /app/
 COPY ./packages/probing-caller /app/packages/probing-caller
-RUN rm -rf /app/packages/probing-caller/dist
-COPY ./packages/probing-caller/dist/src /app/packages/probing-caller/dist
 COPY ./packages/commons /app/packages/commons
 COPY ./packages/models /app/packages/models
 
 RUN pnpm build
+RUN rm -rf /app/packages/probing-caller/dist/test
 
 WORKDIR /app/packages/probing-caller
 

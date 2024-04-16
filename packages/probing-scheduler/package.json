@@ -2,7 +2,7 @@
   "name": "pagopa-interop-probing-scheduler",
   "version": "1.0.0",
   "description": "PagoPA probing scheduler",
-  "main": "dist",
+  "main": "dist/src",
   "type": "module",
   "scripts": {
     "test": "vitest --config ./test/vitest.config.ts",

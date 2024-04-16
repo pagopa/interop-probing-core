@@ -2,7 +2,7 @@
   "name": "pagopa-interop-probing-caller",
   "version": "1.0.0",
   "description": "PagoPA probing caller",
-  "main": "dist",
+  "main": "dist/src",
   "type": "module",
   "scripts": {
     "test": "vitest --config ./test/vitest.config.ts",
