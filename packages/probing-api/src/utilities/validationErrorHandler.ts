@@ -26,7 +26,7 @@ const validationErrorHandler = (
         P.shape({ context: P.string, error: P.array(P.any) }),
         (e: ZodValidationError) => {
           const errors = e.error.map(
-            (issue) => `${e.context}: ${issue.message}`,
+            (issue) => `${e.context}: ${JSON.stringify(issue)}`,
           );
           return makeApiProblem(validationFailed(errors), () => 400);
         },
