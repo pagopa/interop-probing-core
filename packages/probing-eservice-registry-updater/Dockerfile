@@ -17,6 +17,8 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 COPY tsconfig.json /app/
 COPY turbo.json /app/
 COPY ./packages/probing-eservice-registry-updater /app/packages/probing-eservice-registry-updater
+RUN rm -rf /app/packages/probing-eservice-registry-updater/dist
+COPY ./packages/probing-eservice-registry-updater/dist/src /app/packages/probing-eservice-registry-updater/dist
 COPY ./packages/probing-eservice-operations/open-api /app/packages/probing-eservice-operations/open-api
 COPY ./packages/commons /app/packages/commons
 COPY ./packages/models /app/packages/models
