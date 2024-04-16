@@ -146,9 +146,10 @@ describe("eService Router", () => {
       )
       .set("Content-Type", "application/json");
 
-    expect(response.text).toContain(`"context":"body"`);
-    expect(response.text).toContain("eServiceState");
+    expect(response.text).toContain("Validation failed");
+    expect(response.text).toContain("body");
     expect(response.text).toContain("Required");
+    expect(response.text).toContain("eServiceState");
     expect(response.status).toBe(400);
   });
 
@@ -220,9 +221,10 @@ describe("eService Router", () => {
       )
       .set("Content-Type", "application/json");
 
-    expect(response.text).toContain(`"context":"body"`);
-    expect(response.text).toContain("probingEnabled");
+    expect(response.text).toContain("Validation failed");
+    expect(response.text).toContain("body");
     expect(response.text).toContain("Required");
+    expect(response.text).toContain("probingEnabled");
     expect(response.status).toBe(400);
   });
 
@@ -326,10 +328,11 @@ describe("eService Router", () => {
       )
       .set("Content-Type", "application/json");
 
-    expect(response.text).toContain(`"context":"body"`);
+    expect(response.text).toContain("Validation failed");
+    expect(response.text).toContain("body");
+    expect(response.text).toContain("Required");
     expect(response.text).toContain("startTime");
     expect(response.text).toContain("endTime");
-    expect(response.text).toContain("Required");
     expect(response.status).toBe(400);
   });
 
@@ -419,8 +422,9 @@ describe("eService Router", () => {
         versionNumber,
         offset,
       });
-
-    expect(response.text).toContain(`"context":"query.limit"`);
+      
+    expect(response.text).toContain("Validation failed");
+    expect(response.text).toContain("query.limit");
     expect(response.text).toContain("Required");
     expect(response.status).toBe(400);
   });
@@ -447,7 +451,8 @@ describe("eService Router", () => {
         limit,
       });
 
-    expect(response.text).toContain(`"context":"query.offset"`);
+    expect(response.text).toContain("Validation failed");
+    expect(response.text).toContain("query.offset");
     expect(response.text).toContain("Required");
     expect(response.status).toBe(400);
   });
