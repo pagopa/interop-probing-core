@@ -23,7 +23,7 @@ COPY ./packages/models /app/packages/models
 COPY ./packages/clients/eservice-operations /app/packages/clients/eservice-operations
 
 RUN pnpm build
-RUN rm -rf /app/packages/probing-scheduler/test
+RUN rm -rf /app/packages/probing-scheduler/dist/test
 
 WORKDIR /app/packages/probing-scheduler
 
