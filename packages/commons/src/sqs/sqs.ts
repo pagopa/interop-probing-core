@@ -6,6 +6,7 @@ import {
   DeleteMessageCommand,
   Message,
   SQSClientConfig,
+  SendMessageCommandInput,
 } from "@aws-sdk/client-sqs";
 import pkg from "aws-xray-sdk";
 import { logger } from "../logging/index.js";
@@ -89,11 +90,18 @@ export const sendMessage = async (
   sqsClient: SQSClient,
   queueUrl: string,
   messageBody: string,
+  messageGroupId?: string,
 ): Promise<void> => {
-  const command = new SendMessageCommand({
+  const messageCommandInput: SendMessageCommandInput = {
     QueueUrl: queueUrl,
     MessageBody: messageBody,
-  });
+  };
+
+  if (messageGroupId) {
+    messageCommandInput.MessageGroupId = messageGroupId;
+  }
+
+  const command = new SendMessageCommand(messageCommandInput);
 
   await sqsClient.send(command);
 };
