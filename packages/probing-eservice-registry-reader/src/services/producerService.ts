@@ -9,6 +9,7 @@ export const producerServiceBuilder = (sqsClient: SQS.SQSClient) => {
         sqsClient,
         config.sqsEndpointServicesQueue,
         JSON.stringify(message),
+        config.sqsGroupId,
       );
     },
   };
