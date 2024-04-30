@@ -347,7 +347,13 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         .take(filters.limit)
         .getManyAndCount();
 
-      const result = z.array(EServiceContent).safeParse(data.map((d) => d));
+      const result = z.array(EServiceContent).safeParse(
+        data.map((d) => {
+          return Object.fromEntries(
+            Object.entries(d).filter(([_key, value]) => value !== null),
+          );
+        }),
+      );
       if (!result.success) {
         logger.error(
           `Unable to parse eservices items: result ${JSON.stringify(
