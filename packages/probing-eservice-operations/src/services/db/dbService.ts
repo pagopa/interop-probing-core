@@ -347,14 +347,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         .take(filters.limit)
         .getManyAndCount();
 
-      const result = z.array(EServiceContent).safeParse(
-        data.map((d) => {
-          return Object.fromEntries(
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            Object.entries(d).filter(([_key, value]) => value !== null),
-          );
-        }),
-      );
+      const result = z.array(EServiceContent).safeParse(data.map((d) => d));
       if (!result.success) {
         logger.error(
           `Unable to parse eservices items: result ${JSON.stringify(

@@ -150,12 +150,18 @@ export const EServiceContent = z.object({
   responseReceived: z
     .date()
     .transform((date) => date.toISOString())
+    .nullish()
+    .transform((value) => (value === null ? undefined : value))
     .optional(),
   lastRequest: z
     .date()
     .transform((date) => date.toISOString())
+    .nullish()
+    .transform((value) => (value === null ? undefined : value))
     .optional(),
-  responseStatus: EserviceStatus.optional(),
+  responseStatus: EserviceStatus.nullish()
+    .transform((value) => (value === null ? undefined : value))
+    .optional(),
   versionNumber: z.number().int(),
   basePath: z.array(z.string()),
   technology: EserviceTechnology,
