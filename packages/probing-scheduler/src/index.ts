@@ -12,10 +12,9 @@ import {
 } from "./services/producerService.js";
 import cron from "node-cron";
 
-const sqsClient: SQS.SQSClient = await SQS.instantiateClient(
-  { region: config.awsRegion },
-  config.applicationName,
-);
+const sqsClient: SQS.SQSClient = await SQS.instantiateClient({
+  region: config.awsRegion,
+});
 const operationsApiClient = createApiClient(config.operationsBaseUrl);
 const operationsService: OperationsService =
   operationsServiceBuilder(operationsApiClient);

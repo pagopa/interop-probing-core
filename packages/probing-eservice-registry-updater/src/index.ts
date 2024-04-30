@@ -12,10 +12,9 @@ const operationsApiClient = createApiClient(config.operationsBaseUrl);
 const OperationsService: OperationsService =
   operationsServiceBuilder(operationsApiClient);
 
-const sqsClient: SQS.SQSClient = SQS.instantiateClient(
-  { region: config.awsRegion },
-  config.applicationName,
-);
+const sqsClient: SQS.SQSClient = SQS.instantiateClient({
+  region: config.awsRegion,
+});
 
 await SQS.runConsumer(
   sqsClient,

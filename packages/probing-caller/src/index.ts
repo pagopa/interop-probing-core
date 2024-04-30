@@ -18,10 +18,9 @@ import {
   KMSClientHandler,
 } from "./utilities/kmsClientHandler.js";
 
-const sqsClient: SQS.SQSClient = await SQS.instantiateClient(
-  { region: config.awsRegion },
-  config.applicationName,
-);
+const sqsClient: SQS.SQSClient = await SQS.instantiateClient({
+  region: config.awsRegion,
+});
 const kmsClientHandler: KMSClientHandler = kmsClientBuilder();
 const apiClientHandler: ApiClientHandler = apiClientBuilder();
 const callerService: CallerService = callerServiceBuilder(

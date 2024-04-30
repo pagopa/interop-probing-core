@@ -21,7 +21,6 @@
     "@aws-sdk/client-sqs": "^3.507.0",
     "@zodios/core": "^10.9.6",
     "@zodios/express": "^10.6.1",
-    "aws-xray-sdk": "^3.5.3",
     "express-winston": "^4.2.0",
     "ts-pattern": "^5.0.1",
     "winston": "^3.9.0",
