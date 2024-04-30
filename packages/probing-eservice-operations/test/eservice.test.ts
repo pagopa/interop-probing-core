@@ -635,6 +635,37 @@ describe("database test", async () => {
         expect(result?.responseStatus).toBe(payload.status);
         expect(result?.responseReceived).toBe(payload.responseReceived);
       });
+
+      it("given a list of all state values as parameter, service returns searchEservices without probing data", async () => {
+        const eserviceData = {
+          eserviceName: "eService 001",
+          producerName: "eService producer 001",
+        };
+        await createEservice({
+          options: {
+            disableCreationProbingResponse: true,
+            disableCreationProbingRequest: true,
+          },
+        });
+
+        const filters: ApiSearchEservicesQuery = {
+          ...eserviceData,
+          versionNumber: 1,
+          state: [
+            eserviceMonitorState["n/d"],
+            eserviceMonitorState.offline,
+            eserviceMonitorState.online,
+          ],
+          limit: 2,
+          offset: 0,
+        };
+
+        const result = await eserviceService.searchEservices(filters);
+        expect(result.totalElements).not.toBe(0);
+        expect(result.offset).toBe(0);
+        expect(result.limit).toBe(2);
+        expect(result.content[0].state).toBe(eserviceInteropState.inactive);
+      });
     });
   });
 });
