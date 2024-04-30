@@ -48,7 +48,9 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
 
       eServiceToBeUpdated.state = payload.eServiceState;
 
-      logger.info("Updating eService State");
+      logger.info(
+        `Updating eService State with eserviceId: ${eserviceId}, versionId: ${versionId}`,
+      );
       await eserviceQuery.updateEserviceState(
         eserviceId,
         versionId,
@@ -72,7 +74,9 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
 
       eServiceToBeUpdated.probingEnabled = payload.probingEnabled;
 
-      logger.info("Updating eService Probing State");
+      logger.info(
+        `Updating eService Probing State with eserviceId: ${eserviceId}, versionId: ${versionId}`,
+      );
       await eserviceQuery.updateEserviceProbingState(
         eserviceId,
         versionId,
@@ -98,7 +102,9 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       eServiceToBeUpdated.pollingStartTime = payload.startTime;
       eServiceToBeUpdated.pollingEndTime = payload.endTime;
 
-      logger.info("Updating eService frequency");
+      logger.info(
+        `Updating eService frequency with eserviceId: ${eserviceId}, versionId: ${versionId}`,
+      );
       await eserviceQuery.updateEserviceFrequency(
         eserviceId,
         versionId,
@@ -121,7 +127,9 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
         audience: payload.audience,
       };
 
-      logger.info("Save eService");
+      logger.info(
+        `Save eService with eserviceId: ${eserviceId}, versionId: ${versionId}`,
+      );
       return await eserviceQuery.saveEservice(
         eserviceId,
         versionId,
@@ -137,7 +145,9 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
         lastRequest: payload.lastRequest,
       };
 
-      logger.info("Update eService probing last request");
+      logger.info(
+        `Update eService probing last request with eserviceRecordId: ${eserviceRecordId}`,
+      );
       await eserviceQuery.updateEserviceLastRequest(
         eserviceRecordId,
         eServiceToBeUpdated,
@@ -153,7 +163,9 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
         responseReceived: payload.responseReceived,
       };
 
-      logger.info("Update eService probing response received");
+      logger.info(
+        `Update eService probing response received with eserviceRecordId: ${eserviceRecordId}`,
+      );
       await eserviceQuery.updateResponseReceived(
         eserviceRecordId,
         eServiceToBeUpdated,
@@ -170,21 +182,25 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
     async getEserviceMainData(
       eserviceRecordId: number,
     ): Promise<ApiEserviceMainDataResponse> {
-      logger.info("Retrieving eService main data");
+      logger.info(
+        `Retrieving eService main data with eserviceRecordId: ${eserviceRecordId}`,
+      );
       return await eserviceQuery.getEserviceMainData(eserviceRecordId);
     },
 
     async getEserviceProbingData(
       eserviceRecordId: number,
     ): Promise<ApiEserviceProbingDataResponse> {
-      logger.info("Retrieving eService probing data");
+      logger.info(
+        `Retrieving eService probing data with eserviceRecordId: ${eserviceRecordId}`,
+      );
       return await eserviceQuery.getEserviceProbingData(eserviceRecordId);
     },
 
     async getEservicesReadyForPolling(
       filters: ApiGetEservicesReadyForPollingQuery,
     ): Promise<ApiGetEservicesReadyForPollingResponse> {
-      logger.info("Retrieving eServices ready for polling");
+      logger.debug("Retrieving eServices ready for polling");
       return await eserviceQuery.getEservicesReadyForPolling(filters);
     },
 
