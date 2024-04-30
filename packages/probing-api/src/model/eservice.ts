@@ -5,7 +5,7 @@ export const ApiEServiceContent = z.object({
   eserviceRecordId: z.number(),
   eserviceName: z.string(),
   producerName: z.string(),
-  responseReceived: z.string().datetime({ offset: true }),
+  responseReceived: z.string().datetime({ offset: true }).optional(),
   state: EserviceMonitorState,
   versionNumber: z.number(),
 });
