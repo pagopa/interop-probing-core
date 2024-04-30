@@ -8,11 +8,8 @@ import {
   SQSClientConfig,
   SendMessageCommandInput,
 } from "@aws-sdk/client-sqs";
-import pkg from "aws-xray-sdk";
 import { logger } from "../logging/index.js";
 import { ConsumerConfig } from "../config/consumerConfig.js";
-
-const { captureAWSv3Client, Segment } = pkg;
 
 const serializeError = (error: unknown): string => {
   try {
@@ -28,14 +25,10 @@ const processExit = async (exitStatusCode: number = 1): Promise<void> => {
   process.exit(exitStatusCode);
 };
 
-export const instantiateClient = (
-  config: SQSClientConfig,
-  awsXraySegmentName: string,
-): SQSClient => {
+export const instantiateClient = (config: SQSClientConfig): SQSClient => {
   const sqsClient = new SQSClient({
     region: config.region,
   });
-  captureAWSv3Client(sqsClient, new Segment(awsXraySegmentName));
   return sqsClient;
 };
 
