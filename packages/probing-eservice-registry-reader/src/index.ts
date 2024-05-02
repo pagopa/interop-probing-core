@@ -12,7 +12,7 @@ import { S3Client } from "@aws-sdk/client-s3";
 import { processTask } from "./processTask.js";
 import { logger } from "pagopa-interop-probing-commons";
 
-logger.info('Starting...')
+logger.info("Starting...");
 const sqsClient: SQS.SQSClient = SQS.instantiateClient({
   region: config.awsRegion,
 });
@@ -23,4 +23,4 @@ const producerService: ProducerService = producerServiceBuilder(sqsClient);
 
 await processTask(bucketService, producerService);
 
-logger.info('Eservices load completed')
+logger.info("Eservices load completed");
