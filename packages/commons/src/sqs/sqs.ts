@@ -47,9 +47,6 @@ const processQueue = async (
 
   do {
     const { Messages } = await sqsClient.send(command);
-    if (config.runOnce && (!Messages || Messages?.length === 0)) {
-      keepProcessingQueue = false;
-    }
 
     if (Messages?.length) {
       for (const message of Messages) {
