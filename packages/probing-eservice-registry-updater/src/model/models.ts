@@ -28,7 +28,7 @@ export function decodeSQSMessage(message: SQS.Message): SaveEserviceApi {
   const payload = parsed.data.value;
 
   return {
-    params: { eserviceId: payload.eserviceId, versionId: payload.eserviceId },
+    params: { eserviceId: payload.eserviceId, versionId: payload.versionId },
     payload,
   };
 }
