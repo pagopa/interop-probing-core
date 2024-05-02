@@ -68,7 +68,7 @@ const processQueue = async (
 
 export const runConsumer = async (
   sqsClient: SQSClient,
-  config: { queueUrl: string; runOnce?: boolean } & ConsumerConfig,
+  config: { queueUrl: string; runUntilQueueIsEmpty?: boolean } & ConsumerConfig,
   consumerHandler: (messagePayload: Message) => Promise<void>,
 ): Promise<void> => {
   logger.info(`Consumer processing on Queue: ${config.queueUrl}`);
