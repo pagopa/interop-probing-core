@@ -34,7 +34,7 @@ export const instantiateClient = (config: SQSClientConfig): SQSClient => {
 
 const processQueue = async (
   sqsClient: SQSClient,
-  config: { queueUrl: string; runOnce?: boolean } & ConsumerConfig,
+  config: { queueUrl: string; runUntilQueueIsEmpty?: boolean } & ConsumerConfig,
   consumerHandler: (messagePayload: Message) => Promise<void>,
 ): Promise<void> => {
   const command = new ReceiveMessageCommand({
