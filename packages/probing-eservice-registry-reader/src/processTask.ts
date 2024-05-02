@@ -4,6 +4,7 @@ import {
 } from "./model/domain/errors.js";
 import { ProducerService } from "./services/producerService.js";
 import { BucketService } from "./services/bucketService.js";
+import { logger } from "pagopa-interop-probing-commons";
 
 export async function processTask(
   bucketService: BucketService,
@@ -12,6 +13,7 @@ export async function processTask(
   try {
     const eservices = await bucketService.readObject();
     for await (const eservice of eservices) {
+      logger.info(`Sending to queue eserviceId ${eservice.eserviceId} and versionId ${eservice.versionId} `)
       await producerService.sendToServicesQueue(eservice);
     }
   } catch (e: unknown) {
