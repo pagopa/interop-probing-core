@@ -21,6 +21,7 @@ await SQS.runConsumer(
   {
     queueUrl: config.sqsEndpointServicesQueue,
     consumerPollingTimeout: config.consumerPollingTimeout,
+    runUntilQueueIsEmpty: true,
   },
   processMessage(OperationsService),
 ).catch(logger.error);
