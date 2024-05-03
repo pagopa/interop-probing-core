@@ -43,10 +43,14 @@ const processQueue = async (
     MaxNumberOfMessages: 10,
   });
 
-  let keepProcessingQueue = true;
+  let keepProcessingQueue: boolean = true;
 
   do {
     const { Messages } = await sqsClient.send(command);
+
+    if (config.runUntilQueueIsEmpty && (!Messages || Messages?.length === 0)) {
+      keepProcessingQueue = false;
+    }
 
     if (Messages?.length) {
       for (const message of Messages) {
