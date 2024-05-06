@@ -75,7 +75,7 @@ describe("caller service test", () => {
     expect(apiClientHandler.sendREST).toHaveBeenCalledWith(baseUrl, mockJWT);
   });
 
-  it("Test KO UNKNOWN_KO_REASON call probing - REST", async () => {
+  it("Test KO 502 Bad Gateway call probing - REST", async () => {
     const validMessage: SQS.Message = {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
@@ -101,9 +101,7 @@ describe("caller service test", () => {
     const telemetryResult = await callerService.performRequest(eservice);
 
     expect(telemetryResult.status).toBe("KO");
-    expect((telemetryResult as TelemetryKoDto).koReason).toBe(
-      callerConstants.UNKNOWN_KO_REASON,
-    );
+    expect((telemetryResult as TelemetryKoDto).koReason).toBe("502");
     expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
 
     await expect(apiClientHandler.sendREST).toHaveBeenCalledWith(

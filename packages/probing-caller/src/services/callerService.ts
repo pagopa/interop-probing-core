@@ -19,13 +19,13 @@ export const callerServiceBuilder = (
 ) => {
   return {
     async performRequest(eservice: EserviceContentDto): Promise<TelemetryDto> {
+      const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
+
       logger.info(
-        `Perfoming Telemetry ${eservice.technology} request with eserviceRecordId: ${eservice.eserviceRecordId}`,
+        `Perfoming Telemetry ${eservice.technology} request with eserviceRecordId: ${eservice.eserviceRecordId} to ${baseUrl}`,
       );
 
       const token: string = await kmsClientHandler.buildJWT(eservice.audience);
-      const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
-
       const beforeRequestTimestamp: number = Date.now();
 
       try {
