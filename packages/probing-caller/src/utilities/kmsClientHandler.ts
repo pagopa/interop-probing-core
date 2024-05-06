@@ -42,9 +42,7 @@ export const kmsClientBuilder = () => {
           throw new Error("Failed to generate signature.");
         }
 
-        return removePadding(
-          `${token}.${Buffer.from(signedTokenBuffer).toString("base64")}`,
-        );
+        return `${token}.${removePadding(Buffer.from(signedTokenBuffer).toString("base64"))}`;
       } catch (err: unknown) {
         logger.error(`Error building JWT token: ${err}`);
         throw buildJWTError(`${err}`);
@@ -70,11 +68,7 @@ function createHeader(): string {
     kid: config.jwtPayloadKidKms,
   };
 
-  return Buffer.from(JSON.stringify(obj)).toString("base64");
-}
-
-function removePadding(base64Text: string): string {
-  return base64Text.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
+  return removePadding(Buffer.from(JSON.stringify(obj)).toString("base64"));
 }
 
 function createPayload(audience: string[]): string {
@@ -90,5 +84,9 @@ function createPayload(audience: string[]): string {
     jti: uuidv4(),
   };
 
-  return Buffer.from(JSON.stringify(claims)).toString("base64");
+  return removePadding(Buffer.from(JSON.stringify(claims)).toString("base64"));
+}
+
+function removePadding(base64Text: string): string {
+  return base64Text.replace(/=/g, "").replace(/\+/g, "-").replace(/\//g, "_");
 }

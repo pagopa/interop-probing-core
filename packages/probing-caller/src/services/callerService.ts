@@ -26,8 +26,6 @@ export const callerServiceBuilder = (
       );
 
       const token: string = await kmsClientHandler.buildJWT(eservice.audience);
-
-      logger.info(`EserviceRecordId: ${eservice.eserviceRecordId} TOKEN: ${token}`);
       const beforeRequestTimestamp: number = Date.now();
 
       try {
