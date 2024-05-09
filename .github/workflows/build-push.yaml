@@ -9,6 +9,7 @@ on:
       - '*'
     paths:
       - 'packages/**'
+      - '!packages/probing-frontend'
 
 jobs:
   build_push_image:
