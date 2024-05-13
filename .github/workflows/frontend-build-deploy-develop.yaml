@@ -34,9 +34,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-      - name: Clean dependencies
-        run: |
-          rm -rf packages/probing-frontend/node_modules packages/probing-frontend/dist
       - name: Install dependencies
         run: |
           pnpm install
