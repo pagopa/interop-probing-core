@@ -306,7 +306,7 @@ describe("database test", async () => {
         });
 
         expect(result.content.length).toBe(1);
-        expect(result.totalElements).toBe(2);
+        expect(result.totalElements).toBe(1);
       });
     });
 
