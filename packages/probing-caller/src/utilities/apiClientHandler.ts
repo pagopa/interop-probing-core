@@ -1,4 +1,5 @@
 import axios, { AxiosResponse } from "axios";
+import { createProbingRequestEnvelope } from "./soapEnvelope.js";
 
 export const apiClientBuilder = () => {
   return {
@@ -17,9 +18,11 @@ export const apiClientBuilder = () => {
         method: "POST",
         url: baseUrl,
         headers: {
-          "Content-Type": "text/xml",
+          "Content-Type": "text/xml;charset=UTF-8",
           Authorization: `Bearer ${token}`,
+          SOAPAction: "interop/probing",
         },
+        data: createProbingRequestEnvelope(),
       });
     },
   };
