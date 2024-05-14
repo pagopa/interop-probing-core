@@ -28,7 +28,6 @@ import {
 } from "../../model/domain/errors.js";
 import { eServiceDefaultValues } from "../../repositories/entity/eservice.entity.js";
 import { SelectQueryBuilder } from "typeorm";
-import { EserviceView } from "../../repositories/entity/view/eservice.entity.js";
 import { config } from "../../utilities/config.js";
 import { WhereExpressionBuilder } from "typeorm/browser";
 import {
@@ -414,18 +413,17 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       filters: ApiGetEservicesReadyForPollingQuery,
     ): Promise<ApiGetEservicesReadyForPollingResponse> {
       const [data, count] = await eserviceView
-        .createQueryBuilder()
-        .distinct(true)
-        .where((qb: SelectQueryBuilder<EserviceViewEntities>) =>
-          addPredicateEservicesReadyForPolling(qb, "eserviceView"),
-        )
+        .createQueryBuilder("eserviceView")
         .select([
           "eserviceView.eserviceRecordId",
           "eserviceView.technology",
           "eserviceView.basePath",
           "eserviceView.audience",
         ])
-        .from(EserviceView, "eserviceView") // Explicitly defining the 'from' clause is required to address select and the issue described here https://github.com/typeorm/typeorm/issues/1937.
+        .distinct(true)
+        .where((qb: SelectQueryBuilder<EserviceViewEntities>) =>
+          addPredicateEservicesReadyForPolling(qb, "eserviceView"),
+        )
         .orderBy("eserviceView.eserviceRecordId", "ASC")
         .skip(filters.offset)
         .take(filters.limit)
