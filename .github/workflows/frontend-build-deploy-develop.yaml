@@ -4,7 +4,7 @@ on:
     branches:
       - 'develop'
     paths:
-      - 'packages/probing-frontend'
+      - 'packages/probing-frontend/**'
 
 jobs:
   deploy_dev:
