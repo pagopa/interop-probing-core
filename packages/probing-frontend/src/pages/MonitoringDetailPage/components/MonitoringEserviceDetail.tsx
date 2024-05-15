@@ -1,12 +1,12 @@
 import type { MainEservice } from '@/api/monitoring/monitoring.models'
-import { Box } from '@mui/material'
+import { Skeleton, Stack } from '@mui/material'
 import { ButtonNaked } from '@pagopa/mui-italia'
 import { useTranslation } from 'react-i18next'
 import LaunchIcon from '@mui/icons-material/Launch'
 import LockIcon from '@mui/icons-material/Lock'
 import { Link } from 'react-router-dom'
-import { MonitoringInformationContainer } from './MonitoringInformationContainer'
 import { CATALOGUE_BASE_PATH } from '@/config/constants'
+import { InformationContainer } from '@pagopa/interop-fe-commons'
 
 type MonitoringEserviceDetailProps = {
   eservicesDetail: MainEservice
@@ -24,16 +24,13 @@ export const MonitoringEserviceDetail: React.FC<MonitoringEserviceDetailProps> =
   }
 
   return (
-    <Box sx={{ width: '100%', maxWidth: '600px' }}>
-      <MonitoringInformationContainer
-        label={t('producerName')}
-        content={eservicesDetail.producerName || ''}
-      />
-      <MonitoringInformationContainer
+    <Stack spacing={3} sx={{ width: '100%', minWidth: '400px', maxWidth: '600px' }}>
+      <InformationContainer label={t('producerName')} content={eservicesDetail.producerName} />
+      <InformationContainer
         label={t('version')}
-        content={eservicesDetail.versionNumber || ''}
+        content={eservicesDetail.versionNumber.toString()}
       />
-      <MonitoringInformationContainer
+      <InformationContainer
         label={t('eServiceTab')}
         content={
           <ButtonNaked
@@ -49,6 +46,15 @@ export const MonitoringEserviceDetail: React.FC<MonitoringEserviceDetailProps> =
           </ButtonNaked>
         }
       />
-    </Box>
+    </Stack>
+  )
+}
+
+export const MonitoringEserviceDetailSkeleton: React.FC = () => {
+  return (
+    <Skeleton
+      variant="rectangular"
+      sx={{ width: '100%', minWidth: '400px', maxWidth: '600px', height: 115 }}
+    />
   )
 }

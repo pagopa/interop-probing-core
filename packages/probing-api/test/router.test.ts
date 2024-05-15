@@ -3,9 +3,16 @@ import supertest from "supertest";
 import { v4 as uuidv4 } from "uuid";
 import { zodiosCtx } from "pagopa-interop-probing-commons";
 import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
+import {
+  EServiceContent,
+  EServiceMainData,
+  EServiceProbingData,
+  eserviceInteropState,
+  eserviceMonitorState,
+  responseStatus,
+} from "pagopa-interop-probing-models";
 import eServiceRouter from "../src/routers/eserviceRouter.js";
 import { config } from "../src/utilities/config.js";
-import { mockOperationsApiClientError, nowDateUTC } from "./utils.js";
 import {
   eServiceMainDataByRecordIdNotFound,
   eServiceNotFound,
@@ -23,14 +30,7 @@ import {
   ApiSearchEservicesQuery,
   ApiGetProducersQuery,
 } from "../src/model/types.js";
-import {
-  EServiceContent,
-  EServiceMainData,
-  EServiceProbingData,
-  eserviceInteropState,
-  eserviceMonitorState,
-  responseStatus,
-} from "pagopa-interop-probing-models";
+import { mockOperationsApiClientError, nowDateUTC } from "./utils.js";
 
 const operationsApiClient = createApiClient(config.operationsBaseUrl);
 const app = zodiosCtx.app();
@@ -53,12 +53,12 @@ describe("eService Router", () => {
     };
 
     vi.spyOn(operationsApiClient, "updateEserviceState").mockResolvedValue(
-      undefined
+      undefined,
     );
 
     const response = await probingApiClient
       .post(
-        `/eservices/${params.eserviceId}/versions/${params.versionId}/updateState`
+        `/eservices/${params.eserviceId}/versions/${params.versionId}/updateState`,
       )
       .set("Content-Type", "application/json")
       .send(eserviceUpdateState);
@@ -76,17 +76,17 @@ describe("eService Router", () => {
     };
     const errorRes = makeApiProblem(
       eServiceNotFound(params.eserviceId, params.versionId),
-      updateEServiceErrorMapper
+      updateEServiceErrorMapper,
     );
     const apiClientError = mockOperationsApiClientError(errorRes);
 
     vi.spyOn(operationsApiClient, "updateEserviceState").mockRejectedValue(
-      apiClientError
+      apiClientError,
     );
 
     const response = await probingApiClient
       .post(
-        `/eservices/${params.eserviceId}/versions/${params.versionId}/updateState`
+        `/eservices/${params.eserviceId}/versions/${params.versionId}/updateState`,
       )
       .set("Content-Type", "application/json")
       .send(eserviceUpdateState);
@@ -110,7 +110,7 @@ describe("eService Router", () => {
       .send(eserviceUpdateState);
 
     expect(response.text).contains(
-      `Cannot POST /eservices/versions/${params.versionId}/updateState`
+      `Cannot POST /eservices/versions/${params.versionId}/updateState`,
     );
     expect(response.status).toBe(404);
   });
@@ -129,7 +129,7 @@ describe("eService Router", () => {
       .send(eserviceUpdateState);
 
     expect(response.text).contains(
-      `Cannot POST /eservices/${params.eserviceId}/versions/updateState`
+      `Cannot POST /eservices/${params.eserviceId}/versions/updateState`,
     );
     expect(response.status).toBe(404);
   });
@@ -142,13 +142,14 @@ describe("eService Router", () => {
 
     const response = await probingApiClient
       .post(
-        `/eservices/${params.eserviceId}/versions/${params.versionId}/updateState`
+        `/eservices/${params.eserviceId}/versions/${params.versionId}/updateState`,
       )
       .set("Content-Type", "application/json");
 
-    expect(response.text).toContain(`"context":"body"`);
-    expect(response.text).toContain("eServiceState");
+    expect(response.text).toContain("Validation failed");
+    expect(response.text).toContain("body");
     expect(response.text).toContain("Required");
+    expect(response.text).toContain("eServiceState");
     expect(response.status).toBe(400);
   });
 
@@ -163,12 +164,12 @@ describe("eService Router", () => {
 
     vi.spyOn(
       operationsApiClient,
-      "updateEserviceProbingState"
+      "updateEserviceProbingState",
     ).mockResolvedValue(undefined);
 
     const response = await probingApiClient
       .post(
-        `/eservices/${params.eserviceId}/versions/${params.versionId}/probing/updateState`
+        `/eservices/${params.eserviceId}/versions/${params.versionId}/probing/updateState`,
       )
       .set("Content-Type", "application/json")
       .send(updateEserviceProbingState);
@@ -187,18 +188,18 @@ describe("eService Router", () => {
 
     const errorRes = makeApiProblem(
       eServiceNotFound(params.eserviceId, params.versionId),
-      updateEServiceErrorMapper
+      updateEServiceErrorMapper,
     );
     const apiClientError = mockOperationsApiClientError(errorRes);
 
     vi.spyOn(
       operationsApiClient,
-      "updateEserviceProbingState"
+      "updateEserviceProbingState",
     ).mockRejectedValue(apiClientError);
 
     const response = await probingApiClient
       .post(
-        `/eservices/${params.eserviceId}/versions/${params.versionId}/probing/updateState`
+        `/eservices/${params.eserviceId}/versions/${params.versionId}/probing/updateState`,
       )
       .set("Content-Type", "application/json")
       .send(updateEserviceProbingState);
@@ -216,13 +217,14 @@ describe("eService Router", () => {
 
     const response = await probingApiClient
       .post(
-        `/eservices/${params.eserviceId}/versions/${params.versionId}/probing/updateState`
+        `/eservices/${params.eserviceId}/versions/${params.versionId}/probing/updateState`,
       )
       .set("Content-Type", "application/json");
 
-    expect(response.text).toContain(`"context":"body"`);
-    expect(response.text).toContain("probingEnabled");
+    expect(response.text).toContain("Validation failed");
+    expect(response.text).toContain("body");
     expect(response.text).toContain("Required");
+    expect(response.text).toContain("probingEnabled");
     expect(response.status).toBe(400);
   });
 
@@ -238,12 +240,12 @@ describe("eService Router", () => {
     };
 
     vi.spyOn(operationsApiClient, "updateEserviceFrequency").mockResolvedValue(
-      undefined
+      undefined,
     );
 
     const response = await probingApiClient
       .post(
-        `/eservices/${params.eserviceId}/versions/${params.versionId}/updateFrequency`
+        `/eservices/${params.eserviceId}/versions/${params.versionId}/updateFrequency`,
       )
       .set("Content-Type", "application/json")
       .send(updateEserviceFrequency);
@@ -264,17 +266,17 @@ describe("eService Router", () => {
 
     const errorRes = makeApiProblem(
       eServiceNotFound(params.eserviceId, params.versionId),
-      updateEServiceErrorMapper
+      updateEServiceErrorMapper,
     );
     const apiClientError = mockOperationsApiClientError(errorRes);
 
     vi.spyOn(operationsApiClient, "updateEserviceFrequency").mockRejectedValue(
-      apiClientError
+      apiClientError,
     );
 
     const response = await probingApiClient
       .post(
-        `/eservices/${params.eserviceId}/versions/${params.versionId}/updateFrequency`
+        `/eservices/${params.eserviceId}/versions/${params.versionId}/updateFrequency`,
       )
       .set("Content-Type", "application/json")
       .send(updateEserviceFrequency);
@@ -294,7 +296,7 @@ describe("eService Router", () => {
       .set("Content-Type", "application/json");
 
     expect(response.text).contains(
-      `Cannot POST /eservices/versions/${params.versionId}/updateFrequency`
+      `Cannot POST /eservices/versions/${params.versionId}/updateFrequency`,
     );
     expect(response.status).toBe(404);
   });
@@ -309,7 +311,7 @@ describe("eService Router", () => {
       .set("Content-Type", "application/json");
 
     expect(response.text).contains(
-      `Cannot POST /eservices/${params.eserviceId}/versions/updateFrequency`
+      `Cannot POST /eservices/${params.eserviceId}/versions/updateFrequency`,
     );
     expect(response.status).toBe(404);
   });
@@ -322,14 +324,15 @@ describe("eService Router", () => {
 
     const response = await probingApiClient
       .post(
-        `/eservices/${params.eserviceId}/versions/${params.versionId}/updateFrequency`
+        `/eservices/${params.eserviceId}/versions/${params.versionId}/updateFrequency`,
       )
       .set("Content-Type", "application/json");
 
-    expect(response.text).toContain(`"context":"body"`);
+    expect(response.text).toContain("Validation failed");
+    expect(response.text).toContain("body");
+    expect(response.text).toContain("Required");
     expect(response.text).toContain("startTime");
     expect(response.text).toContain("endTime");
-    expect(response.text).toContain("Required");
     expect(response.status).toBe(400);
   });
 
@@ -420,7 +423,8 @@ describe("eService Router", () => {
         offset,
       });
 
-    expect(response.text).toContain(`"context":"query.limit"`);
+    expect(response.text).toContain("Validation failed");
+    expect(response.text).toContain("query.limit");
     expect(response.text).toContain("Required");
     expect(response.status).toBe(400);
   });
@@ -447,7 +451,8 @@ describe("eService Router", () => {
         limit,
       });
 
-    expect(response.text).toContain(`"context":"query.offset"`);
+    expect(response.text).toContain("Validation failed");
+    expect(response.text).toContain("query.offset");
     expect(response.text).toContain("Required");
     expect(response.status).toBe(400);
   });
@@ -457,12 +462,12 @@ describe("eService Router", () => {
 
     const errorRes = makeApiProblem(
       eServiceMainDataByRecordIdNotFound(eserviceRecordId),
-      updateEServiceErrorMapper
+      updateEServiceErrorMapper,
     );
     const apiClientError = mockOperationsApiClientError(errorRes);
 
     vi.spyOn(operationsApiClient, "getEserviceMainData").mockRejectedValue(
-      apiClientError
+      apiClientError,
     );
 
     const response = await probingApiClient
@@ -485,7 +490,7 @@ describe("eService Router", () => {
     };
 
     vi.spyOn(operationsApiClient, "getEserviceMainData").mockResolvedValue(
-      eserviceMainData
+      eserviceMainData,
     );
 
     const {
@@ -505,12 +510,12 @@ describe("eService Router", () => {
 
     const errorRes = makeApiProblem(
       eServiceProbingDataByRecordIdNotFound(eserviceRecordId),
-      updateEServiceErrorMapper
+      updateEServiceErrorMapper,
     );
     const apiClientError = mockOperationsApiClientError(errorRes);
 
     vi.spyOn(operationsApiClient, "getEserviceProbingData").mockRejectedValue(
-      apiClientError
+      apiClientError,
     );
 
     const response = await probingApiClient
@@ -533,7 +538,7 @@ describe("eService Router", () => {
     };
 
     vi.spyOn(operationsApiClient, "getEserviceProbingData").mockResolvedValue(
-      eserviceMainData
+      eserviceMainData,
     );
 
     const {

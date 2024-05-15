@@ -820,6 +820,9 @@ components:
 
     PollingEserviceResponse:
       type: object
+      required:
+        - content
+        - totalElements
       properties:
         content:
           title: polling active response

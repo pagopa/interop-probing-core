@@ -9,12 +9,12 @@ import {
 
 const operationsApiClient = createApiClient(config.operationsBaseUrl);
 
-const OperationsService: OperationsService = operationsServiceBuilder(operationsApiClient);
+const OperationsService: OperationsService =
+  operationsServiceBuilder(operationsApiClient);
 
-const sqsClient: SQS.SQSClient = await SQS.instantiateClient(
-  { region: config.awsRegion },
-  config.applicationName
-);
+const sqsClient: SQS.SQSClient = await SQS.instantiateClient({
+  region: config.awsRegion,
+});
 
 await SQS.runConsumer(
   sqsClient,
@@ -22,5 +22,5 @@ await SQS.runConsumer(
     queueUrl: config.sqsEndpointPollResultQueue,
     consumerPollingTimeout: config.consumerPollingTimeout,
   },
-  processMessage(OperationsService)
+  processMessage(OperationsService),
 ).catch(logger.error);

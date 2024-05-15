@@ -1,3 +1,4 @@
+/* eslint-disable no-constant-condition */
 import {
   SQSClient,
   ReceiveMessageCommand,
@@ -5,42 +6,36 @@ import {
   DeleteMessageCommand,
   Message,
   SQSClientConfig,
+  SendMessageCommandInput,
 } from "@aws-sdk/client-sqs";
-import pkg from "aws-xray-sdk";
 import { logger } from "../logging/index.js";
 import { ConsumerConfig } from "../config/consumerConfig.js";
 
-const { captureAWSv3Client, Segment } = pkg;
-
-const serializeError = (error: unknown) => {
+const serializeError = (error: unknown): string => {
   try {
     return JSON.stringify(error, Object.getOwnPropertyNames(error));
   } catch (e) {
-    return error;
+    return `${error}`;
   }
 };
 
 const processExit = async (exitStatusCode: number = 1): Promise<void> => {
-  logger.info(`Process exit with code ${exitStatusCode}`);
+  logger.error(`Process exit with code ${exitStatusCode}`);
   await new Promise((resolve) => setTimeout(resolve, 1000));
   process.exit(exitStatusCode);
 };
 
-export const instantiateClient = (
-  config: SQSClientConfig,
-  awsXraySegmentName: string
-): SQSClient => {
+export const instantiateClient = (config: SQSClientConfig): SQSClient => {
   const sqsClient = new SQSClient({
     region: config.region,
   });
-  captureAWSv3Client(sqsClient, new Segment(awsXraySegmentName));
   return sqsClient;
 };
 
 const processQueue = async (
   sqsClient: SQSClient,
-  config: { queueUrl: string } & ConsumerConfig,
-  consumerHandler: (messagePayload: Message) => Promise<void>
+  config: { queueUrl: string; runUntilQueueIsEmpty?: boolean } & ConsumerConfig,
+  consumerHandler: (messagePayload: Message) => Promise<void>,
 ): Promise<void> => {
   const command = new ReceiveMessageCommand({
     QueueUrl: config.queueUrl,
@@ -48,51 +43,67 @@ const processQueue = async (
     MaxNumberOfMessages: 10,
   });
 
-  const { Messages } = await sqsClient.send(command);
-  if (Messages?.length) {
-    for (const message of Messages) {
-      if (!message.ReceiptHandle) {
-        throw new Error(
-          `ReceiptHandle not found in Message: ${JSON.stringify(message)}`
-        );
-      }
+  let keepProcessingQueue: boolean = true;
 
-      await consumerHandler(message);
-      await deleteMessage(sqsClient, config.queueUrl, message.ReceiptHandle);
+  do {
+    const { Messages } = await sqsClient.send(command);
+
+    if (config.runUntilQueueIsEmpty && (!Messages || Messages?.length === 0)) {
+      keepProcessingQueue = false;
     }
-  }
+
+    if (Messages?.length) {
+      for (const message of Messages) {
+        if (!message.ReceiptHandle) {
+          throw new Error(
+            `ReceiptHandle not found in Message: ${JSON.stringify(message)}`,
+          );
+        }
+
+        await consumerHandler(message);
+        await deleteMessage(sqsClient, config.queueUrl, message.ReceiptHandle);
+      }
+    }
+  } while (keepProcessingQueue);
 };
 
 export const runConsumer = async (
   sqsClient: SQSClient,
-  config: { queueUrl: string } & ConsumerConfig,
-  consumerHandler: (messagePayload: Message) => Promise<void>
+  config: { queueUrl: string; runUntilQueueIsEmpty?: boolean } & ConsumerConfig,
+  consumerHandler: (messagePayload: Message) => Promise<void>,
 ): Promise<void> => {
   logger.info(`Consumer processing on Queue: ${config.queueUrl}`);
 
-  do {
-    try {
-      await processQueue(sqsClient, config, consumerHandler);
-    } catch (e) {
-      logger.error(
-        `Generic error occurs processing Queue: ${
-          config.queueUrl
-        }. Details: ${serializeError(e)}`
-      );
-      await processExit();
-    }
-  } while (true);
+  try {
+    await processQueue(sqsClient, config, consumerHandler);
+  } catch (e) {
+    logger.error(
+      `Generic error occurs processing Queue: ${
+        config.queueUrl
+      }. Details: ${serializeError(e)}`,
+    );
+    await processExit();
+  }
+
+  logger.info(`Queue processing Completed for Queue: ${config.queueUrl}`);
 };
 
 export const sendMessage = async (
   sqsClient: SQSClient,
   queueUrl: string,
-  messageBody: string
+  messageBody: string,
+  messageGroupId?: string,
 ): Promise<void> => {
-  const command = new SendMessageCommand({
+  const messageCommandInput: SendMessageCommandInput = {
     QueueUrl: queueUrl,
     MessageBody: messageBody,
-  });
+  };
+
+  if (messageGroupId) {
+    messageCommandInput.MessageGroupId = messageGroupId;
+  }
+
+  const command = new SendMessageCommand(messageCommandInput);
 
   await sqsClient.send(command);
 };
@@ -100,7 +111,7 @@ export const sendMessage = async (
 export const deleteMessage = async (
   sqsClient: SQSClient,
   queueUrl: string,
-  receiptHandle: string
+  receiptHandle: string,
 ): Promise<void> => {
   const deleteCommand = new DeleteMessageCommand({
     QueueUrl: queueUrl,
@@ -110,8 +121,4 @@ export const deleteMessage = async (
   await sqsClient.send(deleteCommand);
 };
 
-export {
-  SQSClient,
-  SQSClientConfig,
-  Message,
-};
+export { SQSClient, SQSClientConfig, Message };

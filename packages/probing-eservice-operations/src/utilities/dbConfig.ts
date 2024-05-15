@@ -18,6 +18,4 @@ export const DbConfig = z
 
 export type DbConfig = z.infer<typeof DbConfig>;
 
-export const dbConfig: DbConfig = DbConfig.parse(
-  process.env
-);
+export const dbConfig: DbConfig = DbConfig.parse(process.env);

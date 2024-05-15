@@ -2,23 +2,27 @@ import {
   EService,
   ChangeEserviceProbingStateRequest,
   ChangeEserviceStateRequest,
-  EServiceContent,
   ChangeProbingFrequencyRequest,
   EserviceSaveRequest,
   EserviceProbingUpdateLastRequest,
   ChangeResponseReceived,
-  EServiceMainData,
-  EServiceProbingData,
-  PollingResource,
 } from "pagopa-interop-probing-models";
 import { ModelService } from "./dbService.js";
 import {
-  ListResultEservices,
-  ListResultProducers,
-} from "../../model/dbModels.js";
-import {
+  ApiGetEservicesReadyForPollingQuery,
   ApiGetProducersQuery,
   ApiSearchEservicesQuery,
+  ApiGetEservicesReadyForPollingResponse,
+  ApiSearchEservicesResponse,
+  ApiGetProducersResponse,
+  ApiEserviceMainDataResponse,
+  ApiEserviceProbingDataResponse,
+  ApiUpdateResponseReceivedResponse,
+  ApiUpdateLastRequestResponse,
+  ApiSaveEserviceResponse,
+  ApiUpdateEserviceStateResponse,
+  ApiUpdateEserviceProbingStateResponse,
+  ApiUpdateEserviceFrequencyResponse,
 } from "pagopa-interop-probing-eservice-operations-client";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
@@ -27,81 +31,80 @@ export function eserviceQueryBuilder(modelService: ModelService) {
     updateEserviceState: async (
       eserviceId: string,
       versionId: string,
-      eServiceUpdated: ChangeEserviceStateRequest
-    ): Promise<void> =>
+      eServiceUpdated: ChangeEserviceStateRequest,
+    ): Promise<ApiUpdateEserviceStateResponse> =>
       await modelService.updateEserviceState(
         eserviceId,
         versionId,
-        eServiceUpdated
+        eServiceUpdated,
       ),
     updateEserviceProbingState: async (
       eserviceId: string,
       versionId: string,
-      eServiceUpdated: ChangeEserviceProbingStateRequest
-    ): Promise<void> =>
+      eServiceUpdated: ChangeEserviceProbingStateRequest,
+    ): Promise<ApiUpdateEserviceProbingStateResponse> =>
       await modelService.updateEserviceProbingState(
         eserviceId,
         versionId,
-        eServiceUpdated
+        eServiceUpdated,
       ),
     updateEserviceFrequency: async (
       eserviceId: string,
       versionId: string,
-      eServiceUpdated: ChangeProbingFrequencyRequest
-    ): Promise<void> =>
+      eServiceUpdated: ChangeProbingFrequencyRequest,
+    ): Promise<ApiUpdateEserviceFrequencyResponse> =>
       await modelService.updateEserviceFrequency(
         eserviceId,
         versionId,
-        eServiceUpdated
+        eServiceUpdated,
       ),
     saveEservice: async (
       eserviceId: string,
       versionId: string,
-      eServiceUpdated: EserviceSaveRequest
-    ): Promise<void> =>
+      eServiceUpdated: EserviceSaveRequest,
+    ): Promise<ApiSaveEserviceResponse> =>
       await modelService.saveEservice(eserviceId, versionId, eServiceUpdated),
     updateEserviceLastRequest: async (
       eserviceRecordId: number,
-      eServiceUpdated: EserviceProbingUpdateLastRequest
-    ): Promise<void> =>
+      eServiceUpdated: EserviceProbingUpdateLastRequest,
+    ): Promise<ApiUpdateLastRequestResponse> =>
       await modelService.updateEserviceLastRequest(
         eserviceRecordId,
-        eServiceUpdated
+        eServiceUpdated,
       ),
     updateResponseReceived: async (
       eserviceRecordId: number,
-      eServiceUpdated: ChangeResponseReceived
-    ): Promise<void> =>
+      eServiceUpdated: ChangeResponseReceived,
+    ): Promise<ApiUpdateResponseReceivedResponse> =>
       await modelService.updateResponseReceived(
         eserviceRecordId,
-        eServiceUpdated
+        eServiceUpdated,
       ),
     getEServiceByIdAndVersion: async (
       eserviceId: string,
-      versionId: string
+      versionId: string,
     ): Promise<EService | undefined> =>
       await modelService.getEServiceByIdAndVersion(eserviceId, versionId),
     searchEservices: async (
-      filters: ApiSearchEservicesQuery
-    ): Promise<ListResultEservices<EServiceContent>> =>
+      filters: ApiSearchEservicesQuery,
+    ): Promise<ApiSearchEservicesResponse> =>
       await modelService.searchEservices(filters),
     getEserviceMainData: async (
-      eserviceRecordId: number
-    ): Promise<EServiceMainData> =>
+      eserviceRecordId: number,
+    ): Promise<ApiEserviceMainDataResponse> =>
       await modelService.getEserviceMainData(eserviceRecordId),
     getEserviceProbingData: async (
-      eserviceRecordId: number
-    ): Promise<EServiceProbingData> =>
+      eserviceRecordId: number,
+    ): Promise<ApiEserviceProbingDataResponse> =>
       await modelService.getEserviceProbingData(eserviceRecordId),
     getEservicesProducers: async (
-      filters: ApiGetProducersQuery
-    ): Promise<ListResultProducers<string>> =>
+      filters: ApiGetProducersQuery,
+    ): Promise<ApiGetProducersResponse> =>
       await modelService.getEservicesProducers(filters),
     getEservicesReadyForPolling: async (
-      limit: number,
-      offset: number
-    ): Promise<ListResultEservices<PollingResource>> =>
-      await modelService.getEservicesReadyForPolling(limit, offset),
+      filters: ApiGetEservicesReadyForPollingQuery,
+    ): Promise<ApiGetEservicesReadyForPollingResponse> =>
+      await modelService.getEservicesReadyForPolling(filters),
   };
 }
 

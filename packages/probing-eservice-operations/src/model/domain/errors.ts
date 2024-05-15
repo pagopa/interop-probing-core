@@ -10,7 +10,7 @@ export const makeApiProblem = makeApiProblemBuilder(errorCodes);
 
 export function eServiceNotFound(
   eserviceId: string,
-  versionId: string
+  versionId: string,
 ): ApiError<ErrorCodes> {
   return new ApiError({
     detail: `EService by ${eserviceId} version ${versionId} not found`,
@@ -20,7 +20,7 @@ export function eServiceNotFound(
 }
 
 export function eServiceMainDataByRecordIdNotFound(
-  eserviceRecordId: number
+  eserviceRecordId: number,
 ): ApiError<ErrorCodes> {
   return new ApiError({
     detail: `EService main data by eserviceRecordId ${eserviceRecordId} not found`,
@@ -30,7 +30,7 @@ export function eServiceMainDataByRecordIdNotFound(
 }
 
 export function eServiceProbingDataByRecordIdNotFound(
-  eserviceRecordId: number
+  eserviceRecordId: number,
 ): ApiError<ErrorCodes> {
   return new ApiError({
     detail: `EService probing data by eserviceRecordId ${eserviceRecordId} not found`,

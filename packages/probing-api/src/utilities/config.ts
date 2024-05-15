@@ -12,11 +12,13 @@ const apiConfig = HTTPServerConfig.and(LoggerConfig)
       .object({
         API_OPERATIONS_BASEURL: z.string(),
         TOLERANCE_MULTIPLIER_IN_MINUTES: z.coerce.number().min(1),
+        CORS_ORIGIN_ALLOWED: z.string(),
       })
       .transform((c) => ({
         operationsBaseUrl: c.API_OPERATIONS_BASEURL,
         minOfTolleranceMultiplier: c.TOLERANCE_MULTIPLIER_IN_MINUTES,
-      }))
+        corsOriginAllowed: c.CORS_ORIGIN_ALLOWED,
+      })),
   );
 
 export type ApiConfig = z.infer<typeof apiConfig>;

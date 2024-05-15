@@ -4,7 +4,7 @@ import {
   EserviceProbingResponseEntities,
   EserviceViewEntities,
 } from "../src/repositories/modelRepository.js";
-import { ObjectLiteral } from "typeorm";
+import { InsertResult, ObjectLiteral } from "typeorm";
 import { EserviceSchema } from "../src/repositories/entity/eservice.entity.js";
 import { EserviceProbingRequestSchema } from "../src/repositories/entity/eservice_probing_request.entity.js";
 import { EserviceProbingResponseSchema } from "../src/repositories/entity/eservice_probing_response.entity.js";
@@ -13,7 +13,7 @@ import { EserviceViewSchema } from "../src/repositories/entity/view/eservice.ent
 
 export const addEserviceProbingRequest = async (
   data: EserviceProbingRequestSchema,
-  repository: EserviceProbingRequestEntities
+  repository: EserviceProbingRequestEntities,
 ): Promise<ObjectLiteral[]> => {
   const result = await repository.upsert(data, {
     skipUpdateIfNoValuesChanged: true,
@@ -24,7 +24,7 @@ export const addEserviceProbingRequest = async (
 
 export const addEserviceProbingResponse = async (
   data: EserviceProbingResponseSchema,
-  repository: EserviceProbingResponseEntities
+  repository: EserviceProbingResponseEntities,
 ): Promise<ObjectLiteral[]> => {
   const result = await repository.upsert(data, {
     skipUpdateIfNoValuesChanged: true,
@@ -35,9 +35,9 @@ export const addEserviceProbingResponse = async (
 
 export const addEservice = async (
   data: EserviceSchema,
-  repository: EserviceEntities
-): Promise<{ id: string }> => {
-  const results = await repository
+  repository: EserviceEntities,
+): Promise<number> => {
+  const result: InsertResult = await repository
     .createQueryBuilder()
     .insert()
     .values({
@@ -47,13 +47,14 @@ export const addEservice = async (
     })
     .returning("id")
     .execute();
-  const [result] = results.raw;
-  return result;
+
+  const [eservice]: { id: string }[] = result.raw;
+  return Number(eservice.id);
 };
 
 export const getEservice = async (
   eserviceRecordId: number,
-  repository: EserviceViewEntities
-): Promise<EserviceViewSchema | { [key: string]: string } > => {
-  return await repository.findOneBy({ eserviceRecordId }) || {};
+  repository: EserviceViewEntities,
+): Promise<EserviceViewSchema | { [key: string]: string }> => {
+  return (await repository.findOneBy({ eserviceRecordId })) || {};
 };

@@ -1,12 +1,14 @@
 import { ZodiosEndpointDefinitions, ZodiosInstance } from "@zodios/core";
 import { ZodiosRouter } from "@zodios/express";
-import { resolveOperationsApiClientProblem } from "../model/domain/errors.js";
 import {
   ExpressContext,
   ZodiosContext,
   logger,
 } from "pagopa-interop-probing-commons";
 import { Api } from "pagopa-interop-probing-eservice-operations-client";
+import { genericError } from "pagopa-interop-probing-models";
+import { z } from "zod";
+import { resolveOperationsApiClientProblem } from "../model/domain/errors.js";
 import {
   OperationsService,
   operationsServiceBuilder,
@@ -18,18 +20,20 @@ import {
   isActive,
 } from "../utilities/enumUtils.js";
 import { ApiEServiceContent } from "../model/eservice.js";
-import { genericError } from "pagopa-interop-probing-models";
-import { z } from "zod";
+import validationErrorHandler from "../utilities/validationErrorHandler.js";
 
-const eServiceRouter = (
-  ctx: ZodiosContext
-): ((
-  operationsApiClient: ZodiosInstance<Api>
-) => ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext>) => {
-  return (operationsApiClient: ZodiosInstance<Api>) => {
+const eServiceRouter =
+  (
+    ctx: ZodiosContext,
+  ): ((
+    operationsApiClient: ZodiosInstance<Api>,
+  ) => ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext>) =>
+  (operationsApiClient: ZodiosInstance<Api>) => {
     const operationsService: OperationsService =
       operationsServiceBuilder(operationsApiClient);
-    const router = ctx.router(api.api);
+    const router = ctx.router(api.api, {
+      validationErrorHandler,
+    });
 
     router
       .post(
@@ -39,14 +43,14 @@ const eServiceRouter = (
             await operationsService.updateEserviceState(
               req.params.eserviceId,
               req.params.versionId,
-              req.body
+              req.body,
             );
             return res.status(204).end();
           } catch (error) {
             const errorRes = resolveOperationsApiClientProblem(error);
             return res.status(errorRes.status).json(errorRes).end();
           }
-        }
+        },
       )
       .post(
         "/eservices/:eserviceId/versions/:versionId/probing/updateState",
@@ -55,14 +59,14 @@ const eServiceRouter = (
             await operationsService.updateEserviceProbingState(
               req.params.eserviceId,
               req.params.versionId,
-              req.body
+              req.body,
             );
             return res.status(204).end();
           } catch (error) {
             const errorRes = resolveOperationsApiClientProblem(error);
             return res.status(errorRes.status).json(errorRes).end();
           }
-        }
+        },
       )
       .post(
         "/eservices/:eserviceId/versions/:versionId/updateFrequency",
@@ -71,14 +75,14 @@ const eServiceRouter = (
             await operationsService.updateEserviceFrequency(
               req.params.eserviceId,
               req.params.versionId,
-              req.body
+              req.body,
             );
             return res.status(204).end();
           } catch (error) {
             const errorRes = resolveOperationsApiClientProblem(error);
             return res.status(errorRes.status).json(errorRes).end();
           }
-        }
+        },
       );
 
     router
@@ -95,8 +99,8 @@ const eServiceRouter = (
           if (!result.success) {
             logger.error(
               `Unable to parse eservices items: result ${JSON.stringify(
-                result
-              )} - data ${JSON.stringify(eservices.content)} `
+                result,
+              )} - data ${JSON.stringify(eservices.content)} `,
             );
 
             throw genericError("Unable to parse eservices items");
@@ -119,7 +123,7 @@ const eServiceRouter = (
       .get("/eservices/mainData/:eserviceRecordId", async (req, res) => {
         try {
           const eServiceMainData = await operationsService.getEserviceMainData(
-            req.params.eserviceRecordId
+            req.params.eserviceRecordId,
           );
 
           return res.status(200).json(eServiceMainData).end();
@@ -132,7 +136,7 @@ const eServiceRouter = (
         try {
           const eServiceProbingData =
             await operationsService.getEserviceProbingData(
-              req.params.eserviceRecordId
+              req.params.eserviceRecordId,
             );
 
           return res
@@ -154,7 +158,7 @@ const eServiceRouter = (
       .get("/producers", async (req, res) => {
         try {
           const { content } = await operationsService.getEservicesProducers(
-            req.query
+            req.query,
           );
 
           return res
@@ -169,6 +173,5 @@ const eServiceRouter = (
 
     return router;
   };
-};
 
 export default eServiceRouter;

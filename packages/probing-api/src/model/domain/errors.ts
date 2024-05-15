@@ -1,4 +1,8 @@
-import { ApiError, makeApiProblemBuilder, Problem } from "pagopa-interop-probing-models";
+import {
+  ApiError,
+  makeApiProblemBuilder,
+  Problem,
+} from "pagopa-interop-probing-models";
 import { AxiosError } from "axios";
 
 export const errorCodes = {
@@ -13,7 +17,7 @@ export const makeApiProblem = makeApiProblemBuilder(errorCodes);
 
 export const resolveOperationsApiClientProblem = (error: unknown): Problem => {
   const operationsApiProblem = Problem.safeParse(
-    (error as AxiosError).response?.data
+    (error as AxiosError).response?.data,
   );
 
   if (operationsApiProblem.success) {
@@ -25,7 +29,7 @@ export const resolveOperationsApiClientProblem = (error: unknown): Problem => {
 
 export function eServiceNotFound(
   eserviceId: string,
-  versionId: string
+  versionId: string,
 ): ApiError<ErrorCodes> {
   return new ApiError({
     detail: `EService by ${eserviceId} version ${versionId} not found`,
@@ -35,7 +39,7 @@ export function eServiceNotFound(
 }
 
 export function eServiceMainDataByRecordIdNotFound(
-  eserviceRecordId: number
+  eserviceRecordId: number,
 ): ApiError<ErrorCodes> {
   return new ApiError({
     detail: `EService main data by eserviceRecordId ${eserviceRecordId} not found`,
@@ -45,7 +49,7 @@ export function eServiceMainDataByRecordIdNotFound(
 }
 
 export function eServiceProbingDataByRecordIdNotFound(
-  eserviceRecordId: number
+  eserviceRecordId: number,
 ): ApiError<ErrorCodes> {
   return new ApiError({
     detail: `EService probing data by eserviceRecordId ${eserviceRecordId} not found`,

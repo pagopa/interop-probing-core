@@ -1,5 +1,3 @@
-/* eslint-disable no-constant-condition */
-/* eslint-disable functional/no-let */
 import { logger } from "pagopa-interop-probing-commons";
 import {
   genericError,
@@ -18,7 +16,7 @@ import {
   responseStatus,
   PollingResource,
 } from "pagopa-interop-probing-models";
-import { Brackets } from "typeorm";
+import { Brackets, InsertResult, UpdateResult } from "typeorm";
 import { z } from "zod";
 import {
   ModelRepository,
@@ -30,11 +28,24 @@ import {
 } from "../../model/domain/errors.js";
 import { eServiceDefaultValues } from "../../repositories/entity/eservice.entity.js";
 import { SelectQueryBuilder } from "typeorm";
-import { EserviceView } from "../../repositories/entity/view/eservice.entity.js";
 import { config } from "../../utilities/config.js";
 import { WhereExpressionBuilder } from "typeorm/browser";
-import { ListResultEservices, ListResultProducers } from "../../model/dbModels.js";
-import { ApiGetProducersQuery, ApiSearchEservicesQuery } from "pagopa-interop-probing-eservice-operations-client";
+import {
+  ApiEserviceMainDataResponse,
+  ApiEserviceProbingDataResponse,
+  ApiGetEservicesReadyForPollingQuery,
+  ApiGetEservicesReadyForPollingResponse,
+  ApiGetProducersQuery,
+  ApiGetProducersResponse,
+  ApiSaveEserviceResponse,
+  ApiSearchEservicesQuery,
+  ApiSearchEservicesResponse,
+  ApiUpdateEserviceFrequencyResponse,
+  ApiUpdateEserviceProbingStateResponse,
+  ApiUpdateEserviceStateResponse,
+  ApiUpdateLastRequestResponse,
+  ApiUpdateResponseReceivedResponse,
+} from "pagopa-interop-probing-eservice-operations-client";
 
 const probingDisabledPredicate = (queryBuilder: WhereExpressionBuilder) => {
   const extractMinute = `CAST(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60 AS INTEGER) > polling_frequency`;
@@ -43,7 +54,7 @@ const probingDisabledPredicate = (queryBuilder: WhereExpressionBuilder) => {
   queryBuilder.orWhere(`last_request IS NULL`);
   queryBuilder.orWhere(
     `((${extractMinute}) AND (response_received < last_request))`,
-    { minOfTolleranceMultiplier: config.minOfTolleranceMultiplier }
+    { minOfTolleranceMultiplier: config.minOfTolleranceMultiplier },
   );
   queryBuilder.orWhere(`response_received IS NULL`);
 };
@@ -53,7 +64,10 @@ const probingEnabledPredicate = (
   {
     isStateOffline,
     isStateOnline,
-  }: { isStateOffline: boolean | undefined; isStateOnline: boolean | undefined }
+  }: {
+    isStateOffline: boolean | undefined;
+    isStateOnline: boolean | undefined;
+  },
 ) => {
   const predicates: string[] = [];
 
@@ -85,13 +99,13 @@ const probingEnabledPredicate = (
   queryBuilder.andWhere(`response_received IS NOT NULL`);
   queryBuilder.andWhere(
     `((${extractMinute}) OR (response_received > last_request))`,
-    { minOfTolleranceMultiplier: config.minOfTolleranceMultiplier }
+    { minOfTolleranceMultiplier: config.minOfTolleranceMultiplier },
   );
 };
 
 const addPredicateEservices = (
   queryBuilder: SelectQueryBuilder<EserviceViewEntities>,
-  filters: ApiSearchEservicesQuery
+  filters: ApiSearchEservicesQuery,
 ): void => {
   const { eserviceName, producerName, versionNumber, state } = filters;
 
@@ -127,14 +141,14 @@ const addPredicateEservices = (
               isStateOffline,
               isStateOnline,
             });
-          })
+          }),
         );
         subQb.orWhere(
           new Brackets((subQb2) => {
             probingDisabledPredicate(subQb2);
-          })
+          }),
         );
-      })
+      }),
     );
 
     queryBuilder.orderBy({ id: "ASC" });
@@ -146,7 +160,7 @@ const addPredicateEservices = (
           isStateOffline,
           isStateOnline,
         });
-      })
+      }),
     );
     queryBuilder.orderBy({ id: "ASC" });
   }
@@ -154,10 +168,39 @@ const addPredicateEservices = (
 
 const addPredicateEservicesReadyForPolling = (
   queryBuilder: SelectQueryBuilder<EserviceViewEntities>,
-  entityAlias: string
+  entityAlias: string,
 ): void => {
-  const makeInterval = `(DATE_TRUNC('minute', ${entityAlias}.last_request) + MAKE_INTERVAL(mins => ${entityAlias}.polling_frequency))`;
-  const compareTimestampInterval = `CURRENT_TIME BETWEEN ${entityAlias}.polling_start_time AND ${entityAlias}.polling_end_time`;
+  const lastRequestPlusPollingFrequency = `
+    (
+      DATE_TRUNC('minute', ${entityAlias}.last_request) + 
+      MAKE_INTERVAL(mins := ${entityAlias}.polling_frequency)
+    )
+  `;
+
+  const compareTimestampInterval = `
+    CURRENT_TIME BETWEEN ${entityAlias}.polling_start_time AND ${entityAlias}.polling_end_time
+  `;
+
+  const isRequestAndResponseNull = `
+    (
+      ${entityAlias}.last_request IS NULL AND 
+      ${entityAlias}.response_received IS NULL
+    )
+  `;
+
+  const isIntervalElapsedAndResponseUpdated = `
+    (
+      (${lastRequestPlusPollingFrequency} <= CURRENT_TIMESTAMP) AND 
+      (${entityAlias}.last_request <= ${entityAlias}.response_received)
+    )
+  `;
+
+  const isIntervalElapsedWithThreshold = `
+    (
+      DATE_TRUNC('minute', ${entityAlias}.last_request) + 
+      MAKE_INTERVAL(mins := ${entityAlias}.polling_frequency * ${config.pollingFrequencyThreshold})
+    ) <= CURRENT_TIMESTAMP
+  `;
 
   queryBuilder
     .andWhere(`${entityAlias}.state = :state`, {
@@ -167,7 +210,7 @@ const addPredicateEservicesReadyForPolling = (
       probingEnabled: true,
     })
     .andWhere(
-      `((${entityAlias}.last_request IS NULL AND ${entityAlias}.response_received IS NULL) OR ((${makeInterval} <= CURRENT_TIMESTAMP) AND (${entityAlias}.last_request <= ${entityAlias}.response_received)))`
+      `(${isRequestAndResponseNull} OR ${isIntervalElapsedAndResponseUpdated} OR ${isIntervalElapsedWithThreshold})`,
     )
     .andWhere(compareTimestampInterval);
 };
@@ -183,41 +226,41 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     async updateEserviceState(
       eserviceId: string,
       versionId: string,
-      eServiceUpdated: ChangeEserviceStateRequest
-    ): Promise<void> {
+      eServiceUpdated: ChangeEserviceStateRequest,
+    ): Promise<ApiUpdateEserviceStateResponse> {
       await eservices.update(
         { eserviceId, versionId },
-        { state: eServiceUpdated.state }
+        { state: eServiceUpdated.state },
       );
     },
 
     async updateEserviceProbingState(
       eserviceId: string,
       versionId: string,
-      eServiceUpdated: ChangeEserviceProbingStateRequest
-    ): Promise<void> {
+      eServiceUpdated: ChangeEserviceProbingStateRequest,
+    ): Promise<ApiUpdateEserviceProbingStateResponse> {
       await eservices.update(
         { eserviceId, versionId },
-        { probingEnabled: eServiceUpdated.probingEnabled }
+        { probingEnabled: eServiceUpdated.probingEnabled },
       );
     },
 
     async updateEserviceFrequency(
       eserviceId: string,
       versionId: string,
-      eServiceUpdated: ChangeProbingFrequencyRequest
-    ): Promise<void> {
+      eServiceUpdated: ChangeProbingFrequencyRequest,
+    ): Promise<ApiUpdateEserviceFrequencyResponse> {
       await eservices.update(
         { eserviceId, versionId },
-        { pollingFrequency: eServiceUpdated.pollingFrequency }
+        { pollingFrequency: eServiceUpdated.pollingFrequency },
       );
     },
 
     async saveEservice(
       eserviceId: string,
       versionId: string,
-      eServiceUpdated: EserviceSaveRequest
-    ): Promise<void> {
+      eServiceUpdated: EserviceSaveRequest,
+    ): Promise<ApiSaveEserviceResponse> {
       const updateEservice: EserviceSaveRequest = {
         eserviceName: eServiceUpdated.eserviceName,
         producerName: eServiceUpdated.producerName,
@@ -236,7 +279,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         .getOne();
 
       if (existingEservice) {
-        await eservices
+        const result: UpdateResult = await eservices
           .createQueryBuilder()
           .update()
           .set(updateEservice)
@@ -244,9 +287,12 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
             eserviceId,
             versionId,
           })
+          .returning("id")
           .execute();
+        const [eservice]: { id: string }[] = result.raw;
+        return Number(eservice.id);
       } else {
-        await eservices
+        const result: InsertResult = await eservices
           .createQueryBuilder()
           .insert()
           .values({
@@ -257,27 +303,30 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
             ...eServiceDefaultValues,
             ...updateEservice,
           })
+          .returning("id")
           .execute();
+        const [eservice]: { id: string }[] = result.raw;
+        return Number(eservice.id);
       }
     },
 
     async updateEserviceLastRequest(
       eserviceRecordId: number,
-      eServiceUpdated: EserviceProbingUpdateLastRequest
-    ): Promise<void> {
+      eServiceUpdated: EserviceProbingUpdateLastRequest,
+    ): Promise<ApiUpdateLastRequestResponse> {
       await eserviceProbingRequest.upsert(
         { eserviceRecordId, lastRequest: eServiceUpdated.lastRequest },
         {
           skipUpdateIfNoValuesChanged: true,
           conflictPaths: ["eserviceRecordId"],
-        }
+        },
       );
     },
 
     async updateResponseReceived(
       eserviceRecordId: number,
-      eServiceUpdated: ChangeResponseReceived
-    ): Promise<void> {
+      eServiceUpdated: ChangeResponseReceived,
+    ): Promise<ApiUpdateResponseReceivedResponse> {
       await eserviceProbingResponse.upsert(
         {
           eserviceRecordId,
@@ -287,13 +336,13 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         {
           skipUpdateIfNoValuesChanged: true,
           conflictPaths: ["eserviceRecordId"],
-        }
+        },
       );
     },
 
     async getEServiceByIdAndVersion(
       eserviceId: string,
-      versionId: string
+      versionId: string,
     ): Promise<EService | undefined> {
       const data = await eservices.findOne({
         where: { eserviceId, versionId },
@@ -305,8 +354,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         if (!result.success) {
           logger.error(
             `Unable to parse eservice item: result ${JSON.stringify(
-              result
-            )} - data ${JSON.stringify(data)} `
+              result,
+            )} - data ${JSON.stringify(data)} `,
           );
           throw genericError("Unable to parse eservice item");
         }
@@ -315,12 +364,12 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     },
 
     async searchEservices(
-      filters: ApiSearchEservicesQuery
-    ): Promise<ListResultEservices<EServiceContent>> {
+      filters: ApiSearchEservicesQuery,
+    ): Promise<ApiSearchEservicesResponse> {
       const [data, count] = await eserviceView
         .createQueryBuilder()
         .where((qb: SelectQueryBuilder<EserviceViewEntities>) =>
-          addPredicateEservices(qb, filters)
+          addPredicateEservices(qb, filters),
         )
         .skip(filters.offset)
         .take(filters.limit)
@@ -330,8 +379,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       if (!result.success) {
         logger.error(
           `Unable to parse eservices items: result ${JSON.stringify(
-            result
-          )} - data ${JSON.stringify(data)} `
+            result,
+          )} - data ${JSON.stringify(data)} `,
         );
 
         throw genericError("Unable to parse eservices items");
@@ -346,8 +395,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     },
 
     async getEserviceMainData(
-      eserviceRecordId: number
-    ): Promise<EServiceMainData> {
+      eserviceRecordId: number,
+    ): Promise<ApiEserviceMainDataResponse> {
       const data = await eservices.findOne({ where: { eserviceRecordId } });
       if (!data) {
         throw eServiceMainDataByRecordIdNotFound(eserviceRecordId);
@@ -356,8 +405,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         if (!result.success) {
           logger.error(
             `Unable to parse eservice mainData item: result ${JSON.stringify(
-              result
-            )} - data ${JSON.stringify(data)} `
+              result,
+            )} - data ${JSON.stringify(data)} `,
           );
           throw genericError("Unable to parse eservice mainData item");
         }
@@ -366,8 +415,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     },
 
     async getEserviceProbingData(
-      eserviceRecordId: number
-    ): Promise<EServiceProbingData> {
+      eserviceRecordId: number,
+    ): Promise<ApiEserviceProbingDataResponse> {
       const data = await eserviceView.findOne({
         where: { eserviceRecordId },
         order: { eserviceRecordId: "ASC" },
@@ -379,8 +428,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         if (!result.success) {
           logger.error(
             `Unable to parse eservice probingData item: result ${JSON.stringify(
-              result
-            )} - data ${JSON.stringify(data)} `
+              result,
+            )} - data ${JSON.stringify(data)} `,
           );
 
           throw genericError("Unable to parse eservice probingData item");
@@ -390,33 +439,31 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     },
 
     async getEservicesReadyForPolling(
-      limit: number,
-      offset: number
-    ): Promise<ListResultEservices<PollingResource>> {
+      filters: ApiGetEservicesReadyForPollingQuery,
+    ): Promise<ApiGetEservicesReadyForPollingResponse> {
       const [data, count] = await eserviceView
-        .createQueryBuilder()
-        .distinct(true)
-        .where((qb: SelectQueryBuilder<EserviceViewEntities>) =>
-          addPredicateEservicesReadyForPolling(qb, "eserviceView")
-        )
+        .createQueryBuilder("eserviceView")
         .select([
           "eserviceView.eserviceRecordId",
           "eserviceView.technology",
           "eserviceView.basePath",
           "eserviceView.audience",
         ])
-        .from(EserviceView, "eserviceView") // Explicitly defining the 'from' clause is required to address select and the issue described here https://github.com/typeorm/typeorm/issues/1937.
+        .distinct(true)
+        .where((qb: SelectQueryBuilder<EserviceViewEntities>) =>
+          addPredicateEservicesReadyForPolling(qb, "eserviceView"),
+        )
         .orderBy("eserviceView.eserviceRecordId", "ASC")
-        .skip(offset)
-        .take(limit)
+        .skip(filters.offset)
+        .take(filters.limit)
         .getManyAndCount();
 
       const result = z.array(PollingResource).safeParse(data.map((d) => d));
       if (!result.success) {
         logger.error(
           `Unable to parse eservices ready for polling items: result ${JSON.stringify(
-            result
-          )} - data ${JSON.stringify(data)} `
+            result,
+          )} - data ${JSON.stringify(data)} `,
         );
 
         throw genericError("Unable to parse eservices ready for polling items");
@@ -430,7 +477,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
 
     async getEservicesProducers(
       filters: ApiGetProducersQuery,
-    ): Promise<ListResultProducers<string>> {
+    ): Promise<ApiGetProducersResponse> {
       const data = await eservices
         .createQueryBuilder("eservice")
         .where("UPPER(eservice.producerName) LIKE UPPER(:producerName)", {
@@ -448,8 +495,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       if (!result.success) {
         logger.error(
           `Unable to parse eservices producers items: result ${JSON.stringify(
-            result
-          )} - data ${JSON.stringify(data)} `
+            result,
+          )} - data ${JSON.stringify(data)} `,
         );
 
         throw genericError("Unable to parse eservices producers items");
