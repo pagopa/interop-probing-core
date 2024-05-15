@@ -1,5 +1,5 @@
 import helmet from "helmet";
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import cors, { CorsOptions } from "cors";
 import { zodiosCtx } from "pagopa-interop-probing-commons";
 import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
@@ -48,7 +48,21 @@ const corsOptions: CorsOptions = {
   allowedHeaders: "*",
 };
 
-app.use(express.json());
+/**
+ * Middleware to preprocess the 'state' query parameter.
+ * Ensures the 'state' parameter is always handled as an array.
+ *
+ * The issue arises when a query parameter that Zodios expects to handle as an array
+ * contains a single element. In such cases, it is treated as a string, leading to validation errors.
+ * To address this, the middleware converts the parameter to an array to ensure correct validation preserving schema integrity.
+ */
+app.use((req: Request, _res: Response, next: NextFunction) => {
+  if (req.query.state && typeof req.query.state === "string") {
+    req.query.state = req.query.state.split(",");
+  }
+  next();
+});
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 
