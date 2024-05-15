@@ -6,7 +6,7 @@ import { config } from "../utilities/config.js";
 import { modelServiceBuilder } from "../services/db/dbService.js";
 import { eServiceServiceBuilder } from "../services/eserviceService.js";
 import { eserviceQueryBuilder } from "../services/db/eserviceQuery.js";
-import { api } from "../model/generated/api.js";
+import { api } from "pagopa-interop-probing-eservice-operations-client";
 import { updateEServiceErrorMapper } from "../utilities/errorMappers.js";
 import { ModelRepository } from "../repositories/modelRepository.js";
 

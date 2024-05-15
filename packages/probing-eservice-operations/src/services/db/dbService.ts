@@ -170,8 +170,37 @@ const addPredicateEservicesReadyForPolling = (
   queryBuilder: SelectQueryBuilder<EserviceViewEntities>,
   entityAlias: string,
 ): void => {
-  const makeInterval = `(DATE_TRUNC('minute', ${entityAlias}.last_request) + MAKE_INTERVAL(mins => ${entityAlias}.polling_frequency))`;
-  const compareTimestampInterval = `CURRENT_TIME BETWEEN ${entityAlias}.polling_start_time AND ${entityAlias}.polling_end_time`;
+  const lastRequestPlusPollingFrequency = `
+    (
+      DATE_TRUNC('minute', ${entityAlias}.last_request) + 
+      MAKE_INTERVAL(mins := ${entityAlias}.polling_frequency)
+    )
+  `;
+
+  const compareTimestampInterval = `
+    CURRENT_TIME BETWEEN ${entityAlias}.polling_start_time AND ${entityAlias}.polling_end_time
+  `;
+
+  const isRequestAndResponseNull = `
+    (
+      ${entityAlias}.last_request IS NULL AND 
+      ${entityAlias}.response_received IS NULL
+    )
+  `;
+
+  const isIntervalElapsedAndResponseUpdated = `
+    (
+      (${lastRequestPlusPollingFrequency} <= CURRENT_TIMESTAMP) AND 
+      (${entityAlias}.last_request <= ${entityAlias}.response_received)
+    )
+  `;
+
+  const isIntervalElapsedWithThreshold = `
+    (
+      DATE_TRUNC('minute', ${entityAlias}.last_request) + 
+      MAKE_INTERVAL(mins := ${entityAlias}.polling_frequency * ${config.pollingFrequencyThreshold})
+    ) <= CURRENT_TIMESTAMP
+  `;
 
   queryBuilder
     .andWhere(`${entityAlias}.state = :state`, {
@@ -181,7 +210,7 @@ const addPredicateEservicesReadyForPolling = (
       probingEnabled: true,
     })
     .andWhere(
-      `((${entityAlias}.last_request IS NULL AND ${entityAlias}.response_received IS NULL) OR ((${makeInterval} <= CURRENT_TIMESTAMP) AND (${entityAlias}.last_request <= ${entityAlias}.response_received)))`,
+      `(${isRequestAndResponseNull} OR ${isIntervalElapsedAndResponseUpdated} OR ${isIntervalElapsedWithThreshold})`,
     )
     .andWhere(compareTimestampInterval);
 };
