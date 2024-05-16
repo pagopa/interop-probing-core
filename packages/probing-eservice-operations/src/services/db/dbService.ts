@@ -484,10 +484,10 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
           producerName: `%${filters.producerName}%`,
         })
         .orderBy("eservice.producerName", "ASC")
-        .select(["eservice.producerName"])
+        .select("DISTINCT eservice.producerName", "producerName")
         .skip(filters.offset)
         .take(filters.limit)
-        .getMany();
+        .getRawMany();
 
       const result = z
         .array(z.string())
