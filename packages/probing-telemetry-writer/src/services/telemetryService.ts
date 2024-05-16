@@ -10,7 +10,7 @@ export const telemetryWriteServiceBuilder = (
     async writeRecord(telemetry: TelemetryDto): Promise<void> {
       try {
         logger.info(
-          `Writing Telemetry with eserviceRecordId ${telemetry.eserviceRecordId}`,
+          `Writing Telemetry with eserviceRecordId: ${telemetry.eserviceRecordId}`,
         );
         await timestreamWriteClient.writeRecord(telemetry);
       } catch (error: unknown) {
