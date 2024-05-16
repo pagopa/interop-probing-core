@@ -1052,7 +1052,7 @@ components:
       enum:
         - ONLINE
         - OFFLINE
-        - "N/D"
+        - "N_D"
 
     EserviceInteropState:
       type: string

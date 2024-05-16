@@ -115,7 +115,7 @@ function calculatePerformances(
         (el) => el.status !== telemetryStatus.ok,
       ).length;
 
-      // if the point contains a fraction of KO and N/D which is bigger of the one
+      // if the point contains a fraction of KO and N_D which is bigger of the one
       // calculated via the performanceTolerance, the line gets broken
       if (
         (hourStatistic.length < config.graphPerformanceTolerance &&
@@ -159,7 +159,7 @@ function calculateFailures(values: StatisticContent[]): FailureContent[] {
       (el) => el.status === status,
     ).length;
 
-    // If the partition contains a bigger fraction of KO or N/D which is bigger of the one
+    // If the partition contains a bigger fraction of KO or N_D which is bigger of the one
     // calculated via the failureTolerance, we create a failure point for the given status
     if (
       (values.length < config.graphFailureTolerance && numberOfFailures > 0) ||

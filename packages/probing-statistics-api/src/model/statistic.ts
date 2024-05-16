@@ -8,7 +8,7 @@ export const telemetrySuccessStatus = {
 
 export const telemetryFailureStatus = {
   ko: "KO",
-  "n/d": "N/D",
+  n_d: "N_D",
 } as const;
 
 export const telemetryStatus = {

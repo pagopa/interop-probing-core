@@ -597,7 +597,7 @@ components:
       enum:
         - ONLINE 
         - OFFLINE
-        - 'N/D'
+        - 'N_D'
         
     EserviceStateBE:
       type: string

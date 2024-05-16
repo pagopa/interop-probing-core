@@ -108,10 +108,10 @@ describe("Statistics service test", () => {
     );
 
     expect(failures.some((el) => el.status === "KO")).toBe(true);
-    expect(failures.some((el) => el.status === "N/D")).toBe(true);
+    expect(failures.some((el) => el.status === "N_D")).toBe(true);
 
     expect(percentages.find((el) => el.status === "OK")?.value).toBe(20);
     expect(percentages.find((el) => el.status === "KO")?.value).toBe(40);
-    expect(percentages.find((el) => el.status === "N/D")?.value).toBe(40);
+    expect(percentages.find((el) => el.status === "N_D")?.value).toBe(40);
   });
 });
