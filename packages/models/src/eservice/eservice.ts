@@ -23,7 +23,7 @@ export type EserviceInteropState = z.infer<typeof EserviceInteropState>;
 export const eserviceMonitorState = {
   online: "ONLINE",
   offline: "OFFLINE",
-  "n/d": "N/D",
+  n_d: "N_D",
 } as const;
 export const EserviceMonitorState = z.enum([
   Object.values(eserviceMonitorState)[0],

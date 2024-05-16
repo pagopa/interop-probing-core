@@ -51,7 +51,7 @@ function handleState({
         lastRequest,
         pollingFrequency,
       )
-        ? eserviceMonitorState["n/d"]
+        ? eserviceMonitorState["n_d"]
         : checkOFFLINE(responseStatus)
           ? eserviceMonitorState.offline
           : eserviceMonitorState.online;
@@ -62,7 +62,7 @@ function handleState({
         lastRequest,
         pollingFrequency,
       )
-        ? eserviceMonitorState["n/d"]
+        ? eserviceMonitorState["n_d"]
         : eserviceMonitorState.offline;
     default:
       throw new Error(`Invalid state ${state}`);

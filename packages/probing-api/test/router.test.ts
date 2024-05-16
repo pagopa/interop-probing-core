@@ -341,7 +341,7 @@ describe("eService Router", () => {
       eserviceName: "eService 001",
       producerName: "eService producer 001",
       versionNumber: 1,
-      state: [eserviceMonitorState.online, eserviceMonitorState["n/d"]],
+      state: [eserviceMonitorState.online, eserviceMonitorState["n_d"]],
       offset: 0,
       limit: 2,
     };
