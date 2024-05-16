@@ -37,9 +37,6 @@ jobs:
       - name: Install dependencies
         run: |
           pnpm install
-      - name: Set environment variables
-        run: |
-          envsubst < .env
       - name: Build project
         run: |
           pnpm turbo build --filter probing-frontend
