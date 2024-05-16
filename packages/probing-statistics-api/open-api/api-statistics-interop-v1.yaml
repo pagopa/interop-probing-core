@@ -198,7 +198,7 @@ components:
       type: string
       enum:
         - OK
-        - 'N/D'
+        - 'N_D'
         - KO
     
     Problem:
