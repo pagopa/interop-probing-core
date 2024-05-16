@@ -31,7 +31,7 @@ export const MonitoringEserviceProbing: React.FC<MonitoringEserviceProbingProps>
         return 'success'
       case 'OFFLINE':
         return 'error'
-      case 'N/D':
+      case 'N_D':
         return 'warning'
     }
   }
@@ -89,7 +89,7 @@ const ProbingDataAlert: React.FC<ProbingDataAlertProps> = ({ eservicesProbingDet
   const { t } = useTranslation('common', { keyPrefix: 'detailsPage.alerts' })
   const { probingEnabled, state, eserviceActive } = eservicesProbingDetail
 
-  const isMonitoringSuspended = state === 'N/D' && !probingEnabled
+  const isMonitoringSuspended = state === 'N_D' && !probingEnabled
   const isVersionSuspended = state === 'OFFLINE' && !eserviceActive
   const isEserviceNotAnswering = state === 'OFFLINE' && eserviceActive
 

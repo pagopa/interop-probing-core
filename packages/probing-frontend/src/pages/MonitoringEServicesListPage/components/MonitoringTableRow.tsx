@@ -21,7 +21,7 @@ export const MonitoringTableRow: React.FC<MonitoringTableRowProps> = ({ row }) =
           row.producerName,
           <Chip
             key={row.eserviceRecordId}
-            label={row.state.toLowerCase()}
+            label={row.state === 'N_D' ? 'n/d' : row.state.toLowerCase()}
             size="small"
             color={
               row.state === 'ONLINE' ? 'success' : row.state === 'OFFLINE' ? 'error' : 'warning'
