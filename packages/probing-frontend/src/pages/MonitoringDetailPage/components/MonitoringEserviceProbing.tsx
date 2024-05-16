@@ -62,7 +62,11 @@ export const MonitoringEserviceProbing: React.FC<MonitoringEserviceProbingProps>
           content={
             <Chip
               size={'small'}
-              label={eservicesProbingDetail.state.toLowerCase()}
+              label={
+                eservicesProbingDetail.state === 'N_D'
+                  ? 'n/d'
+                  : eservicesProbingDetail.state.toLowerCase()
+              }
               color={getProbingStateChipColor(eservicesProbingDetail.state)}
             />
           }
