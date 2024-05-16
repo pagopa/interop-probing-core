@@ -44,38 +44,40 @@ export const MonitoringDetailPage: React.FC = () => {
 
   return (
     <PageContainer title={eservicesDetail?.eserviceName} description={t('subtitle')}>
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        {eservicesDetail && <MonitoringEserviceDetail eservicesDetail={eservicesDetail} />}
-        {eservicesProbingDetail && (
-          <MonitoringEserviceProbing
-            eservicesProbingDetail={eservicesProbingDetail}
-            onRefetch={handleRefetch}
+      <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          {eservicesDetail && <MonitoringEserviceDetail eservicesDetail={eservicesDetail} />}
+          {eservicesProbingDetail && (
+            <MonitoringEserviceProbing
+              eservicesProbingDetail={eservicesProbingDetail}
+              onRefetch={handleRefetch}
+            />
+          )}
+        </Box>
+        {hasValidData && (
+          <MonitoringEserviceTelemetry
+            eserviceId={eserviceId}
+            pollingFrequency={eservicesDetail.pollingFrequency}
           />
         )}
+        <Stack alignItems="center" sx={{ mt: 8 }}>
+          <Link
+            to={'MONITORING_E_SERVICE_LIST'}
+            as="button"
+            variant="naked"
+            startIcon={<ArrowBackIcon />}
+          >
+            {t('returnToList')}
+          </Link>
+        </Stack>
       </Box>
-      {hasValidData && (
-        <MonitoringEserviceTelemetry
-          eserviceId={eserviceId}
-          pollingFrequency={eservicesDetail.pollingFrequency}
-        />
-      )}
-      <Stack alignItems="center" sx={{ mt: 8 }}>
-        <Link
-          to={'MONITORING_E_SERVICE_LIST'}
-          as="button"
-          variant="naked"
-          startIcon={<ArrowBackIcon />}
-        >
-          {t('returnToList')}
-        </Link>
-      </Stack>
     </PageContainer>
   )
 }
