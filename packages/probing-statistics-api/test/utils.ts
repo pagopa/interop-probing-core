@@ -37,14 +37,14 @@ export const mockTimestreamResponseQuery: QueryResponse = {
     {
       Data: [
         { ScalarValue: "2024-03-13 21:09:00.000000000" },
-        { ScalarValue: "N/D" },
+        { ScalarValue: "N_D" },
         { ScalarValue: undefined },
       ],
     },
     {
       Data: [
         { ScalarValue: "2024-03-13 21:12:00.000000000" },
-        { ScalarValue: "N/D" },
+        { ScalarValue: "N_D" },
         { ScalarValue: undefined },
       ],
     },

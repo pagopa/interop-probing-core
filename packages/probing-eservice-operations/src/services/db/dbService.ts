@@ -127,7 +127,7 @@ const addPredicateEservices = (
 
   const isStateOffline = state?.includes(eserviceMonitorState.offline);
   const isStateOnline = state?.includes(eserviceMonitorState.online);
-  const isStateND = state?.includes(eserviceMonitorState["n/d"]);
+  const isStateND = state?.includes(eserviceMonitorState["n_d"]);
   const allStates = isStateOffline && isStateOnline && isStateND;
 
   if (!state || allStates) {

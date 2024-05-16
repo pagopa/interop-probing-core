@@ -110,7 +110,7 @@ function buildQueryString(
               SEQUENCE(min(binned_timestamp), max(binned_timestamp), ${
                 pollingFrequency * months
               }m), 
-              'N/D'
+              'N_D'
             ) AS interpolated_status 
           FROM 
             binned_timeseries
