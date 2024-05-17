@@ -38,10 +38,10 @@ function handleState({
 }: {
   state: EserviceInteropState;
   probingEnabled: boolean;
-  lastRequest?: string;
-  responseReceived?: string;
   pollingFrequency: number;
-  responseStatus?: EserviceStatus | undefined;
+  lastRequest?: string | null;
+  responseReceived?: string | null;
+  responseStatus?: EserviceStatus | null;
 }): EserviceMonitorState {
   switch (state) {
     case eserviceInteropState.active:
@@ -75,8 +75,8 @@ export function isActive(viewState: EserviceInteropState): boolean {
 
 export function checkND(
   probingEnabled: boolean,
-  responseReceived: string | undefined,
-  lastRequest: string | undefined,
+  responseReceived: string | null | undefined,
+  lastRequest: string | null | undefined,
   pollingFrequency: number,
 ): boolean {
   return (
@@ -92,15 +92,17 @@ export function checkND(
   );
 }
 
-export function checkOFFLINE(status: EserviceStatus | undefined): boolean {
+export function checkOFFLINE(
+  status: EserviceStatus | null | undefined,
+): boolean {
   return status === responseStatus.ko;
 }
 
 export function isResponseReceivedBeforeLastRequest(
-  responseReceived: string | undefined,
-  lastRequest: string,
+  responseReceived: string | null | undefined,
+  lastRequest: string | null | undefined,
 ): boolean {
-  if (!responseReceived) {
+  if (!responseReceived || !lastRequest) {
     return false;
   }
 

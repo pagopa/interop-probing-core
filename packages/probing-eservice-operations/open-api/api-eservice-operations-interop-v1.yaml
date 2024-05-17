@@ -1011,9 +1011,6 @@ components:
       required: 
         - probingEnabled
         - state
-        - responseReceived
-        - lastRequest
-        - responseStatus
         - pollingFrequency
       properties:
         probingEnabled:
@@ -1025,13 +1022,17 @@ components:
           title: last response date
           type: string
           format: date-time
+          nullable: true
         lastRequest:
           title: last request date
           type: string
           format: date-time
+          nullable: true
         responseStatus:
           title: eservice last status
-          $ref: "#/components/schemas/EserviceStatus"
+          allOf:
+            - $ref: "#/components/schemas/EserviceStatus"
+          nullable: true
         pollingFrequency:
           title: eservice polling frequency
           type: integer
