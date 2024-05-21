@@ -48,13 +48,12 @@ import {
 } from "pagopa-interop-probing-eservice-operations-client";
 
 const probingDisabledPredicate = (queryBuilder: WhereExpressionBuilder) => {
-  const extractMinute = `CAST(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60 AS INTEGER) > polling_frequency`;
+  const extractMinute = `TRUNC(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60) > polling_frequency`;
 
   queryBuilder.orWhere(`probing_enabled = false`);
   queryBuilder.orWhere(`last_request IS NULL`);
   queryBuilder.orWhere(
     `((${extractMinute}) AND (response_received < last_request))`,
-    { minOfTolleranceMultiplier: config.minOfTolleranceMultiplier },
   );
   queryBuilder.orWhere(`response_received IS NULL`);
 };
@@ -92,7 +91,7 @@ const probingEnabledPredicate = (
     });
   }
 
-  const extractMinute = `CAST(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60 AS INTEGER) < (polling_frequency * :minOfTolleranceMultiplier)`;
+  const extractMinute = `TRUNC(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60) < (polling_frequency * :minOfTolleranceMultiplier)`;
 
   queryBuilder.andWhere(`probing_enabled = true`);
   queryBuilder.andWhere(`last_request IS NOT NULL`);
@@ -135,14 +134,16 @@ const addPredicateEservices = (
   } else if (isStateND) {
     queryBuilder.andWhere(
       new Brackets((subQb: WhereExpressionBuilder) => {
-        subQb.orWhere(
-          new Brackets((subQb2) => {
-            probingEnabledPredicate(subQb2, {
-              isStateOffline,
-              isStateOnline,
-            });
-          }),
-        );
+        if (isStateOffline || isStateOnline) {
+          subQb.orWhere(
+            new Brackets((subQb2) => {
+              probingEnabledPredicate(subQb2, {
+                isStateOffline,
+                isStateOnline,
+              });
+            }),
+          );
+        }
         subQb.orWhere(
           new Brackets((subQb2) => {
             probingDisabledPredicate(subQb2);
