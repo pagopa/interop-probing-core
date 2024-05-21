@@ -10,12 +10,6 @@ import {
 } from "pagopa-interop-probing-models";
 import { config } from "./config.js";
 
-const isBefore = (responseReceived: string, lastRequest: string): boolean =>
-  new Date(responseReceived).getTime() < new Date(lastRequest).getTime();
-
-const minutesDifferenceFromCurrentDate = (lastRequest: string): number =>
-  (new Date().getTime() - new Date(lastRequest).getTime()) / (1000 * 60);
-
 export function fromECToMonitorState(
   data: EServiceContent,
 ): EserviceMonitorState {
@@ -106,7 +100,7 @@ export function isResponseReceivedBeforeLastRequest(
     return false;
   }
 
-  return isBefore(responseReceived, lastRequest);
+  return new Date(responseReceived).getTime() < new Date(lastRequest).getTime();
 }
 
 export function isBeenToLongRequest(
@@ -118,8 +112,8 @@ export function isBeenToLongRequest(
     return false;
   }
 
-  const timeDifferenceMinutes = minutesDifferenceFromCurrentDate(lastRequest);
-  const toleranceThreshold = pollingFrequency * toleranceMultiplierInMinutes;
+  const timeDifferenceMinutes: number = (new Date().getTime() - new Date(lastRequest).getTime()) / (1000 * 60);
+  const toleranceThreshold: number = pollingFrequency * toleranceMultiplierInMinutes;
 
   return timeDifferenceMinutes > toleranceThreshold;
 }
