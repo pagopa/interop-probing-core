@@ -112,8 +112,10 @@ export function isBeenToLongRequest(
     return false;
   }
 
-  const timeDifferenceMinutes: number = (new Date().getTime() - new Date(lastRequest).getTime()) / (1000 * 60);
-  const toleranceThreshold: number = pollingFrequency * toleranceMultiplierInMinutes;
+  const timeDifferenceMinutes: number =
+    (new Date().getTime() - new Date(lastRequest).getTime()) / (1000 * 60);
+  const toleranceThreshold: number =
+    pollingFrequency * toleranceMultiplierInMinutes;
 
   return timeDifferenceMinutes > toleranceThreshold;
 }
