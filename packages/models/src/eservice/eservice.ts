@@ -23,7 +23,7 @@ export type EserviceInteropState = z.infer<typeof EserviceInteropState>;
 export const eserviceMonitorState = {
   online: "ONLINE",
   offline: "OFFLINE",
-  "n/d": "N/D",
+  n_d: "N_D",
 } as const;
 export const EserviceMonitorState = z.enum([
   Object.values(eserviceMonitorState)[0],
@@ -194,9 +194,15 @@ export type EServiceMainData = z.infer<typeof EServiceMainData>;
 export const EServiceProbingData = z.object({
   probingEnabled: z.boolean(),
   state: EserviceInteropState,
-  responseReceived: z.date().transform((date) => date.toISOString()),
-  lastRequest: z.date().transform((date) => date.toISOString()),
-  responseStatus: EserviceStatus,
+  responseReceived: z
+    .date()
+    .transform((date) => date.toISOString())
+    .nullish(),
+  lastRequest: z
+    .date()
+    .transform((date) => date.toISOString())
+    .nullish(),
+  responseStatus: EserviceStatus.nullish(),
   pollingFrequency: z.number().int(),
 });
 export type EServiceProbingData = z.infer<typeof EServiceProbingData>;

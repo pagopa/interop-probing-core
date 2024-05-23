@@ -20,7 +20,7 @@ export const MonitoringEserviceDetail: React.FC<MonitoringEserviceDetailProps> =
   })
 
   const getExternalCatalogUrl = () => {
-    return `${CATALOGUE_BASE_PATH}ui/it/fruizione/catalogo-e-service/${eservicesDetail.eserviceId}/${eservicesDetail.versionId}`
+    return `${CATALOGUE_BASE_PATH}/ui/it/fruizione/catalogo-e-service/${eservicesDetail.eserviceId}/${eservicesDetail.versionId}`
   }
 
   return (

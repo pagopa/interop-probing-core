@@ -1,5 +1,5 @@
-export type ProbingResponseStatus = 'OK' | 'KO' | 'N/D'
-export type ProbingEServiceMonitorState = 'N/D' | 'OFFLINE' | 'ONLINE'
+export type ProbingResponseStatus = 'OK' | 'KO' | 'N_D'
+export type ProbingEServiceMonitorState = 'N_D' | 'OFFLINE' | 'ONLINE'
 
 export type EserviceContent = {
   eserviceRecordId: number

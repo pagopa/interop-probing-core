@@ -197,7 +197,7 @@ describe("database test", async () => {
           ...eserviceData,
           versionNumber: 1,
           state: [
-            eserviceMonitorState["n/d"],
+            eserviceMonitorState["n_d"],
             eserviceMonitorState.offline,
             eserviceMonitorState.online,
           ],
@@ -212,7 +212,7 @@ describe("database test", async () => {
         expect(result.content[0].state).toBe(eserviceInteropState.inactive);
       });
 
-      it("given status n/d as parameter, service returns searchEservices response object with content empty", async () => {
+      it("given status n_d as parameter, service returns searchEservices response object with content empty", async () => {
         const eserviceData = {
           eserviceName: "eService 001",
           producerName: "eService producer 001",
@@ -222,7 +222,7 @@ describe("database test", async () => {
         const filters: ApiSearchEservicesQuery = {
           ...eserviceData,
           versionNumber: 2,
-          state: [eserviceMonitorState["n/d"]],
+          state: [eserviceMonitorState["n_d"]],
           limit: 2,
           offset: 0,
         };
@@ -336,7 +336,7 @@ describe("database test", async () => {
         expect(result.content).toContain(filters.producerName);
       });
 
-      it("given partial producerName as parameter, service returns list of 2 producers", async () => {
+      it("given partial producerName as parameter, service returns list of 1 producers", async () => {
         const eServiceProducer1: ApiGetProducersQuery = {
           producerName: "eService producer",
           limit: 2,
@@ -347,7 +347,7 @@ describe("database test", async () => {
         const producers =
           await eserviceService.getEservicesProducers(eServiceProducer1);
 
-        expect(producers.content.length).toBe(2);
+        expect(producers.content.length).toBe(1);
       });
     });
 
@@ -652,7 +652,7 @@ describe("database test", async () => {
           ...eserviceData,
           versionNumber: 1,
           state: [
-            eserviceMonitorState["n/d"],
+            eserviceMonitorState["n_d"],
             eserviceMonitorState.offline,
             eserviceMonitorState.online,
           ],

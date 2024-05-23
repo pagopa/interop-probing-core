@@ -80,7 +80,7 @@ export const ChartWrapper: React.FC<ChartWrapperProps> = ({ eserviceId, pollingF
   return (
     <>
       <Box sx={{ width: '100%' }}>{jwt && <Filters {...handlers} />}</Box>
-      <Stack direction={'row'} sx={{ flexWrap: 'wrap' }}>
+      <Stack direction={{ md: 'row' }}>
         <Stack direction="column" flexGrow={2}>
           <LineChart
             data={responseTelemetry?.performances ?? []}
