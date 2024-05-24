@@ -60,7 +60,7 @@ const LineChart: React.FC<LineChartProps> = ({ data, xScale, yScale }) => {
     return (
       <g opacity="40%" fontSize={10} textAnchor="end">
         {yScale.ticks().map((d) => (
-          <g key={d} opacity="1" className="tick" transform={`translate(-10, ${yScale(d)})`}>
+          <g key={d} opacity="1" className="tick" transform={`translate(10, ${yScale(d)})`}>
             <line stroke="currentColor" x2={0} strokeOpacity="0.2" />
             <line stroke="currentColor" x2={550} strokeOpacity="0.2" />
             <text x="-16" dy="0.32em">{`${d}ms`}</text>
