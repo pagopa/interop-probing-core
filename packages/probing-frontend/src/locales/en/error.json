@@ -1,0 +1,28 @@
+{
+  "actions": {
+    "reloadPage": "Reload",
+    "backToHome": "Back to home",
+    "retry": "Retry",
+    "backToSelfcare": "Go back to Area Riservata"
+  },
+  "default": {
+    "title": "Unexpected Error",
+    "description": "An unexpected error has occurred. Please reload the page."
+  },
+  "notFound": {
+    "title": "404",
+    "description": "The requested page does not exist"
+  },
+  "axiosError": {
+    "title": "Server Error",
+    "description": "There was an error while handling the request. Please reload the page."
+  },
+  "forbidden": {
+    "title": "Not authorized",
+    "description": "You don't have the necessary permissions to view the page."
+  },
+  "authentication": {
+    "title": "Unexpected error during authentication",
+    "description": "An error occurred during the authentication process. Please try again."
+  }
+}

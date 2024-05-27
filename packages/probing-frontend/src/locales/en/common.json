@@ -1,0 +1,150 @@
+{
+  "actions": {
+    "suspend": "Suspend",
+    "activate": "Activate",
+    "reject": "Reject",
+    "upgrade": "Upgrade",
+    "delete": "Delete",
+    "inspect": "View",
+    "edit": "Edit",
+    "clone": "Clone",
+    "publish": "Publish",
+    "download": "Download",
+    "archive": "Archive",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "createNewDraft": "Create draft",
+    "saveDraft": "Save draft",
+    "manageDraft": "Manage draft",
+    "deleteDraft": "Delete draft",
+    "publishDraft": "Publish draft",
+    "editDraft": "Edit draft",
+    "insert": "Insert"
+  },
+  "dialogSessionExpired": {
+    "title": "Session expired",
+    "content": {
+      "description": "Your session on PDND Interoperabilità has expired. You are about to be redirected to Self Care"
+    },
+    "actions": {
+      "exitLabel": "Exit"
+    }
+  },
+  "footer": {
+    "links": {
+      "privacy": {
+        "label": "Privacy Policy",
+        "ariaLabel": "Vai al link: privacy policy"
+      },
+      "dataProtection": {
+        "label": "Personal data protection rights",
+        "ariaLabel": "Vai al link: personal data protection rights"
+      },
+      "terms": {
+        "label": "Terms and conditions",
+        "ariaLabel": "Vai al link: terms and conditions"
+      },
+      "a11y": {
+        "label": "Accessibility",
+        "ariaLabel": "Vai al link: accessibility"
+      }
+    }
+  },
+  "loginForm": {
+    "title": "Sign in",
+    "subtitle": "",
+    "username": "Username",
+    "password": "Password",
+    "signIn": "Sign in",
+    "fieldRequired": "Password is mandatory",
+    "emailPattern": "Please insert a valid mail",
+    "forgotPassword": "Forgot your password? <1>Click here</1> to reset it.",
+    "clickHere": "Click here",
+    "returnToList": "Return to e-service list"
+  },
+  "firstAccessForm": {
+    "title": "Create new password",
+    "subtitle": "Your password must be at least 12 chatacters long and contain a lowercase letter, a uppercase letter, a number and a special character",
+    "newPassword": "New password",
+    "newPasswordConfirm": "Confirm new password",
+    "signIn": "Sign in",
+    "fieldRequired": "Password is mandatory",
+    "passwordLengthError": "Password is too short",
+    "passwordPatternError": "Password must contain at least one lowercase letter",
+    "notMatching": "Password not matching"
+  },
+  "restoreForm": {
+    "title": "Recover password",
+    "subtitle": "Your password must be at least 12 chatacters long and contain a lowercase letter, a uppercase letter, a number and a special character"
+  },
+  "recoverPasswordForm": {
+    "title": "Recover password",
+    "subtitle": "",
+    "email": "Email",
+    "emailPattern": "Please insert a valid mail",
+    "send": "Recover"
+  },
+  "homePage": {
+    "title": "E-services status",
+    "subtitle": "On this page, you can monitor the status of e-services provided by erogators on PDND Interoperabilità."
+  },
+  "EMAIL_SENT": {
+    "title": "You have a new message",
+    "subtitle": "If the email address you provided exists in our database, you will find password recovery instructions in your inbox (also check spam)",
+    "button": "Back to Home"
+  },
+  "PASSWORD_UPDATED": {
+    "title": "Password recovery completed",
+    "subtitle": "Your new password has been successfully saved",
+    "button": "Go to Login"
+  },
+  "table": {
+    "serviceNameFilter": "Search for e-service's name",
+    "serviceProducerFilter": "Search for e-service's producer",
+    "serviceVersionFilter": "Search for e-service's version",
+    "serviceStateFilter": "Search for e-service's state",
+    "refresh": "Refresh",
+    "eServiceName": "E-service name",
+    "version": "Version",
+    "producer": "Producer",
+    "eServiceStatus": "E-service status",
+    "lastDetectionDate": "Last detection date",
+    "readMore": "Read more",
+    "noDataLabel": "No results",
+    "loading": "Loading..."
+  },
+  "detailsPage": {
+    "titleOperativita": "Operativity",
+    "historyTitle": "History monitoring",
+    "lineChartTitle": "Response time",
+    "lineChartFailuresTitle": "Recorded anomalies",
+    "monitoringSuspended": "Monitoring suspended",
+    "subtitle": "On this page you can check the status of the e-service in real time and explore the performance history",
+    "producerName": "PRODUCER",
+    "version": "VERSION",
+    "eServiceTab": "E-SERVICE TAB",
+    "viewInCatalog": "View in catalog",
+    "returnToList": "Return to the list of e-services",
+    "realTimeTitle": "In real time",
+    "refresh": "Reload",
+    "monitoringState": "MONITORING STATE",
+    "eserviceState": "E-SERVICE STATE",
+    "lastRelevationDate": "LAST RELEVATION DATE",
+    "success": "success",
+    "error": "error",
+    "warning": "warning",
+    "active": "active",
+    "suspended": "suspended",
+    "loading": "Loading...",
+    "startDateTime": "Period start date and time",
+    "endDateTime": "Period end date and time",
+    "alerts": {
+      "monitoringSuspended": "Monitoring suspended",
+      "versionSuspendedMessage": "The e-service is offline because this version is currently suspended",
+      "eserviceNotAnswerMessage": "The e-service is offline because it's not responding to the monitoring system",
+      "monitoringSystemSuspendedMessage": "The monitoring system is currently suspended",
+      "genericAlert": "Further details not available"
+    }
+  },
+  "hour": "hours"
+}

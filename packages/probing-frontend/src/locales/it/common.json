@@ -1,0 +1,149 @@
+{
+  "actions": {
+    "suspend": "Sospendi",
+    "activate": "Attiva",
+    "reject": "Rifiuta",
+    "upgrade": "Aggiorna",
+    "delete": "Elimina",
+    "inspect": "Visualizza",
+    "edit": "Modifica",
+    "clone": "Clona",
+    "publish": "Pubblica",
+    "download": "Scarica",
+    "archive": "Archivia",
+    "cancel": "Annulla",
+    "confirm": "Conferma",
+    "createNewDraft": "Crea bozza",
+    "saveDraft": "Salva bozza",
+    "manageDraft": "Gestisci bozza",
+    "deleteDraft": "Elimina bozza",
+    "publishDraft": "Pubblica bozza",
+    "editDraft": "Modifica bozza",
+    "insert": "Inserisci"
+  },
+  "dialogSessionExpired": {
+    "title": "La sessione è scaduta",
+    "content": {
+      "description": "La sessione su PDND Interoperabilità è scaduta. Stai per essere reindirizzato su Area Riservata"
+    },
+    "actions": {
+      "exitLabel": "Esci"
+    }
+  },
+  "footer": {
+    "links": {
+      "privacy": {
+        "label": "Privacy Policy",
+        "ariaLabel": "Vai al link: privacy policy"
+      },
+      "dataProtection": {
+        "label": "Diritto alla protezione dei dati personali",
+        "ariaLabel": "Vai al link: diritto alla protezione dei dati personali"
+      },
+      "terms": {
+        "label": "Termini e condizioni",
+        "ariaLabel": "Vai al link: termini e condizioni"
+      },
+      "a11y": {
+        "label": "Accessibilità",
+        "ariaLabel": "Vai al link: accessibilità"
+      }
+    }
+  },
+  "loginForm": {
+    "title": "Accedi",
+    "subtitle": "",
+    "username": "Nome utente",
+    "password": "Password",
+    "signIn": "Accedi",
+    "fieldRequired": "Inserisci la password",
+    "emailPattern": "Inserisci una mail valida",
+    "forgotPassword": "Hai dimenticato la password? <1>Clicca qui</1> per ripristinarla",
+    "returnToList": "Torna alla lista degli e-service"
+  },
+  "firstAccessForm": {
+    "title": "Creazione password",
+    "subtitle": "La tua password deve essere lunga almeno 12 caratteri e contenere almeno una lettera minuscola, una maiuscola, un numero e un carattere speciale",
+    "newPassword": "Nuova password",
+    "newPasswordConfirm": "Conferma nuova password",
+    "signIn": "Accedi",
+    "passwordLengthError": "La password è troppo breve",
+    "passwordPatternError": "La password deve contenere almeno una maiuscola, una minuscola, un numero e un carattere speciale",
+    "fieldRequired": "Inserisci la password",
+    "notMatching": "Le due password non coincidono"
+  },
+  "restoreForm": {
+    "title": "Ripristino password",
+    "subtitle": "La tua password deve essere lunga almeno 12 caratteri e contenere almeno una lettera minuscola, una maiuscola, un numero e un carattere speciale"
+  },
+  "recoverPasswordForm": {
+    "title": "Recupero password",
+    "subtitle": "",
+    "email": "Email",
+    "emailPattern": "Inserisci una mail vaida",
+    "send": "Invia"
+  },
+  "homePage": {
+    "title": "Stato degli e-service",
+    "subtitle": "In questa pagina puoi monitorare lo stato degli e-service messi a disposizione degli erogatori su PDND Interoperabilità"
+  },
+  "EMAIL_SENT": {
+    "title": "Hai un nuovo messaggio",
+    "subtitle": "Se l'indirizzo che hai indicato esiste nel nostro database, troverai le istruzioni per il recupero password nella tua casella di posta (controlla anche lo spam)",
+    "button": "Torna alla home"
+  },
+  "PASSWORD_UPDATED": {
+    "title": "Ripristino password completato",
+    "subtitle": "La tua nuova password è stata salvata correttamente",
+    "button": "Vai alla login"
+  },
+  "table": {
+    "serviceNameFilter": "Cerca per nome",
+    "serviceProducerFilter": "Cerca per erogatore",
+    "serviceVersionFilter": "Cerca per versione",
+    "serviceStateFilter": "Cerca stato",
+    "refresh": "Ricarica",
+    "eServiceName": "Nome e-service",
+    "version": "Versione",
+    "producer": "Erogatore",
+    "eServiceStatus": "Stato e-service",
+    "lastDetectionDate": "Data ultima rilevazione",
+    "readMore": "Approfondisci",
+    "noDataLabel": "La ricerca non ha prodotto risultati",
+    "loading": "Operazione in corso..."
+  },
+  "detailsPage": {
+    "titleOperativita": "Operatività",
+    "historyTitle": "Storico del monitoraggio",
+    "lineChartTitle": "Tempi di risposta",
+    "lineChartFailuresTitle": "Anomalie registrate",
+    "monitoringSuspended": "Monitoraggio sospeso",
+    "subtitle": "In questa pagina puoi verificare lo stato dell'e-service in tempo reale ed esplorare lo storico delle performance",
+    "producerName": "EROGATORE",
+    "version": "VERSIONE",
+    "eServiceTab": "SCHEDA E-SERVICE",
+    "viewInCatalog": "Visualizza sul catalogo",
+    "returnToList": "Torna alla lista degli e-service",
+    "realTimeTitle": "In tempo reale",
+    "refresh": "Ricarica",
+    "monitoringState": "STATO DEL MONITORAGGIO",
+    "eserviceState": "STATO DELL'E-SERVICE",
+    "lastRelevationDate": "DATA ULTIMA RILEVAZIONE",
+    "success": "attivo",
+    "error": "errore",
+    "warning": "attenzione",
+    "active": "attivo",
+    "suspended": "sospeso",
+    "loading": "Operazione in corso...",
+    "startDateTime": "Data e ora inizio periodo",
+    "endDateTime": "Data e ora fine periodo",
+    "alerts": {
+      "monitoringSuspended": "Monitoraggio sospeso",
+      "versionSuspendedMessage": "L'e-service è offline perché questa versione è attualmente sospesa",
+      "eserviceNotAnswerMessage": "L'e-service è offline perché non risponde al sistema di monitoraggio",
+      "monitoringSystemSuspendedMessage": "Il sistema di monitoraggio è attualmente sospeso",
+      "genericAlert": "Ulteriori dettagli non disponibili"
+    }
+  },
+  "hour": "ore"
+}
