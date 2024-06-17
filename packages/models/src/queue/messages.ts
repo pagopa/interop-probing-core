@@ -57,10 +57,24 @@ export const EserviceDto = z.object({
   versionId: z.string().uuid(),
   technology: EserviceTechnology,
   state: EserviceInteropState,
-  basePath: z.array(z.string()).nonempty().max(2048),
+  basePath: z
+    .array(z.preprocess((val) => sanitizeData(val as string), z.string()))
+    .nonempty()
+    .max(2048),
   producerName: z.string().max(2048),
   versionNumber: z.number().int().min(1),
-  audience: z.array(z.string()).nonempty().max(2048),
+  audience: z
+    .array(z.preprocess((val) => sanitizeData(val as string), z.string()))
+    .nonempty()
+    .max(2048),
 });
 
 export type EserviceDto = z.infer<typeof EserviceDto>;
+
+/**
+ * Sanitizes the input string by removing control characters and trimming whitespace.
+ * Control characters removed include ASCII codes 0-31 and 127.
+ */
+const sanitizeData = (input: string): string => {
+  return input.replace(/[\x00-\x1F\x7F]+/g, "");
+};
