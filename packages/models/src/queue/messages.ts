@@ -76,5 +76,6 @@ export type EserviceDto = z.infer<typeof EserviceDto>;
  * Control characters removed include ASCII codes 0-31 and 127.
  */
 const sanitizeData = (input: string): string => {
+  // eslint-disable-next-line no-control-regex
   return input.replace(/[\x00-\x1F\x7F]+/g, "").trim();
 };
