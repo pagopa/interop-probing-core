@@ -1,9 +1,12 @@
 import {
   ApiError,
   makeApiProblemBuilder,
+  makeProblemLogString,
   Problem,
 } from "pagopa-interop-probing-models";
 import { AxiosError } from "axios";
+import { Logger } from "pagopa-interop-probing-commons";
+import { errorMapper } from "../../utilities/errorMapper.js";
 
 export const errorCodes = {
   eServiceNotFound: "0001",
@@ -15,15 +18,16 @@ export type ErrorCodes = keyof typeof errorCodes;
 
 export const makeApiProblem = makeApiProblemBuilder(errorCodes);
 
-export const resolveOperationsApiClientProblem = (error: unknown): Problem => {
-  const operationsApiProblem = Problem.safeParse(
+export const resolveApiProblem = (error: unknown, logger: Logger): Problem => {
+  const axiosApiProblem = Problem.safeParse(
     (error as AxiosError).response?.data,
   );
 
-  if (operationsApiProblem.success) {
-    return operationsApiProblem.data;
+  if (axiosApiProblem.success) {
+    logger.warn(makeProblemLogString(axiosApiProblem.data, error));
+    return axiosApiProblem.data;
   } else {
-    return makeApiProblem(error, () => 500);
+    return makeApiProblem(error, errorMapper, logger);
   }
 };
 

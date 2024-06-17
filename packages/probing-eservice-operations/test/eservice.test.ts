@@ -53,6 +53,7 @@ import {
   ApiGetProducersQuery,
   ApiSearchEservicesQuery,
 } from "pagopa-interop-probing-eservice-operations-client";
+import { genericLogger } from "pagopa-interop-probing-commons";
 
 describe("database test", async () => {
   let eservices: EserviceEntities;
@@ -180,7 +181,10 @@ describe("database test", async () => {
           offset: 0,
         };
 
-        const result = await eserviceService.searchEservices(filters);
+        const result = await eserviceService.searchEservices(
+          filters,
+          genericLogger,
+        );
 
         expect(result.content).toStrictEqual([]);
         expect(result.totalElements).toBe(0);
@@ -205,7 +209,10 @@ describe("database test", async () => {
           offset: 0,
         };
 
-        const result = await eserviceService.searchEservices(filters);
+        const result = await eserviceService.searchEservices(
+          filters,
+          genericLogger,
+        );
         expect(result.totalElements).not.toBe(0);
         expect(result.offset).toBe(0);
         expect(result.limit).toBe(2);
@@ -227,7 +234,10 @@ describe("database test", async () => {
           offset: 0,
         };
 
-        const result = await eserviceService.searchEservices(filters);
+        const result = await eserviceService.searchEservices(
+          filters,
+          genericLogger,
+        );
 
         expect(result.content).toStrictEqual([]);
         expect(result.totalElements).toBe(0);
@@ -248,7 +258,10 @@ describe("database test", async () => {
           offset: 0,
         };
 
-        const result = await eserviceService.searchEservices(filters);
+        const result = await eserviceService.searchEservices(
+          filters,
+          genericLogger,
+        );
 
         expect(result.totalElements).toBe(1);
         expect(result.offset).toBe(0);
@@ -262,13 +275,15 @@ describe("database test", async () => {
         const eservice = await createEservice();
         const result = await eserviceService.getEserviceMainData(
           eservice.eserviceRecordId,
+          genericLogger,
         );
         expect(result).toBeTruthy();
       });
 
       it("e-service should not be found and an `eServiceProbingDataByRecordIdNotFound` should be thrown", async () => {
         await expect(
-          async () => await eserviceService.getEserviceMainData(99),
+          async () =>
+            await eserviceService.getEserviceMainData(99, genericLogger),
         ).rejects.toThrowError(eServiceMainDataByRecordIdNotFound(99));
       });
     });
@@ -278,13 +293,15 @@ describe("database test", async () => {
         const eservice = await createEservice();
         const result = await eserviceService.getEserviceProbingData(
           eservice.eserviceRecordId,
+          genericLogger,
         );
         expect(result).toBeTruthy();
       });
 
       it("e-service should not be found and an `eServiceProbingDataByRecordIdNotFound` should be thrown", async () => {
         await expect(
-          async () => await eserviceService.getEserviceProbingData(99),
+          async () =>
+            await eserviceService.getEserviceProbingData(99, genericLogger),
         ).rejects.toThrowError(eServiceProbingDataByRecordIdNotFound(99));
       });
     });
@@ -300,10 +317,13 @@ describe("database test", async () => {
         await createEservice({
           eserviceData: { ...eserviceData, state: eserviceInteropState.active },
         });
-        const result = await eserviceService.getEservicesReadyForPolling({
-          offset: 0,
-          limit: 2,
-        });
+        const result = await eserviceService.getEservicesReadyForPolling(
+          {
+            offset: 0,
+            limit: 2,
+          },
+          genericLogger,
+        );
 
         expect(result.content.length).toBe(1);
         expect(result.totalElements).toBe(1);
@@ -318,7 +338,10 @@ describe("database test", async () => {
           offset: 0,
         };
         await createEservice();
-        const producers = await eserviceService.getEservicesProducers(filters);
+        const producers = await eserviceService.getEservicesProducers(
+          filters,
+          genericLogger,
+        );
 
         expect(producers.content.length).toBe(0);
       });
@@ -330,7 +353,10 @@ describe("database test", async () => {
           offset: 0,
         };
         await createEservice();
-        const result = await eserviceService.getEservicesProducers(filters);
+        const result = await eserviceService.getEservicesProducers(
+          filters,
+          genericLogger,
+        );
 
         expect(result.content.length).not.toBe(0);
         expect(result.content).toContain(filters.producerName);
@@ -344,8 +370,10 @@ describe("database test", async () => {
         };
         await createEservice();
         await createEservice();
-        const producers =
-          await eserviceService.getEservicesProducers(eServiceProducer1);
+        const producers = await eserviceService.getEservicesProducers(
+          eServiceProducer1,
+          genericLogger,
+        );
 
         expect(producers.content.length).toBe(1);
       });
@@ -356,9 +384,14 @@ describe("database test", async () => {
         const { eserviceId, versionId } = await createEservice({
           eserviceData: { state: eserviceInteropState.active },
         });
-        await eserviceService.updateEserviceState(eserviceId, versionId, {
-          eServiceState: eserviceInteropState.inactive,
-        });
+        await eserviceService.updateEserviceState(
+          eserviceId,
+          versionId,
+          {
+            eServiceState: eserviceInteropState.inactive,
+          },
+          genericLogger,
+        );
 
         const result = await eservices.findOneBy({
           eserviceId,
@@ -373,9 +406,14 @@ describe("database test", async () => {
         const versionId = uuidv4();
         await expect(
           async () =>
-            await eserviceService.updateEserviceState(eserviceId, versionId, {
-              eServiceState: eserviceInteropState.active,
-            }),
+            await eserviceService.updateEserviceState(
+              eserviceId,
+              versionId,
+              {
+                eServiceState: eserviceInteropState.active,
+              },
+              genericLogger,
+            ),
         ).rejects.toThrowError(eServiceNotFound(eserviceId, versionId));
       });
     });
@@ -392,6 +430,7 @@ describe("database test", async () => {
           {
             probingEnabled: true,
           },
+          genericLogger,
         );
 
         const result = await eservices.findOneBy({
@@ -414,6 +453,7 @@ describe("database test", async () => {
               {
                 probingEnabled: true,
               },
+              genericLogger,
             ),
         ).rejects.toThrowError(eServiceNotFound(eserviceId, versionId));
       });
@@ -429,11 +469,16 @@ describe("database test", async () => {
           endTime: nowDateUTC(8, 0),
         };
 
-        await eserviceService.updateEserviceFrequency(eserviceId, versionId, {
-          frequency: payload.frequency,
-          startTime: payload.startTime,
-          endTime: payload.endTime,
-        });
+        await eserviceService.updateEserviceFrequency(
+          eserviceId,
+          versionId,
+          {
+            frequency: payload.frequency,
+            startTime: payload.startTime,
+            endTime: payload.endTime,
+          },
+          genericLogger,
+        );
 
         const updatedEservice = await eservices.findOneBy({
           eserviceId,
@@ -465,6 +510,7 @@ describe("database test", async () => {
                 startTime: payload.startTime,
                 endTime: payload.endTime,
               },
+              genericLogger,
             ),
         ).rejects.toThrowError(eServiceNotFound(eserviceId, versionId));
       });
@@ -488,6 +534,7 @@ describe("database test", async () => {
           eserviceId,
           versionId,
           payload,
+          genericLogger,
         );
 
         const updatedEservice = await eservices.findOneBy({
@@ -517,7 +564,12 @@ describe("database test", async () => {
           audience: ["audience updated"],
         };
 
-        await eserviceService.saveEservice(eserviceId, versionId, payload);
+        await eserviceService.saveEservice(
+          eserviceId,
+          versionId,
+          payload,
+          genericLogger,
+        );
 
         const updatedEservice = await eservices.findOneBy({
           eserviceId,
@@ -540,6 +592,7 @@ describe("database test", async () => {
         await eserviceService.updateEserviceLastRequest(
           eserviceRecordId,
           payload,
+          genericLogger,
         );
 
         const updatedEservice = await eserviceProbingRequest.findOneBy({
@@ -567,6 +620,7 @@ describe("database test", async () => {
         await eserviceService.updateEserviceLastRequest(
           eserviceRecordId,
           payload,
+          genericLogger,
         );
 
         const updatedEservice = await eserviceProbingRequest.findOneBy({
@@ -592,7 +646,11 @@ describe("database test", async () => {
           responseReceived: new Date().toISOString(),
         };
 
-        await eserviceService.updateResponseReceived(eserviceRecordId, payload);
+        await eserviceService.updateResponseReceived(
+          eserviceRecordId,
+          payload,
+          genericLogger,
+        );
 
         const updatedEservice = await eserviceProbingResponse.findOneBy({
           eserviceRecordId,
@@ -619,7 +677,11 @@ describe("database test", async () => {
           responseReceived: new Date().toISOString(),
         };
 
-        await eserviceService.updateResponseReceived(eserviceRecordId, payload);
+        await eserviceService.updateResponseReceived(
+          eserviceRecordId,
+          payload,
+          genericLogger,
+        );
 
         const updatedEservice = await eserviceProbingResponse.findOneBy({
           eserviceRecordId,
@@ -660,7 +722,10 @@ describe("database test", async () => {
           offset: 0,
         };
 
-        const result = await eserviceService.searchEservices(filters);
+        const result = await eserviceService.searchEservices(
+          filters,
+          genericLogger,
+        );
         expect(result.totalElements).not.toBe(0);
         expect(result.offset).toBe(0);
         expect(result.limit).toBe(2);

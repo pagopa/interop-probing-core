@@ -63,6 +63,9 @@ importers:
       '@aws-sdk/client-sqs':
         specifier: ^3.507.0
         version: 3.507.0
+      '@types/uuid':
+        specifier: ^9.0.2
+        version: 9.0.7
       '@zodios/core':
         specifier: ^10.9.6
         version: 10.9.6(axios@1.6.7)(zod@3.22.4)
@@ -72,15 +75,24 @@ importers:
       express-winston:
         specifier: ^4.2.0
         version: 4.2.0(winston@3.11.0)
+      pagopa-interop-probing-models:
+        specifier: workspace:*
+        version: link:../models
       ts-pattern:
         specifier: ^5.0.1
         version: 5.0.6
+      uuid:
+        specifier: ^10.0.0
+        version: 10.0.0
       winston:
         specifier: ^3.9.0
         version: 3.11.0
       zod:
         specifier: ^3.21.4
         version: 3.22.4
+      zod-validation-error:
+        specifier: ^3.3.0
+        version: 3.3.0(zod@3.22.4)
     devDependencies:
       '@types/express':
         specifier: ^4.17.17
@@ -8423,7 +8435,6 @@ packages:
 
   /@types/uuid@9.0.7:
     resolution: {integrity: sha512-WUtIVRUZ9i5dYXefDEAI7sh9/O7jGvHg7Df/5O/gtH3Yabe5odI3UWopVR1qbPXQtvOxWu3mM4XxlYeZtMWF4g==}
-    dev: true
 
   /@types/yargs-parser@21.0.3:
     resolution: {integrity: sha512-I4q9QU9MQv4oEOz4tAHJtNz1cwuLxn2F3xcc2iV5WdqLPpUnj30aUuxt1mAxYTG+oe8CZMV/+6rU4S4gRDzqtQ==}
@@ -14541,6 +14552,11 @@ packages:
     engines: {node: '>= 0.4.0'}
     dev: false
 
+  /uuid@10.0.0:
+    resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
+    hasBin: true
+    dev: false
+
   /uuid@3.4.0:
     resolution: {integrity: sha512-HjSDRw6gZE5JMggctHBcjVak08+KEVhSIiDzFnT9S9aegmp85S/bReBVTb4QTFaRNptJ9kuYaNhnbNEOkbKb/A==}
     deprecated: Please upgrade  to version 7 or higher.  Older versions may use Math.random() in certain circumstances, which is known to be problematic.  See https://v8.dev/blog/math-random for details.
@@ -15082,6 +15098,15 @@ packages:
       compress-commons: 4.1.2
       readable-stream: 3.6.2
     dev: true
+
+  /zod-validation-error@3.3.0(zod@3.22.4):
+    resolution: {integrity: sha512-Syib9oumw1NTqEv4LT0e6U83Td9aVRk9iTXPUQr1otyV1PuXQKOvOwhMNqZIq5hluzHP2pMgnOmHEo7kPdI2mw==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      zod: ^3.18.0
+    dependencies:
+      zod: 3.22.4
+    dev: false
 
   /zod@3.22.4:
     resolution: {integrity: sha512-iC+8Io04lddc+mVqQ9AZ7OQ2MrUKGN+oIQyq1vemgt46jwCwLfhq7/pwnBnNXXXZb8VTVLKwp9EDkx+ryxIWmg==}

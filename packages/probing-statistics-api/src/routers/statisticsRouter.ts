@@ -1,11 +1,15 @@
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ZodiosRouter } from "@zodios/express";
 import { makeApiProblem } from "../model/domain/errors.js";
-import { ExpressContext, ZodiosContext } from "pagopa-interop-probing-commons";
+import {
+  ExpressContext,
+  ZodiosContext,
+  logger,
+  zodiosValidationErrorToApiProblem,
+} from "pagopa-interop-probing-commons";
 import { StatisticsService } from "../services/statisticsService.js";
 import { api } from "../model/generated/api.js";
-import { statisticsErrorMapper } from "../utilities/errorMappers.js";
-import validationErrorHandler from "../utilities/validationErrorHandler.js";
+import { errorMapper } from "../utilities/errorMapper.js";
 
 const statisticsRouter = (
   ctx: ZodiosContext,
@@ -14,7 +18,7 @@ const statisticsRouter = (
 ) => ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext>) => {
   return (statisticsService: StatisticsService) => {
     const router = ctx.router(api.api, {
-      validationErrorHandler,
+      validationErrorHandler: zodiosValidationErrorToApiProblem,
     });
 
     router
@@ -27,7 +31,7 @@ const statisticsRouter = (
 
           return res.status(200).json(telemetryData).end();
         } catch (error) {
-          const errorRes = makeApiProblem(error, statisticsErrorMapper);
+          const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();
         }
       })
@@ -43,7 +47,11 @@ const statisticsRouter = (
 
             return res.status(200).json(telemetryData).end();
           } catch (error) {
-            const errorRes = makeApiProblem(error, statisticsErrorMapper);
+            const errorRes = makeApiProblem(
+              error,
+              errorMapper,
+              logger(req.ctx),
+            );
             return res.status(errorRes.status).json(errorRes).end();
           }
         },

@@ -7,9 +7,7 @@ type ErrorCodes = LocalErrorCodes | CommonErrorCodes;
 
 const { HTTP_STATUS_INTERNAL_SERVER_ERROR, HTTP_STATUS_NOT_FOUND } = constants;
 
-export const updateEServiceErrorMapper = (
-  error: ApiError<ErrorCodes>,
-): number =>
+export const errorMapper = (error: ApiError<ErrorCodes>): number =>
   match(error.code)
     .with("eServiceNotFound", () => HTTP_STATUS_NOT_FOUND)
     .with("eServiceMainDataByRecordIdNotFound", () => HTTP_STATUS_NOT_FOUND)

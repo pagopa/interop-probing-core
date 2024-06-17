@@ -1,33 +1,35 @@
-import { AsyncLocalStorage } from "async_hooks";
-import { NextFunction, Request, Response } from "express";
-import { zodiosContext } from "@zodios/express";
+import {
+  ZodiosRouterContextRequestHandler,
+  zodiosContext,
+} from "@zodios/express";
+import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
+import { Logger, logger } from "../logging/index.js";
+import { readCorrelationIdHeader } from "../auth/headers.js";
 
-export type AppContext = z.infer<typeof ctx>;
+export const AppContext = z.object({
+  serviceName: z.string(),
+  correlationId: z.string(),
+});
+export type AppContext = z.infer<typeof AppContext>;
+
+export const zodiosCtx = zodiosContext(z.object({ ctx: AppContext }));
 export type ZodiosContext = NonNullable<typeof zodiosCtx>;
 export type ExpressContext = NonNullable<typeof zodiosCtx.context>;
 
-export const ctx = z.object({
-  correlationId: z.string().uuid(),
-});
+export type WithLogger<T> = T & { logger: Logger };
 
-export const zodiosCtx = zodiosContext(z.object({ ctx }));
+export function fromAppContext(ctx: AppContext): WithLogger<AppContext> {
+  return { ...ctx, logger: logger({ ...ctx }) };
+}
 
-const globalStore = new AsyncLocalStorage<AppContext>();
-const defaultAppContext: AppContext = {
-  correlationId: "",
-};
+export const contextMiddleware =
+  (serviceName: string): ZodiosRouterContextRequestHandler<ExpressContext> =>
+  (req, _res, next): void => {
+    req.ctx = {
+      serviceName,
+      correlationId: readCorrelationIdHeader(req) ?? uuidv4(),
+    } as AppContext;
 
-export const getContext = (): AppContext => {
-  const context = globalStore.getStore();
-  return !context ? defaultAppContext : context;
-};
-
-export const globalContextMiddleware = (
-  _req: Request,
-  _res: Response,
-  next: NextFunction,
-): void => {
-  globalStore.run(defaultAppContext, () => defaultAppContext);
-  next();
-};
+    next();
+  };

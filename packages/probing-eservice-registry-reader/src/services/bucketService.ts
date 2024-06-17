@@ -1,6 +1,6 @@
 import { EserviceDto } from "pagopa-interop-probing-models";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
-import { logger } from "pagopa-interop-probing-commons";
+import { genericLogger } from "pagopa-interop-probing-commons";
 import { config } from "../utilities/config.js";
 import { z } from "zod";
 import { readObjectS3BucketError } from "../model/domain/errors.js";
@@ -31,7 +31,7 @@ export const bucketServiceBuilder = (s3Client: S3Client) => {
           .safeParse(data.map((d: EserviceDto) => d));
 
         if (!result.success) {
-          logger.error(
+          genericLogger.error(
             `Unable to parse eservices from S3 Bucket ${
               config.bucketS3Name
             } Key ${config.bucketS3Key}: result ${JSON.stringify(

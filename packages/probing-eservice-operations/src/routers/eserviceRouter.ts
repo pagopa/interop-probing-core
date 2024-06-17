@@ -1,13 +1,17 @@
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ZodiosRouter } from "@zodios/express";
 import { makeApiProblem } from "../model/domain/errors.js";
-import { ExpressContext, ZodiosContext } from "pagopa-interop-probing-commons";
+import {
+  ExpressContext,
+  ZodiosContext,
+  logger,
+} from "pagopa-interop-probing-commons";
 import { config } from "../utilities/config.js";
 import { modelServiceBuilder } from "../services/db/dbService.js";
 import { eServiceServiceBuilder } from "../services/eserviceService.js";
 import { eserviceQueryBuilder } from "../services/db/eserviceQuery.js";
 import { api } from "pagopa-interop-probing-eservice-operations-client";
-import { updateEServiceErrorMapper } from "../utilities/errorMappers.js";
+import { errorMapper } from "../utilities/errorMapper.js";
 import { ModelRepository } from "../repositories/modelRepository.js";
 
 const modelService = modelServiceBuilder(await ModelRepository.init(config));
@@ -28,10 +32,11 @@ const eServiceRouter = (
             req.params.eserviceId,
             req.params.versionId,
             req.body,
+            logger(req.ctx),
           );
           return res.status(204).end();
         } catch (error) {
-          const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
+          const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();
         }
       },
@@ -44,10 +49,11 @@ const eServiceRouter = (
             req.params.eserviceId,
             req.params.versionId,
             req.body,
+            logger(req.ctx),
           );
           return res.status(204).end();
         } catch (error) {
-          const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
+          const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();
         }
       },
@@ -60,10 +66,11 @@ const eServiceRouter = (
             req.params.eserviceId,
             req.params.versionId,
             req.body,
+            logger(req.ctx),
           );
           return res.status(204).end();
         } catch (error) {
-          const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
+          const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();
         }
       },
@@ -76,10 +83,11 @@ const eServiceRouter = (
             req.params.eserviceId,
             req.params.versionId,
             req.body,
+            logger(req.ctx),
           );
           return res.status(200).end();
         } catch (error) {
-          const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
+          const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();
         }
       },
@@ -91,10 +99,11 @@ const eServiceRouter = (
           await eServiceService.updateEserviceLastRequest(
             Number(req.params.eserviceRecordId),
             req.body,
+            logger(req.ctx),
           );
           return res.status(204).end();
         } catch (error) {
-          const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
+          const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();
         }
       },
@@ -106,10 +115,11 @@ const eServiceRouter = (
           await eServiceService.updateResponseReceived(
             Number(req.params.eserviceRecordId),
             req.body,
+            logger(req.ctx),
           );
           return res.status(204).end();
         } catch (error) {
-          const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
+          const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();
         }
       },
@@ -118,14 +128,17 @@ const eServiceRouter = (
   eServiceRouter
     .get("/eservices", async (req, res) => {
       try {
-        const eservices = await eServiceService.searchEservices({
-          eserviceName: req.query.eserviceName,
-          producerName: req.query.producerName,
-          versionNumber: req.query.versionNumber,
-          state: req.query.state,
-          limit: req.query.limit,
-          offset: req.query.offset,
-        });
+        const eservices = await eServiceService.searchEservices(
+          {
+            eserviceName: req.query.eserviceName,
+            producerName: req.query.producerName,
+            versionNumber: req.query.versionNumber,
+            state: req.query.state,
+            limit: req.query.limit,
+            offset: req.query.offset,
+          },
+          logger(req.ctx),
+        );
 
         return res
           .status(200)
@@ -137,7 +150,7 @@ const eServiceRouter = (
           })
           .end();
       } catch (error) {
-        const errorRes = makeApiProblem(error, () => 500);
+        const errorRes = makeApiProblem(error, () => 500, logger(req.ctx));
         return res.status(errorRes.status).json(errorRes).end();
       }
     })
@@ -145,11 +158,12 @@ const eServiceRouter = (
       try {
         const eServiceMainData = await eServiceService.getEserviceMainData(
           Number(req.params.eserviceRecordId),
+          logger(req.ctx),
         );
 
         return res.status(200).json(eServiceMainData).end();
       } catch (error) {
-        const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
+        const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
         return res.status(errorRes.status).json(errorRes).end();
       }
     })
@@ -158,21 +172,25 @@ const eServiceRouter = (
         const eServiceProbingData =
           await eServiceService.getEserviceProbingData(
             Number(req.params.eserviceRecordId),
+            logger(req.ctx),
           );
 
         return res.status(200).json(eServiceProbingData).end();
       } catch (error) {
-        const errorRes = makeApiProblem(error, updateEServiceErrorMapper);
+        const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
         return res.status(errorRes.status).json(errorRes).end();
       }
     })
     .get("/producers", async (req, res) => {
       try {
-        const eservices = await eServiceService.getEservicesProducers({
-          producerName: req.query.producerName,
-          limit: req.query.limit,
-          offset: req.query.offset,
-        });
+        const eservices = await eServiceService.getEservicesProducers(
+          {
+            producerName: req.query.producerName,
+            limit: req.query.limit,
+            offset: req.query.offset,
+          },
+          logger(req.ctx),
+        );
 
         return res
           .status(200)
@@ -181,7 +199,7 @@ const eServiceRouter = (
           })
           .end();
       } catch (error) {
-        const errorRes = makeApiProblem(error, () => 500);
+        const errorRes = makeApiProblem(error, () => 500, logger(req.ctx));
         return res.status(errorRes.status).json(errorRes).end();
       }
     })
@@ -189,6 +207,7 @@ const eServiceRouter = (
       try {
         const eservices = await eServiceService.getEservicesReadyForPolling(
           req.query,
+          logger(req.ctx),
         );
 
         return res
@@ -199,7 +218,7 @@ const eServiceRouter = (
           })
           .end();
       } catch (error) {
-        const errorRes = makeApiProblem(error, () => 500);
+        const errorRes = makeApiProblem(error, () => 500, logger(req.ctx));
         return res.status(errorRes.status).json(errorRes).end();
       }
     });

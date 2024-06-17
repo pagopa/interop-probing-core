@@ -1,4 +1,4 @@
-import { logger, SQS } from "pagopa-interop-probing-commons";
+import { genericLogger, SQS } from "pagopa-interop-probing-commons";
 import { config } from "./utilities/config.js";
 import { processMessage } from "./messagesHandler.js";
 import {
@@ -36,4 +36,4 @@ await SQS.runConsumer(
     consumerPollingTimeout: config.consumerPollingTimeout,
   },
   processMessage(callerService, producerService),
-).catch(logger.error);
+).catch(genericLogger.error);

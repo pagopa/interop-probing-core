@@ -1,4 +1,4 @@
-import { logger } from "pagopa-interop-probing-commons";
+import { Logger } from "pagopa-interop-probing-commons";
 import {
   genericError,
   EService,
@@ -344,6 +344,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     async getEServiceByIdAndVersion(
       eserviceId: string,
       versionId: string,
+      logger: Logger,
     ): Promise<EService | undefined> {
       const data = await eservices.findOne({
         where: { eserviceId, versionId },
@@ -366,6 +367,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
 
     async searchEservices(
       filters: ApiSearchEservicesQuery,
+      logger: Logger,
     ): Promise<ApiSearchEservicesResponse> {
       const [data, count] = await eserviceView
         .createQueryBuilder()
@@ -397,6 +399,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
 
     async getEserviceMainData(
       eserviceRecordId: number,
+      logger: Logger,
     ): Promise<ApiEserviceMainDataResponse> {
       const data = await eservices.findOne({ where: { eserviceRecordId } });
       if (!data) {
@@ -417,6 +420,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
 
     async getEserviceProbingData(
       eserviceRecordId: number,
+      logger: Logger,
     ): Promise<ApiEserviceProbingDataResponse> {
       const data = await eserviceView.findOne({
         where: { eserviceRecordId },
@@ -441,6 +445,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
 
     async getEservicesReadyForPolling(
       filters: ApiGetEservicesReadyForPollingQuery,
+      logger: Logger,
     ): Promise<ApiGetEservicesReadyForPollingResponse> {
       const [data, count] = await eserviceView
         .createQueryBuilder("eserviceView")
@@ -478,6 +483,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
 
     async getEservicesProducers(
       filters: ApiGetProducersQuery,
+      logger: Logger,
     ): Promise<ApiGetProducersResponse> {
       const data = await eservices
         .createQueryBuilder("eservice")

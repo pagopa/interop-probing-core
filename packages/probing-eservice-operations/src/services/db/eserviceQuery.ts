@@ -24,6 +24,7 @@ import {
   ApiUpdateEserviceProbingStateResponse,
   ApiUpdateEserviceFrequencyResponse,
 } from "pagopa-interop-probing-eservice-operations-client";
+import { Logger } from "pagopa-interop-probing-commons";
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function eserviceQueryBuilder(modelService: ModelService) {
@@ -83,28 +84,38 @@ export function eserviceQueryBuilder(modelService: ModelService) {
     getEServiceByIdAndVersion: async (
       eserviceId: string,
       versionId: string,
+      logger: Logger,
     ): Promise<EService | undefined> =>
-      await modelService.getEServiceByIdAndVersion(eserviceId, versionId),
+      await modelService.getEServiceByIdAndVersion(
+        eserviceId,
+        versionId,
+        logger,
+      ),
     searchEservices: async (
       filters: ApiSearchEservicesQuery,
+      logger: Logger,
     ): Promise<ApiSearchEservicesResponse> =>
-      await modelService.searchEservices(filters),
+      await modelService.searchEservices(filters, logger),
     getEserviceMainData: async (
       eserviceRecordId: number,
+      logger: Logger,
     ): Promise<ApiEserviceMainDataResponse> =>
-      await modelService.getEserviceMainData(eserviceRecordId),
+      await modelService.getEserviceMainData(eserviceRecordId, logger),
     getEserviceProbingData: async (
       eserviceRecordId: number,
+      logger: Logger,
     ): Promise<ApiEserviceProbingDataResponse> =>
-      await modelService.getEserviceProbingData(eserviceRecordId),
+      await modelService.getEserviceProbingData(eserviceRecordId, logger),
     getEservicesProducers: async (
       filters: ApiGetProducersQuery,
+      logger: Logger,
     ): Promise<ApiGetProducersResponse> =>
-      await modelService.getEservicesProducers(filters),
+      await modelService.getEservicesProducers(filters, logger),
     getEservicesReadyForPolling: async (
       filters: ApiGetEservicesReadyForPollingQuery,
+      logger: Logger,
     ): Promise<ApiGetEservicesReadyForPollingResponse> =>
-      await modelService.getEservicesReadyForPolling(filters),
+      await modelService.getEservicesReadyForPolling(filters, logger),
   };
 }
 
