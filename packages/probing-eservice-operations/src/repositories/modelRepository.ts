@@ -14,7 +14,7 @@ import {
   EserviceViewSchema,
 } from "./entity/view/eservice.entity.js";
 import { Eservice, EserviceSchema } from "./entity/eservice.entity.js";
-import { logger } from "pagopa-interop-probing-commons";
+import { genericLogger } from "pagopa-interop-probing-commons";
 
 /**
  * Extracts keys of a given type T
@@ -102,7 +102,7 @@ export class ModelRepository {
       if (initDB) {
         await ModelRepository.instance.entityManager.query(initDB);
       }
-      logger.info(
+      genericLogger.info(
         `Database Connection Status: ${
           connectionStatus ? "Initialized" : "Not Initialized"
         }`,

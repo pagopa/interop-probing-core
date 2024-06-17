@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import supertest from "supertest";
 import { v4 as uuidv4 } from "uuid";
-import { zodiosCtx } from "pagopa-interop-probing-commons";
+import { genericLogger, zodiosCtx } from "pagopa-interop-probing-commons";
 import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
 import {
   EServiceContent,
@@ -19,7 +19,7 @@ import {
   eServiceProbingDataByRecordIdNotFound,
   makeApiProblem,
 } from "../src/model/domain/errors.js";
-import { updateEServiceErrorMapper } from "../src/utilities/errorMappers.js";
+import { errorMapper } from "../src/utilities/errorMapper.js";
 import {
   ApiGetEserviceMainDataResponse,
   ApiSearchEservicesResponse,
@@ -76,7 +76,8 @@ describe("eService Router", () => {
     };
     const errorRes = makeApiProblem(
       eServiceNotFound(params.eserviceId, params.versionId),
-      updateEServiceErrorMapper,
+      errorMapper,
+      genericLogger,
     );
     const apiClientError = mockOperationsApiClientError(errorRes);
 
@@ -146,7 +147,7 @@ describe("eService Router", () => {
       )
       .set("Content-Type", "application/json");
 
-    expect(response.text).toContain("Validation failed");
+    expect(response.text).toContain("Bad request");
     expect(response.text).toContain("body");
     expect(response.text).toContain("Required");
     expect(response.text).toContain("eServiceState");
@@ -188,7 +189,8 @@ describe("eService Router", () => {
 
     const errorRes = makeApiProblem(
       eServiceNotFound(params.eserviceId, params.versionId),
-      updateEServiceErrorMapper,
+      errorMapper,
+      genericLogger,
     );
     const apiClientError = mockOperationsApiClientError(errorRes);
 
@@ -221,7 +223,7 @@ describe("eService Router", () => {
       )
       .set("Content-Type", "application/json");
 
-    expect(response.text).toContain("Validation failed");
+    expect(response.text).toContain("Bad request");
     expect(response.text).toContain("body");
     expect(response.text).toContain("Required");
     expect(response.text).toContain("probingEnabled");
@@ -266,7 +268,8 @@ describe("eService Router", () => {
 
     const errorRes = makeApiProblem(
       eServiceNotFound(params.eserviceId, params.versionId),
-      updateEServiceErrorMapper,
+      errorMapper,
+      genericLogger,
     );
     const apiClientError = mockOperationsApiClientError(errorRes);
 
@@ -328,7 +331,7 @@ describe("eService Router", () => {
       )
       .set("Content-Type", "application/json");
 
-    expect(response.text).toContain("Validation failed");
+    expect(response.text).toContain("Bad request");
     expect(response.text).toContain("body");
     expect(response.text).toContain("Required");
     expect(response.text).toContain("startTime");
@@ -423,7 +426,7 @@ describe("eService Router", () => {
         offset,
       });
 
-    expect(response.text).toContain("Validation failed");
+    expect(response.text).toContain("Bad request");
     expect(response.text).toContain("query.limit");
     expect(response.text).toContain("Required");
     expect(response.status).toBe(400);
@@ -451,7 +454,7 @@ describe("eService Router", () => {
         limit,
       });
 
-    expect(response.text).toContain("Validation failed");
+    expect(response.text).toContain("Bad request");
     expect(response.text).toContain("query.offset");
     expect(response.text).toContain("Required");
     expect(response.status).toBe(400);
@@ -462,7 +465,8 @@ describe("eService Router", () => {
 
     const errorRes = makeApiProblem(
       eServiceMainDataByRecordIdNotFound(eserviceRecordId),
-      updateEServiceErrorMapper,
+      errorMapper,
+      genericLogger,
     );
     const apiClientError = mockOperationsApiClientError(errorRes);
 
@@ -510,7 +514,8 @@ describe("eService Router", () => {
 
     const errorRes = makeApiProblem(
       eServiceProbingDataByRecordIdNotFound(eserviceRecordId),
-      updateEServiceErrorMapper,
+      errorMapper,
+      genericLogger,
     );
     const apiClientError = mockOperationsApiClientError(errorRes);
 

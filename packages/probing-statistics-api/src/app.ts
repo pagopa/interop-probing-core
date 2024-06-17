@@ -1,4 +1,8 @@
-import { zodiosCtx } from "pagopa-interop-probing-commons";
+import {
+  contextMiddleware,
+  loggerMiddleware,
+  zodiosCtx,
+} from "pagopa-interop-probing-commons";
 import statisticsRouter from "./routers/statisticsRouter.js";
 import healthRouter from "./routers/healthRouter.js";
 import {
@@ -69,6 +73,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions));
 
+app.use(loggerMiddleware(config.applicationName));
+app.use(contextMiddleware(config.applicationName));
 app.use(healthRouter);
 app.use(statisticsRouter(zodiosCtx)(statisticsService));
 

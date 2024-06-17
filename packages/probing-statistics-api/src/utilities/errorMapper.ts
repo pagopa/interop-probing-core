@@ -7,7 +7,7 @@ type ErrorCodes = LocalErrorCodes | CommonErrorCodes;
 
 const { HTTP_STATUS_INTERNAL_SERVER_ERROR } = constants;
 
-export const statisticsErrorMapper = (error: ApiError<ErrorCodes>): number =>
+export const errorMapper = (error: ApiError<ErrorCodes>): number =>
   match(error.code)
     .with(
       "missingScalarValueTelemetry",
