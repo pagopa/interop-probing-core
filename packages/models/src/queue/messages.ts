@@ -58,7 +58,7 @@ export const EserviceDto = z.object({
   technology: EserviceTechnology,
   state: EserviceInteropState,
   basePath: z
-    .array(z.preprocess((val) => sanitizeData(val as string), z.string()))
+    .array(z.coerce.string().transform(sanitizeData))
     .nonempty()
     .max(2048),
   producerName: z.string().max(2048),
