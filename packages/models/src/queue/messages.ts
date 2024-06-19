@@ -64,7 +64,7 @@ export const EserviceDto = z.object({
   producerName: z.string().max(2048),
   versionNumber: z.number().int().min(1),
   audience: z
-    .array(z.preprocess((val) => sanitizeData(val as string), z.string()))
+    .array(z.coerce.string().transform(sanitizeData))
     .nonempty()
     .max(2048),
 });
@@ -75,7 +75,7 @@ export type EserviceDto = z.infer<typeof EserviceDto>;
  * Sanitizes the input string by removing control characters and trimming whitespace.
  * Control characters removed include ASCII codes 0-31 and 127.
  */
-const sanitizeData = (input: string): string => {
+function sanitizeData(input: string): string {
   // eslint-disable-next-line no-control-regex
   return input.replace(/[\x00-\x1F\x7F]+/g, "").trim();
-};
+}
