@@ -1,11 +1,10 @@
 import { SQS } from "pagopa-interop-probing-commons";
 import { EserviceDto } from "pagopa-interop-probing-models";
 import { config } from "../utilities/config.js";
-import { v4 as uuidv4 } from "uuid";
 
 export const producerServiceBuilder = (sqsClient: SQS.SQSClient) => {
   return {
-    async sendToServicesQueue(message: EserviceDto): Promise<void> {
+    async sendToServicesQueue(message: EserviceDto, correlationId: string): Promise<void> {
       await SQS.sendMessage(
         sqsClient,
         config.sqsEndpointServicesQueue,
@@ -14,7 +13,7 @@ export const producerServiceBuilder = (sqsClient: SQS.SQSClient) => {
         {
           Header: {
             DataType: "string",
-            StringValue: `{ "correlationId": "${uuidv4()}" }`,
+            StringValue: `{ "correlationId": "${correlationId}" }`,
           },
         },
       );
