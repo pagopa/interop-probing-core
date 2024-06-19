@@ -40,6 +40,7 @@ const processQueue = async (
 ): Promise<void> => {
   const command = new ReceiveMessageCommand({
     QueueUrl: config.queueUrl,
+    MessageAttributeNames: ["All"],
     WaitTimeSeconds: config.consumerPollingTimeout,
     MaxNumberOfMessages: 10,
   });
