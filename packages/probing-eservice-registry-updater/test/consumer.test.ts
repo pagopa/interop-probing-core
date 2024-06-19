@@ -43,7 +43,7 @@ describe("Consumer queue test", () => {
       }),
       MessageAttributes: {
         Header: {
-          DataType: "string",
+          DataType: "String",
           StringValue: `{ "correlationId": "${uuidv4()}" }`,
         },
       },
@@ -92,7 +92,7 @@ describe("Consumer queue test", () => {
       }),
       MessageAttributes: {
         Header: {
-          DataType: "string",
+          DataType: "String",
           StringValue: `{ "correlationId": "${uuidv4()}" }`,
         },
       },
@@ -123,7 +123,7 @@ describe("Consumer queue test", () => {
       }),
       MessageAttributes: {
         Header: {
-          DataType: "string",
+          DataType: "String",
           StringValue: `{ "correlationId": "${uuidv4()}" }`,
         },
       },
@@ -155,7 +155,7 @@ describe("Consumer queue test", () => {
       }),
       MessageAttributes: {
         Header: {
-          DataType: "string",
+          DataType: "String",
           StringValue: `{ "correlationId": "${uuidv4()}" }`,
         },
       },

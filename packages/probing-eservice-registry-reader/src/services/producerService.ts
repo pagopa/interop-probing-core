@@ -15,7 +15,7 @@ export const producerServiceBuilder = (sqsClient: SQS.SQSClient) => {
         config.sqsGroupId,
         {
           Header: {
-            DataType: "string",
+            DataType: "String",
             StringValue: `{ "correlationId": "${correlationId}" }`,
           },
         },
