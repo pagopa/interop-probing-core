@@ -64,3 +64,9 @@ export const EserviceDto = z.object({
 });
 
 export type EserviceDto = z.infer<typeof EserviceDto>;
+
+export const HeadersMessageDto = z.object({
+  correlationId: z.string().uuid(),
+});
+
+export type HeadersMessageDto = z.infer<typeof HeadersMessageDto>;

@@ -124,6 +124,9 @@ importers:
 
   packages/models:
     dependencies:
+      express:
+        specifier: ^4.18.2
+        version: 4.18.2
       ts-pattern:
         specifier: ^5.0.1
         version: 5.0.6
@@ -131,6 +134,9 @@ importers:
         specifier: ^3.21.4
         version: 3.22.4
     devDependencies:
+      '@types/express':
+        specifier: ^4.17.17
+        version: 4.17.21
       '@typescript-eslint/eslint-plugin':
         specifier: ^6.14.0
         version: 6.21.0(@typescript-eslint/parser@6.21.0)(eslint@8.56.0)(typescript@5.2.2)
@@ -404,6 +410,9 @@ importers:
       '@tsconfig/node-lts':
         specifier: ^20.1.0
         version: 20.1.1
+      '@types/uuid':
+        specifier: ^9.0.2
+        version: 9.0.7
       dotenv-flow:
         specifier: ^3.2.0
         version: 3.3.0
@@ -416,6 +425,9 @@ importers:
       ts-pattern:
         specifier: ^5.0.1
         version: 5.0.6
+      uuid:
+        specifier: ^10.0.0
+        version: 10.0.0
       zod:
         specifier: ^3.21.4
         version: 3.22.4
@@ -11268,7 +11280,7 @@ packages:
     dependencies:
       get-intrinsic: 1.2.2
       hasown: 2.0.0
-      side-channel: 1.0.4
+      side-channel: 1.0.6
     dev: true
 
   /internmap@2.0.3:
@@ -12982,7 +12994,7 @@ packages:
     resolution: {integrity: sha512-MvjoMCJwEarSbUYk5O+nmoSzSutSsTwF85zcHPQ9OrlFoZOYIjaqBAJIqIXjptyD5vThxGq52Xu/MaJzRkIk4Q==}
     engines: {node: '>=0.6'}
     dependencies:
-      side-channel: 1.0.4
+      side-channel: 1.0.6
     dev: false
 
   /qs@6.12.0:
@@ -13635,6 +13647,7 @@ packages:
       call-bind: 1.0.5
       get-intrinsic: 1.2.2
       object-inspect: 1.13.1
+    dev: true
 
   /side-channel@1.0.6:
     resolution: {integrity: sha512-fDW/EZ6Q9RiO8eFG8Hj+7u/oW+XrPTIChwCOM2+th2A6OblDtYYIpve9m+KvI9Z4C9qSEXlaGR6bTEYHReuglA==}
