@@ -71,11 +71,11 @@ export const EserviceDto = z.object({
 
 export type EserviceDto = z.infer<typeof EserviceDto>;
 
-export const HeadersMessageDto = z.object({
+export const MessageHeadersDto = z.object({
   correlationId: z.string().uuid(),
 });
 
-export type HeadersMessageDto = z.infer<typeof HeadersMessageDto>;
+export type MessageHeadersDto = z.infer<typeof MessageHeadersDto>;
 
 /**
  * Sanitizes the input string by removing control characters and trimming whitespace.

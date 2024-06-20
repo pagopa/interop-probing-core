@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { EserviceDto, HeadersMessageDto } from "pagopa-interop-probing-models";
+import { EserviceDto, MessageHeadersDto } from "pagopa-interop-probing-models";
 import { SQS } from "pagopa-interop-probing-commons";
 import { decodeSQSMessageError } from "./domain/errors.js";
 import { v4 as uuidv4 } from "uuid";
@@ -9,22 +9,22 @@ export interface SaveEserviceApi {
   payload: EserviceDto;
 }
 
-const BodyMessageSchema = z.object({
+const MessageBodySchema = z.object({
   value: z.preprocess(
     (v) => (v != null ? JSON.parse(v.toString()) : null),
     EserviceDto,
   ),
 });
 
-const HeaderMessageSchema = z.object({
+const MessageHeadersSchema = z.object({
   value: z.preprocess(
     (v) => (v ? JSON.parse(v.toString()) : null),
-    HeadersMessageDto,
+    MessageHeadersDto,
   ),
 });
 
-export function decodeSQSBodyMessage(message: SQS.Message): SaveEserviceApi {
-  const parsedBody = BodyMessageSchema.safeParse({ value: message.Body });
+export function decodeSQSMessageBody(message: SQS.Message): SaveEserviceApi {
+  const parsedBody = MessageBodySchema.safeParse({ value: message.Body });
   if (!parsedBody.success) {
     throw decodeSQSMessageError(
       `Failed to decode SQS Body message with MessageId: ${
@@ -41,11 +41,11 @@ export function decodeSQSBodyMessage(message: SQS.Message): SaveEserviceApi {
   };
 }
 
-export function decodeSQSHeadersMessage(
+export function decodeSQSMessageHeaders(
   message: SQS.Message,
-): HeadersMessageDto {
+): MessageHeadersDto {
   try {
-    const parsedHeaders = HeaderMessageSchema.parse({
+    const parsedHeaders = MessageHeadersSchema.parse({
       value: message.MessageAttributes?.Header.StringValue,
     });
     return {

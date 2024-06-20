@@ -6,8 +6,8 @@ import {
   WithSQSMessageId,
 } from "pagopa-interop-probing-commons";
 import {
-  decodeSQSBodyMessage,
-  decodeSQSHeadersMessage,
+  decodeSQSMessageBody,
+  decodeSQSMessageHeaders,
 } from "../src/model/models.js";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -52,7 +52,7 @@ describe("Consumer queue test", () => {
     const mockAppCtx: WithSQSMessageId<AppContext> = {
       serviceName: config.applicationName,
       messageId: validMessage.MessageId,
-      correlationId: decodeSQSHeadersMessage(validMessage).correlationId,
+      correlationId: decodeSQSMessageHeaders(validMessage).correlationId,
     };
 
     expect(
@@ -60,7 +60,7 @@ describe("Consumer queue test", () => {
     ).resolves.not.toThrow();
 
     expect(mockOperationsService.saveEservice).toHaveBeenCalledWith(
-      decodeSQSBodyMessage(validMessage),
+      decodeSQSMessageBody(validMessage),
       mockAppCtx,
     );
   });
