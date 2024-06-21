@@ -1,4 +1,4 @@
-import { logger } from "pagopa-interop-probing-commons";
+import { genericLogger } from "pagopa-interop-probing-commons";
 import { callerConstants } from "../utilities/constants.js";
 import {
   responseStatus,
@@ -21,7 +21,7 @@ export const callerServiceBuilder = (
     async performRequest(eservice: EserviceContentDto): Promise<TelemetryDto> {
       const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
-      logger.info(
+      genericLogger.info(
         `Perfoming Telemetry ${eservice.technology} request with eserviceRecordId: ${eservice.eserviceRecordId} to ${baseUrl}`,
       );
 

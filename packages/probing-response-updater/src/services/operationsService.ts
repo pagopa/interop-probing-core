@@ -4,7 +4,7 @@ import {
   Api,
   ApiUpdateResponseReceivedResponse,
 } from "pagopa-interop-probing-eservice-operations-client";
-import { logger } from "pagopa-interop-probing-commons";
+import { genericLogger } from "pagopa-interop-probing-commons";
 import {
   apiUpdateResponseReceivedError,
   makeApplicationError,
@@ -27,7 +27,7 @@ export const operationsServiceBuilder = (
           { params: { eserviceRecordId: params.eserviceRecordId } },
         );
 
-        logger.info(
+        genericLogger.info(
           `Updating eService response received with eserviceRecordId: ${params.eserviceRecordId} and responseReceived: ${payload.responseReceived}`,
         );
       } catch (error: unknown) {

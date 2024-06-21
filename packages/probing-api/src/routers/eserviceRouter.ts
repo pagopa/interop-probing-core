@@ -4,11 +4,12 @@ import {
   ExpressContext,
   ZodiosContext,
   logger,
+  zodiosValidationErrorToApiProblem,
 } from "pagopa-interop-probing-commons";
 import { Api } from "pagopa-interop-probing-eservice-operations-client";
 import { genericError } from "pagopa-interop-probing-models";
 import { z } from "zod";
-import { resolveOperationsApiClientProblem } from "../model/domain/errors.js";
+import { resolveApiProblem } from "../model/domain/errors.js";
 import {
   OperationsService,
   operationsServiceBuilder,
@@ -20,7 +21,6 @@ import {
   isActive,
 } from "../utilities/enumUtils.js";
 import { ApiEServiceContent } from "../model/eservice.js";
-import validationErrorHandler from "../utilities/validationErrorHandler.js";
 
 const eServiceRouter =
   (
@@ -32,7 +32,7 @@ const eServiceRouter =
     const operationsService: OperationsService =
       operationsServiceBuilder(operationsApiClient);
     const router = ctx.router(api.api, {
-      validationErrorHandler,
+      validationErrorHandler: zodiosValidationErrorToApiProblem,
     });
 
     router
@@ -47,7 +47,7 @@ const eServiceRouter =
             );
             return res.status(204).end();
           } catch (error) {
-            const errorRes = resolveOperationsApiClientProblem(error);
+            const errorRes = resolveApiProblem(error, logger(req.ctx));
             return res.status(errorRes.status).json(errorRes).end();
           }
         },
@@ -63,7 +63,7 @@ const eServiceRouter =
             );
             return res.status(204).end();
           } catch (error) {
-            const errorRes = resolveOperationsApiClientProblem(error);
+            const errorRes = resolveApiProblem(error, logger(req.ctx));
             return res.status(errorRes.status).json(errorRes).end();
           }
         },
@@ -79,7 +79,7 @@ const eServiceRouter =
             );
             return res.status(204).end();
           } catch (error) {
-            const errorRes = resolveOperationsApiClientProblem(error);
+            const errorRes = resolveApiProblem(error, logger(req.ctx));
             return res.status(errorRes.status).json(errorRes).end();
           }
         },
@@ -97,7 +97,7 @@ const eServiceRouter =
 
           const result = z.array(ApiEServiceContent).safeParse(mappedContent);
           if (!result.success) {
-            logger.error(
+            logger(req.ctx).error(
               `Unable to parse eservices items: result ${JSON.stringify(
                 result,
               )} - data ${JSON.stringify(eservices.content)} `,
@@ -116,7 +116,7 @@ const eServiceRouter =
             })
             .end();
         } catch (error) {
-          const errorRes = resolveOperationsApiClientProblem(error);
+          const errorRes = resolveApiProblem(error, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();
         }
       })
@@ -128,7 +128,7 @@ const eServiceRouter =
 
           return res.status(200).json(eServiceMainData).end();
         } catch (error) {
-          const errorRes = resolveOperationsApiClientProblem(error);
+          const errorRes = resolveApiProblem(error, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();
         }
       })
@@ -151,7 +151,7 @@ const eServiceRouter =
             })
             .end();
         } catch (error) {
-          const errorRes = resolveOperationsApiClientProblem(error);
+          const errorRes = resolveApiProblem(error, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();
         }
       })
@@ -166,7 +166,7 @@ const eServiceRouter =
             .json(content.map((el) => ({ label: el, value: el })))
             .end();
         } catch (error) {
-          const errorRes = resolveOperationsApiClientProblem(error);
+          const errorRes = resolveApiProblem(error, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();
         }
       });

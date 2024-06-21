@@ -1,5 +1,5 @@
 import { config } from "./config.js";
-import { logger } from "pagopa-interop-probing-commons";
+import { genericLogger } from "pagopa-interop-probing-commons";
 import {
   TimestreamQueryClient,
   QueryRequest,
@@ -47,7 +47,7 @@ export const timestreamQueryClientBuilder = () => {
 
         return queryResponses;
       } catch (error) {
-        logger.error(
+        genericLogger.error(
           `An error occurred while attempting to retrieve records from Timestream: ${error}`,
         );
         throw queryTimestreamError(`${error}`);

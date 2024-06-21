@@ -1,7 +1,7 @@
 import { SaveEserviceApi } from "../model/models.js";
 import { ZodiosInstance } from "@zodios/core";
 import { Api } from "pagopa-interop-probing-eservice-operations-client";
-import { logger } from "pagopa-interop-probing-commons";
+import { genericLogger } from "pagopa-interop-probing-commons";
 import {
   apiSaveEserviceError,
   makeApplicationError,
@@ -13,7 +13,7 @@ export const operationsServiceBuilder = (
   return {
     async saveEservice({ params, payload }: SaveEserviceApi): Promise<void> {
       try {
-        logger.info(
+        genericLogger.info(
           `Saving eService with eserviceId/versionId: ${params.eserviceId}/${params.versionId}`,
         );
 

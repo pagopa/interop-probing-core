@@ -1,4 +1,4 @@
-import { logger, SQS } from "pagopa-interop-probing-commons";
+import { genericLogger, SQS } from "pagopa-interop-probing-commons";
 import { config } from "./utilities/config.js";
 import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
 import { processMessage } from "./messagesHandler.js";
@@ -24,4 +24,4 @@ await SQS.runConsumer(
     runUntilQueueIsEmpty: true,
   },
   processMessage(OperationsService),
-).catch(logger.error);
+).catch(genericLogger.error);
