@@ -25,8 +25,8 @@
     "generate-client": "turbo generate-client"
   },
   "devDependencies": {
-    "@tsconfig/node-lts": "^20.1.0",
-    "turbo": "^1.10.16"
+    "@tsconfig/node-lts": "20.1.1",
+    "turbo": "1.10.16"
   },
   "packageManager": "pnpm@8.11.0"
 }
