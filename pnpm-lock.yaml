@@ -19,7 +19,7 @@ importers:
     dependencies:
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.6.7)(zod@3.22.4)
+        version: 10.9.6(axios@1.7.4)(zod@3.22.4)
       '@zodios/express':
         specifier: 10.6.1
         version: 10.6.1(@zodios/core@10.9.6)(express@4.19.2)(zod@3.22.4)
@@ -68,7 +68,7 @@ importers:
         version: 9.0.7
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.6.7)(zod@3.22.4)
+        version: 10.9.6(axios@1.7.4)(zod@3.22.4)
       '@zodios/express':
         specifier: 10.6.1
         version: 10.6.1(@zodios/core@10.9.6)(express@4.19.2)(zod@3.22.4)
@@ -163,7 +163,7 @@ importers:
         version: 20.1.1
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.6.7)(zod@3.22.4)
+        version: 10.9.6(axios@1.7.4)(zod@3.22.4)
       '@zodios/express':
         specifier: 10.6.1
         version: 10.6.1(@zodios/core@10.9.6)(express@4.19.2)(zod@3.22.4)
@@ -171,8 +171,8 @@ importers:
         specifier: 2.1593.0
         version: 2.1593.0
       axios:
-        specifier: 1.6.7
-        version: 1.6.7
+        specifier: 1.7.4
+        version: 1.7.4
       cors:
         specifier: 2.8.5
         version: 2.8.5
@@ -248,10 +248,10 @@ importers:
         version: 20.1.1
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.6.7)(zod@3.22.4)
+        version: 10.9.6(axios@1.7.4)(zod@3.22.4)
       axios:
-        specifier: 1.6.7
-        version: 1.6.7
+        specifier: 1.7.4
+        version: 1.7.4
       dotenv-flow:
         specifier: 3.3.0
         version: 3.3.0
@@ -312,7 +312,7 @@ importers:
     dependencies:
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.6.7)(zod@3.22.4)
+        version: 10.9.6(axios@1.7.4)(zod@3.22.4)
       '@zodios/express':
         specifier: 10.6.1
         version: 10.6.1(@zodios/core@10.9.6)(express@4.19.2)(zod@3.22.4)
@@ -461,10 +461,10 @@ importers:
         version: 20.1.1
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.6.7)(zod@3.22.4)
+        version: 10.9.6(axios@1.7.4)(zod@3.22.4)
       axios:
-        specifier: 1.6.7
-        version: 1.6.7
+        specifier: 1.7.4
+        version: 1.7.4
       dotenv-flow:
         specifier: 3.3.0
         version: 3.3.0
@@ -566,8 +566,8 @@ importers:
         specifier: 5.3.17
         version: 5.3.17(react-native@0.73.5)
       axios:
-        specifier: 1.6.7
-        version: 1.6.7
+        specifier: 1.7.4
+        version: 1.7.4
       d3:
         specifier: 7.8.5
         version: 7.8.5
@@ -649,10 +649,10 @@ importers:
         version: 20.1.1
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.6.7)(zod@3.22.4)
+        version: 10.9.6(axios@1.7.4)(zod@3.22.4)
       axios:
-        specifier: 1.6.7
-        version: 1.6.7
+        specifier: 1.7.4
+        version: 1.7.4
       dotenv-flow:
         specifier: 3.3.0
         version: 3.3.0
@@ -716,10 +716,10 @@ importers:
         version: 3.0.11
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.6.7)(zod@3.22.4)
+        version: 10.9.6(axios@1.7.4)(zod@3.22.4)
       axios:
-        specifier: 1.6.7
-        version: 1.6.7
+        specifier: 1.7.4
+        version: 1.7.4
       dotenv-flow:
         specifier: 3.3.0
         version: 3.3.0
@@ -786,7 +786,7 @@ importers:
         version: 20.1.1
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.6.7)(zod@3.22.4)
+        version: 10.9.6(axios@1.7.4)(zod@3.22.4)
       '@zodios/express':
         specifier: 10.6.1
         version: 10.6.1(@zodios/core@10.9.6)(express@4.19.2)(zod@3.22.4)
@@ -874,7 +874,7 @@ importers:
         version: 20.1.1
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.6.7)(zod@3.22.4)
+        version: 10.9.6(axios@1.7.4)(zod@3.22.4)
       dotenv-flow:
         specifier: 3.3.0
         version: 3.3.0
@@ -1010,7 +1010,7 @@ packages:
     resolution: {integrity: sha512-WxtlHL+Cw2Wqk2BqZA2WzRO1u1ctB4mC2k6hJ/+fJL4E3S8M3dC/Dky5VOT46frsnZTSjGCBEv4QCERLn51GKQ==}
     dependencies:
       '@aws-amplify/core': 5.8.11(react-native@0.73.5)
-      axios: 1.6.7
+      axios: 1.7.4
       tslib: 1.14.1
       url: 0.11.0
     transitivePeerDependencies:
@@ -8256,6 +8256,16 @@ packages:
       zod: 3.22.4
     dev: false
 
+  /@zodios/core@10.9.6(axios@1.7.4)(zod@3.22.4):
+    resolution: {integrity: sha512-aH4rOdb3AcezN7ws8vDgBfGboZMk2JGGzEq/DtW65MhnRxyTGRuLJRWVQ/2KxDgWvV2F5oTkAS+5pnjKbl0n+A==}
+    peerDependencies:
+      axios: ^0.x || ^1.0.0
+      zod: ^3.x
+    dependencies:
+      axios: 1.7.4
+      zod: 3.22.4
+    dev: false
+
   /@zodios/express@10.6.1(@zodios/core@10.9.6)(express@4.19.2)(zod@3.22.4):
     resolution: {integrity: sha512-FNgOq8mvwvWP5B2howMKGm6EPp6i/0XFAsQnX5Ov3MLbanzD1oE4WJtBkTL3cmJYvD0nyykbWSeHOh51bCmhUA==}
     peerDependencies:
@@ -8263,7 +8273,7 @@ packages:
       express: 4.x
       zod: ^3.x
     dependencies:
-      '@zodios/core': 10.9.6(axios@1.6.7)(zod@3.22.4)
+      '@zodios/core': 10.9.6(axios@1.7.4)(zod@3.22.4)
       express: 4.19.2
       zod: 3.22.4
     dev: false
@@ -8620,6 +8630,16 @@ packages:
     resolution: {integrity: sha512-/hDJGff6/c7u0hDkvkGxR/oy6CbCs8ziCsC7SqmhjfozqiJGc8Z11wrv9z9lYfY4K8l+H9TpjcMDX0xOZmx+RA==}
     dependencies:
       follow-redirects: 1.15.5
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
+  /axios@1.7.4:
+    resolution: {integrity: sha512-DukmaFRnY6AzAALSH4J2M3k6PkaC+MfaAGdEERRWcC9q3/TWQwLpHR8ZRLKTdQ3aBDL64EdluRDjJqKw+BPZEw==}
+    dependencies:
+      follow-redirects: 1.15.6
       form-data: 4.0.0
       proxy-from-env: 1.1.0
     transitivePeerDependencies:
@@ -10397,6 +10417,16 @@ packages:
 
   /follow-redirects@1.15.5:
     resolution: {integrity: sha512-vSFWUON1B+yAw1VN4xMfxgn5fTUiaOzAJCKBwIIgT/+7CuGy9+r+5gITvP62j3RmaD5Ph65UaERdOSRGUzZtgw==}
+    engines: {node: '>=4.0'}
+    peerDependencies:
+      debug: '*'
+    peerDependenciesMeta:
+      debug:
+        optional: true
+    dev: false
+
+  /follow-redirects@1.15.6:
+    resolution: {integrity: sha512-wWN62YITEaOpSK584EZXJafH1AGpO8RVgElfkuXbTOrPX4fIfOyEpW/CsiNd8JdYrAoOvafRTOEnvsO++qCqFA==}
     engines: {node: '>=4.0'}
     peerDependencies:
       debug: '*'
