@@ -43,7 +43,7 @@
     "@zodios/express": "10.6.1",
     "cors": "2.8.5",
     "dotenv-flow": "3.3.0",
-    "express": "4.19.2",
+    "express": "4.20.0",
     "helmet": "7.1.0",
     "openapi-zod-client": "1.13.4",
     "pagopa-interop-probing-commons": "workspace:*",
