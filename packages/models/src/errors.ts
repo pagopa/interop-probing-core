@@ -49,6 +49,17 @@ export class ApiError<T> extends Error {
   }
 }
 
+export class InternalError<T> extends Error {
+  public code: T;
+  public detail: string;
+
+  constructor({ code, detail }: { code: T; detail: string }) {
+    super(detail);
+    this.code = code;
+    this.detail = detail;
+  }
+}
+
 export type MakeApiProblemFn<T extends string> = (
   error: unknown,
   httpMapper: (apiError: ApiError<T | CommonErrorCodes>) => number,
@@ -100,6 +111,7 @@ export function makeApiProblemBuilder<T extends string>(errors: {
 const errorCodes = {
   genericError: "9991",
   badRequestError: "9992",
+  kafkaMessageProcessError: "9993",
 } as const;
 
 export type CommonErrorCodes = keyof typeof errorCodes;
@@ -121,5 +133,16 @@ export function badRequestError(
     code: "badRequestError",
     title: "Bad request",
     errors,
+  });
+}
+export function kafkaMessageProcessError(
+  topic: string,
+  partition: number,
+  offset: string,
+  error?: unknown,
+): InternalError<CommonErrorCodes> {
+  return new InternalError({
+    code: "kafkaMessageProcessError",
+    detail: `Error while handling kafka message from topic : ${topic} - partition ${partition} - offset ${offset}. ${error}`,
   });
 }
