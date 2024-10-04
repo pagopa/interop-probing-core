@@ -23,6 +23,7 @@
     "@zodios/core": "10.9.6",
     "@zodios/express": "10.6.1",
     "express-winston": "4.2.0",
+    "kafkajs": "2.2.4",
     "pagopa-interop-probing-models": "workspace:*",
     "ts-pattern": "5.0.6",
     "uuid": "10.0.0",
