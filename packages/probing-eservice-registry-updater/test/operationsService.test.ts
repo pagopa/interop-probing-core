@@ -1,5 +1,6 @@
 import { afterAll, describe, expect, it, vi } from "vitest";
 import {
+  ApplicationError,
   eserviceInteropState,
   technology,
 } from "pagopa-interop-probing-models";
@@ -8,7 +9,7 @@ import {
   OperationsService,
   operationsServiceBuilder,
 } from "../src/services/operationsService.js";
-import { AppError, ApplicationError } from "../src/model/domain/errors.js";
+import { ErrorCodes } from "../src/model/domain/errors.js";
 import { config } from "../src/utilities/config.js";
 import { mockApiClientError } from "./utils.js";
 import { SaveEserviceApi } from "../src/model/models.js";
@@ -90,7 +91,7 @@ describe("Operations service test", () => {
       await OperationsService.saveEservice(saveEservice, mockAppCtx);
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as AppError).status).toBe(500);
+      expect((error as ApplicationError<ErrorCodes>).status).toBe(500);
     }
   });
 });

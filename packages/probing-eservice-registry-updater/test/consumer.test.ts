@@ -6,16 +6,15 @@ import {
   SQS,
   WithSQSMessageId,
 } from "pagopa-interop-probing-commons";
-import {
-  decodeSQSMessageBody,
-} from "../src/model/models.js";
+import { decodeSQSMessageBody } from "../src/model/models.js";
 import { v4 as uuidv4 } from "uuid";
 import {
+  ApplicationError,
   eserviceInteropState,
   technology,
 } from "pagopa-interop-probing-models";
 import { config } from "../src/utilities/config.js";
-import { AppError } from "../src/model/domain/errors.js";
+import { ErrorCodes } from "../src/model/domain/errors.js";
 
 describe("Consumer queue test", () => {
   const mockOperationsService = {
@@ -74,8 +73,8 @@ describe("Consumer queue test", () => {
     try {
       await processMessage(mockOperationsService)(invalidMessage);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0002");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
     }
   });
 
@@ -99,8 +98,8 @@ describe("Consumer queue test", () => {
     try {
       await processMessage(mockOperationsService)(missingEserviceId);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0002");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
       expect(mockOperationsService.saveEservice).not.toBeCalled();
     }
   });
@@ -125,8 +124,8 @@ describe("Consumer queue test", () => {
     try {
       await processMessage(mockOperationsService)(missingVersionId);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0002");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
       expect(mockOperationsService.saveEservice).not.toBeCalled();
     }
   });
@@ -152,8 +151,8 @@ describe("Consumer queue test", () => {
     try {
       await processMessage(mockOperationsService)(badFormattedEserviceDTO);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0002");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
     }
   });
 });

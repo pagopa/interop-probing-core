@@ -3,12 +3,13 @@ import { processTask } from "../src/processTask.js";
 import { ApiGetEservicesReadyForPollingQuery } from "pagopa-interop-probing-eservice-operations-client";
 import { config } from "../src/utilities/config.js";
 import {
+  ApplicationError,
   correlationIdToHeader,
   EserviceContentDto,
 } from "pagopa-interop-probing-models";
 import { mockApiClientError } from "./utils.js";
 import {
-  AppError,
+  ErrorCodes,
   apiGetEservicesReadyForPollingError,
   makeApplicationError,
 } from "../src/model/domain/errors.js";
@@ -98,7 +99,8 @@ describe("Process task test", async () => {
       apiGetEservicesReadyForPollingError(
         `Error API getEservicesReadyForPolling. Details: ${apiClientError}`,
         apiClientError,
-      ), genericLogger,
+      ),
+      genericLogger,
     );
 
     vi.spyOn(
@@ -109,9 +111,9 @@ describe("Process task test", async () => {
     try {
       await processTask(mockOperationsService, mockProducerService);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0002");
-      expect((error as AppError).status).toBe(500);
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
+      expect((error as ApplicationError<ErrorCodes>).status).toBe(500);
     }
   });
 });

@@ -3,53 +3,11 @@ import { P, match } from "ts-pattern";
 import { ZodError } from "zod";
 import { AxiosError } from "axios";
 import { Logger } from "pagopa-interop-probing-commons";
-export class ApplicationError<T> extends Error {
-  public code: T;
-  public title: string;
-  public detail: string;
-  public status?: number;
-
-  constructor({
-    code,
-    title,
-    detail,
-    status,
-  }: {
-    code: T;
-    title: string;
-    detail: string;
-    status?: number;
-  }) {
-    super(detail);
-    this.code = code;
-    this.title = title;
-    this.detail = detail;
-    if (status) this.status = status;
-  }
-}
-
-export const makeAppErrorLogString = (
-  appError: AppError,
-  originalError: unknown,
-): string => {
-  return `- title: ${appError.title} - detail: ${appError.detail} - original error: ${originalError}`;
-};
-
-export class AppError extends ApplicationError<string> {
-  constructor({
-    code,
-    title,
-    detail,
-    status,
-  }: {
-    code: string;
-    title: string;
-    detail: string;
-    status?: number;
-  }) {
-    super({ code, title, detail, status });
-  }
-}
+import {
+  AppError,
+  ApplicationError,
+  makeAppErrorLogString,
+} from "pagopa-interop-probing-models";
 
 export function makeApplicationErrorBuilder<T extends string>(errors: {
   [K in T]: string;

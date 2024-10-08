@@ -2,10 +2,11 @@ import { describe, expect, it, vi, afterEach } from "vitest";
 import { processTask } from "../src/processTask.js";
 import { mockBucketObject } from "./utils.js";
 import {
-  AppError,
+  ErrorCodes,
   readObjectS3BucketError,
 } from "../src/model/domain/errors.js";
 import { config } from "../src/utilities/config.js";
+import { ApplicationError } from "pagopa-interop-probing-models";
 
 describe("Process task test", async () => {
   const mockBucketService = {
@@ -40,8 +41,8 @@ describe("Process task test", async () => {
     try {
       await processTask(mockBucketService, mockProducerService);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0001");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("0001");
     }
   });
 });
