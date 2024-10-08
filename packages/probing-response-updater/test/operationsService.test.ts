@@ -83,7 +83,6 @@ describe("eService service test", () => {
         ctx,
       );
     } catch (error) {
-      console.log("error", error);
       expect(error).toBeInstanceOf(ApplicationError);
       expect((error as ApplicationError<ErrorCodes>).status).toBe(500);
     }
