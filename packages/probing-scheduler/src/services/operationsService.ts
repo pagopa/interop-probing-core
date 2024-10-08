@@ -1,8 +1,10 @@
 import { ZodiosInstance } from "@zodios/core";
 import {
   Api,
+  ApiGetEservicesReadyForPollingHeaders,
   ApiGetEservicesReadyForPollingQuery,
   ApiGetEservicesReadyForPollingResponse,
+  ApiUpdateLastRequestHeaders,
   ApiUpdateLastRequestParams,
   ApiUpdateLastRequestPayload,
   ApiUpdateLastRequestResponse,
@@ -18,11 +20,13 @@ export const operationsServiceBuilder = (
 ) => {
   return {
     async getEservicesReadyForPolling(
+      headers: ApiGetEservicesReadyForPollingHeaders,
       query: ApiGetEservicesReadyForPollingQuery,
     ): Promise<ApiGetEservicesReadyForPollingResponse> {
       try {
         return await operationsApiClient.getEservicesReadyForPolling({
           queries: query,
+          headers,
         });
       } catch (error: unknown) {
         throw makeApplicationError(
@@ -33,15 +37,16 @@ export const operationsServiceBuilder = (
         );
       }
     },
-    async updateLastRequest({
-      params,
-      payload,
-    }: {
-      params: ApiUpdateLastRequestParams;
-      payload: ApiUpdateLastRequestPayload;
-    }): Promise<ApiUpdateLastRequestResponse> {
+    async updateLastRequest(
+      headers: ApiUpdateLastRequestHeaders,
+      params: ApiUpdateLastRequestParams,
+      payload: ApiUpdateLastRequestPayload,
+    ): Promise<ApiUpdateLastRequestResponse> {
       try {
-        return await operationsApiClient.updateLastRequest(payload, { params });
+        return await operationsApiClient.updateLastRequest(payload, {
+          params,
+          headers,
+        });
       } catch (error: unknown) {
         throw makeApplicationError(
           apiUpdateLastRequestError(

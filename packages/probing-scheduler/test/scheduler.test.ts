@@ -1,16 +1,23 @@
-import { describe, expect, it, vi, afterEach } from "vitest";
+import { describe, expect, it, vi, afterAll, beforeAll } from "vitest";
 import { processTask } from "../src/processTask.js";
 import { ApiGetEservicesReadyForPollingQuery } from "pagopa-interop-probing-eservice-operations-client";
 import { config } from "../src/utilities/config.js";
-import { EserviceContentDto } from "pagopa-interop-probing-models";
+import {
+  correlationIdToHeader,
+  EserviceContentDto,
+} from "pagopa-interop-probing-models";
 import { mockApiClientError } from "./utils.js";
 import {
   AppError,
   apiGetEservicesReadyForPollingError,
   makeApplicationError,
 } from "../src/model/domain/errors.js";
+import { AppContext } from "pagopa-interop-probing-commons";
+
+const mockUUID: string = "mocked-uuid-value";
 
 describe("Process task test", async () => {
+  const totalElements: number = 4;
   const mockEservicesActive: EserviceContentDto[] = [
     {
       eserviceRecordId: 1,
@@ -23,7 +30,7 @@ describe("Process task test", async () => {
   const mockOperationsService = {
     getEservicesReadyForPolling: vi.fn().mockResolvedValue({
       content: mockEservicesActive,
-      totalElements: 4,
+      totalElements,
     }),
     updateLastRequest: vi.fn().mockResolvedValue(undefined),
   };
@@ -32,8 +39,14 @@ describe("Process task test", async () => {
     sendToCallerQueue: vi.fn().mockResolvedValue(undefined),
   };
 
-  afterEach(() => {
-    vi.restoreAllMocks();
+  beforeAll(() => {
+    vi.mock("uuid", () => ({
+      v4: vi.fn(() => mockUUID),
+    }));
+  });
+
+  afterAll(() => {
+    vi.clearAllMocks();
   });
 
   it("Get eservices by calling getEservicesReadyForPolling API, update each eservice by calling updateLastRequest API and send message to queue.", async () => {
@@ -44,11 +57,22 @@ describe("Process task test", async () => {
       limit: config.schedulerLimit,
     };
 
+    const batchCtx: AppContext = {
+      serviceName: config.applicationName,
+      correlationId: mockUUID,
+    };
+
     await processTask(mockOperationsService, mockProducerService);
 
-    await expect(
-      mockOperationsService.getEservicesReadyForPolling,
-    ).toHaveBeenCalledWith(query);
+    for (let i = 0; i < 4; i++) {
+      const headers = {
+        ...correlationIdToHeader(batchCtx.correlationId),
+      };
+
+      await expect(
+        mockOperationsService.getEservicesReadyForPolling,
+      ).toHaveBeenCalledWith(headers, { ...query, offset: i });
+    }
 
     await expect(
       mockOperationsService.getEservicesReadyForPolling,
@@ -64,6 +88,7 @@ describe("Process task test", async () => {
 
     await expect(mockProducerService.sendToCallerQueue).toHaveBeenCalledWith(
       mockEservicesActive[0],
+      batchCtx,
     );
   });
 
