@@ -11,7 +11,7 @@ info:
   termsOfService: "https://swagger.io/terms/"
 servers:
   - url: "{{baseUrl}}"
-    description: Base url of the interoperability probing operations API 
+    description: Base url of the interoperability probing operations API
 tags:
   - name: EServices
     description: Operations on EServices registry
@@ -179,7 +179,7 @@ paths:
                       "detail": "The server is currently down for maintenance. Please try again later.",
                     },
                   ]
-  
+
   "/eservices/{eserviceId}/versions/{versionId}/updateFrequency":
     post:
       summary: Updates the frequency and the time interval of an e-service's polling process.
@@ -261,7 +261,7 @@ paths:
                       "detail": "The server is currently down for maintenance. Please try again later.",
                     },
                   ]
-  
+
   "/eservices":
     get:
       summary: Retrive e-services by filters
@@ -633,7 +633,7 @@ paths:
                       "detail": "The server is currently down for maintenance. Please try again later.",
                     },
                   ]
-  
+
   "/eservices/polling":
     get:
       summary: Retrive eservices ready for polling
@@ -699,7 +699,7 @@ paths:
                       "detail": "The server is currently down for maintenance. Please try again later.",
                     },
                   ]
-  
+
   "/eservices/{eserviceRecordId}/updateLastRequest":
     post:
       summary: Update last request of the eservice
@@ -759,7 +759,7 @@ paths:
                       "detail": "The server is currently down for maintenance. Please try again later.",
                     },
                   ]
-  
+
   "/eservices/{eserviceRecordId}/updateResponseReceived":
     post:
       summary: Update response received of the eservice
@@ -1022,7 +1022,7 @@ components:
 
     SearchEserviceResponse:
       type: object
-      required: 
+      required:
         - content
         - totalElements
       properties:
@@ -1068,7 +1068,7 @@ components:
 
     ProbingDataEserviceResponse:
       type: object
-      required: 
+      required:
         - probingEnabled
         - state
         - pollingFrequency
