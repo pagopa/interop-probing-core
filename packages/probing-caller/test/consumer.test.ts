@@ -9,12 +9,13 @@ import {
 import { decodeSQSMessage } from "../src/model/models.js";
 import { callerConstants } from "../src/utilities/constants.js";
 import {
-  AppError,
+  ApplicationError,
   responseStatus,
   TelemetryDto,
 } from "pagopa-interop-probing-models";
 import { config } from "../src/utilities/config.js";
 import { v4 as uuidv4 } from "uuid";
+import { ErrorCodes } from "../src/model/domain/errors.js";
 
 describe("Consumer queue test", async () => {
   const telemetryResult: TelemetryDto = {
@@ -94,8 +95,8 @@ describe("Consumer queue test", async () => {
         mockProducerService,
       )(invalidMessage);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0002");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
     }
   });
 });

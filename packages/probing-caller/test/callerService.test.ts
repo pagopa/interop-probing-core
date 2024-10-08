@@ -23,10 +23,11 @@ import {
 } from "../src/utilities/kmsClientHandler.js";
 import {
   buildJWTError,
+  ErrorCodes,
   makeApplicationError,
 } from "../src/model/domain/errors.js";
 import {
-  AppError,
+  ApplicationError,
   EserviceContentDto,
   TelemetryKoDto,
 } from "pagopa-interop-probing-models";
@@ -301,8 +302,8 @@ describe("caller service test", () => {
     try {
       await callerService.performRequest(eservice, ctx);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0004");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("0004");
     }
   });
 
@@ -336,8 +337,8 @@ describe("caller service test", () => {
     try {
       await callerService.performRequest(eservice, ctx);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("9999");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("9999");
     }
   });
 });
