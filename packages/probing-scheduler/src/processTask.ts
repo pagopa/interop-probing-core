@@ -1,5 +1,4 @@
 import {
-  ApplicationError,
   makeApplicationError,
 } from "./model/domain/errors.js";
 import { ProducerService } from "./services/producerService.js";
@@ -18,7 +17,10 @@ export async function processTask(
   producerService: ProducerService,
 ): Promise<void> {
   const rootCorrelationId: string = uuidv4();
-  const batchCorrelationId: string = uuidv4();
+  const operationCtx: AppContext = {
+    serviceName: config.applicationName,
+    correlationId: rootCorrelationId,
+  };
 
   try {
     logger({
@@ -30,31 +32,36 @@ export async function processTask(
     let offset: number = 0;
     let totalElements: number = 0;
 
-    const batchCtx: AppContext = {
-      serviceName: config.applicationName,
-      correlationId: batchCorrelationId,
-    };
-
     do {
-      const headers = {
-        ...correlationIdToHeader(batchCtx.correlationId),
-      };
-
-      const data = await operationsService.getEservicesReadyForPolling(headers,{
-        offset,
-        limit,
-      });
+      operationCtx.correlationId = uuidv4();
+      const data = await operationsService.getEservicesReadyForPolling(
+        {
+          ...correlationIdToHeader(operationCtx.correlationId),
+        },
+        {
+          offset,
+          limit,
+        },
+      );
       totalElements = data.totalElements;
 
       const promises = data.content.map(async (eservice) => {
+        operationCtx.correlationId = uuidv4();
+
         const params: ApiUpdateLastRequestParams = {
           eserviceRecordId: eservice.eserviceRecordId,
         };
         const payload: ApiUpdateLastRequestPayload = {
           lastRequest: new Date().toISOString(),
         };
-        await operationsService.updateLastRequest(headers, params, payload);
-        await producerService.sendToCallerQueue(eservice, batchCtx);
+        await operationsService.updateLastRequest(
+          {
+            ...correlationIdToHeader(operationCtx.correlationId),
+          },
+          params,
+          payload,
+        );
+        await producerService.sendToCallerQueue(eservice, operationCtx);
       });
       await Promise.all(promises);
 
@@ -65,13 +72,8 @@ export async function processTask(
       serviceName: config.applicationName,
       correlationId: rootCorrelationId,
     }).info(`End processing eservices ready for polling.`);
-  } catch (e: unknown) {
-    throw makeApplicationError(
-      e instanceof ApplicationError
-        ? e
-        : new Error(
-            `Unexpected error processing scheduled task. Details: ${e}`,
-          ),
+  } catch (error: unknown) {
+    throw makeApplicationError(error, logger(operationCtx),
     );
   }
 }

@@ -12,7 +12,6 @@ import {
 import {
   apiGetEservicesReadyForPollingError,
   apiUpdateLastRequestError,
-  makeApplicationError,
 } from "../model/domain/errors.js";
 
 export const operationsServiceBuilder = (
@@ -29,12 +28,10 @@ export const operationsServiceBuilder = (
           headers,
         });
       } catch (error: unknown) {
-        throw makeApplicationError(
-          apiGetEservicesReadyForPollingError(
-            `Error API getEservicesReadyForPolling. Details: ${error}`,
-            error,
-          ),
-        );
+        throw apiGetEservicesReadyForPollingError(
+          `Error API getEservicesReadyForPolling. Details: ${error}`,
+          error,
+        )
       }
     },
     async updateLastRequest(
@@ -48,12 +45,10 @@ export const operationsServiceBuilder = (
           headers,
         });
       } catch (error: unknown) {
-        throw makeApplicationError(
-          apiUpdateLastRequestError(
-            `Error API updateLastRequest. Details: ${error}`,
-            error,
-          ),
-        );
+        throw apiUpdateLastRequestError(
+          `Error API updateLastRequest. Details: ${error}`,
+          error,
+        )
       }
     },
   };

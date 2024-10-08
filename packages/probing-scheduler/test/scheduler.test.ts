@@ -12,7 +12,7 @@ import {
   apiGetEservicesReadyForPollingError,
   makeApplicationError,
 } from "../src/model/domain/errors.js";
-import { AppContext } from "pagopa-interop-probing-commons";
+import { AppContext, genericLogger } from "pagopa-interop-probing-commons";
 
 const mockUUID: string = "mocked-uuid-value";
 
@@ -98,7 +98,7 @@ describe("Process task test", async () => {
       apiGetEservicesReadyForPollingError(
         `Error API getEservicesReadyForPolling. Details: ${apiClientError}`,
         apiClientError,
-      ),
+      ), genericLogger,
     );
 
     vi.spyOn(
