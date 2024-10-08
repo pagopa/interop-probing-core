@@ -4,16 +4,14 @@ info:
   version: 1.0.0
   x-summary: "E-Service Monitor Operations service"
   description: OpenAPI specification for E-Service Monitor's operation services
-  termsOfService: https://www.e-serviceurl-example.com/terms
   contact:
-    name: contactToDefinePagoPa
-    email: toDefinePagoPa@pagopa.it
-  license:
-    name: Interop's licence
-    url: https://to-define/
+    name: API Support
+    url: "https://www.example.com/support"
+    email: support@example.com
+  termsOfService: "https://swagger.io/terms/"
 servers:
-  - url: https://to-define/
-    description: Development environment
+  - url: "{{baseUrl}}"
+    description: Base url of the interoperability probing operations API 
 tags:
   - name: EServices
     description: Operations on EServices registry
@@ -28,6 +26,11 @@ paths:
         - Write
       operationId: updateEserviceState
       parameters:
+        - in: header
+          name: x-correlation-id
+          required: true
+          schema:
+            $ref: "#/components/schemas/CorrelationId"
         - name: eserviceId
           in: path
           required: true
@@ -104,6 +107,11 @@ paths:
         - Write
       operationId: updateEserviceProbingState
       parameters:
+        - in: header
+          name: x-correlation-id
+          required: true
+          schema:
+            $ref: "#/components/schemas/CorrelationId"
         - name: eserviceId
           in: path
           required: true
@@ -171,6 +179,7 @@ paths:
                       "detail": "The server is currently down for maintenance. Please try again later.",
                     },
                   ]
+  
   "/eservices/{eserviceId}/versions/{versionId}/updateFrequency":
     post:
       summary: Updates the frequency and the time interval of an e-service's polling process.
@@ -179,6 +188,11 @@ paths:
         - Write
       operationId: updateEserviceFrequency
       parameters:
+        - in: header
+          name: x-correlation-id
+          required: true
+          schema:
+            $ref: "#/components/schemas/CorrelationId"
         - name: eserviceId
           in: path
           required: true
@@ -247,6 +261,7 @@ paths:
                       "detail": "The server is currently down for maintenance. Please try again later.",
                     },
                   ]
+  
   "/eservices":
     get:
       summary: Retrive e-services by filters
@@ -255,6 +270,11 @@ paths:
         - Read
       operationId: searchEservices
       parameters:
+        - in: header
+          name: x-correlation-id
+          required: true
+          schema:
+            $ref: "#/components/schemas/CorrelationId"
         - name: limit
           in: query
           required: true
@@ -338,6 +358,11 @@ paths:
         - Read
       operationId: getEserviceMainData
       parameters:
+        - in: header
+          name: x-correlation-id
+          required: true
+          schema:
+            $ref: "#/components/schemas/CorrelationId"
         - name: eserviceRecordId
           in: path
           required: true
@@ -408,6 +433,11 @@ paths:
         - Read
       operationId: getEserviceProbingData
       parameters:
+        - in: header
+          name: x-correlation-id
+          required: true
+          schema:
+            $ref: "#/components/schemas/CorrelationId"
         - name: eserviceRecordId
           in: path
           required: true
@@ -477,6 +507,11 @@ paths:
         - Read
       operationId: getEservicesProducers
       parameters:
+        - in: header
+          name: x-correlation-id
+          required: true
+          schema:
+            $ref: "#/components/schemas/CorrelationId"
         - name: limit
           in: query
           required: true
@@ -598,6 +633,7 @@ paths:
                       "detail": "The server is currently down for maintenance. Please try again later.",
                     },
                   ]
+  
   "/eservices/polling":
     get:
       summary: Retrive eservices ready for polling
@@ -607,6 +643,11 @@ paths:
         - Read
       operationId: getEservicesReadyForPolling
       parameters:
+        - in: header
+          name: x-correlation-id
+          required: true
+          schema:
+            $ref: "#/components/schemas/CorrelationId"
         - name: limit
           in: query
           required: true
@@ -658,7 +699,7 @@ paths:
                       "detail": "The server is currently down for maintenance. Please try again later.",
                     },
                   ]
-
+  
   "/eservices/{eserviceRecordId}/updateLastRequest":
     post:
       summary: Update last request of the eservice
@@ -668,6 +709,11 @@ paths:
         - Write
       operationId: updateLastRequest
       parameters:
+        - in: header
+          name: x-correlation-id
+          required: true
+          schema:
+            $ref: "#/components/schemas/CorrelationId"
         - name: eserviceRecordId
           in: path
           required: true
@@ -713,7 +759,7 @@ paths:
                       "detail": "The server is currently down for maintenance. Please try again later.",
                     },
                   ]
-
+  
   "/eservices/{eserviceRecordId}/updateResponseReceived":
     post:
       summary: Update response received of the eservice
@@ -723,6 +769,11 @@ paths:
         - Write
       operationId: updateResponseReceived
       parameters:
+        - in: header
+          name: x-correlation-id
+          required: true
+          schema:
+            $ref: "#/components/schemas/CorrelationId"
         - name: eserviceRecordId
           in: path
           required: true
