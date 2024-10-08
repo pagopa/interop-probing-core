@@ -1,4 +1,4 @@
-import { genericLogger } from "pagopa-interop-probing-commons";
+import { AppContext, logger } from "pagopa-interop-probing-commons";
 import { callerConstants } from "../utilities/constants.js";
 import {
   responseStatus,
@@ -18,10 +18,13 @@ export const callerServiceBuilder = (
   kmsClientHandler: KMSClientHandler,
 ) => {
   return {
-    async performRequest(eservice: EserviceContentDto): Promise<TelemetryDto> {
+    async performRequest(
+      eservice: EserviceContentDto,
+      ctx: AppContext,
+    ): Promise<TelemetryDto> {
       const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
-      genericLogger.info(
+      logger(ctx).info(
         `Perfoming Telemetry ${eservice.technology} request with eserviceRecordId: ${eservice.eserviceRecordId} to ${baseUrl}`,
       );
 
@@ -32,11 +35,11 @@ export const callerServiceBuilder = (
         await match(eservice.technology)
           .with(
             technology.soap,
-            async () => await apiClientHandler.sendSOAP(baseUrl, token),
+            async () => await apiClientHandler.sendSOAP(baseUrl, token, ctx),
           )
           .with(
             technology.rest,
-            async () => await apiClientHandler.sendREST(baseUrl, token),
+            async () => await apiClientHandler.sendREST(baseUrl, token, ctx),
           )
           .exhaustive();
 

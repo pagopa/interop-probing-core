@@ -2,12 +2,12 @@ import { describe, expect, it, vi, afterAll } from "vitest";
 import { processMessage } from "../src/messagesHandler.js";
 import {
   AppContext,
+  decodeSQSMessageCorrelationId,
   SQS,
   WithSQSMessageId,
 } from "pagopa-interop-probing-commons";
 import {
   decodeSQSMessageBody,
-  decodeSQSMessageCorrelationId,
 } from "../src/model/models.js";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -51,11 +51,11 @@ describe("Consumer queue test", () => {
       MessageAttributes: correlationIdMessageAttribute,
     };
 
-    const attributes = decodeSQSMessageCorrelationId(validMessage);
-    const mockAppCtx: WithSQSMessageId<AppContext> = {
+    const { correlationId } = decodeSQSMessageCorrelationId(validMessage);
+    const ctx: WithSQSMessageId<AppContext> = {
       serviceName: config.applicationName,
       messageId: validMessage.MessageId,
-      correlationId: attributes.correlationId,
+      correlationId,
     };
 
     expect(
@@ -64,7 +64,7 @@ describe("Consumer queue test", () => {
 
     expect(mockOperationsService.saveEservice).toHaveBeenCalledWith(
       decodeSQSMessageBody(validMessage),
-      mockAppCtx,
+      ctx,
     );
   });
 

@@ -60,11 +60,53 @@ export class InternalError<T> extends Error {
   }
 }
 
-export type MakeApiProblemFn<T extends string> = (
-  error: unknown,
-  httpMapper: (apiError: ApiError<T | CommonErrorCodes>) => number,
-  logger: { error: (message: string) => void; warn: (message: string) => void },
-) => Problem;
+export class ApplicationError<T> extends Error {
+  public code: T;
+  public title: string;
+  public detail: string;
+  public status?: number;
+
+  constructor({
+    code,
+    title,
+    detail,
+    status,
+  }: {
+    code: T;
+    title: string;
+    detail: string;
+    status?: number;
+  }) {
+    super(detail);
+    this.code = code;
+    this.title = title;
+    this.detail = detail;
+    if (status) this.status = status;
+  }
+}
+
+export class AppError extends ApplicationError<string> {
+  constructor({
+    code,
+    title,
+    detail,
+    status,
+  }: {
+    code: string;
+    title: string;
+    detail: string;
+    status?: number;
+  }) {
+    super({ code, title, detail, status });
+  }
+}
+
+export const makeAppErrorLogString = (
+  appError: AppError,
+  originalError: unknown,
+): string => {
+  return `- title: ${appError.title} - detail: ${appError.detail} - original error: ${originalError}`;
+};
 
 export const makeProblemLogString = (
   problem: Problem,
@@ -73,6 +115,12 @@ export const makeProblemLogString = (
   const errorsString = problem.errors.map((e) => e.detail).join(" - ");
   return `- title: ${problem.title} - detail: ${problem.detail} - errors: ${errorsString} - original error: ${originalError}`;
 };
+
+export type MakeApiProblemFn<T extends string> = (
+  error: unknown,
+  httpMapper: (apiError: ApiError<T | CommonErrorCodes>) => number,
+  logger: { error: (message: string) => void; warn: (message: string) => void },
+) => Problem;
 
 export function makeApiProblemBuilder<T extends string>(errors: {
   [K in T]: string;
@@ -112,7 +160,6 @@ const errorCodes = {
   genericError: "GENERIC_ERROR",
   badRequestError: "BAD_REQUEST_ERROR",
   kafkaMessageProcessError: "KAFKA_MESSAGE_PROCESS_ERROR",
-  decodeSQSMessageCorrelationIdError: "DECODE_SQS_MESSAGE_CORRELATION_ID_ERROR",
 } as const;
 
 export type CommonErrorCodes = keyof typeof errorCodes;
@@ -145,14 +192,5 @@ export function kafkaMessageProcessError(
   return new InternalError({
     code: "kafkaMessageProcessError",
     detail: `Error while handling kafka message from topic : ${topic} - partition ${partition} - offset ${offset}. ${error}`,
-  });
-}
-
-export function decodeSQSMessageCorrelationIdError(
-  detail: string,
-): InternalError<CommonErrorCodes> {
-  return new InternalError({
-    detail: `${detail}`,
-    code: "decodeSQSMessageCorrelationIdError",
   });
 }
