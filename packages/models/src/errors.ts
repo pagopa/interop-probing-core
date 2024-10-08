@@ -109,9 +109,10 @@ export function makeApiProblemBuilder<T extends string>(errors: {
 }
 
 const errorCodes = {
-  genericError: "9991",
-  badRequestError: "9992",
-  kafkaMessageProcessError: "9993",
+  genericError: "GENERIC_ERROR",
+  badRequestError: "BAD_REQUEST_ERROR",
+  kafkaMessageProcessError: "KAFKA_MESSAGE_PROCESS_ERROR",
+  decodeSQSMessageCorrelationIdError: "DECODE_SQS_MESSAGE_CORRELATION_ID_ERROR",
 } as const;
 
 export type CommonErrorCodes = keyof typeof errorCodes;
@@ -144,5 +145,14 @@ export function kafkaMessageProcessError(
   return new InternalError({
     code: "kafkaMessageProcessError",
     detail: `Error while handling kafka message from topic : ${topic} - partition ${partition} - offset ${offset}. ${error}`,
+  });
+}
+
+export function decodeSQSMessageCorrelationIdError(
+  detail: string,
+): InternalError<CommonErrorCodes> {
+  return new InternalError({
+    detail: `${detail}`,
+    code: "decodeSQSMessageCorrelationIdError",
   });
 }

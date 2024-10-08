@@ -5,7 +5,7 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 import { Logger, logger } from "../logging/index.js";
-import { readCorrelationIdHeader } from "./headers.js";
+import { probingCorrelationIdToHeader } from "./headers.js";
 
 export const AppContext = z.object({
   serviceName: z.string(),
@@ -29,7 +29,7 @@ export const contextMiddleware =
   (req, _res, next): void => {
     req.ctx = {
       serviceName,
-      correlationId: readCorrelationIdHeader(req) ?? uuidv4(),
+      correlationId: probingCorrelationIdToHeader(req) ?? uuidv4(),
     } as AppContext;
 
     next();

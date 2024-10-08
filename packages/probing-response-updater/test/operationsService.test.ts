@@ -12,7 +12,7 @@ import { mockApiClientError } from "./utils.js";
 const apiClient = createApiClient(config.operationsBaseUrl);
 
 describe("eService service test", () => {
-  const OperationsService: OperationsService =
+  const operationsService: OperationsService =
     operationsServiceBuilder(apiClient);
 
   afterAll(() => {
@@ -30,7 +30,7 @@ describe("eService service test", () => {
 
     await expect(
       async () =>
-        await OperationsService.updateResponseReceived({
+        await operationsService.updateResponseReceived({
           params: { eserviceRecordId },
           payload: {
             status,
@@ -54,7 +54,7 @@ describe("eService service test", () => {
     );
 
     try {
-      await OperationsService.updateResponseReceived({
+      await operationsService.updateResponseReceived({
         params: { eserviceRecordId },
         payload: {
           status,

@@ -1,17 +1,32 @@
 import { describe, expect, it, vi, afterAll } from "vitest";
 import { processMessage } from "../src/messagesHandler.js";
-import { AppError } from "../src/model/domain/errors.js";
-import { SQS } from "pagopa-interop-probing-commons";
-import { decodeSQSMessage } from "../src/model/models.js";
+import {
+  AppContext,
+  SQS,
+  WithSQSMessageId,
+} from "pagopa-interop-probing-commons";
+import {
+  decodeSQSMessageBody,
+  decodeSQSMessageCorrelationId,
+} from "../src/model/models.js";
 import { v4 as uuidv4 } from "uuid";
 import {
   eserviceInteropState,
   technology,
 } from "pagopa-interop-probing-models";
+import { config } from "../src/utilities/config.js";
+import { AppError } from "../src/model/domain/errors.js";
 
 describe("Consumer queue test", () => {
   const mockOperationsService = {
     saveEservice: vi.fn().mockResolvedValue(undefined),
+  };
+
+  const correlationIdMessageAttribute = {
+    correlationId: {
+      DataType: "String",
+      StringValue: uuidv4(),
+    },
   };
 
   afterAll(() => {
@@ -33,6 +48,14 @@ describe("Consumer queue test", () => {
         audience: ["audience1", "audience2"],
         versionNumber: 1,
       }),
+      MessageAttributes: correlationIdMessageAttribute,
+    };
+
+    const attributes = decodeSQSMessageCorrelationId(validMessage);
+    const mockAppCtx: WithSQSMessageId<AppContext> = {
+      serviceName: config.applicationName,
+      messageId: validMessage.MessageId,
+      correlationId: attributes.correlationId,
     };
 
     expect(
@@ -40,7 +63,8 @@ describe("Consumer queue test", () => {
     ).resolves.not.toThrow();
 
     expect(mockOperationsService.saveEservice).toHaveBeenCalledWith(
-      decodeSQSMessage(validMessage),
+      decodeSQSMessageBody(validMessage),
+      mockAppCtx,
     );
   });
 
@@ -69,6 +93,7 @@ describe("Consumer queue test", () => {
         audience: ["audience1", "audience2"],
         versionNumber: 1,
       }),
+      MessageAttributes: correlationIdMessageAttribute,
     };
 
     try {
@@ -94,6 +119,7 @@ describe("Consumer queue test", () => {
         audience: ["audience1", "audience2"],
         versionNumber: 1,
       }),
+      MessageAttributes: correlationIdMessageAttribute,
     };
 
     try {
@@ -120,6 +146,7 @@ describe("Consumer queue test", () => {
         audience: ["audience1", "audience2"],
         versionNumber: "1",
       }),
+      MessageAttributes: correlationIdMessageAttribute,
     };
 
     try {

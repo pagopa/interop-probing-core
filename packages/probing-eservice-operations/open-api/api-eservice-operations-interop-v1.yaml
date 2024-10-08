@@ -539,6 +539,11 @@ paths:
         - Write
       operationId: saveEservice
       parameters:
+        - in: header
+          name: x-correlation-id
+          required: true
+          schema:
+            $ref: "#/components/schemas/CorrelationId"
         - name: eserviceId
           in: path
           required: true
@@ -766,6 +771,10 @@ paths:
 
 components:
   schemas:
+    CorrelationId:
+      type: string
+      format: uuid
+      description: Correlation ID for tracking requests
     ChangeLastRequest:
       type: object
       required:
