@@ -6,9 +6,7 @@ import {
   logger,
 } from "pagopa-interop-probing-commons";
 import { OperationsService } from "./services/operationsService.js";
-import {
-  decodeSQSMessageBody,
-} from "./model/models.js";
+import { decodeSQSMessageBody } from "./model/models.js";
 import { config } from "./utilities/config.js";
 import { makeApplicationError } from "./model/domain/errors.js";
 

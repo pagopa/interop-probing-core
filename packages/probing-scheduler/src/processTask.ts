@@ -1,6 +1,4 @@
-import {
-  makeApplicationError,
-} from "./model/domain/errors.js";
+import { makeApplicationError } from "./model/domain/errors.js";
 import { ProducerService } from "./services/producerService.js";
 import { OperationsService } from "./services/operationsService.js";
 import { config } from "./utilities/config.js";
@@ -73,7 +71,6 @@ export async function processTask(
       correlationId: rootCorrelationId,
     }).info(`End processing eservices ready for polling.`);
   } catch (error: unknown) {
-    throw makeApplicationError(error, logger(operationCtx),
-    );
+    throw makeApplicationError(error, logger(operationCtx));
   }
 }

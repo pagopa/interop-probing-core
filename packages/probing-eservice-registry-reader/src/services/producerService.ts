@@ -1,4 +1,8 @@
-import { AppContext, SQS, WithSQSMessageId } from "pagopa-interop-probing-commons";
+import {
+  AppContext,
+  SQS,
+  WithSQSMessageId,
+} from "pagopa-interop-probing-commons";
 import { EserviceDto } from "pagopa-interop-probing-models";
 import { config } from "../utilities/config.js";
 

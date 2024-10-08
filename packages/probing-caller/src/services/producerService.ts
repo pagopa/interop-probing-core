@@ -1,4 +1,8 @@
-import { AppContext, SQS, WithSQSMessageId } from "pagopa-interop-probing-commons";
+import {
+  AppContext,
+  SQS,
+  WithSQSMessageId,
+} from "pagopa-interop-probing-commons";
 import { config } from "../utilities/config.js";
 import {
   UpdateResponseReceivedDto,

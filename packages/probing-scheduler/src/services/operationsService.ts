@@ -31,7 +31,7 @@ export const operationsServiceBuilder = (
         throw apiGetEservicesReadyForPollingError(
           `Error API getEservicesReadyForPolling. Details: ${error}`,
           error,
-        )
+        );
       }
     },
     async updateLastRequest(
@@ -48,7 +48,7 @@ export const operationsServiceBuilder = (
         throw apiUpdateLastRequestError(
           `Error API updateLastRequest. Details: ${error}`,
           error,
-        )
+        );
       }
     },
   };

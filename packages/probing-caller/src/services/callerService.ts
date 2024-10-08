@@ -1,4 +1,8 @@
-import { AppContext, logger, WithSQSMessageId } from "pagopa-interop-probing-commons";
+import {
+  AppContext,
+  logger,
+  WithSQSMessageId,
+} from "pagopa-interop-probing-commons";
 import { callerConstants } from "../utilities/constants.js";
 import {
   responseStatus,

@@ -3,7 +3,11 @@ import { P, match } from "ts-pattern";
 import { ZodError } from "zod";
 import { AxiosError } from "axios";
 import { Logger } from "pagopa-interop-probing-commons";
-import { AppError, ApplicationError, makeAppErrorLogString } from "pagopa-interop-probing-models";
+import {
+  AppError,
+  ApplicationError,
+  makeAppErrorLogString,
+} from "pagopa-interop-probing-models";
 
 export function makeApplicationErrorBuilder<T extends string>(errors: {
   [K in T]: string;

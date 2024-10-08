@@ -8,7 +8,9 @@ export const Headers = z.object({
 
 export type Headers = z.infer<typeof Headers>;
 
-export const probingCorrelationIdToHeader = (req: Request): string | undefined =>
+export const probingCorrelationIdToHeader = (
+  req: Request,
+): string | undefined =>
   match(req.headers)
     .with(
       { "x-correlation-id": P.string },
