@@ -1,4 +1,4 @@
-import { AppContext, SQS } from "pagopa-interop-probing-commons";
+import { AppContext, SQS, WithSQSMessageId } from "pagopa-interop-probing-commons";
 import { config } from "../utilities/config.js";
 import {
   UpdateResponseReceivedDto,
@@ -9,7 +9,7 @@ export const producerServiceBuilder = (sqsClient: SQS.SQSClient) => {
   return {
     async sendToTelemetryWriterQueue(
       message: TelemetryDto,
-      ctx: AppContext,
+      ctx: WithSQSMessageId<AppContext>,
     ): Promise<void> {
       await SQS.sendMessage(
         sqsClient,
@@ -20,7 +20,7 @@ export const producerServiceBuilder = (sqsClient: SQS.SQSClient) => {
     },
     async sendToResponseUpdaterQueue(
       message: UpdateResponseReceivedDto,
-      ctx: AppContext,
+      ctx: WithSQSMessageId<AppContext>,
     ): Promise<void> {
       await SQS.sendMessage(
         sqsClient,

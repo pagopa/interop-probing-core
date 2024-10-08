@@ -1,4 +1,4 @@
-import { AppContext, logger } from "pagopa-interop-probing-commons";
+import { AppContext, logger, WithSQSMessageId } from "pagopa-interop-probing-commons";
 import { callerConstants } from "../utilities/constants.js";
 import {
   responseStatus,
@@ -20,7 +20,7 @@ export const callerServiceBuilder = (
   return {
     async performRequest(
       eservice: EserviceContentDto,
-      ctx: AppContext,
+      ctx: WithSQSMessageId<AppContext>,
     ): Promise<TelemetryDto> {
       const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 

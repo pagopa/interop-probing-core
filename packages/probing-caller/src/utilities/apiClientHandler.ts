@@ -1,13 +1,13 @@
 import axios, { AxiosResponse } from "axios";
 import { createProbingRequestEnvelope } from "./soapEnvelope.js";
-import { AppContext } from "pagopa-interop-probing-commons";
+import { AppContext, WithSQSMessageId } from "pagopa-interop-probing-commons";
 
 export const apiClientBuilder = () => {
   return {
     async sendREST(
       baseUrl: string,
       token: string,
-      ctx: AppContext,
+      ctx: WithSQSMessageId<AppContext>,
     ): Promise<AxiosResponse> {
       return await axios({
         method: "GET",
@@ -22,7 +22,7 @@ export const apiClientBuilder = () => {
     async sendSOAP(
       baseUrl: string,
       token: string,
-      ctx: AppContext,
+      ctx: WithSQSMessageId<AppContext>,
     ): Promise<AxiosResponse> {
       return await axios({
         method: "POST",
