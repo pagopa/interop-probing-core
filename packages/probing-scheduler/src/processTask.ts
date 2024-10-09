@@ -43,12 +43,7 @@ export async function processTask(
       );
       totalElements = data.totalElements;
       logger(operationCtx).info(
-        `Performed getEservicesReadyForPolling with query parameters: ${JSON.stringify(
-          {
-            offset,
-            limit,
-          },
-        )}`,
+        `Performed getEservicesReadyForPolling with query parameters limit ${limit} offset ${offset}`,
       );
 
       const promises = data.content.map(async (eservice) => {
@@ -68,12 +63,12 @@ export async function processTask(
           payload,
         );
         logger(operationCtx).info(
-          `Performed updateLastRequest with eserviceRecordId ${params.eserviceRecordId}, payload: ${JSON.stringify(payload)}`,
+          `Performed updateLastRequest with eserviceRecordId ${params.eserviceRecordId}. Payload: ${JSON.stringify(payload)}`,
         );
 
         await producerService.sendToCallerQueue(eservice, operationCtx);
         logger(operationCtx).info(
-          `Performed sendToCallerQueue with eserviceRecordId ${eservice.eserviceRecordId}, payload: ${JSON.stringify(eservice)}`,
+          `Performed sendToCallerQueue with eserviceRecordId ${eservice.eserviceRecordId}. Payload: ${JSON.stringify(eservice)}`,
         );
       });
       await Promise.all(promises);
