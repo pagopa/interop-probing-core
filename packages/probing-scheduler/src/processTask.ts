@@ -42,6 +42,14 @@ export async function processTask(
         },
       );
       totalElements = data.totalElements;
+      logger(operationCtx).info(
+        `Performed getEservicesReadyForPolling with query parameters: ${JSON.stringify(
+          {
+            offset,
+            limit,
+          },
+        )}`,
+      );
 
       const promises = data.content.map(async (eservice) => {
         operationCtx.correlationId = uuidv4();
@@ -59,7 +67,14 @@ export async function processTask(
           params,
           payload,
         );
+        logger(operationCtx).info(
+          `Performed updateLastRequest with eserviceRecordId ${params.eserviceRecordId}, payload: ${JSON.stringify(payload)}`,
+        );
+
         await producerService.sendToCallerQueue(eservice, operationCtx);
+        logger(operationCtx).info(
+          `Performed sendToCallerQueue with eserviceRecordId ${eservice.eserviceRecordId}, payload: ${JSON.stringify(eservice)}`,
+        );
       });
       await Promise.all(promises);
 
