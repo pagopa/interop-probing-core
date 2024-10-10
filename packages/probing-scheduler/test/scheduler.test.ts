@@ -58,21 +58,25 @@ describe("Process task test", async () => {
       limit: config.schedulerLimit,
     };
 
-    const batchCtx: AppContext = {
+    const pollingCtx: AppContext = {
       serviceName: config.applicationName,
       correlationId: mockUUID,
     };
 
     await processTask(mockOperationsService, mockProducerService);
 
-    for (let i = 0; i < 4; i++) {
+    for (let polling = 0; polling < totalElements; polling++) {
       const headers = {
-        ...correlationIdToHeader(batchCtx.correlationId),
+        ...correlationIdToHeader(pollingCtx.correlationId),
       };
 
       await expect(
         mockOperationsService.getEservicesReadyForPolling,
-      ).toHaveBeenCalledWith(headers, { ...query, offset: i });
+      ).toHaveBeenCalledWith(
+        headers,
+        { ...query, offset: polling },
+        pollingCtx,
+      );
     }
 
     await expect(
@@ -89,7 +93,7 @@ describe("Process task test", async () => {
 
     await expect(mockProducerService.sendToCallerQueue).toHaveBeenCalledWith(
       mockEservicesActive[0],
-      batchCtx,
+      pollingCtx,
     );
   });
 

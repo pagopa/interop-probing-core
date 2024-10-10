@@ -14,40 +14,40 @@ export async function processTask(
   operationsService: OperationsService,
   producerService: ProducerService,
 ): Promise<void> {
-  const rootCorrelationId: string = uuidv4();
-  const operationCtx: AppContext = {
+  const mainCtx: AppContext = {
     serviceName: config.applicationName,
-    correlationId: rootCorrelationId,
+    correlationId: uuidv4(),
   };
 
   try {
-    logger({
-      serviceName: config.applicationName,
-      correlationId: rootCorrelationId,
-    }).info(`Start processing eservices ready for polling.`);
+    logger(mainCtx).info(`Start processing eservices ready for polling.`);
 
     const limit: number = config.schedulerLimit;
     let offset: number = 0;
     let totalElements: number = 0;
 
     do {
-      operationCtx.correlationId = uuidv4();
+      const pollingCtx: AppContext = {
+        ...mainCtx,
+        correlationId: uuidv4(),
+      };
       const data = await operationsService.getEservicesReadyForPolling(
         {
-          ...correlationIdToHeader(operationCtx.correlationId),
+          ...correlationIdToHeader(pollingCtx.correlationId),
         },
         {
           offset,
           limit,
         },
+        pollingCtx,
       );
       totalElements = data.totalElements;
-      logger(operationCtx).info(
-        `Performed getEservicesReadyForPolling with query parameters limit ${limit} offset ${offset}`,
-      );
 
       const promises = data.content.map(async (eservice) => {
-        operationCtx.correlationId = uuidv4();
+        const eserviceCtx: AppContext = {
+          serviceName: config.applicationName,
+          correlationId: uuidv4(),
+        };
 
         const params: ApiUpdateLastRequestParams = {
           eserviceRecordId: eservice.eserviceRecordId,
@@ -57,30 +57,22 @@ export async function processTask(
         };
         await operationsService.updateLastRequest(
           {
-            ...correlationIdToHeader(operationCtx.correlationId),
+            ...correlationIdToHeader(eserviceCtx.correlationId),
           },
           params,
           payload,
-        );
-        logger(operationCtx).info(
-          `Performed updateLastRequest with eserviceRecordId ${params.eserviceRecordId}. Payload: ${JSON.stringify(payload)}`,
+          eserviceCtx,
         );
 
-        await producerService.sendToCallerQueue(eservice, operationCtx);
-        logger(operationCtx).info(
-          `Performed sendToCallerQueue with eserviceRecordId ${eservice.eserviceRecordId}. Payload: ${JSON.stringify(eservice)}`,
-        );
+        await producerService.sendToCallerQueue(eservice, eserviceCtx);
       });
       await Promise.all(promises);
 
       offset += limit;
     } while (offset < totalElements);
 
-    logger({
-      serviceName: config.applicationName,
-      correlationId: rootCorrelationId,
-    }).info(`End processing eservices ready for polling.`);
+    logger(mainCtx).info(`End processing eservices ready for polling.`);
   } catch (error: unknown) {
-    throw makeApplicationError(error, logger(operationCtx));
+    throw makeApplicationError(error, logger(mainCtx));
   }
 }

@@ -12,7 +12,13 @@ import {
 import {
   apiGetEservicesReadyForPollingError,
   apiUpdateLastRequestError,
+  makeApplicationError,
 } from "../model/domain/errors.js";
+import {
+  WithSQSMessageId,
+  AppContext,
+  logger,
+} from "pagopa-interop-probing-commons";
 
 export const operationsServiceBuilder = (
   operationsApiClient: ZodiosInstance<Api>,
@@ -21,16 +27,23 @@ export const operationsServiceBuilder = (
     async getEservicesReadyForPolling(
       headers: ApiGetEservicesReadyForPollingHeaders,
       query: ApiGetEservicesReadyForPollingQuery,
+      ctx: WithSQSMessageId<AppContext>,
     ): Promise<ApiGetEservicesReadyForPollingResponse> {
       try {
+        logger(ctx).info(
+          `Performing getEservicesReadyForPolling with query parameters limit ${query.limit} offset ${query.offset}`,
+        );
         return await operationsApiClient.getEservicesReadyForPolling({
           queries: query,
           headers,
         });
       } catch (error: unknown) {
-        throw apiGetEservicesReadyForPollingError(
-          `Error API getEservicesReadyForPolling. Details: ${error}`,
-          error,
+        throw makeApplicationError(
+          apiGetEservicesReadyForPollingError(
+            `Error API getEservicesReadyForPolling. Details: ${error}`,
+            error,
+          ),
+          logger(ctx),
         );
       }
     },
@@ -38,16 +51,23 @@ export const operationsServiceBuilder = (
       headers: ApiUpdateLastRequestHeaders,
       params: ApiUpdateLastRequestParams,
       payload: ApiUpdateLastRequestPayload,
+      ctx: WithSQSMessageId<AppContext>,
     ): Promise<ApiUpdateLastRequestResponse> {
       try {
+        logger(ctx).info(
+          `Performing updateLastRequest with eserviceRecordId ${params.eserviceRecordId}. Payload: ${JSON.stringify(payload)}`,
+        );
         return await operationsApiClient.updateLastRequest(payload, {
           params,
           headers,
         });
       } catch (error: unknown) {
-        throw apiUpdateLastRequestError(
-          `Error API updateLastRequest. Details: ${error}`,
-          error,
+        throw makeApplicationError(
+          apiUpdateLastRequestError(
+            `Error API updateLastRequest. Details: ${error}`,
+            error,
+          ),
+          logger(ctx),
         );
       }
     },

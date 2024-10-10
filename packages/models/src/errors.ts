@@ -97,7 +97,7 @@ export class AppError extends ApplicationError<string> {
     detail: string;
     status?: number;
   }) {
-    super({ code, title, detail, status });
+    super({ code, title, detail, ...(status && { status }) });
   }
 }
 
