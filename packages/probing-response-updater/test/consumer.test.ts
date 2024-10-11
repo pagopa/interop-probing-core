@@ -60,7 +60,9 @@ describe("Consumer queue test", () => {
       await processMessage(mockResponseUpdaterService)(invalidMessage);
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "DECODE_SQS_MESSAGE_ERROR",
+      );
     }
   });
 
@@ -76,7 +78,9 @@ describe("Consumer queue test", () => {
       await processMessage(mockResponseUpdaterService)(emptyMessage);
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "DECODE_SQS_MESSAGE_ERROR",
+      );
       expect(
         mockResponseUpdaterService.updateResponseReceived,
       ).not.toBeCalled();
@@ -97,7 +101,9 @@ describe("Consumer queue test", () => {
       await processMessage(mockResponseUpdaterService)(missingEserviceRecordId);
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "DECODE_SQS_MESSAGE_ERROR",
+      );
       expect(
         mockResponseUpdaterService.updateResponseReceived,
       ).not.toBeCalled();
@@ -118,7 +124,9 @@ describe("Consumer queue test", () => {
       await processMessage(mockResponseUpdaterService)(missingResponseReceived);
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "DECODE_SQS_MESSAGE_ERROR",
+      );
       expect(
         mockResponseUpdaterService.updateResponseReceived,
       ).not.toBeCalled();
@@ -137,7 +145,9 @@ describe("Consumer queue test", () => {
       await processMessage(mockResponseUpdaterService)(missingStatus);
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "DECODE_SQS_MESSAGE_ERROR",
+      );
       expect(
         mockResponseUpdaterService.updateResponseReceived,
       ).not.toBeCalled();
@@ -158,7 +168,9 @@ describe("Consumer queue test", () => {
       );
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "DECODE_SQS_MESSAGE_ERROR",
+      );
     }
   });
 });

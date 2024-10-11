@@ -303,7 +303,9 @@ describe("caller service test", () => {
       await callerService.performRequest(eservice, ctx);
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe("0004");
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "BUILD_JWT_ERROR",
+      );
     }
   });
 
@@ -338,7 +340,9 @@ describe("caller service test", () => {
       await callerService.performRequest(eservice, ctx);
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe("9999");
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "GENERIC_ERROR",
+      );
     }
   });
 });

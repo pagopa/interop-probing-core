@@ -116,7 +116,9 @@ describe("Process task test", async () => {
       await processTask(mockOperationsService, mockProducerService);
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "API_GET_ESERVICES_READY_FOR_POLLING_ERROR",
+      );
       expect((error as ApplicationError<ErrorCodes>).status).toBe(500);
     }
   });

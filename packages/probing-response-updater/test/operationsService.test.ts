@@ -111,7 +111,9 @@ describe("eService service test", () => {
       );
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe("0001");
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "API_UPDATE_RESPONSE_RECEIVED_ERROR",
+      );
     }
   });
 });

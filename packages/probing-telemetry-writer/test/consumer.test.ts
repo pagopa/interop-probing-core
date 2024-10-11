@@ -70,7 +70,9 @@ describe("Consumer queue test", () => {
       await processMessage(mockTelemetryService)(invalidMessage);
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe("9999");
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "GENERIC_ERROR",
+      );
     }
   });
 });

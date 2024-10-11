@@ -29,7 +29,7 @@ describe("Process task test", async () => {
     );
   });
 
-  it("Invoke processTask should throw an error code 0001", async () => {
+  it("Invoke processTask should throw an error code READ_OBJECT_S3_BUCKET_ERROR", async () => {
     const mockReadObjectS3BucketError = readObjectS3BucketError(
       `Unable to parse eservices from S3 Bucket ${config.bucketS3Name} Key ${config.bucketS3Key}`,
     );
@@ -42,7 +42,9 @@ describe("Process task test", async () => {
       await processTask(mockBucketService, mockProducerService);
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe("0001");
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "READ_OBJECT_S3_BUCKET_ERROR",
+      );
     }
   });
 });

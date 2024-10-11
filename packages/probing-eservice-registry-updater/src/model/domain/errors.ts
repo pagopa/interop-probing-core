@@ -46,9 +46,9 @@ export function makeApplicationErrorBuilder<T extends string>(errors: {
 }
 
 export const errorCodes = {
-  genericError: "9999",
-  apiSaveEserviceError: "0001",
-  decodeSQSMessageError: "0002",
+  genericError: "GENERIC_ERROR",
+  apiSaveEserviceError: "API_SAVE_ESERVICE_ERROR",
+  decodeSQSMessageError: "DECODE_SQS_MESSAGE_ERROR",
 } as const;
 
 export type ErrorCodes = keyof typeof errorCodes;
