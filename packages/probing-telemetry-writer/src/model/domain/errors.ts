@@ -44,9 +44,9 @@ export function makeApplicationErrorBuilder<T extends string>(errors: {
 }
 
 export const errorCodes = {
-  genericError: "9999",
-  decodeSQSMessageError: "0001",
-  writeRecordTimestreamError: "0002",
+  genericError: "GENERIC_ERROR",
+  decodeSQSMessageError: "DECODE_SQS_MESSAGE_ERROR",
+  writeRecordTimestreamError: "WRITE_RECORD_TIMESTREAM_ERROR",
 } as const;
 
 export type ErrorCodes = keyof typeof errorCodes;

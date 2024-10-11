@@ -46,10 +46,10 @@ export function makeApplicationErrorBuilder<T extends string>(errors: {
 }
 
 export const errorCodes = {
-  genericError: "9999",
-  callProbingEndpointError: "0001",
-  decodeSQSMessageError: "0002",
-  buildJWTError: "0004",
+  genericError: "GENERIC_ERROR",
+  callProbingEndpointError: "CALL_PROBING_ENDPOINT_ERROR",
+  decodeSQSMessageError: "DECODE_SQS_MESSAGE_ERROR",
+  buildJWTError: "BUILD_JWT_ERROR",
 } as const;
 
 export type ErrorCodes = keyof typeof errorCodes;

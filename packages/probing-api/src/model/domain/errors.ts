@@ -9,9 +9,11 @@ import { Logger } from "pagopa-interop-probing-commons";
 import { errorMapper } from "../../utilities/errorMapper.js";
 
 export const errorCodes = {
-  eServiceNotFound: "0001",
-  eServiceMainDataByRecordIdNotFound: "0002",
-  eServiceProbingDataByRecordIdNotFound: "0003",
+  eServiceNotFound: "ESERVICE_NOT_FOUND",
+  eServiceMainDataByRecordIdNotFound:
+    "ESERVICE_MAIN_DATA_BY_RECORD_ID_NOT_FOUND",
+  eServiceProbingDataByRecordIdNotFound:
+    "ESERVICE_PROBING_DATA_BY_RECORD_ID_NOT_FOUND",
 };
 
 export type ErrorCodes = keyof typeof errorCodes;

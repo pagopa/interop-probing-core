@@ -74,7 +74,9 @@ describe("Consumer queue test", () => {
       await processMessage(mockOperationsService)(invalidMessage);
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "DECODE_SQS_MESSAGE_ERROR",
+      );
     }
   });
 
@@ -99,7 +101,9 @@ describe("Consumer queue test", () => {
       await processMessage(mockOperationsService)(missingEserviceId);
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "DECODE_SQS_MESSAGE_ERROR",
+      );
       expect(mockOperationsService.saveEservice).not.toBeCalled();
     }
   });
@@ -125,7 +129,9 @@ describe("Consumer queue test", () => {
       await processMessage(mockOperationsService)(missingVersionId);
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "DECODE_SQS_MESSAGE_ERROR",
+      );
       expect(mockOperationsService.saveEservice).not.toBeCalled();
     }
   });
@@ -152,7 +158,9 @@ describe("Consumer queue test", () => {
       await processMessage(mockOperationsService)(badFormattedEserviceDTO);
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "DECODE_SQS_MESSAGE_ERROR",
+      );
     }
   });
 });

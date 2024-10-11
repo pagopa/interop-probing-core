@@ -44,8 +44,8 @@ export function makeApplicationErrorBuilder<T extends string>(errors: {
 }
 
 export const errorCodes = {
-  genericError: "9999",
-  readObjectS3BucketError: "0001",
+  genericError: "GENERIC_ERROR",
+  readObjectS3BucketError: "READ_OBJECT_S3_BUCKET_ERROR",
 } as const;
 
 export type ErrorCodes = keyof typeof errorCodes;

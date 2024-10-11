@@ -96,7 +96,9 @@ describe("Consumer queue test", async () => {
       )(invalidMessage);
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "DECODE_SQS_MESSAGE_ERROR",
+      );
     }
   });
 });

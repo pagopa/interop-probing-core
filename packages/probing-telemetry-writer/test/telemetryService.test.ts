@@ -77,7 +77,9 @@ describe("Telemetry service test", () => {
       await telemetryService.writeRecord(telemetry, ctx);
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "WRITE_RECORD_TIMESTREAM_ERROR",
+      );
     }
   });
 });
