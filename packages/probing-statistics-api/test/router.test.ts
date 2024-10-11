@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import supertest from "supertest";
-import { zodiosCtx } from "pagopa-interop-probing-commons";
+import {
+  contextMiddleware,
+  ExpressContext,
+  zodiosCtx,
+} from "pagopa-interop-probing-commons";
 import statisticsRouter from "../src/routers/statisticsRouter.js";
 import {
   TimestreamQueryClientHandler,
@@ -15,12 +19,15 @@ import {
   statisticsServiceBuilder,
 } from "../src/services/statisticsService.js";
 import {
+  Api,
   ApiFilteredStatisticsEservicesParams,
   ApiFilteredStatisticsEservicesQuery,
   ApiStatisticsEservicesParams,
   ApiStatisticsEservicesQuery,
 } from "../src/model/types.js";
 import { mockTimestreamResponseQuery } from "./utils.js";
+import { ZodiosApp } from "@zodios/express";
+import { config } from "../src/utilities/config.js";
 
 const timestreamQueryClient: TimestreamQueryClientHandler =
   timestreamQueryClientBuilder();
@@ -30,7 +37,8 @@ const timestreamService: TimestreamService = timestreamServiceBuilder(
 const statisticsService: StatisticsService =
   statisticsServiceBuilder(timestreamService);
 
-const app = zodiosCtx.app();
+const app: ZodiosApp<Api, ExpressContext> = zodiosCtx.app();
+app.use(contextMiddleware(config.applicationName));
 app.use(statisticsRouter(zodiosCtx)(statisticsService));
 
 const probingApiClient = supertest(app);

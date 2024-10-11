@@ -1,13 +1,28 @@
 import { describe, expect, it, vi, afterAll } from "vitest";
 import { sqsMessages } from "./sqsMessages.js";
 import { processMessage } from "../src/messagesHandler.js";
-import { AppError } from "../src/model/domain/errors.js";
-import { SQS } from "pagopa-interop-probing-commons";
+import {
+  AppContext,
+  decodeSQSMessageCorrelationId,
+  SQS,
+  WithSQSMessageId,
+} from "pagopa-interop-probing-commons";
 import { decodeSQSMessage } from "../src/model/models.js";
+import { ApplicationError } from "pagopa-interop-probing-models";
+import { v4 as uuidv4 } from "uuid";
+import { config } from "../src/utilities/config.js";
+import { ErrorCodes } from "../src/model/domain/errors.js";
 
 describe("Consumer queue test", () => {
   const mockResponseUpdaterService = {
     updateResponseReceived: vi.fn().mockResolvedValue(undefined),
+  };
+
+  const correlationIdMessageAttribute = {
+    correlationId: {
+      DataType: "String",
+      StringValue: uuidv4(),
+    },
   };
 
   afterAll(() => {
@@ -19,6 +34,14 @@ describe("Consumer queue test", () => {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
       Body: JSON.stringify(sqsMessages.messageChangeResponseReceivedDto),
+      MessageAttributes: correlationIdMessageAttribute,
+    };
+
+    const { correlationId } = decodeSQSMessageCorrelationId(validMessage);
+    const ctx: WithSQSMessageId<AppContext> = {
+      serviceName: config.applicationName,
+      messageId: validMessage.MessageId,
+      correlationId,
     };
 
     await expect(async () => {
@@ -27,7 +50,7 @@ describe("Consumer queue test", () => {
 
     expect(
       mockResponseUpdaterService.updateResponseReceived,
-    ).toHaveBeenCalledWith(decodeSQSMessage(validMessage));
+    ).toHaveBeenCalledWith(decodeSQSMessage(validMessage), ctx);
   });
 
   it("given invalid message, method should throw an error", async () => {
@@ -36,8 +59,8 @@ describe("Consumer queue test", () => {
     try {
       await processMessage(mockResponseUpdaterService)(invalidMessage);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0002");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
     }
   });
 
@@ -46,13 +69,14 @@ describe("Consumer queue test", () => {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
       Body: JSON.stringify(sqsMessages.messageChangeResponseReceivedEmpty),
+      MessageAttributes: correlationIdMessageAttribute,
     };
 
     try {
       await processMessage(mockResponseUpdaterService)(emptyMessage);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0002");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
       expect(
         mockResponseUpdaterService.updateResponseReceived,
       ).not.toBeCalled();
@@ -66,13 +90,14 @@ describe("Consumer queue test", () => {
       Body: JSON.stringify(
         sqsMessages.messageChangeResponseReceivedNoEserviceRecordId,
       ),
+      MessageAttributes: correlationIdMessageAttribute,
     };
 
     try {
       await processMessage(mockResponseUpdaterService)(missingEserviceRecordId);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0002");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
       expect(
         mockResponseUpdaterService.updateResponseReceived,
       ).not.toBeCalled();
@@ -86,13 +111,14 @@ describe("Consumer queue test", () => {
       Body: JSON.stringify(
         sqsMessages.messageChangeResponseReceivedNoResponseReceived,
       ),
+      MessageAttributes: correlationIdMessageAttribute,
     };
 
     try {
       await processMessage(mockResponseUpdaterService)(missingResponseReceived);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0002");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
       expect(
         mockResponseUpdaterService.updateResponseReceived,
       ).not.toBeCalled();
@@ -104,13 +130,14 @@ describe("Consumer queue test", () => {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
       Body: JSON.stringify(sqsMessages.messageChangeResponseReceivedNoStatus),
+      MessageAttributes: correlationIdMessageAttribute,
     };
 
     try {
       await processMessage(mockResponseUpdaterService)(missingStatus);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0002");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
       expect(
         mockResponseUpdaterService.updateResponseReceived,
       ).not.toBeCalled();
@@ -122,6 +149,7 @@ describe("Consumer queue test", () => {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
       Body: JSON.stringify(sqsMessages.messageBadFormattedResponseReceived),
+      MessageAttributes: correlationIdMessageAttribute,
     };
 
     try {
@@ -129,8 +157,8 @@ describe("Consumer queue test", () => {
         badFormattedResponseReceived,
       );
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0002");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
     }
   });
 });

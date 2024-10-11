@@ -3,7 +3,13 @@ import {
   CallerService,
   callerServiceBuilder,
 } from "../src/services/callerService.js";
-import { SQS } from "pagopa-interop-probing-commons";
+import {
+  AppContext,
+  decodeSQSMessageCorrelationId,
+  genericLogger,
+  SQS,
+  WithSQSMessageId,
+} from "pagopa-interop-probing-commons";
 import { decodeSQSMessage } from "../src/model/models.js";
 import {
   ApiClientHandler,
@@ -16,14 +22,17 @@ import {
   kmsClientBuilder,
 } from "../src/utilities/kmsClientHandler.js";
 import {
-  AppError,
   buildJWTError,
+  ErrorCodes,
   makeApplicationError,
 } from "../src/model/domain/errors.js";
 import {
+  ApplicationError,
   EserviceContentDto,
   TelemetryKoDto,
 } from "pagopa-interop-probing-models";
+import { config } from "../src/utilities/config.js";
+import { v4 as uuidv4 } from "uuid";
 
 describe("caller service test", () => {
   const mockJWT = `token`;
@@ -33,6 +42,13 @@ describe("caller service test", () => {
     apiClientHandler,
     kmsClientHandler,
   );
+
+  const correlationIdMessageAttribute = {
+    correlationId: {
+      DataType: "String",
+      StringValue: uuidv4(),
+    },
+  };
 
   afterEach(() => {
     vi.restoreAllMocks();
@@ -48,6 +64,14 @@ describe("caller service test", () => {
         basePath: ["path1", "path2"],
         audience: ["aud1", "path2"],
       }),
+      MessageAttributes: correlationIdMessageAttribute,
+    };
+
+    const { correlationId } = decodeSQSMessageCorrelationId(validMessage);
+    const ctx: WithSQSMessageId<AppContext> = {
+      serviceName: config.applicationName,
+      messageId: validMessage.MessageId,
+      correlationId,
     };
 
     const apiClientError = mockApiClientError(
@@ -62,7 +86,7 @@ describe("caller service test", () => {
     const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
     const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
-    const telemetryResult = await callerService.performRequest(eservice);
+    const telemetryResult = await callerService.performRequest(eservice, ctx);
 
     expect(kmsClientHandler.buildJWT).toHaveBeenCalledWith(eservice.audience);
 
@@ -72,7 +96,11 @@ describe("caller service test", () => {
     );
     expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
 
-    expect(apiClientHandler.sendREST).toHaveBeenCalledWith(baseUrl, mockJWT);
+    expect(apiClientHandler.sendREST).toHaveBeenCalledWith(
+      baseUrl,
+      mockJWT,
+      ctx,
+    );
   });
 
   it("Test KO 502 Bad Gateway call probing - REST", async () => {
@@ -85,6 +113,14 @@ describe("caller service test", () => {
         basePath: ["path1", "path2"],
         audience: ["aud1", "path2"],
       }),
+      MessageAttributes: correlationIdMessageAttribute,
+    };
+
+    const { correlationId } = decodeSQSMessageCorrelationId(validMessage);
+    const ctx: WithSQSMessageId<AppContext> = {
+      serviceName: config.applicationName,
+      messageId: validMessage.MessageId,
+      correlationId,
     };
 
     const apiClientError = mockApiClientError(
@@ -98,7 +134,7 @@ describe("caller service test", () => {
     const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
     const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
-    const telemetryResult = await callerService.performRequest(eservice);
+    const telemetryResult = await callerService.performRequest(eservice, ctx);
 
     expect(telemetryResult.status).toBe("KO");
     expect((telemetryResult as TelemetryKoDto).koReason).toBe("502");
@@ -107,6 +143,7 @@ describe("caller service test", () => {
     await expect(apiClientHandler.sendREST).toHaveBeenCalledWith(
       baseUrl,
       mockJWT,
+      ctx,
     );
   });
 
@@ -120,6 +157,14 @@ describe("caller service test", () => {
         basePath: ["path1", "path2"],
         audience: ["aud1", "path2"],
       }),
+      MessageAttributes: correlationIdMessageAttribute,
+    };
+
+    const { correlationId } = decodeSQSMessageCorrelationId(validMessage);
+    const ctx: WithSQSMessageId<AppContext> = {
+      serviceName: config.applicationName,
+      messageId: validMessage.MessageId,
+      correlationId,
     };
 
     const apiClientError = mockApiClientError(
@@ -133,7 +178,7 @@ describe("caller service test", () => {
     const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
     const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
-    const telemetryResult = await callerService.performRequest(eservice);
+    const telemetryResult = await callerService.performRequest(eservice, ctx);
 
     expect(telemetryResult.status).toBe("KO");
     expect((telemetryResult as TelemetryKoDto).koReason).toBe(
@@ -144,6 +189,7 @@ describe("caller service test", () => {
     await expect(apiClientHandler.sendSOAP).toHaveBeenCalledWith(
       baseUrl,
       mockJWT,
+      ctx,
     );
   });
 
@@ -157,6 +203,14 @@ describe("caller service test", () => {
         basePath: ["path1", "path2"],
         audience: ["aud1", "path2"],
       }),
+      MessageAttributes: correlationIdMessageAttribute,
+    };
+
+    const { correlationId } = decodeSQSMessageCorrelationId(validMessage);
+    const ctx: WithSQSMessageId<AppContext> = {
+      serviceName: config.applicationName,
+      messageId: validMessage.MessageId,
+      correlationId,
     };
 
     const apiClientResponse = mockApiClientResponse(undefined);
@@ -166,7 +220,7 @@ describe("caller service test", () => {
     const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
     const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
-    const telemetryResult = await callerService.performRequest(eservice);
+    const telemetryResult = await callerService.performRequest(eservice, ctx);
 
     expect(telemetryResult.status).toBe("OK");
     expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
@@ -174,6 +228,7 @@ describe("caller service test", () => {
     await expect(apiClientHandler.sendSOAP).toHaveBeenCalledWith(
       baseUrl,
       mockJWT,
+      ctx,
     );
   });
 
@@ -187,6 +242,14 @@ describe("caller service test", () => {
         basePath: ["path1", "path2"],
         audience: ["aud1", "path2"],
       }),
+      MessageAttributes: correlationIdMessageAttribute,
+    };
+
+    const { correlationId } = decodeSQSMessageCorrelationId(validMessage);
+    const ctx: WithSQSMessageId<AppContext> = {
+      serviceName: config.applicationName,
+      messageId: validMessage.MessageId,
+      correlationId,
     };
 
     const apiClientResponse = mockApiClientResponse(undefined);
@@ -196,7 +259,7 @@ describe("caller service test", () => {
     const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
     const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
-    const telemetryResult = await callerService.performRequest(eservice);
+    const telemetryResult = await callerService.performRequest(eservice, ctx);
 
     expect(telemetryResult.status).toBe("OK");
     expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
@@ -204,6 +267,7 @@ describe("caller service test", () => {
     await expect(apiClientHandler.sendREST).toHaveBeenCalledWith(
       baseUrl,
       mockJWT,
+      ctx,
     );
   });
 
@@ -217,19 +281,29 @@ describe("caller service test", () => {
         basePath: ["path1", "path2"],
         audience: ["aud1", "path2"],
       }),
+      MessageAttributes: correlationIdMessageAttribute,
     };
-    const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
 
+    const { correlationId } = decodeSQSMessageCorrelationId(validMessage);
+    const ctx: WithSQSMessageId<AppContext> = {
+      serviceName: config.applicationName,
+      messageId: validMessage.MessageId,
+      correlationId,
+    };
+
+    const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
     const mockBuildJwtError = makeApplicationError(
       buildJWTError(`Failed to generate signature.`),
+      genericLogger,
     );
+
     vi.spyOn(kmsClientHandler, "buildJWT").mockRejectedValue(mockBuildJwtError);
 
     try {
-      await callerService.performRequest(eservice);
+      await callerService.performRequest(eservice, ctx);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0004");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("0004");
     }
   });
 
@@ -243,6 +317,14 @@ describe("caller service test", () => {
         basePath: ["path1", "path2"],
         audience: ["aud1", "path2"],
       }),
+      MessageAttributes: correlationIdMessageAttribute,
+    };
+
+    const { correlationId } = decodeSQSMessageCorrelationId(validMessage);
+    const ctx: WithSQSMessageId<AppContext> = {
+      serviceName: config.applicationName,
+      messageId: validMessage.MessageId,
+      correlationId,
     };
 
     vi.spyOn(apiClientHandler, "sendSOAP").mockRejectedValue(
@@ -253,10 +335,10 @@ describe("caller service test", () => {
     const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
 
     try {
-      await callerService.performRequest(eservice);
+      await callerService.performRequest(eservice, ctx);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("9999");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("9999");
     }
   });
 });

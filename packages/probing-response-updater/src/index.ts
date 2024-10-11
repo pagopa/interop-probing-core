@@ -9,7 +9,7 @@ import {
 
 const operationsApiClient = createApiClient(config.operationsBaseUrl);
 
-const OperationsService: OperationsService =
+const operationsService: OperationsService =
   operationsServiceBuilder(operationsApiClient);
 
 const sqsClient: SQS.SQSClient = await SQS.instantiateClient({
@@ -22,5 +22,5 @@ await SQS.runConsumer(
     queueUrl: config.sqsEndpointPollResultQueue,
     consumerPollingTimeout: config.consumerPollingTimeout,
   },
-  processMessage(OperationsService),
+  processMessage(operationsService),
 ).catch(genericLogger.error);

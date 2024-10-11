@@ -39,6 +39,7 @@ const processQueue = async (
 ): Promise<void> => {
   const command = new ReceiveMessageCommand({
     QueueUrl: config.queueUrl,
+    MessageAttributeNames: ["All"],
     WaitTimeSeconds: config.consumerPollingTimeout,
     MaxNumberOfMessages: 10,
   });
@@ -94,7 +95,8 @@ export const sendMessage = async (
   sqsClient: SQSClient,
   queueUrl: string,
   messageBody: string,
-  messageGroupId?: string,
+  correlationId: string,
+  messageGroupId?: string | null,
 ): Promise<void> => {
   const messageCommandInput: SendMessageCommandInput = {
     QueueUrl: queueUrl,
@@ -104,6 +106,13 @@ export const sendMessage = async (
   if (messageGroupId) {
     messageCommandInput.MessageGroupId = messageGroupId;
   }
+
+  messageCommandInput.MessageAttributes = {
+    correlationId: {
+      DataType: "String",
+      StringValue: correlationId,
+    },
+  };
 
   const command = new SendMessageCommand(messageCommandInput);
 

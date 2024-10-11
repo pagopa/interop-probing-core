@@ -1,21 +1,23 @@
 import { TelemetryDto } from "pagopa-interop-probing-models";
 import { TimestreamWriteClientHandler } from "../utilities/timestreamWriteClientHandler.js";
-import { makeApplicationError } from "../model/domain/errors.js";
-import { genericLogger } from "pagopa-interop-probing-commons";
+import {
+  AppContext,
+  logger,
+  WithSQSMessageId,
+} from "pagopa-interop-probing-commons";
 
 export const telemetryWriteServiceBuilder = (
   timestreamWriteClient: TimestreamWriteClientHandler,
 ) => {
   return {
-    async writeRecord(telemetry: TelemetryDto): Promise<void> {
-      try {
-        genericLogger.info(
-          `Writing Telemetry with eserviceRecordId: ${telemetry.eserviceRecordId}`,
-        );
-        await timestreamWriteClient.writeRecord(telemetry);
-      } catch (error: unknown) {
-        throw makeApplicationError(error);
-      }
+    async writeRecord(
+      telemetry: TelemetryDto,
+      ctx: WithSQSMessageId<AppContext>,
+    ): Promise<void> {
+      logger(ctx).info(
+        `Writing Telemetry with eserviceRecordId: ${telemetry.eserviceRecordId}`,
+      );
+      await timestreamWriteClient.writeRecord(telemetry);
     },
   };
 };

@@ -1,17 +1,31 @@
 import { describe, expect, it, vi, afterAll } from "vitest";
 import { processMessage } from "../src/messagesHandler.js";
-import { AppError } from "../src/model/domain/errors.js";
-import { SQS } from "pagopa-interop-probing-commons";
-import { decodeSQSMessage } from "../src/model/models.js";
+import {
+  AppContext,
+  decodeSQSMessageCorrelationId,
+  SQS,
+  WithSQSMessageId,
+} from "pagopa-interop-probing-commons";
+import { decodeSQSMessageBody } from "../src/model/models.js";
 import { v4 as uuidv4 } from "uuid";
 import {
+  ApplicationError,
   eserviceInteropState,
   technology,
 } from "pagopa-interop-probing-models";
+import { config } from "../src/utilities/config.js";
+import { ErrorCodes } from "../src/model/domain/errors.js";
 
 describe("Consumer queue test", () => {
   const mockOperationsService = {
     saveEservice: vi.fn().mockResolvedValue(undefined),
+  };
+
+  const correlationIdMessageAttribute = {
+    correlationId: {
+      DataType: "String",
+      StringValue: uuidv4(),
+    },
   };
 
   afterAll(() => {
@@ -33,6 +47,14 @@ describe("Consumer queue test", () => {
         audience: ["audience1", "audience2"],
         versionNumber: 1,
       }),
+      MessageAttributes: correlationIdMessageAttribute,
+    };
+
+    const { correlationId } = decodeSQSMessageCorrelationId(validMessage);
+    const ctx: WithSQSMessageId<AppContext> = {
+      serviceName: config.applicationName,
+      messageId: validMessage.MessageId,
+      correlationId,
     };
 
     expect(
@@ -40,7 +62,8 @@ describe("Consumer queue test", () => {
     ).resolves.not.toThrow();
 
     expect(mockOperationsService.saveEservice).toHaveBeenCalledWith(
-      decodeSQSMessage(validMessage),
+      decodeSQSMessageBody(validMessage),
+      ctx,
     );
   });
 
@@ -50,8 +73,8 @@ describe("Consumer queue test", () => {
     try {
       await processMessage(mockOperationsService)(invalidMessage);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0002");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
     }
   });
 
@@ -69,13 +92,14 @@ describe("Consumer queue test", () => {
         audience: ["audience1", "audience2"],
         versionNumber: 1,
       }),
+      MessageAttributes: correlationIdMessageAttribute,
     };
 
     try {
       await processMessage(mockOperationsService)(missingEserviceId);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0002");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
       expect(mockOperationsService.saveEservice).not.toBeCalled();
     }
   });
@@ -94,13 +118,14 @@ describe("Consumer queue test", () => {
         audience: ["audience1", "audience2"],
         versionNumber: 1,
       }),
+      MessageAttributes: correlationIdMessageAttribute,
     };
 
     try {
       await processMessage(mockOperationsService)(missingVersionId);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0002");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
       expect(mockOperationsService.saveEservice).not.toBeCalled();
     }
   });
@@ -120,13 +145,14 @@ describe("Consumer queue test", () => {
         audience: ["audience1", "audience2"],
         versionNumber: "1",
       }),
+      MessageAttributes: correlationIdMessageAttribute,
     };
 
     try {
       await processMessage(mockOperationsService)(badFormattedEserviceDTO);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0002");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe("0002");
     }
   });
 });
