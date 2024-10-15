@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+  ApplicationError,
   TelemetryKoDto,
   TelemetryOkDto,
   responseStatus,
@@ -9,11 +10,18 @@ import {
   telemetryWriteServiceBuilder,
 } from "../src/services/telemetryService.js";
 import {
-  AppError,
+  ErrorCodes,
   makeApplicationError,
   writeRecordTimestreamError,
 } from "../src/model/domain/errors.js";
 import { timestreamWriteClientBuilder } from "../src/utilities/timestreamWriteClientHandler.js";
+import {
+  AppContext,
+  genericLogger,
+  WithSQSMessageId,
+} from "pagopa-interop-probing-commons";
+import { config } from "../src/utilities/config.js";
+import { v4 as uuidv4 } from "uuid";
 
 describe("Telemetry service test", () => {
   const timestreamWriteClient = timestreamWriteClientBuilder();
@@ -32,11 +40,16 @@ describe("Telemetry service test", () => {
       status: responseStatus.ko,
       koReason: "Connection error",
     };
+    const ctx: WithSQSMessageId<AppContext> = {
+      serviceName: config.applicationName,
+      messageId: "MESSAGE_ID",
+      correlationId: uuidv4(),
+    };
 
     vi.spyOn(timestreamWriteClient, "writeRecord").mockResolvedValue(undefined);
 
     await expect(
-      telemetryService.writeRecord(telemetry),
+      telemetryService.writeRecord(telemetry, ctx),
     ).resolves.not.toThrow();
   });
 
@@ -47,16 +60,26 @@ describe("Telemetry service test", () => {
       status: responseStatus.ok,
       responseTime: 16,
     };
+    const ctx: WithSQSMessageId<AppContext> = {
+      serviceName: config.applicationName,
+      messageId: "MESSAGE_ID",
+      correlationId: uuidv4(),
+    };
 
     vi.spyOn(timestreamWriteClient, "writeRecord").mockRejectedValue(
-      makeApplicationError(writeRecordTimestreamError("Generic error")),
+      makeApplicationError(
+        writeRecordTimestreamError("Generic error"),
+        genericLogger,
+      ),
     );
 
     try {
-      await telemetryService.writeRecord(telemetry);
+      await telemetryService.writeRecord(telemetry, ctx);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0002");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "WRITE_RECORD_TIMESTREAM_ERROR",
+      );
     }
   });
 });

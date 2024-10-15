@@ -9,6 +9,7 @@ export type LoggerMetadata = {
   streamId?: string;
   version?: number;
   correlationId?: string | null;
+  messageId?: string | null;
 };
 
 const parsedLoggerConfig = LoggerConfig.safeParse(process.env);
@@ -29,18 +30,20 @@ const logFormat = (
   msg: string,
   timestamp: string,
   level: string,
-  { serviceName, correlationId }: LoggerMetadata,
+  { serviceName, correlationId, messageId }: LoggerMetadata,
 ) => {
   const serviceLogPart = serviceName ? `[${serviceName}]` : undefined;
   const correlationLogPart = correlationId
     ? `[CID=${correlationId}]`
     : undefined;
 
+  const sqsMessageIdLogPart = messageId ? `[SQS MID=${messageId}]` : undefined;
+
   const firstPart = [timestamp, level.toUpperCase(), serviceLogPart]
     .filter((e) => e !== undefined)
     .join(" ");
 
-  const secondPart = [correlationLogPart]
+  const secondPart = [correlationLogPart, sqsMessageIdLogPart]
     .filter((e) => e !== undefined)
     .join(" ");
 

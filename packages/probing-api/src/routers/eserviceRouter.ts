@@ -44,6 +44,7 @@ const eServiceRouter =
               req.params.eserviceId,
               req.params.versionId,
               req.body,
+              req.ctx,
             );
             return res.status(204).end();
           } catch (error) {
@@ -60,6 +61,7 @@ const eServiceRouter =
               req.params.eserviceId,
               req.params.versionId,
               req.body,
+              req.ctx,
             );
             return res.status(204).end();
           } catch (error) {
@@ -76,6 +78,7 @@ const eServiceRouter =
               req.params.eserviceId,
               req.params.versionId,
               req.body,
+              req.ctx,
             );
             return res.status(204).end();
           } catch (error) {
@@ -88,7 +91,10 @@ const eServiceRouter =
     router
       .get("/eservices", async (req, res) => {
         try {
-          const eservices = await operationsService.getEservices(req.query);
+          const eservices = await operationsService.getEservices(
+            req.query,
+            req.ctx,
+          );
 
           const mappedContent = eservices.content.map((el) => ({
             ...el,
@@ -124,6 +130,7 @@ const eServiceRouter =
         try {
           const eServiceMainData = await operationsService.getEserviceMainData(
             req.params.eserviceRecordId,
+            req.ctx,
           );
 
           return res.status(200).json(eServiceMainData).end();
@@ -137,6 +144,7 @@ const eServiceRouter =
           const eServiceProbingData =
             await operationsService.getEserviceProbingData(
               req.params.eserviceRecordId,
+              req.ctx,
             );
 
           return res
@@ -159,6 +167,7 @@ const eServiceRouter =
         try {
           const { content } = await operationsService.getEservicesProducers(
             req.query,
+            req.ctx,
           );
 
           return res

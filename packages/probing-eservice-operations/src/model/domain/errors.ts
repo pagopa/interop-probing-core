@@ -1,7 +1,7 @@
 import { ApiError, makeApiProblemBuilder } from "pagopa-interop-probing-models";
 
 export const errorCodes = {
-  eServiceNotFound: "0001",
+  eServiceNotFound: "ESERVICE_NOT_FOUND",
 };
 
 export type ErrorCodes = keyof typeof errorCodes;

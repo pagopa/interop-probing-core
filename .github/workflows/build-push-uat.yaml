@@ -3,10 +3,10 @@ name: "Build & Push UAT"
 on:
   push:
     tags:
-      - '[0-9]+.[0-9]+.[0-9]-rc[0-9]+'
+      - "[0-9]+.[0-9]+.[0-9]-rc[0-9]+"
     paths:
-      - 'packages/**'
-      - '!packages/probing-frontend'
+      - "packages/**"
+      - "!packages/probing-frontend"
 
 jobs:
   build_push_image:

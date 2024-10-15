@@ -1,8 +1,8 @@
-name: 'UAT CI/CD'
+name: "UAT CI/CD"
 on:
   push:
     tags:
-      - 'v*-rc*'
+      - "v*-rc*"
 
 jobs:
   deploy_uat:
@@ -30,7 +30,7 @@ jobs:
       - name: Set Node.js 20.x
         uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3
         with:
-          node-version: '20'
+          node-version: "20"
       - uses: pnpm/action-setup@v3
         with:
           run_install: true

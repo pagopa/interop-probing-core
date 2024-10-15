@@ -1,25 +1,31 @@
-import { SQS } from "pagopa-interop-probing-commons";
+import {
+  AppContext,
+  decodeSQSMessageCorrelationId,
+  logger,
+  SQS,
+  WithSQSMessageId,
+} from "pagopa-interop-probing-commons";
 import { TelemetryWriteService } from "./services/telemetryService.js";
 import { decodeSQSMessage } from "./model/models.js";
-import {
-  ApplicationError,
-  makeApplicationError,
-} from "./model/domain/errors.js";
+import { makeApplicationError } from "./model/domain/errors.js";
+import { config } from "./utilities/config.js";
+import { error } from "console";
 
 export function processMessage(
   service: TelemetryWriteService,
 ): (message: SQS.Message) => Promise<void> {
   return async (message: SQS.Message): Promise<void> => {
+    const { correlationId } = decodeSQSMessageCorrelationId(message);
+    const ctx: WithSQSMessageId<AppContext> = {
+      serviceName: config.applicationName,
+      messageId: message.MessageId,
+      correlationId,
+    };
+
     try {
-      await service.writeRecord(decodeSQSMessage(message));
+      await service.writeRecord(decodeSQSMessage(message), ctx);
     } catch (e: unknown) {
-      throw makeApplicationError(
-        e instanceof ApplicationError
-          ? e
-          : new Error(
-              `Unexpected error handling message with MessageId: ${message.MessageId}. Details: ${e}`,
-            ),
-      );
+      throw makeApplicationError(error, logger(ctx));
     }
   };
 }

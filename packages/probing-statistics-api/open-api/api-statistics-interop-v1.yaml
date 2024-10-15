@@ -1,19 +1,17 @@
 openapi: 3.0.3
 info:
-  title: 'E-Service Monitor Interop Statistics service'
+  title: "E-Service Monitor Interop Statistics service"
   version: 1.0.0
-  x-summary: 'E-Service Monitor Statistics service'
+  x-summary: "E-Service Monitor Statistics service"
   description: OpenAPI specification for E-Service Monitor's operation services
-  termsOfService: https://www.e-serviceurl-example.com/terms
   contact:
-    name: contactToDefinePagoPa
-    email: toDefinePagoPa@pagopa.it
-  license:
-    name: Interop's licence
-    url: https://to-define/
+    name: API Support
+    url: "https://www.example.com/support"
+    email: support@example.com
+  termsOfService: "https://swagger.io/terms/"
 servers:
-  - url: https://to-define/
-    description: Development environment
+  - url: "{{baseUrl}}"
+    description: Base url of the interoperability probing statistics API
 tags:
   - name: Telemetry
     description: >-
@@ -23,20 +21,20 @@ tags:
       Operations about micro-service status
 
 paths:
-  '/status':
+  "/status":
     get:
       tags:
         - Status
       operationId: getHealthStatus
       description: Get the micro-service status
       responses:
-        '204':
+        "204":
           description: The micro-service is running
 
-  '/telemetryData/eservices/{eserviceRecordId}':
+  "/telemetryData/eservices/{eserviceRecordId}":
     get:
       summary: Retrive e-service statistics
-      description: 'Retrive e-service statistics'
+      description: "Retrive e-service statistics"
       tags:
         - Telemetry
       operationId: statisticsEservices
@@ -55,36 +53,42 @@ paths:
           schema:
             type: integer
       responses:
-        '200':
-          description: 'The search has been successfully performed '
+        "200":
+          description: "The search has been successfully performed "
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StatisticsEserviceResponse'
-        '400':
+                $ref: "#/components/schemas/StatisticsEserviceResponse"
+        "400":
           description: The provided input data is invalid
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Problem'
-        '500':
+                $ref: "#/components/schemas/Problem"
+        "500":
           description: A managed error has occured during the request elaboration
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Problem'
+                $ref: "#/components/schemas/Problem"
               example:
                 type: string
                 status: 500
-                title: 'Internal Server Error'
-                detail: 'There is a problem processing the request on the server.'
-                traceId: 'string'
-                errors: [ { 'code': '000-1234', 'detail': 'The server is currently down for maintenance. Please try again later.' } ]
-    
-  '/telemetryData/eservices/filtered/{eserviceRecordId}':
+                title: "Internal Server Error"
+                detail: "There is a problem processing the request on the server."
+                traceId: "string"
+                errors:
+                  [
+                    {
+                      "code": "000-1234",
+                      "detail": "The server is currently down for maintenance. Please try again later.",
+                    },
+                  ]
+
+  "/telemetryData/eservices/filtered/{eserviceRecordId}":
     get:
       summary: Retrive filtered e-service statistics
-      description: 'Retrive filtered e-service statistics'
+      description: "Retrive filtered e-service statistics"
       tags:
         - Telemetry
       operationId: filteredStatisticsEservices
@@ -107,41 +111,47 @@ paths:
           required: true
           description: filters start date
           schema:
-             type: string
-             format: date-time
+            type: string
+            format: date-time
         - name: endDate
           in: query
           required: true
           description: filters end date
           schema:
-             type: string
-             format: date-time
+            type: string
+            format: date-time
       responses:
-        '200':
-          description: 'The search has been successfully performed '
+        "200":
+          description: "The search has been successfully performed "
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/StatisticsEserviceResponse'
-        '400':
+                $ref: "#/components/schemas/StatisticsEserviceResponse"
+        "400":
           description: The provided input data is invalid
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Problem'
-        '500':
+                $ref: "#/components/schemas/Problem"
+        "500":
           description: A managed error has occured during the request elaboration
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Problem'
+                $ref: "#/components/schemas/Problem"
               example:
                 type: string
                 status: 500
-                title: 'Internal Server Error'
-                detail: 'There is a problem processing the request on the server.'
-                traceId: 'string'
-                errors: [ { 'code': '000-1234', 'detail': 'The server is currently down for maintenance. Please try again later.' } ]
+                title: "Internal Server Error"
+                detail: "There is a problem processing the request on the server."
+                traceId: "string"
+                errors:
+                  [
+                    {
+                      "code": "000-1234",
+                      "detail": "The server is currently down for maintenance. Please try again later.",
+                    },
+                  ]
 
 components:
   schemas:
@@ -153,12 +163,12 @@ components:
           type: integer
           format: int64
         status:
-          $ref: '#/components/schemas/EserviceStatus'
+          $ref: "#/components/schemas/EserviceStatus"
         time:
           title: date of telemetry
           type: string
           format: date-time
-          
+
     PercentageContent:
       type: object
       properties:
@@ -169,10 +179,10 @@ components:
         status:
           title: status of telemetry
           type: string
-    
+
     StatisticsEserviceResponse:
       type: object
-      required: 
+      required:
         - performances
         - failures
         - percentages
@@ -181,26 +191,25 @@ components:
           title: eservice status values list
           type: array
           items:
-            $ref: '#/components/schemas/StatisticContent'
+            $ref: "#/components/schemas/StatisticContent"
         failures:
           title: eservice status failures list
           type: array
           items:
-            $ref: '#/components/schemas/StatisticContent'
+            $ref: "#/components/schemas/StatisticContent"
         percentages:
           title: eservice status percentages list
           type: array
           items:
-            $ref: '#/components/schemas/PercentageContent'
+            $ref: "#/components/schemas/PercentageContent"
 
-    
     EserviceStatus:
       type: string
       enum:
         - OK
-        - 'N_D'
+        - "N_D"
         - KO
-    
+
     Problem:
       properties:
         type:
@@ -233,13 +242,13 @@ components:
           type: array
           minItems: 0
           items:
-            $ref: '#/components/schemas/ProblemError'
+            $ref: "#/components/schemas/ProblemError"
       additionalProperties: false
       required:
         - status
         - title
         - errors
-    
+
     ProblemError:
       properties:
         code:
@@ -257,4 +266,4 @@ components:
           type: string
       required:
         - code
-        - detail   
+        - detail

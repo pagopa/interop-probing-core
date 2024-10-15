@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import supertest from "supertest";
 import { v4 as uuidv4 } from "uuid";
-import { genericLogger, zodiosCtx } from "pagopa-interop-probing-commons";
+import {
+  contextMiddleware,
+  ExpressContext,
+  genericLogger,
+  zodiosCtx,
+} from "pagopa-interop-probing-commons";
 import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
 import {
   EServiceContent,
@@ -29,11 +34,15 @@ import {
   ApiUpdateEserviceStatePayload,
   ApiSearchEservicesQuery,
   ApiGetProducersQuery,
+  Api,
 } from "../src/model/types.js";
 import { mockOperationsApiClientError, nowDateUTC } from "./utils.js";
+import { ZodiosApp } from "@zodios/express";
 
 const operationsApiClient = createApiClient(config.operationsBaseUrl);
-const app = zodiosCtx.app();
+
+const app: ZodiosApp<Api, ExpressContext> = zodiosCtx.app();
+app.use(contextMiddleware(config.applicationName));
 app.use(eServiceRouter(zodiosCtx)(operationsApiClient));
 
 const probingApiClient = supertest(app);

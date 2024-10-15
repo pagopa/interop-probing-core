@@ -1,8 +1,8 @@
 import { ApiError, makeApiProblemBuilder } from "pagopa-interop-probing-models";
 
 export const errorCodes = {
-  missingScalarValueTelemetry: "0001",
-  queryTimestreamError: "0002",
+  missingScalarValueTelemetry: "MISSING_SCALAR_VALUE_TELEMETRY",
+  queryTimestreamError: "QUERY_TIMESTREAM_ERROR",
 };
 
 export type ErrorCodes = keyof typeof errorCodes;

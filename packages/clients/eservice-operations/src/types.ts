@@ -1,5 +1,6 @@
 import {
   ZodiosBodyByPath,
+  ZodiosHeaderParamsByPath,
   ZodiosPathParamsByPath,
   ZodiosQueryParamsByPath,
   ZodiosResponseByPath,
@@ -98,6 +99,12 @@ export type ApiUpdateLastRequestParams = ZodiosPathParamsByPath<
   "/eservices/:eserviceRecordId/updateLastRequest"
 >;
 
+export type ApiUpdateLastRequestHeaders = ZodiosHeaderParamsByPath<
+  Api,
+  "post",
+  "/eservices/:eserviceRecordId/updateLastRequest"
+>;
+
 export type ApiUpdateLastRequestPayload = ZodiosBodyByPath<
   Api,
   "post",
@@ -123,6 +130,12 @@ export type ApiSearchEservicesResponse = ZodiosResponseByPath<
 >;
 
 export type ApiGetEservicesReadyForPollingQuery = ZodiosQueryParamsByPath<
+  Api,
+  "get",
+  "/eservices/polling"
+>;
+
+export type ApiGetEservicesReadyForPollingHeaders = ZodiosHeaderParamsByPath<
   Api,
   "get",
   "/eservices/polling"
