@@ -4,6 +4,10 @@ import { LoggerConfig } from "../config/loggerConfig.js";
 
 export type LoggerMetadata = {
   serviceName?: string;
+  eventType?: string;
+  eventVersion?: number;
+  streamId?: string;
+  version?: number;
   correlationId?: string | null;
 };
 

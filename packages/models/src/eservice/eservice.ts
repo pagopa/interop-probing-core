@@ -31,7 +31,10 @@ export const EserviceMonitorState = z.enum([
 ]);
 export type EserviceMonitorState = z.infer<typeof EserviceMonitorState>;
 
-export const technology = { rest: "REST", soap: "SOAP" } as const;
+export const technology = {
+  rest: "REST",
+  soap: "SOAP",
+} as const;
 export const EserviceTechnology = z.enum([
   Object.values(technology)[0],
   ...Object.values(technology).slice(1),

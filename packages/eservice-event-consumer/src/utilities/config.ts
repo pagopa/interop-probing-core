@@ -11,11 +11,11 @@ const eServiceEventConsumerConfig = LoggerConfig.and(KafkaConsumerConfig)
     z
       .object({
         INTEROP_PROBING_ESERVICE_EVENT_CONSUMER_NAME: z.string(),
-        API_ESERVICE_BASEURL: z.string(),
+        API_OPERATIONS_BASEURL: z.string(),
       })
       .transform((c) => ({
         applicationName: c.INTEROP_PROBING_ESERVICE_EVENT_CONSUMER_NAME,
-        eserviceBaseUrl: c.API_ESERVICE_BASEURL,
+        operationsBaseUrl: c.API_OPERATIONS_BASEURL,
       })),
   );
 

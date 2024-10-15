@@ -112,6 +112,8 @@ const errorCodes = {
   genericError: "9991",
   badRequestError: "9992",
   kafkaMessageProcessError: "9993",
+  kafkaMessageValueError: "9994",
+  kafkaMessageMissingData: "9995",
 } as const;
 
 export type CommonErrorCodes = keyof typeof errorCodes;
@@ -144,5 +146,24 @@ export function kafkaMessageProcessError(
   return new InternalError({
     code: "kafkaMessageProcessError",
     detail: `Error while handling kafka message from topic : ${topic} - partition ${partition} - offset ${offset}. ${error}`,
+  });
+}
+
+export function kafkaMissingMessageValue(
+  topic: string,
+): InternalError<CommonErrorCodes> {
+  return new InternalError({
+    code: "kafkaMessageValueError",
+    detail: `Missing value message in kafka message from topic: ${topic}`,
+  });
+}
+
+export function kafkaMessageMissingData(
+  topic: string,
+  eventType: string,
+): InternalError<CommonErrorCodes> {
+  return new InternalError({
+    code: "kafkaMessageMissingData",
+    detail: `Missing data in kafka message from topic: ${topic} and event type: ${eventType}`,
   });
 }

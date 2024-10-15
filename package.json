@@ -14,6 +14,7 @@
     "start:probing-scheduler": "turbo start --filter pagopa-interop-probing-scheduler",
     "start:probing-statistics-api": "turbo start --filter pagopa-interop-probing-statistics-api",
     "start:probing-telemetry-writer": "turbo start --filter pagopa-interop-probing-telemetry-writer",
+    "start:event:eservice": "turbo start --filter pagopa-interop-probing-eservice-event-consumer",
     "test": "turbo test",
     "test:it": "turbo test:it",
     "build": "turbo build",
