@@ -21,10 +21,6 @@ import {
 } from "pagopa-interop-probing-models";
 import { handleMessageV1 } from "../src/handlers/messageHandlerV1.js";
 import { ErrorCodes, errorSaveEservice } from "../src/models/domain/errors.js";
-import {
-  EServiceAddedV1,
-  EServiceEventV1,
-} from "@pagopa/interop-outbound-models";
 
 const apiClient = createApiClient(config.operationsBaseUrl);
 
