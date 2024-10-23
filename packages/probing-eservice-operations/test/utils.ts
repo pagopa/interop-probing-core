@@ -52,6 +52,27 @@ export const addEservice = async (
   return Number(eservice.id);
 };
 
+// ===== TODO: must create tenant on TenantSchema
+export const addTenant = async (
+  data: EserviceSchema,
+  repository: EserviceEntities,
+): Promise<EserviceSchema> => {
+  const result: InsertResult = await repository
+    .createQueryBuilder()
+    .insert()
+    .values({
+      eserviceRecordId: () =>
+        `nextval('"${config.schemaName}"."eservice_sequence"'::regclass)`,
+      ...data,
+    })
+    .returning("*")
+    .execute();
+
+  const [eservice]: EserviceSchema[] = result.raw;
+  return eservice;
+};
+// ===== TODO: must create tenant on TenantSchema
+
 export const getEservice = async (
   eserviceRecordId: number,
   repository: EserviceViewEntities,

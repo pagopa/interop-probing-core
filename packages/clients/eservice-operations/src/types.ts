@@ -45,18 +45,6 @@ export type ApiUpdateEserviceFrequencyResponse = ZodiosResponseByPath<
   "/eservices/:eserviceId/versions/:versionId/updateFrequency"
 >;
 
-export type ApiSaveEservicePayload = ZodiosBodyByPath<
-  Api,
-  "put",
-  "/eservices/:eserviceId/versions/:versionId/saveEservice"
->;
-
-export type ApiSaveEserviceResponse = ZodiosResponseByPath<
-  Api,
-  "put",
-  "/eservices/:eserviceId/versions/:versionId/saveEservice"
->;
-
 export type ApiUpdateResponseReceivedPayload = ZodiosBodyByPath<
   Api,
   "post",
@@ -157,4 +145,46 @@ export type ApiEserviceMainDataResponse = ZodiosResponseByPath<
   Api,
   "get",
   "/eservices/mainData/:eserviceRecordId"
+>;
+
+export type ApiSaveEserviceHeaders = ZodiosHeaderParamsByPath<
+  Api,
+  "post",
+  "/eservices/:eserviceId/versions/:versionId/saveEservice"
+>;
+
+export type ApiSaveEservicePayload = ZodiosBodyByPath<
+  Api,
+  "post",
+  "/eservices/:eserviceId/versions/:versionId/saveEservice"
+>;
+
+export type ApiSaveEserviceParams = ZodiosPathParamsByPath<
+  Api,
+  "post",
+  "/eservices/:eserviceId/versions/:versionId/saveEservice"
+>;
+
+export type ApiSaveEserviceResponse = ZodiosResponseByPath<
+  Api,
+  "post",
+  "/eservices/:eserviceId/versions/:versionId/saveEservice"
+>;
+
+export type ApiDeleteEserviceHeaders = ZodiosHeaderParamsByPath<
+  Api,
+  "delete",
+  "/eservices/:eserviceId/deleteEservice"
+>;
+
+export type ApiDeleteEserviceParams = ZodiosPathParamsByPath<
+  Api,
+  "delete",
+  "/eservices/:eserviceId/deleteEservice"
+>;
+
+export type ApiDeleteEserviceResponse = ZodiosResponseByPath<
+  Api,
+  "delete",
+  "/eservices/:eserviceId/deleteEservice"
 >;

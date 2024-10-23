@@ -8,12 +8,11 @@
     "start:probing-api": "turbo start --filter pagopa-interop-probing-api",
     "start:probing-caller": "turbo start --filter pagopa-interop-probing-caller",
     "start:probing-eservice-operations": "turbo start --filter pagopa-interop-probing-eservice-operations",
-    "start:probing-eservice-registry-reader": "turbo start --filter pagopa-interop-probing-eservice-registry-reader",
-    "start:probing-eservice-registry-updater": "turbo start --filter pagopa-interop-probing-eservice-registry-updater",
     "start:probing-response-updater": "turbo start --filter pagopa-interop-probing-response-updater",
     "start:probing-scheduler": "turbo start --filter pagopa-interop-probing-scheduler",
     "start:probing-statistics-api": "turbo start --filter pagopa-interop-probing-statistics-api",
     "start:probing-telemetry-writer": "turbo start --filter pagopa-interop-probing-telemetry-writer",
+    "start:event:eservice": "turbo start --filter pagopa-interop-probing-eservice-event-consumer",
     "test": "turbo test",
     "test:it": "turbo test:it",
     "build": "turbo build",
@@ -22,7 +21,10 @@
     "format:check": "turbo format:check",
     "format:write": "turbo format:write",
     "generate-model": "turbo generate-model",
-    "generate-client": "turbo generate-client"
+    "generate-client": "turbo generate-client",
+    "clean-generated": "turbo clean-generated",
+    "prune-dist": "find . -name 'dist' -type d -exec rm -rf {} +",
+    "prune-modules": "find . -name 'node_modules' -type d -exec rm -rf {} +"
   },
   "devDependencies": {
     "@tsconfig/node-lts": "20.1.1",

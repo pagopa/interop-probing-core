@@ -127,7 +127,7 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       const eServiceToBeUpdated: EserviceSaveRequest = {
         state: payload.state,
         eserviceName: payload.name,
-        producerName: payload.producerName,
+        producerId: payload.producerId,
         basePath: payload.basePath,
         technology: payload.technology,
         versionNumber: payload.versionNumber,

@@ -78,7 +78,7 @@ export type ChangeResponseReceived = z.infer<typeof ChangeResponseReceived>;
 
 export const EserviceSaveRequest = z.object({
   eserviceName: z.string(),
-  producerName: z.string(),
+  producerId: z.string(),
   basePath: z.array(z.string()),
   technology: EserviceTechnology,
   state: EserviceInteropState,

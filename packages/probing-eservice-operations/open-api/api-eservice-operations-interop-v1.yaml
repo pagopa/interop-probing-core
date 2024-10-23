@@ -567,12 +567,10 @@ paths:
                   ]
 
   "/eservices/{eserviceId}/versions/{versionId}/saveEservice":
-    put:
+    post:
       summary: Create or Update the EService Version
-      description: Create or Update the EService Version, with corresponding details
-      tags:
-        - Write
       operationId: saveEservice
+      description: Create or Update the EService Version, with corresponding details
       parameters:
         - in: header
           name: x-correlation-id
@@ -593,6 +591,8 @@ paths:
           schema:
             type: string
             format: uuid
+      tags:
+        - Write
       requestBody:
         required: true
         content:
@@ -600,13 +600,63 @@ paths:
             schema:
               $ref: "#/components/schemas/EserviceSaveRequest"
       responses:
-        "200":
-          description: The update has been successfully completed
+        "204":
+          description: No content
+        "404":
+          description: The requested resource could not be found on the server
           content:
             application/json:
               schema:
-                type: integer
-                format: int64
+                $ref: "#/components/schemas/Problem"
+        "400":
+          description: The provided input is invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "500":
+          description: >-
+            A managed error has occured during the request elaboration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+              example:
+                type: string
+                status: 500
+                title: "Internal Server Error"
+                detail: "There is a problem processing the request on the server."
+                traceId: "string"
+                errors:
+                  [
+                    {
+                      "code": "000-1234",
+                      "detail": "The server is currently down for maintenance. Please try again later.",
+                    },
+                  ]
+
+  "/eservices/{eserviceId}/deleteEservice":
+    delete:
+      summary: Delete eservice
+      operationId: deleteEservice
+      parameters:
+        - in: header
+          name: x-correlation-id
+          required: true
+          schema:
+            $ref: "#/components/schemas/CorrelationId"
+        - name: eserviceId
+          in: path
+          required: true
+          description: The e-service name
+          schema:
+            type: string
+            format: uuid
+      tags:
+        - Write
+      responses:
+        "204":
+          description: No content
         "400":
           description: The provided input is invalid
           content:
@@ -851,7 +901,7 @@ components:
       type: object
       required:
         - name
-        - producerName
+        - producerId
         - basePath
         - technology
         - state
@@ -860,8 +910,9 @@ components:
       properties:
         name:
           type: string
-        producerName:
+        producerId:
           type: string
+          format: uuid
         basePath:
           type: array
           items:

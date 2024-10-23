@@ -75,7 +75,7 @@ const eServiceRouter = (
         }
       },
     )
-    .put(
+    .post(
       "/eservices/:eserviceId/versions/:versionId/saveEservice",
       async (req, res) => {
         try {
@@ -85,7 +85,7 @@ const eServiceRouter = (
             req.body,
             logger(req.ctx),
           );
-          return res.status(200).end();
+          return res.status(204).end();
         } catch (error) {
           const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();

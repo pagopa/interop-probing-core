@@ -16,7 +16,7 @@ import {
   responseStatus,
   PollingResource,
 } from "pagopa-interop-probing-models";
-import { Brackets, InsertResult, UpdateResult } from "typeorm";
+import { Brackets } from "typeorm";
 import { z } from "zod";
 import {
   ModelRepository,
@@ -25,6 +25,7 @@ import {
 import {
   eServiceMainDataByRecordIdNotFound,
   eServiceProbingDataByRecordIdNotFound,
+  tenantNotFound,
 } from "../../model/domain/errors.js";
 import { eServiceDefaultValues } from "../../repositories/entity/eservice.entity.js";
 import { SelectQueryBuilder } from "typeorm";
@@ -262,9 +263,20 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       versionId: string,
       eServiceUpdated: EserviceSaveRequest,
     ): Promise<ApiSaveEserviceResponse> {
-      const updateEservice: EserviceSaveRequest = {
+      console.log();
+      const eservice = await eservices.findOneBy({
+        eserviceId: eServiceUpdated.producerId,
+        versionId,
+      }); // TODO: must become tenant, producers.findOneBy({ producerId })
+
+      if (!eservice) {
+        // TODO: must become tenant.tenantName
+        throw tenantNotFound(eServiceUpdated.producerId);
+      }
+
+      const updateEservice = {
         eserviceName: eServiceUpdated.eserviceName,
-        producerName: eServiceUpdated.producerName,
+        producerName: eservice.eserviceName, // TODO: must become tenant.tenantName
         basePath: eServiceUpdated.basePath,
         technology: eServiceUpdated.technology,
         versionNumber: eServiceUpdated.versionNumber,
@@ -280,7 +292,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         .getOne();
 
       if (existingEservice) {
-        const result: UpdateResult = await eservices
+        await eservices
           .createQueryBuilder()
           .update()
           .set(updateEservice)
@@ -290,10 +302,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
           })
           .returning("id")
           .execute();
-        const [eservice]: { id: string }[] = result.raw;
-        return Number(eservice.id);
       } else {
-        const result: InsertResult = await eservices
+        await eservices
           .createQueryBuilder()
           .insert()
           .values({
@@ -306,8 +316,6 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
           })
           .returning("id")
           .execute();
-        const [eservice]: { id: string }[] = result.raw;
-        return Number(eservice.id);
       }
     },
 

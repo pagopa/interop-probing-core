@@ -5,15 +5,15 @@
       "persistent": true,
       "cache": false,
       "dependsOn": [
-        "^build",
+        "generate-client",
         "generate-model",
-        "generate-client"
+        "^build"
       ]
     },
     "build": {
       "dependsOn": [
-        "generate-model",
         "generate-client",
+        "generate-model",
         "^build"
       ],
       "outputs": [
@@ -30,6 +30,11 @@
         "^generate-client"
       ]
     },
+    "clean-generated": {
+      "dependsOn": [
+        "^clean-generated"
+      ]
+    },
     "test": {
       "dependsOn": [
         "build",
@@ -44,7 +49,6 @@
     },
     "lint": {},
     "lint:autofix": {},
-    "format:check": {},
     "format:write": {}
   },
   "globalDependencies": [
