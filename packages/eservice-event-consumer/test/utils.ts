@@ -170,7 +170,7 @@ export const mockEserviceCloneV2: EServiceEventV2 = {
     eservice: {
       id: uuidv4(),
       producerId: uuidv4(),
-      createdAt: "1" as any,
+      createdAt: "1" as any, // eslint-disable-line @typescript-eslint/no-explicit-any
       description: "eService test description",
       mode: 0,
       name: "eService test name",
@@ -186,7 +186,7 @@ export const mockEserviceCloneV2: EServiceEventV2 = {
         }),
       ],
     },
-  }, // eslint-disable-line @typescript-eslint/no-explicit-any
+  },
 };
 
 export function mockApiClientError(
