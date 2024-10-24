@@ -11,6 +11,7 @@
       ]
     },
     "build": {
+      "cache": false,
       "dependsOn": [
         "generate-client",
         "generate-model",
@@ -21,11 +22,13 @@
       ]
     },
     "generate-model": {
+      "cache": false,
       "dependsOn": [
         "^generate-model"
       ]
     },
     "generate-client": {
+      "cache": false,
       "dependsOn": [
         "^generate-client"
       ]
