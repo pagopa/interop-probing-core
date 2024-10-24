@@ -14,10 +14,8 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { AppContext, genericLogger } from "pagopa-interop-probing-commons";
 import {
-  generateId,
   InternalError,
   kafkaMessageMissingData,
-  TenantId,
 } from "pagopa-interop-probing-models";
 import { handleMessageV2 } from "../src/handlers/messageHandlerV2.js";
 import { ErrorCodes, errorSaveTenant } from "../src/models/domain/errors.js";
@@ -36,14 +34,14 @@ describe("Message handler V2 test", () => {
 
   describe("TenantOnboarded Event", () => {
     it("save a new Tenant for TenantOnboarded event should return a successfully response", async () => {
-      const tenantId = generateId<TenantId>();
+      const tenantId = uuidv4();
       const tenantV2: TenantV2 = {
         id: tenantId,
         name: "pagoPa",
         selfcareId: "selfcareId",
         externalId: {
           origin: "origin",
-          value: generateId(),
+          value: uuidv4(),
         },
         features: [],
         attributes: [],
@@ -51,7 +49,7 @@ describe("Message handler V2 test", () => {
         onboardedAt: 1n,
       };
 
-      const tenantV2Event = createTenantEventV2(tenantV2, generateId());
+      const tenantV2Event = createTenantEventV2(tenantV2, uuidv4());
 
       vi.spyOn(apiClient, "saveTenant").mockResolvedValueOnce(undefined);
 
@@ -69,7 +67,7 @@ describe("Message handler V2 test", () => {
     });
 
     it("save a new Tenant for TenantOnboarded event should return an exception kafkaMessageMissingData", async () => {
-      const tenantV2Event = createTenantEventV2(undefined, generateId());
+      const tenantV2Event = createTenantEventV2(undefined, uuidv4());
 
       await expect(
         handleMessageV2(tenantV2Event, operationsService, ctx, genericLogger)
@@ -93,7 +91,7 @@ describe("Message handler V2 test", () => {
         onboardedAt: 1n,
       };
 
-      const tenantV2Event = createTenantEventV2(tenantV2, generateId());
+      const tenantV2Event = createTenantEventV2(tenantV2, uuidv4());
 
       const zodiosValidationError =
         "Error: Zodios: Invalid Body parameter 'body'";
@@ -108,7 +106,7 @@ describe("Message handler V2 test", () => {
     });
 
     it("save a new Tenant for TenantOnboarded event should return generic exception errorSaveTenant", async () => {
-      const tenantId = generateId<TenantId>();
+      const tenantId = uuidv4();
       const tenantV2: TenantV2 = {
         id: tenantId,
         name: "tenant name",
@@ -123,7 +121,7 @@ describe("Message handler V2 test", () => {
         onboardedAt: 1n,
       };
 
-      const tenantV2Event = createTenantEventV2(tenantV2, generateId());
+      const tenantV2Event = createTenantEventV2(tenantV2, uuidv4());
 
       const apiClientError = mockApiClientError(500, "Internal server error");
 
@@ -152,7 +150,7 @@ describe("Message handler V2 test", () => {
       expect(
         async () =>
           await handleMessageV2(
-            mockTenantUpdateV2(generateId<TenantId>()),
+            mockTenantUpdateV2(uuidv4()),
             operationsService,
             ctx,
             genericLogger
@@ -169,7 +167,7 @@ describe("Message handler V2 test", () => {
 
       try {
         await handleMessageV2(
-          mockTenantUpdateV2(generateId<TenantId>()),
+          mockTenantUpdateV2(uuidv4()),
           operationsService,
           ctx,
           genericLogger

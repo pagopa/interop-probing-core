@@ -14,10 +14,8 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import { AppContext, genericLogger } from "pagopa-interop-probing-commons";
 import {
-  generateId,
   InternalError,
   kafkaMessageMissingData,
-  TenantId,
 } from "pagopa-interop-probing-models";
 import { handleMessageV1 } from "../src/handlers/messageHandlerV1.js";
 import { ErrorCodes, errorSaveTenant } from "../src/models/domain/errors.js";
@@ -36,20 +34,20 @@ describe("Message handler V1 test", () => {
 
   describe("TenantCreated Event", () => {
     it("save a new Tenant for TenantCreated event should return a successfully response", async () => {
-      const tenantId = generateId<TenantId>();
+      const tenantId = uuidv4();
       const tenantV1: TenantV1 = {
         id: tenantId,
         name: "pagoPa",
         externalId: {
           origin: "origin",
-          value: generateId(),
+          value: uuidv4(),
         },
         features: [],
         attributes: [],
         createdAt: 1n,
       };
 
-      const tenantV1Event = createTenantEventV1(tenantV1, generateId());
+      const tenantV1Event = createTenantEventV1(tenantV1, uuidv4());
 
       vi.spyOn(apiClient, "saveTenant").mockResolvedValueOnce(undefined);
 
@@ -67,7 +65,7 @@ describe("Message handler V1 test", () => {
     });
 
     it("save a new Tenant for TenantCreated event should return an exception kafkaMessageMissingData", async () => {
-      const tenantV1Event = createTenantEventV1(undefined, generateId());
+      const tenantV1Event = createTenantEventV1(undefined, uuidv4());
 
       await expect(
         handleMessageV1(tenantV1Event, operationsService, ctx, genericLogger)
@@ -89,7 +87,7 @@ describe("Message handler V1 test", () => {
         createdAt: 1n,
       };
 
-      const tenantV1Event = createTenantEventV1(tenantV1, generateId());
+      const tenantV1Event = createTenantEventV1(tenantV1, uuidv4());
 
       const zodiosValidationError =
         "Error: Zodios: Invalid Body parameter 'body'";
@@ -104,7 +102,7 @@ describe("Message handler V1 test", () => {
     });
 
     it("save a new Tenant for TenantCreated event should return generic exception errorSaveTenant", async () => {
-      const tenantId = generateId<TenantId>();
+      const tenantId = uuidv4();
       const tenantV1: TenantV1 = {
         id: tenantId,
         name: "tenant name",
@@ -117,7 +115,7 @@ describe("Message handler V1 test", () => {
         createdAt: 1n,
       };
 
-      const tenantV1Event = createTenantEventV1(tenantV1, generateId());
+      const tenantV1Event = createTenantEventV1(tenantV1, uuidv4());
 
       const apiClientError = mockApiClientError(500, "Internal server error");
 
@@ -146,7 +144,7 @@ describe("Message handler V1 test", () => {
       expect(
         async () =>
           await handleMessageV1(
-            mockTenantUpdateV1(generateId<TenantId>()),
+            mockTenantUpdateV1(uuidv4()),
             operationsService,
             ctx,
             genericLogger
@@ -163,7 +161,7 @@ describe("Message handler V1 test", () => {
 
       try {
         await handleMessageV1(
-          mockTenantUpdateV1(generateId<TenantId>()),
+          mockTenantUpdateV1(uuidv4()),
           operationsService,
           ctx,
           genericLogger
