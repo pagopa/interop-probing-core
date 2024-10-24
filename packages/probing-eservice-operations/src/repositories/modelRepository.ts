@@ -13,7 +13,12 @@ import {
   EserviceView,
   EserviceViewSchema,
 } from "./entity/view/eservice.entity.js";
-import { Eservice, EserviceSchema } from "./entity/eservice.entity.js";
+import {
+  Eservice,
+  EserviceSchema,
+  Tenant,
+  TenantSchema,
+} from "./entity/eservice.entity.js";
 import { genericLogger } from "pagopa-interop-probing-commons";
 
 /**
@@ -37,6 +42,7 @@ export type ModelFilter<T> = {
 } & FindManyOptions<T>;
 
 export type EserviceEntities = Repository<EserviceSchema>;
+export type TenantEntities = Repository<TenantSchema>;
 export type EserviceProbingRequestEntities =
   Repository<EserviceProbingRequestSchema>;
 export type EserviceProbingResponseEntities =
@@ -53,6 +59,7 @@ export class ModelRepository {
   public eserviceProbingRequest: EserviceProbingRequestEntities;
   public eserviceProbingResponse: EserviceProbingResponseEntities;
   public eserviceView: EserviceViewEntities;
+  public tenants: TenantEntities;
 
   private constructor({
     dbHost: host,
@@ -74,6 +81,7 @@ export class ModelRepository {
         EserviceProbingRequest,
         EserviceProbingResponse,
         EserviceView,
+        Tenant,
       ],
       migrationsRun: false,
       synchronize: false,
@@ -82,18 +90,19 @@ export class ModelRepository {
 
     this.entityManager = this.connection.createEntityManager();
     this.eservices = this.entityManager.getRepository(Eservice);
+    this.tenants = this.entityManager.getRepository(Tenant);
     this.eserviceProbingRequest = this.entityManager.getRepository(
-      EserviceProbingRequest,
+      EserviceProbingRequest
     );
     this.eserviceProbingResponse = this.entityManager.getRepository(
-      EserviceProbingResponse,
+      EserviceProbingResponse
     );
     this.eserviceView = this.entityManager.getRepository(EserviceView);
   }
 
   public static async init(
     config: DbConfig,
-    initDB: string | null = null,
+    initDB: string | null = null
   ): Promise<ModelRepository> {
     if (!ModelRepository.instance) {
       ModelRepository.instance = new ModelRepository(config);
@@ -105,10 +114,10 @@ export class ModelRepository {
       genericLogger.info(
         `Database Connection Status: ${
           connectionStatus ? "Initialized" : "Not Initialized"
-        }`,
+        }`
       );
     }
 
-    return await ModelRepository.instance;
+    return ModelRepository.instance;
   }
 }

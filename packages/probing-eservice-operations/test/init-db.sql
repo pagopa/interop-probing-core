@@ -5,6 +5,14 @@ CREATE SCHEMA IF NOT EXISTS probing;
 
 CREATE SEQUENCE IF NOT EXISTS probing.eservice_sequence START WITH 1 INCREMENT BY 1;
 
+CREATE SEQUENCE IF NOT EXISTS probing.tenant_sequence START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE probing.tenants (
+    id BIGINT NOT NULL,
+    tenant_id UUID NOT NULL,
+    producer_name VARCHAR(2048) NOT NULL,
+)
+
 CREATE TABLE probing.eservices (
    id BIGINT NOT NULL,
    base_path VARCHAR(2048) array NOT NULL,

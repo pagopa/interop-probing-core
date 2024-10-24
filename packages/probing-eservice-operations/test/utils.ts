@@ -3,9 +3,13 @@ import {
   EserviceProbingRequestEntities,
   EserviceProbingResponseEntities,
   EserviceViewEntities,
+  TenantEntities,
 } from "../src/repositories/modelRepository.js";
 import { InsertResult, ObjectLiteral } from "typeorm";
-import { EserviceSchema } from "../src/repositories/entity/eservice.entity.js";
+import {
+  EserviceSchema,
+  TenantSchema,
+} from "../src/repositories/entity/eservice.entity.js";
 import { EserviceProbingRequestSchema } from "../src/repositories/entity/eservice_probing_request.entity.js";
 import { EserviceProbingResponseSchema } from "../src/repositories/entity/eservice_probing_response.entity.js";
 import { config } from "../src/utilities/config.js";
@@ -13,7 +17,7 @@ import { EserviceViewSchema } from "../src/repositories/entity/view/eservice.ent
 
 export const addEserviceProbingRequest = async (
   data: EserviceProbingRequestSchema,
-  repository: EserviceProbingRequestEntities,
+  repository: EserviceProbingRequestEntities
 ): Promise<ObjectLiteral[]> => {
   const result = await repository.upsert(data, {
     skipUpdateIfNoValuesChanged: true,
@@ -24,7 +28,7 @@ export const addEserviceProbingRequest = async (
 
 export const addEserviceProbingResponse = async (
   data: EserviceProbingResponseSchema,
-  repository: EserviceProbingResponseEntities,
+  repository: EserviceProbingResponseEntities
 ): Promise<ObjectLiteral[]> => {
   const result = await repository.upsert(data, {
     skipUpdateIfNoValuesChanged: true,
@@ -35,7 +39,7 @@ export const addEserviceProbingResponse = async (
 
 export const addEservice = async (
   data: EserviceSchema,
-  repository: EserviceEntities,
+  repository: EserviceEntities
 ): Promise<number> => {
   const result: InsertResult = await repository
     .createQueryBuilder()
@@ -52,30 +56,28 @@ export const addEservice = async (
   return Number(eservice.id);
 };
 
-// ===== TODO: must create tenant on TenantSchema
 export const addTenant = async (
-  data: EserviceSchema,
-  repository: EserviceEntities,
-): Promise<EserviceSchema> => {
+  data: TenantSchema,
+  repository: TenantEntities
+): Promise<TenantSchema> => {
   const result: InsertResult = await repository
     .createQueryBuilder()
     .insert()
     .values({
-      eserviceRecordId: () =>
-        `nextval('"${config.schemaName}"."eservice_sequence"'::regclass)`,
+      tenantRecordId: () =>
+        `nextval('"${config.schemaName}"."tenant_sequence"'::regclass)`,
       ...data,
     })
     .returning("*")
     .execute();
 
-  const [eservice]: EserviceSchema[] = result.raw;
-  return eservice;
+  const [tenant]: TenantSchema[] = result.raw;
+  return tenant;
 };
-// ===== TODO: must create tenant on TenantSchema
 
 export const getEservice = async (
   eserviceRecordId: number,
-  repository: EserviceViewEntities,
+  repository: EserviceViewEntities
 ): Promise<EserviceViewSchema | { [key: string]: string }> => {
   return (await repository.findOneBy({ eserviceRecordId })) || {};
 };

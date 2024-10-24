@@ -1,9 +1,5 @@
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import {
-  ModelRepository,
-  EserviceProbingResponseEntities,
-} from "../src/repositories/modelRepository.js";
-import {
   EserviceStatus,
   eserviceInteropState,
   eserviceMonitorState,
@@ -32,8 +28,10 @@ import {
   modelServiceBuilder,
 } from "../src/services/db/dbService.js";
 import {
+  ModelRepository,
   EserviceEntities,
   EserviceProbingRequestEntities,
+  EserviceProbingResponseEntities,
 } from "../src/repositories/modelRepository.js";
 import {
   eServiceMainDataByRecordIdNotFound,
@@ -101,7 +99,7 @@ describe("database test", async () => {
         ...eServiceDefaultValues,
         ...partialEserviceData,
       } satisfies EserviceSchema,
-      modelRepository.eservices,
+      modelRepository.eservices
     );
 
     if (!dataOptions.disableCreationProbingRequest) {
@@ -111,7 +109,7 @@ describe("database test", async () => {
           lastRequest: "2024-01-25T00:51:05.733Z",
           ...partialProbingRequestData,
         } satisfies EserviceProbingRequestSchema,
-        modelRepository.eserviceProbingRequest,
+        modelRepository.eserviceProbingRequest
       );
     }
 
@@ -123,13 +121,13 @@ describe("database test", async () => {
           responseReceived: "2024-01-25T00:51:05.736Z",
           ...partialProbingResponseData,
         } satisfies EserviceProbingResponseSchema,
-        modelRepository.eserviceProbingResponse,
+        modelRepository.eserviceProbingResponse
       );
     }
 
     const { versionId, eserviceId } = await getEservice(
       eserviceRecordId,
-      modelRepository.eserviceView,
+      modelRepository.eserviceView
     );
 
     return {
@@ -159,7 +157,6 @@ describe("database test", async () => {
     eservices = modelRepository.eservices;
     eserviceProbingRequest = modelRepository.eserviceProbingRequest;
     eserviceProbingResponse = modelRepository.eserviceProbingResponse;
-
     modelService = modelServiceBuilder(modelRepository);
     eserviceQuery = eserviceQueryBuilder(modelService);
     eserviceService = eServiceServiceBuilder(eserviceQuery);
@@ -185,7 +182,7 @@ describe("database test", async () => {
 
         const result = await eserviceService.searchEservices(
           filters,
-          genericLogger,
+          genericLogger
         );
 
         expect(result.content).toStrictEqual([]);
@@ -213,7 +210,7 @@ describe("database test", async () => {
 
         const result = await eserviceService.searchEservices(
           filters,
-          genericLogger,
+          genericLogger
         );
         expect(result.totalElements).not.toBe(0);
         expect(result.offset).toBe(0);
@@ -238,7 +235,7 @@ describe("database test", async () => {
 
         const result = await eserviceService.searchEservices(
           filters,
-          genericLogger,
+          genericLogger
         );
 
         expect(result.content).toStrictEqual([]);
@@ -262,7 +259,7 @@ describe("database test", async () => {
 
         const result = await eserviceService.searchEservices(
           filters,
-          genericLogger,
+          genericLogger
         );
 
         expect(result.totalElements).toBe(1);
@@ -277,7 +274,7 @@ describe("database test", async () => {
         const eservice = await createEservice();
         const result = await eserviceService.getEserviceMainData(
           eservice.eserviceRecordId,
-          genericLogger,
+          genericLogger
         );
         expect(result).toBeTruthy();
       });
@@ -285,7 +282,7 @@ describe("database test", async () => {
       it("e-service should not be found and an `eServiceProbingDataByRecordIdNotFound` should be thrown", async () => {
         await expect(
           async () =>
-            await eserviceService.getEserviceMainData(99, genericLogger),
+            await eserviceService.getEserviceMainData(99, genericLogger)
         ).rejects.toThrowError(eServiceMainDataByRecordIdNotFound(99));
       });
     });
@@ -295,7 +292,7 @@ describe("database test", async () => {
         const eservice = await createEservice();
         const result = await eserviceService.getEserviceProbingData(
           eservice.eserviceRecordId,
-          genericLogger,
+          genericLogger
         );
         expect(result).toBeTruthy();
       });
@@ -303,7 +300,7 @@ describe("database test", async () => {
       it("e-service should not be found and an `eServiceProbingDataByRecordIdNotFound` should be thrown", async () => {
         await expect(
           async () =>
-            await eserviceService.getEserviceProbingData(99, genericLogger),
+            await eserviceService.getEserviceProbingData(99, genericLogger)
         ).rejects.toThrowError(eServiceProbingDataByRecordIdNotFound(99));
       });
     });
@@ -324,7 +321,7 @@ describe("database test", async () => {
             offset: 0,
             limit: 2,
           },
-          genericLogger,
+          genericLogger
         );
 
         expect(result.content.length).toBe(1);
@@ -342,7 +339,7 @@ describe("database test", async () => {
         await createEservice();
         const producers = await eserviceService.getEservicesProducers(
           filters,
-          genericLogger,
+          genericLogger
         );
 
         expect(producers.content.length).toBe(0);
@@ -357,7 +354,7 @@ describe("database test", async () => {
         await createEservice();
         const result = await eserviceService.getEservicesProducers(
           filters,
-          genericLogger,
+          genericLogger
         );
 
         expect(result.content.length).not.toBe(0);
@@ -374,7 +371,7 @@ describe("database test", async () => {
         await createEservice();
         const producers = await eserviceService.getEservicesProducers(
           eServiceProducer1,
-          genericLogger,
+          genericLogger
         );
 
         expect(producers.content.length).toBe(1);
@@ -392,7 +389,7 @@ describe("database test", async () => {
           {
             eServiceState: eserviceInteropState.inactive,
           },
-          genericLogger,
+          genericLogger
         );
 
         const result = await eservices.findOneBy({
@@ -414,8 +411,8 @@ describe("database test", async () => {
               {
                 eServiceState: eserviceInteropState.active,
               },
-              genericLogger,
-            ),
+              genericLogger
+            )
         ).rejects.toThrowError(eServiceNotFound(eserviceId, versionId));
       });
     });
@@ -432,7 +429,7 @@ describe("database test", async () => {
           {
             probingEnabled: true,
           },
-          genericLogger,
+          genericLogger
         );
 
         const result = await eservices.findOneBy({
@@ -455,8 +452,8 @@ describe("database test", async () => {
               {
                 probingEnabled: true,
               },
-              genericLogger,
-            ),
+              genericLogger
+            )
         ).rejects.toThrowError(eServiceNotFound(eserviceId, versionId));
       });
     });
@@ -479,7 +476,7 @@ describe("database test", async () => {
             startTime: payload.startTime,
             endTime: payload.endTime,
           },
-          genericLogger,
+          genericLogger
         );
 
         const updatedEservice = await eservices.findOneBy({
@@ -512,35 +509,26 @@ describe("database test", async () => {
                 startTime: payload.startTime,
                 endTime: payload.endTime,
               },
-              genericLogger,
-            ),
+              genericLogger
+            )
         ).rejects.toThrowError(eServiceNotFound(eserviceId, versionId));
       });
     });
 
     describe("saveEservice", () => {
       it("e-service to save when no eservice was found", async () => {
-        // TODO: must be a payload of tenant, to be fixed with addTenant implementation
         const tenantPayload = {
-          eserviceName: "eService 001",
-          eserviceId: uuidv4(),
-          versionId: uuidv4(),
-          producerName: "eService producer 001",
-          versionNumber: 1,
-          state: eserviceInteropState.inactive,
-          basePath: ["path-1"],
-          technology: technology.rest,
-          audience: ["audience"],
-          ...eServiceDefaultValues,
+          tenantId: uuidv4(),
+          tenantName: "tenant 001",
         };
 
-        await addTenant(tenantPayload, modelRepository.eservices);
+        await addTenant(tenantPayload, modelRepository.tenants);
 
         const payload = {
           name: "eService 004",
-          producerId: tenantPayload.eserviceId,
+          producerId: tenantPayload.tenantId,
           eserviceId: uuidv4(),
-          versionId: tenantPayload.versionId, // TODO: must be autogenerated after fixing addTenant
+          versionId: uuidv4(),
           state: eserviceInteropState.inactive,
           basePath: ["path-004"],
           technology: technology.rest,
@@ -552,7 +540,7 @@ describe("database test", async () => {
           payload.eserviceId,
           payload.versionId,
           payload,
-          genericLogger,
+          genericLogger
         );
 
         const updatedEservice = await eservices.findOneBy({
@@ -569,13 +557,17 @@ describe("database test", async () => {
       });
 
       it("e-service correctly updated", async () => {
-        // TODO: add a tenant/producer with await addTenant
+        const tenantPayload = {
+          tenantId: uuidv4(),
+          tenantName: "tenant 001",
+        };
+        const tenant = await addTenant(tenantPayload, modelRepository.tenants);
 
         const { eserviceId, versionId } = await createEservice();
 
         const payload = {
           name: "eService 004",
-          producerId: eserviceId, // TODO: to fix
+          producerId: tenant.tenantId,
           state: eserviceInteropState.inactive,
           basePath: ["path-004"],
           technology: technology.rest,
@@ -587,7 +579,7 @@ describe("database test", async () => {
           eserviceId,
           versionId,
           payload,
-          genericLogger,
+          genericLogger
         );
 
         const updatedEservice = await eservices.findOneBy({
@@ -618,8 +610,8 @@ describe("database test", async () => {
               payload.eserviceId,
               payload.versionId,
               payload,
-              genericLogger,
-            ),
+              genericLogger
+            )
         ).rejects.toThrowError(tenantNotFound(payload.producerId));
       });
     });
@@ -649,7 +641,7 @@ describe("database test", async () => {
         await eserviceService.updateEserviceLastRequest(
           eserviceRecordId,
           payload,
-          genericLogger,
+          genericLogger
         );
 
         const updatedEservice = await eserviceProbingRequest.findOneBy({
@@ -677,7 +669,7 @@ describe("database test", async () => {
         await eserviceService.updateEserviceLastRequest(
           eserviceRecordId,
           payload,
-          genericLogger,
+          genericLogger
         );
 
         const updatedEservice = await eserviceProbingRequest.findOneBy({
@@ -706,7 +698,7 @@ describe("database test", async () => {
         await eserviceService.updateResponseReceived(
           eserviceRecordId,
           payload,
-          genericLogger,
+          genericLogger
         );
 
         const updatedEservice = await eserviceProbingResponse.findOneBy({
@@ -737,7 +729,7 @@ describe("database test", async () => {
         await eserviceService.updateResponseReceived(
           eserviceRecordId,
           payload,
-          genericLogger,
+          genericLogger
         );
 
         const updatedEservice = await eserviceProbingResponse.findOneBy({
@@ -781,7 +773,7 @@ describe("database test", async () => {
 
         const result = await eserviceService.searchEservices(
           filters,
-          genericLogger,
+          genericLogger
         );
         expect(result.totalElements).not.toBe(0);
         expect(result.offset).toBe(0);
