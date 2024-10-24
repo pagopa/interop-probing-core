@@ -870,7 +870,7 @@ paths:
                     },
                   ]
 
-  "/eservices/saveTenant":
+  "/tenants/saveTenant":
     post:
       summary: Save tenant
       operationId: saveTenant
@@ -910,7 +910,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
 
-  "/eservices/deleteTenant/{tenantId}":
+  "/tenants/{tenantId}/deleteTenant":
     delete:
       summary: Delete tenant
       operationId: deleteTenant

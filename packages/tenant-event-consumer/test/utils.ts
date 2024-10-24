@@ -18,10 +18,9 @@ import {
   TenantV2,
   TenantEventV2,
 } from "@pagopa/interop-outbound-models";
-import { generateId } from "pagopa-interop-probing-models";
-
+import { v4 as uuidv4 } from "uuid";
 const descriptor: EServiceDescriptorV1 = {
-  id: generateId(),
+  id: uuidv4(),
   audience: ["test.audience"],
   dailyCallsPerConsumer: 100,
   dailyCallsTotal: 100,
@@ -36,8 +35,8 @@ export const createEServiceV1 = (
   partialEservice?: Partial<EServiceV1>,
   descriptorItem?: EServiceDescriptorV1
 ): EServiceV1 => ({
-  id: generateId(),
-  producerId: generateId(),
+  id: uuidv4(),
+  producerId: uuidv4(),
   description: "eService test description",
   name: "eServie test name",
   mode: EServiceModeV1.RECEIVE,
@@ -55,7 +54,7 @@ export const createTenantEventV1 = (
   timestamp: new Date(),
   event_version: 1,
   version: version || 1,
-  stream_id: stream_id || generateId(),
+  stream_id: stream_id || uuidv4(),
   data: {
     tenant: tenantV1,
   },
@@ -70,7 +69,7 @@ export const createTenantEventV2 = (
   timestamp: new Date(),
   event_version: 2,
   version: version || 1,
-  stream_id: stream_id || generateId(),
+  stream_id: stream_id || uuidv4(),
   data: {
     tenant: tenantV2,
   },
@@ -83,7 +82,7 @@ export const mockEserviceDeleteV1: EServiceEventV1 = {
   timestamp: new Date(),
   stream_id: "1",
   data: {
-    eserviceId: generateId(),
+    eserviceId: uuidv4(),
   },
 };
 
@@ -94,7 +93,7 @@ export const mockEserviceDeleteV2: EServiceEventV2 = {
   timestamp: new Date(),
   stream_id: "1",
   data: {
-    eserviceId: generateId(),
+    eserviceId: uuidv4(),
   },
 };
 
@@ -108,9 +107,9 @@ export const mockEserviceUpdateV1: EServiceEventV1 = {
     eservice: {
       description: "",
       technology: EServiceTechnologyV1.REST,
-      id: generateId(),
+      id: uuidv4(),
       name: "",
-      producerId: generateId(),
+      producerId: uuidv4(),
       descriptors: [descriptor, descriptor],
     },
   },
@@ -123,7 +122,7 @@ export const createEserviceAddedEventV2 = (
 ): EServiceEventV2 => ({
   type: "EServiceAdded",
   event_version: 2,
-  stream_id: stream_id || generateId(),
+  stream_id: stream_id || uuidv4(),
   timestamp: new Date(),
   version: version || 1,
   data: {
@@ -134,7 +133,7 @@ export const createEserviceAddedEventV2 = (
 export const getDescriptorV2 = (
   partialDescriptorV2?: Partial<EServiceDescriptorV2>
 ): EServiceDescriptorV2 => ({
-  id: generateId(),
+  id: uuidv4(),
   agreementApprovalPolicy: AgreementApprovalPolicyV2.AUTOMATIC,
   audience: ["test.audience"],
   createdAt: 1n,
@@ -194,7 +193,7 @@ export const mockTenantDeleteV1: TenantEventV1 = {
   timestamp: new Date(),
   stream_id: "1",
   data: {
-    tenantId: generateId(),
+    tenantId: uuidv4(),
   },
 };
 
@@ -205,7 +204,7 @@ export const mockTenantDeleteV2: TenantEventV2 = {
   timestamp: new Date(),
   stream_id: "1",
   data: {
-    tenantId: generateId(),
+    tenantId: uuidv4(),
   },
 };
 
@@ -214,7 +213,7 @@ export const mockTenantUpdateV1 = (tenantId: string): TenantEventV1 => ({
   timestamp: new Date(),
   event_version: 1,
   version: 1,
-  stream_id: generateId(),
+  stream_id: uuidv4(),
   data: {
     tenant: {
       id: tenantId,
@@ -235,7 +234,7 @@ export const mockTenantUpdateV2 = (tenantId: string): TenantEventV2 => ({
   timestamp: new Date(),
   event_version: 2,
   version: 1,
-  stream_id: generateId(),
+  stream_id: uuidv4(),
   data: {
     tenant: {
       id: tenantId,
