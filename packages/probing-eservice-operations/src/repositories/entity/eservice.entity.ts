@@ -185,7 +185,7 @@ export const Tenant = new EntitySchema<TenantSchema>({
       nullable: false,
     },
     tenantId: {
-      name: "eservice_id",
+      name: "tenant_id",
       type: "uuid",
       nullable: false,
     },

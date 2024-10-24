@@ -10,8 +10,8 @@ CREATE SEQUENCE IF NOT EXISTS probing.tenant_sequence START WITH 1 INCREMENT BY 
 CREATE TABLE probing.tenants (
     id BIGINT NOT NULL,
     tenant_id UUID NOT NULL,
-    producer_name VARCHAR(2048) NOT NULL,
-)
+    tenant_name VARCHAR(2048) NOT NULL
+);
 
 CREATE TABLE probing.eservices (
    id BIGINT NOT NULL,
