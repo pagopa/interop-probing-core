@@ -24,7 +24,8 @@
     "generate-client": "turbo generate-client",
     "clean-generated": "turbo clean-generated",
     "prune-dist": "find . -name 'dist' -type d -exec rm -rf {} +",
-    "prune-modules": "find . -name 'node_modules' -type d -exec rm -rf {} +"
+    "prune-modules": "find . -name 'node_modules' -type d -exec rm -rf {} +",
+    "infra:start": "./scripts/infra-start.sh"
   },
   "devDependencies": {
     "@tsconfig/node-lts": "20.1.1",
