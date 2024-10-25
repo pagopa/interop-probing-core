@@ -24,6 +24,7 @@ import {
 } from "../../repositories/modelRepository.js";
 import {
   eServiceMainDataByRecordIdNotFound,
+  eServiceNotFound,
   eServiceProbingDataByRecordIdNotFound,
   tenantNotFound,
 } from "../../model/domain/errors.js";
@@ -145,6 +146,15 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
           .returning("id")
           .execute();
       }
+    },
+
+    //TODO: DeleteEservice
+    async deleteEservice(eserviceId: string): Promise<void> {
+      await eservices
+        .createQueryBuilder()
+        .delete()
+        .where("eservice_id = :eserviceId", { eserviceId })
+        .execute();
     },
 
     async updateEserviceLastRequest(
