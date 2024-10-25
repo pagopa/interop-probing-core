@@ -15,6 +15,7 @@ import {
   eserviceInteropState,
   responseStatus,
   PollingResource,
+  TenantSaveRequest,
 } from "pagopa-interop-probing-models";
 import { Brackets } from "typeorm";
 import { z } from "zod";
@@ -39,6 +40,7 @@ import {
   ApiGetProducersQuery,
   ApiGetProducersResponse,
   ApiSaveEserviceResponse,
+  ApiSaveTenantResponse,
   ApiSearchEservicesQuery,
   ApiSearchEservicesResponse,
   ApiUpdateEserviceFrequencyResponse,
@@ -60,40 +62,40 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     async updateEserviceState(
       eserviceId: string,
       versionId: string,
-      eServiceUpdated: ChangeEserviceStateRequest
+      eServiceUpdated: ChangeEserviceStateRequest,
     ): Promise<ApiUpdateEserviceStateResponse> {
       await eservices.update(
         { eserviceId, versionId },
-        { state: eServiceUpdated.state }
+        { state: eServiceUpdated.state },
       );
     },
 
     async updateEserviceProbingState(
       eserviceId: string,
       versionId: string,
-      eServiceUpdated: ChangeEserviceProbingStateRequest
+      eServiceUpdated: ChangeEserviceProbingStateRequest,
     ): Promise<ApiUpdateEserviceProbingStateResponse> {
       await eservices.update(
         { eserviceId, versionId },
-        { probingEnabled: eServiceUpdated.probingEnabled }
+        { probingEnabled: eServiceUpdated.probingEnabled },
       );
     },
 
     async updateEserviceFrequency(
       eserviceId: string,
       versionId: string,
-      eServiceUpdated: ChangeProbingFrequencyRequest
+      eServiceUpdated: ChangeProbingFrequencyRequest,
     ): Promise<ApiUpdateEserviceFrequencyResponse> {
       await eservices.update(
         { eserviceId, versionId },
-        { pollingFrequency: eServiceUpdated.pollingFrequency }
+        { pollingFrequency: eServiceUpdated.pollingFrequency },
       );
     },
 
     async saveEservice(
       eserviceId: string,
       versionId: string,
-      eServiceUpdated: EserviceSaveRequest
+      eServiceUpdated: EserviceSaveRequest,
     ): Promise<ApiSaveEserviceResponse> {
       const tenant = await tenants.findOneBy({
         tenantId: eServiceUpdated.producerId,
@@ -147,7 +149,6 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       }
     },
 
-    //TODO: DeleteEservice
     async deleteEservice(eserviceId: string): Promise<void> {
       await eservices
         .createQueryBuilder()
@@ -156,22 +157,43 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         .execute();
     },
 
+    async saveTenant(
+      eServiceSaveTenant: TenantSaveRequest,
+    ): Promise<ApiSaveTenantResponse> {
+      const existingTenant = await tenants.findOneBy({
+        tenantId: eServiceSaveTenant.tenant_id,
+      });
+
+      if (existingTenant) {
+        throw new Error(`Tenant with ID '${eServiceSaveTenant.tenant_id}' already exists.`);
+      }
+      await tenants
+        .createQueryBuilder()
+        .insert()
+        .values({
+          tenantId: eServiceSaveTenant.tenant_id,
+          tenantName: eServiceSaveTenant.tenant_name,
+        })
+        .returning("tenant_id")
+        .execute();
+    },
+
     async updateEserviceLastRequest(
       eserviceRecordId: number,
-      eServiceUpdated: EserviceProbingUpdateLastRequest
+      eServiceUpdated: EserviceProbingUpdateLastRequest,
     ): Promise<ApiUpdateLastRequestResponse> {
       await eserviceProbingRequest.upsert(
         { eserviceRecordId, lastRequest: eServiceUpdated.lastRequest },
         {
           skipUpdateIfNoValuesChanged: true,
           conflictPaths: ["eserviceRecordId"],
-        }
+        },
       );
     },
 
     async updateResponseReceived(
       eserviceRecordId: number,
-      eServiceUpdated: ChangeResponseReceived
+      eServiceUpdated: ChangeResponseReceived,
     ): Promise<ApiUpdateResponseReceivedResponse> {
       await eserviceProbingResponse.upsert(
         {
@@ -182,14 +204,14 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         {
           skipUpdateIfNoValuesChanged: true,
           conflictPaths: ["eserviceRecordId"],
-        }
+        },
       );
     },
 
     async getEServiceByIdAndVersion(
       eserviceId: string,
       versionId: string,
-      logger: Logger
+      logger: Logger,
     ): Promise<EService | undefined> {
       const data = await eservices.findOne({
         where: { eserviceId, versionId },
@@ -201,8 +223,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         if (!result.success) {
           logger.error(
             `Unable to parse eservice item: result ${JSON.stringify(
-              result
-            )} - data ${JSON.stringify(data)} `
+              result,
+            )} - data ${JSON.stringify(data)} `,
           );
           throw genericError("Unable to parse eservice item");
         }
@@ -212,12 +234,12 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
 
     async searchEservices(
       filters: ApiSearchEservicesQuery,
-      logger: Logger
+      logger: Logger,
     ): Promise<ApiSearchEservicesResponse> {
       const [data, count] = await eserviceView
         .createQueryBuilder()
         .where((qb: SelectQueryBuilder<EserviceViewEntities>) =>
-          addPredicateEservices(qb, filters)
+          addPredicateEservices(qb, filters),
         )
         .skip(filters.offset)
         .take(filters.limit)
@@ -227,8 +249,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       if (!result.success) {
         logger.error(
           `Unable to parse eservices items: result ${JSON.stringify(
-            result
-          )} - data ${JSON.stringify(data)} `
+            result,
+          )} - data ${JSON.stringify(data)} `,
         );
 
         throw genericError("Unable to parse eservices items");
@@ -244,7 +266,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
 
     async getEserviceMainData(
       eserviceRecordId: number,
-      logger: Logger
+      logger: Logger,
     ): Promise<ApiEserviceMainDataResponse> {
       const data = await eservices.findOne({ where: { eserviceRecordId } });
       if (!data) {
@@ -254,8 +276,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         if (!result.success) {
           logger.error(
             `Unable to parse eservice mainData item: result ${JSON.stringify(
-              result
-            )} - data ${JSON.stringify(data)} `
+              result,
+            )} - data ${JSON.stringify(data)} `,
           );
           throw genericError("Unable to parse eservice mainData item");
         }
@@ -265,7 +287,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
 
     async getEserviceProbingData(
       eserviceRecordId: number,
-      logger: Logger
+      logger: Logger,
     ): Promise<ApiEserviceProbingDataResponse> {
       const data = await eserviceView.findOne({
         where: { eserviceRecordId },
@@ -278,8 +300,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         if (!result.success) {
           logger.error(
             `Unable to parse eservice probingData item: result ${JSON.stringify(
-              result
-            )} - data ${JSON.stringify(data)} `
+              result,
+            )} - data ${JSON.stringify(data)} `,
           );
 
           throw genericError("Unable to parse eservice probingData item");
@@ -290,7 +312,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
 
     async getEservicesReadyForPolling(
       filters: ApiGetEservicesReadyForPollingQuery,
-      logger: Logger
+      logger: Logger,
     ): Promise<ApiGetEservicesReadyForPollingResponse> {
       const [data, count] = await eserviceView
         .createQueryBuilder("eserviceView")
@@ -302,7 +324,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         ])
         .distinct(true)
         .where((qb: SelectQueryBuilder<EserviceViewEntities>) =>
-          addPredicateEservicesReadyForPolling(qb, "eserviceView")
+          addPredicateEservicesReadyForPolling(qb, "eserviceView"),
         )
         .orderBy("eserviceView.eserviceRecordId", "ASC")
         .skip(filters.offset)
@@ -313,8 +335,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       if (!result.success) {
         logger.error(
           `Unable to parse eservices ready for polling items: result ${JSON.stringify(
-            result
-          )} - data ${JSON.stringify(data)} `
+            result,
+          )} - data ${JSON.stringify(data)} `,
         );
 
         throw genericError("Unable to parse eservices ready for polling items");
@@ -328,7 +350,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
 
     async getEservicesProducers(
       filters: ApiGetProducersQuery,
-      logger: Logger
+      logger: Logger,
     ): Promise<ApiGetProducersResponse> {
       const data = await eservices
         .createQueryBuilder("eservice")
@@ -347,8 +369,8 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       if (!result.success) {
         logger.error(
           `Unable to parse eservices producers items: result ${JSON.stringify(
-            result
-          )} - data ${JSON.stringify(data)} `
+            result,
+          )} - data ${JSON.stringify(data)} `,
         );
 
         throw genericError("Unable to parse eservices producers items");

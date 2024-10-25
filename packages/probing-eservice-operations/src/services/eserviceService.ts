@@ -3,6 +3,7 @@ import {
   ChangeResponseReceived,
   EserviceProbingUpdateLastRequest,
   EserviceSaveRequest,
+  TenantSaveRequest,
 } from "pagopa-interop-probing-models";
 import { EserviceQuery } from "./db/eserviceQuery.js";
 import {
@@ -27,6 +28,8 @@ import {
   ApiUpdateResponseReceivedPayload,
   ApiUpdateResponseReceivedResponse,
   ApiDeleteEserviceResponse,
+  ApiSaveTenantPayload,
+  ApiSaveTenantResponse,
 } from "pagopa-interop-probing-eservice-operations-client";
 import { eServiceNotFound } from "../model/domain/errors.js";
 
@@ -143,6 +146,22 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
         versionId,
         eServiceToBeUpdated
       );
+    },
+
+    async saveTenant(
+      data: ApiSaveTenantPayload,
+      logger: Logger,
+    ): Promise<ApiSaveTenantResponse> {
+      const eServiceSaveTenant: TenantSaveRequest = {
+        tenant_id: data.tenantId,
+        tenant_name: data.name,
+      };
+
+      logger.info(
+        `Save tenant ${data.name}`,
+      );
+
+      return await eserviceQuery.saveTenant(eServiceSaveTenant);
     },
 
     async updateEserviceLastRequest(
