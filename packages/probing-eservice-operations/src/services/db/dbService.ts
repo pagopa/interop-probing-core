@@ -24,7 +24,6 @@ import {
 } from "../../repositories/modelRepository.js";
 import {
   eServiceMainDataByRecordIdNotFound,
-  eServiceNotFound,
   eServiceProbingDataByRecordIdNotFound,
   tenantNotFound,
 } from "../../model/domain/errors.js";

@@ -26,7 +26,6 @@ import {
   ApiUpdateLastRequestResponse,
   ApiUpdateResponseReceivedPayload,
   ApiUpdateResponseReceivedResponse,
-  ApiDeleteEserviceHeaders,
   ApiDeleteEserviceResponse,
 } from "pagopa-interop-probing-eservice-operations-client";
 import { eServiceNotFound } from "../model/domain/errors.js";
