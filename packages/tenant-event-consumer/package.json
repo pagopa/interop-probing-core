@@ -16,7 +16,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
     "@pagopa/interop-outbound-models": "1.0.4",
     "@tsconfig/node-lts": "20.1.1",
