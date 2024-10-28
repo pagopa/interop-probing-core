@@ -32,7 +32,7 @@ const errorEventsListener = (consumerOrProducer: Consumer | Producer): void => {
         processExit();
       } catch (e) {
         genericLogger.error(
-          `Unexpected error on disconnection with event type ${type}; Error detail: ${e}`
+          `Unexpected error on disconnection with event type ${type}; Error detail: ${e}`,
         );
         processExit();
       }
@@ -61,14 +61,14 @@ const producerKafkaEventsListener = (producer: Producer): void => {
   }
   producer.on(producer.events.REQUEST_TIMEOUT, (e) => {
     genericLogger.error(
-      `Error Request to a broker has timed out : ${JSON.stringify(e)}.`
+      `Error Request to a broker has timed out : ${JSON.stringify(e)}.`,
     );
   });
 };
 
 async function oauthBearerTokenProvider(
   region: string,
-  logger: Logger
+  logger: Logger,
 ): Promise<OauthbearerProviderResponse> {
   logger.debug("Fetching token from AWS");
 
@@ -77,7 +77,7 @@ async function oauthBearerTokenProvider(
   });
 
   logger.debug(
-    `Token fetched from AWS expires at ${authTokenResponse.expiryTime}`
+    `Token fetched from AWS expires at ${authTokenResponse.expiryTime}`,
   );
 
   return {
@@ -110,7 +110,7 @@ const initKafka = (config: KafkaProducerConfig): Kafka => {
     ...kafkaConfig,
     logCreator:
       (
-        _logLevel // eslint-disable-line @typescript-eslint/no-unused-vars
+        _logLevel, // eslint-disable-line @typescript-eslint/no-unused-vars
       ) =>
       ({ level, log }) => {
         const { message, error } = log;
@@ -121,7 +121,7 @@ const initKafka = (config: KafkaProducerConfig): Kafka => {
             (error) =>
               (level === logLevel.ERROR || level === logLevel.WARN) &&
               error.includes("The group is rebalancing, so a rejoin is needed"),
-            () => logLevel.INFO
+            () => logLevel.INFO,
           )
           .otherwise(() => level);
 
@@ -129,7 +129,7 @@ const initKafka = (config: KafkaProducerConfig): Kafka => {
 
         match(filteredLevel)
           .with(logLevel.NOTHING, logLevel.ERROR, () =>
-            genericLogger.error(msg)
+            genericLogger.error(msg),
           )
           .with(logLevel.WARN, () => genericLogger.warn(msg))
           .with(logLevel.INFO, () => genericLogger.info(msg))
@@ -141,11 +141,11 @@ const initKafka = (config: KafkaProducerConfig): Kafka => {
 
 export const initProducer = async (
   config: KafkaProducerConfig,
-  topics: string
+  topics: string,
 ): Promise<
   Producer & {
     send: (
-      record: Omit<ProducerRecord, "topic"> & { topic: string }
+      record: Omit<ProducerRecord, "topic"> & { topic: string },
     ) => Promise<RecordMetadata[]>;
   }
 > => {
@@ -186,7 +186,7 @@ export const initProducer = async (
     };
   } catch (e) {
     genericLogger.error(
-      `Generic error occurs during consumer initialization: ${e}`
+      `Generic error occurs during consumer initialization: ${e}`,
     );
     processExit();
     return undefined as never;
@@ -195,10 +195,10 @@ export const initProducer = async (
 
 export const validateTopicMetadata = async (
   kafka: Kafka,
-  topicNames: string[]
+  topicNames: string[],
 ): Promise<boolean> => {
   genericLogger.debug(
-    `Check topics |${JSON.stringify(topicNames)}| existence...`
+    `Check topics |${JSON.stringify(topicNames)}| existence...`,
   );
 
   const admin = kafka.admin();
@@ -215,8 +215,8 @@ export const validateTopicMetadata = async (
     await admin.disconnect();
     genericLogger.error(
       `Unable to subscribe! Error during topic metadata fetch: ${JSON.stringify(
-        e
-      )}`
+        e,
+      )}`,
     );
     return false;
   }

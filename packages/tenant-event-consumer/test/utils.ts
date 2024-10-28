@@ -33,7 +33,7 @@ const descriptor: EServiceDescriptorV1 = {
 
 export const createEServiceV1 = (
   partialEservice?: Partial<EServiceV1>,
-  descriptorItem?: EServiceDescriptorV1
+  descriptorItem?: EServiceDescriptorV1,
 ): EServiceV1 => ({
   id: uuidv4(),
   producerId: uuidv4(),
@@ -48,7 +48,7 @@ export const createEServiceV1 = (
 export const createTenantEventV1 = (
   tenantV1: TenantV1 | undefined,
   stream_id?: string,
-  version?: number
+  version?: number,
 ): TenantEventV1 => ({
   type: "TenantCreated",
   timestamp: new Date(),
@@ -63,7 +63,7 @@ export const createTenantEventV1 = (
 export const createTenantEventV2 = (
   tenantV2: TenantV2 | undefined,
   stream_id?: string,
-  version?: number
+  version?: number,
 ): TenantEventV2 => ({
   type: "TenantOnboarded",
   timestamp: new Date(),
@@ -118,7 +118,7 @@ export const mockEserviceUpdateV1: EServiceEventV1 = {
 export const createEserviceAddedEventV2 = (
   eServiceV2: EServiceV2,
   stream_id?: string,
-  version?: number
+  version?: number,
 ): EServiceEventV2 => ({
   type: "EServiceAdded",
   event_version: 2,
@@ -131,7 +131,7 @@ export const createEserviceAddedEventV2 = (
 });
 
 export const getDescriptorV2 = (
-  partialDescriptorV2?: Partial<EServiceDescriptorV2>
+  partialDescriptorV2?: Partial<EServiceDescriptorV2>,
 ): EServiceDescriptorV2 => ({
   id: uuidv4(),
   agreementApprovalPolicy: AgreementApprovalPolicyV2.AUTOMATIC,
@@ -152,7 +152,7 @@ export const createV2Event = (
   descriptorId: string,
   producerId: string,
   eServiceDescriptorState: EServiceDescriptorStateV2,
-  descriptors?: EServiceDescriptorV2[]
+  descriptors?: EServiceDescriptorV2[],
 ): EServiceV2 => ({
   id: eServiceId,
   producerId,
@@ -254,7 +254,7 @@ export const mockTenantUpdateV2 = (tenantId: string): TenantEventV2 => ({
 
 export function mockApiClientError(
   status: number,
-  statusText: string
+  statusText: string,
 ): AxiosError {
   const mockAxiosError = new AxiosError(statusText);
   mockAxiosError.response = {

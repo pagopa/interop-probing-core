@@ -10,7 +10,7 @@ import { decodeOutboundTenantEvent } from "@pagopa/interop-outbound-models";
 import { handleMessageV1, handleMessageV2 } from "./handlers/index.js";
 
 export function processMessage(
-  service: OperationsService
+  service: OperationsService,
 ): ({ message, partition }: EachMessagePayload) => Promise<void> {
   return async ({ message, partition }: EachMessagePayload): Promise<void> => {
     const ctx: AppContext = {
@@ -34,15 +34,15 @@ export function processMessage(
 
       await match(tenantEvent)
         .with({ event_version: 1 }, (event) =>
-          handleMessageV1(event, service, ctx, loggerInstance)
+          handleMessageV1(event, service, ctx, loggerInstance),
         )
         .with({ event_version: 2 }, (event) =>
-          handleMessageV2(event, service, ctx, loggerInstance)
+          handleMessageV2(event, service, ctx, loggerInstance),
         )
         .exhaustive();
 
       loggerInstance.info(
-        `Message was processed. Partition number: ${partition}. Offset: ${message.offset}`
+        `Message was processed. Partition number: ${partition}. Offset: ${message.offset}`,
       );
     } catch (error: unknown) {
       throw errorMapper(error, logger(ctx));

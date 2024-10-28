@@ -87,11 +87,10 @@ export const EserviceSaveRequest = z.object({
 export type EserviceSaveRequest = z.infer<typeof EserviceSaveRequest>;
 
 export const TenantSaveRequest = z.object({
-    tenant_id: z.string(),
-    tenant_name: z.string().optional(),
+  tenant_id: z.string(),
+  tenant_name: z.string().optional(),
 });
 export type TenantSaveRequest = z.infer<typeof TenantSaveRequest>;
-
 
 /**
  * Schema for EService.

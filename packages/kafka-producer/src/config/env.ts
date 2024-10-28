@@ -33,11 +33,11 @@ export const KafkaProducerConfig = z
 const parsedFromEnv = KafkaProducerConfig.safeParse(process.env);
 if (!parsedFromEnv.success) {
   const invalidEnvVars = parsedFromEnv.error.issues.flatMap(
-    (issue) => issue.path
+    (issue) => issue.path,
   );
   // eslint-disable-next-line no-console
   console.error(
-    "Invalid or missing env vars: Kafka Producer " + invalidEnvVars.join(", ")
+    "Invalid or missing env vars: Kafka Producer " + invalidEnvVars.join(", "),
   );
   process.exit(1);
 }

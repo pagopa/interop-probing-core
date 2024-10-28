@@ -16,7 +16,7 @@ const tenantEventConsumerConfig = LoggerConfig.and(KafkaConsumerConfig)
       .transform((c) => ({
         applicationName: c.APPLICATION_NAME,
         operationsBaseUrl: c.API_OPERATIONS_BASEURL,
-      }))
+      })),
   );
 
 export type TenantEventConsumerConfig = z.infer<

@@ -14,5 +14,5 @@ const operationsService: OperationsService =
 await runConsumer(
   config,
   [config.kafkaTopic],
-  processMessage(operationsService)
+  processMessage(operationsService),
 );

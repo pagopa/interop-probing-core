@@ -92,17 +92,17 @@ export class ModelRepository {
     this.eservices = this.entityManager.getRepository(Eservice);
     this.tenants = this.entityManager.getRepository(Tenant);
     this.eserviceProbingRequest = this.entityManager.getRepository(
-      EserviceProbingRequest
+      EserviceProbingRequest,
     );
     this.eserviceProbingResponse = this.entityManager.getRepository(
-      EserviceProbingResponse
+      EserviceProbingResponse,
     );
     this.eserviceView = this.entityManager.getRepository(EserviceView);
   }
 
   public static async init(
     config: DbConfig,
-    initDB: string | null = null
+    initDB: string | null = null,
   ): Promise<ModelRepository> {
     if (!ModelRepository.instance) {
       ModelRepository.instance = new ModelRepository(config);
@@ -114,7 +114,7 @@ export class ModelRepository {
       genericLogger.info(
         `Database Connection Status: ${
           connectionStatus ? "Initialized" : "Not Initialized"
-        }`
+        }`,
       );
     }
 
