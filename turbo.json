@@ -4,57 +4,37 @@
     "start": {
       "persistent": true,
       "cache": false,
-      "dependsOn": [
-        "generate-client",
-        "generate-model",
-        "^build"
-      ]
+      "dependsOn": ["generate-client", "generate-model", "^build"]
     },
     "build": {
       "cache": false,
-      "dependsOn": [
-        "generate-client",
-        "generate-model",
-        "^build"
-      ],
-      "outputs": [
-        "dist"
-      ]
+      "dependsOn": ["generate-client", "generate-model", "^build"],
+      "outputs": ["dist"]
     },
     "generate-model": {
       "cache": false,
-      "dependsOn": [
-        "^generate-model"
-      ]
+      "dependsOn": ["^generate-model"]
     },
     "generate-client": {
       "cache": false,
-      "dependsOn": [
-        "^generate-client"
-      ]
+      "dependsOn": ["^generate-client"]
     },
     "clean-generated": {
-      "dependsOn": [
-        "^clean-generated"
-      ]
+      "dependsOn": ["^clean-generated"]
     },
     "test": {
-      "dependsOn": [
-        "build",
-        "^test"
-      ]
+      "dependsOn": ["build", "^test"]
     },
     "test:it": {
-      "dependsOn": [
-        "build",
-        "^test:it"
-      ]
+      "dependsOn": ["build", "^test:it"]
     },
     "lint": {},
     "lint:autofix": {},
-    "format:write": {}
+    "format:write": {},
+    "format:check": {
+      "cache": false,
+      "dependsOn": ["^format:check"]
+    }
   },
-  "globalDependencies": [
-    "tsconfig.json"
-  ]
+  "globalDependencies": ["tsconfig.json"]
 }
