@@ -943,17 +943,12 @@ components:
     SaveTenantRequest:
       type: object
       properties:
-        tenantId:
-          type: string
-          format: uuid
         name:
           type: string
         origin:
           type: string
         externalId:
           type: string
-      required:
-        - tenantId
     PollingEserviceResponse:
       type: object
       required:

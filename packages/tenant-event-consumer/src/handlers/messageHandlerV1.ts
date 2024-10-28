@@ -12,7 +12,7 @@ export async function handleMessageV1(
   event: TenantEventV1,
   operationsService: OperationsService,
   ctx: AppContext,
-  logger: Logger
+  logger: Logger,
 ): Promise<void> {
   await match(event)
     .with(
@@ -28,15 +28,15 @@ export async function handleMessageV1(
 
         await operationsService.saveTenant(
           { ...correlationIdToHeader(ctx.correlationId) },
+          { tenantId: tenant.id },
           {
-            tenantId: tenant.id,
             externalId: tenant.externalId?.value,
             origin: tenant.externalId?.origin,
             name: tenant.name,
           },
-          logger
+          logger,
         );
-      }
+      },
     )
 
     .with(
@@ -49,9 +49,9 @@ export async function handleMessageV1(
           {
             tenantId: evt.data.tenantId,
           },
-          logger
+          logger,
         );
-      }
+      },
     )
     .exhaustive();
 }

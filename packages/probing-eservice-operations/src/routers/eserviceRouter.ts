@@ -19,7 +19,7 @@ const eserviceQuery = eserviceQueryBuilder(modelService);
 const eServiceService = eServiceServiceBuilder(eserviceQuery);
 
 const eServiceRouter = (
-  ctx: ZodiosContext
+  ctx: ZodiosContext,
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const eServiceRouter = ctx.router(api.api);
 
@@ -32,14 +32,14 @@ const eServiceRouter = (
             req.params.eserviceId,
             req.params.versionId,
             req.body,
-            logger(req.ctx)
+            logger(req.ctx),
           );
           return res.status(204).end();
         } catch (error) {
           const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();
         }
-      }
+      },
     )
     .post(
       "/eservices/:eserviceId/versions/:versionId/probing/updateState",
@@ -49,14 +49,14 @@ const eServiceRouter = (
             req.params.eserviceId,
             req.params.versionId,
             req.body,
-            logger(req.ctx)
+            logger(req.ctx),
           );
           return res.status(204).end();
         } catch (error) {
           const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();
         }
-      }
+      },
     )
     .post(
       "/eservices/:eserviceId/versions/:versionId/updateFrequency",
@@ -66,14 +66,14 @@ const eServiceRouter = (
             req.params.eserviceId,
             req.params.versionId,
             req.body,
-            logger(req.ctx)
+            logger(req.ctx),
           );
           return res.status(204).end();
         } catch (error) {
           const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();
         }
-      }
+      },
     )
     .post(
       "/eservices/:eserviceId/versions/:versionId/saveEservice",
@@ -83,14 +83,74 @@ const eServiceRouter = (
             req.params.eserviceId,
             req.params.versionId,
             req.body,
-            logger(req.ctx)
+            logger(req.ctx),
           );
           return res.status(204).end();
         } catch (error) {
           const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();
         }
+      },
+    )
+    .post("/tenants/:tenantId/saveTenant", async (req, res) => {
+      try {
+        await eServiceService.saveTenant(req.params, req.body, logger(req.ctx));
+        return res.status(204).end();
+      } catch (error) {
+        const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
+        return res.status(errorRes.status).json(errorRes).end();
       }
+    })
+    .post(
+      "/eservices/:eserviceId/versions/:versionId/probing/updateState",
+      async (req, res) => {
+        try {
+          await eServiceService.updateEserviceProbingState(
+            req.params.eserviceId,
+            req.params.versionId,
+            req.body,
+            logger(req.ctx),
+          );
+          return res.status(204).end();
+        } catch (error) {
+          const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
+          return res.status(errorRes.status).json(errorRes).end();
+        }
+      },
+    )
+    .post(
+      "/eservices/:eserviceId/versions/:versionId/updateFrequency",
+      async (req, res) => {
+        try {
+          await eServiceService.updateEserviceFrequency(
+            req.params.eserviceId,
+            req.params.versionId,
+            req.body,
+            logger(req.ctx),
+          );
+          return res.status(204).end();
+        } catch (error) {
+          const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
+          return res.status(errorRes.status).json(errorRes).end();
+        }
+      },
+    )
+    .post(
+      "/eservices/:eserviceId/versions/:versionId/saveEservice",
+      async (req, res) => {
+        try {
+          await eServiceService.saveEservice(
+            req.params.eserviceId,
+            req.params.versionId,
+            req.body,
+            logger(req.ctx),
+          );
+          return res.status(204).end();
+        } catch (error) {
+          const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
+          return res.status(errorRes.status).json(errorRes).end();
+        }
+      },
     )
 
     .post(
@@ -100,14 +160,14 @@ const eServiceRouter = (
           await eServiceService.updateEserviceLastRequest(
             Number(req.params.eserviceRecordId),
             req.body,
-            logger(req.ctx)
+            logger(req.ctx),
           );
           return res.status(204).end();
         } catch (error) {
           const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();
         }
-      }
+      },
     )
     .post(
       "/eservices/:eserviceRecordId/updateResponseReceived",
@@ -116,14 +176,14 @@ const eServiceRouter = (
           await eServiceService.updateResponseReceived(
             Number(req.params.eserviceRecordId),
             req.body,
-            logger(req.ctx)
+            logger(req.ctx),
           );
           return res.status(204).end();
         } catch (error) {
           const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();
         }
-      }
+      },
     );
 
   eServiceRouter
@@ -138,7 +198,7 @@ const eServiceRouter = (
             limit: req.query.limit,
             offset: req.query.offset,
           },
-          logger(req.ctx)
+          logger(req.ctx),
         );
 
         return res
@@ -159,7 +219,7 @@ const eServiceRouter = (
       try {
         const eServiceMainData = await eServiceService.getEserviceMainData(
           Number(req.params.eserviceRecordId),
-          logger(req.ctx)
+          logger(req.ctx),
         );
 
         return res.status(200).json(eServiceMainData).end();
@@ -173,7 +233,7 @@ const eServiceRouter = (
         const eServiceProbingData =
           await eServiceService.getEserviceProbingData(
             Number(req.params.eserviceRecordId),
-            logger(req.ctx)
+            logger(req.ctx),
           );
 
         return res.status(200).json(eServiceProbingData).end();
@@ -190,7 +250,7 @@ const eServiceRouter = (
             limit: req.query.limit,
             offset: req.query.offset,
           },
-          logger(req.ctx)
+          logger(req.ctx),
         );
 
         return res
@@ -208,7 +268,7 @@ const eServiceRouter = (
       try {
         const eservices = await eServiceService.getEservicesReadyForPolling(
           req.query,
-          logger(req.ctx)
+          logger(req.ctx),
         );
 
         return res
@@ -220,19 +280,6 @@ const eServiceRouter = (
           .end();
       } catch (error) {
         const errorRes = makeApiProblem(error, () => 500, logger(req.ctx));
-        return res.status(errorRes.status).json(errorRes).end();
-      }
-    })
-    .post("/tenants/:tenantId/saveTenant", async (req, res) => {
-      try {
-        await eServiceService.saveTenant(
-          req.params.tenantId,
-          req.body.name,
-          logger(req.ctx)
-        );
-        return res.status(204).end();
-      } catch (error) {
-        const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
         return res.status(errorRes.status).json(errorRes).end();
       }
     })

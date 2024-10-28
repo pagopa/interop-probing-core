@@ -12,7 +12,7 @@ export async function handleMessageV2(
   event: TenantEventV2,
   operationsService: OperationsService,
   ctx: AppContext,
-  logger: Logger
+  logger: Logger,
 ): Promise<void> {
   await match(event)
     .with(
@@ -27,15 +27,15 @@ export async function handleMessageV2(
 
         await operationsService.saveTenant(
           { ...correlationIdToHeader(ctx.correlationId) },
+          { tenantId: tenant.id },
           {
-            tenantId: tenant.id,
             externalId: tenant.externalId?.value,
             origin: tenant.externalId?.origin,
             name: tenant.name,
           },
-          logger
+          logger,
         );
-      }
+      },
     )
     .with(
       {
@@ -47,9 +47,9 @@ export async function handleMessageV2(
           {
             tenantId: evt.data.tenantId,
           },
-          logger
+          logger,
         );
-      }
+      },
     )
 
     .with(
@@ -64,12 +64,12 @@ export async function handleMessageV2(
           "TenantVerifiedAttributeExpirationUpdated",
           "TenantVerifiedAttributeExtensionUpdated",
           "TenantKindUpdated",
-          "MaintenanceTenantPromotedToCertifier"
+          "MaintenanceTenantPromotedToCertifier",
         ),
       },
       async (evt) => {
         logger.info(`Skip event ${evt.type} (not relevant)`);
-      }
+      },
     )
     .exhaustive();
 }

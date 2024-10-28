@@ -12,13 +12,14 @@ import { errorDeleteTenant, errorSaveTenant } from "../models/domain/errors.js";
 import { Logger } from "pagopa-interop-probing-commons";
 
 export const operationsServiceBuilder = (
-  operationsApiClient: ZodiosInstance<Api>
+  operationsApiClient: ZodiosInstance<Api>,
 ) => {
   return {
     async saveTenant(
       headers: ApiSaveTenantHeaders,
+      params: ApiDeleteTenantParams,
       data: ApiSaveTenantPayload,
-      logger: Logger
+      logger: Logger,
     ): Promise<ApiSaveTenantResponse> {
       try {
         await operationsApiClient.saveTenant(
@@ -30,7 +31,8 @@ export const operationsServiceBuilder = (
           },
           {
             headers,
-          }
+            params,
+          },
         );
 
         logger.info(`Tenant saved with tenantId: ${data.tenantId}.`);
@@ -38,14 +40,14 @@ export const operationsServiceBuilder = (
         throw errorSaveTenant(
           `Error saving tenant with tenantId: ${
             data.tenantId
-          }. Details: ${error}. Data: ${JSON.stringify(data)}`
+          }. Details: ${error}. Data: ${JSON.stringify(data)}`,
         );
       }
     },
     async deleteTenant(
       headers: ApiDeleteTenantHeaders,
       params: ApiDeleteTenantParams,
-      logger: Logger
+      logger: Logger,
     ): Promise<ApiDeleteTenantResponse> {
       try {
         await operationsApiClient.deleteTenant(undefined, {
@@ -56,7 +58,7 @@ export const operationsServiceBuilder = (
         logger.info(`Tenant deleted with tenantId: ${params.tenantId}.`);
       } catch (error: unknown) {
         throw errorDeleteTenant(
-          `Error deleting tenant with tenantId: ${params.tenantId}. Details: ${error}`
+          `Error deleting tenant with tenantId: ${params.tenantId}. Details: ${error}`,
         );
       }
     },
