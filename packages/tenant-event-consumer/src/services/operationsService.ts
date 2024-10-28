@@ -24,7 +24,6 @@ export const operationsServiceBuilder = (
       try {
         await operationsApiClient.saveTenant(
           {
-            tenantId: data.tenantId,
             name: data.name,
             externalId: data.externalId,
             origin: data.name,
