@@ -39,7 +39,7 @@ export const operationsServiceBuilder = (
       } catch (error: unknown) {
         throw errorSaveTenant(
           `Error saving tenant with tenantId: ${
-            data.tenantId
+            params.tenantId
           }. Details: ${error}. Data: ${JSON.stringify(data)}`,
         );
       }

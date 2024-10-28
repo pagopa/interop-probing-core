@@ -15,8 +15,8 @@ export const eServiceIdV1 = randomUUID();
 
 const descriptor: EServiceDescriptorV1 = {
   id: eServiceIdV1,
-  audience: [],
-  serverUrls: [],
+  audience: ["audeince1", "audience2"],
+  serverUrls: ["url1", "url2"],
   version: "1",
   state: EServiceDescriptorStateV1.PUBLISHED,
   dailyCallsTotal: 10,
@@ -30,7 +30,7 @@ const EServiceAdded: EServiceEvent = {
   data: {
     eservice: {
       description: "",
-      descriptors: [descriptor, descriptor],
+      descriptors: [descriptor, { ...descriptor, id: randomUUID() }],
       id: eServiceIdV1,
       name: "Eservice-test",
       producerId: tenantIdV1,
@@ -97,7 +97,7 @@ export const EserviceEventTypeV1 = z.union([
 export type EserviceEventTypeV1 = z.infer<typeof EserviceEventTypeV1>;
 
 export function getEserviceEventV1ByType(
-  type: EserviceEventTypeV1
+  type: EserviceEventTypeV1,
 ): EServiceEvent {
   return match(type)
     .with("EServiceAdded", () => EServiceAdded)

@@ -159,7 +159,9 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
         tenant_name: data.name,
       };
 
-      logger.info(`Save tenant ${data.name}`);
+      logger.info(
+        `Save tenant with tenant_id: ${eServiceSaveTenant.tenant_id}`,
+      );
 
       return await eserviceQuery.saveTenant(eServiceSaveTenant);
     },

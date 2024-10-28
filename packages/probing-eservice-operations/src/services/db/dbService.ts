@@ -165,12 +165,16 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
       });
 
       if (existingTenant) {
-        throw new Error(`Tenant with ID '${eServiceSaveTenant.tenant_id}' already exists.`);
+        throw new Error(
+          `Tenant with ID '${eServiceSaveTenant.tenant_id}' already exists.`,
+        );
       }
       await tenants
         .createQueryBuilder()
         .insert()
         .values({
+          tenantRecordId: () =>
+            `nextval('"${config.schemaName}"."tenant_sequence"'::regclass)`,
           tenantId: eServiceSaveTenant.tenant_id,
           tenantName: eServiceSaveTenant.tenant_name,
         })
@@ -391,7 +395,7 @@ const probingDisabledPredicate = (queryBuilder: WhereExpressionBuilder) => {
   queryBuilder.orWhere(`probing_enabled = false`);
   queryBuilder.orWhere(`last_request IS NULL`);
   queryBuilder.orWhere(
-    `((${extractMinute}) AND (response_received < last_request))`
+    `((${extractMinute}) AND (response_received < last_request))`,
   );
   queryBuilder.orWhere(`response_received IS NULL`);
 };
@@ -404,7 +408,7 @@ const probingEnabledPredicate = (
   }: {
     isStateOffline: boolean | undefined;
     isStateOnline: boolean | undefined;
-  }
+  },
 ) => {
   const predicates: string[] = [];
 
@@ -436,13 +440,13 @@ const probingEnabledPredicate = (
   queryBuilder.andWhere(`response_received IS NOT NULL`);
   queryBuilder.andWhere(
     `((${extractMinute}) OR (response_received > last_request))`,
-    { minOfTolleranceMultiplier: config.minOfTolleranceMultiplier }
+    { minOfTolleranceMultiplier: config.minOfTolleranceMultiplier },
   );
 };
 
 const addPredicateEservices = (
   queryBuilder: SelectQueryBuilder<EserviceViewEntities>,
-  filters: ApiSearchEservicesQuery
+  filters: ApiSearchEservicesQuery,
 ): void => {
   const { eserviceName, producerName, versionNumber, state } = filters;
 
@@ -479,15 +483,15 @@ const addPredicateEservices = (
                 isStateOffline,
                 isStateOnline,
               });
-            })
+            }),
           );
         }
         subQb.orWhere(
           new Brackets((subQb2) => {
             probingDisabledPredicate(subQb2);
-          })
+          }),
         );
-      })
+      }),
     );
 
     queryBuilder.orderBy({ id: "ASC" });
@@ -499,7 +503,7 @@ const addPredicateEservices = (
           isStateOffline,
           isStateOnline,
         });
-      })
+      }),
     );
     queryBuilder.orderBy({ id: "ASC" });
   }
@@ -507,7 +511,7 @@ const addPredicateEservices = (
 
 const addPredicateEservicesReadyForPolling = (
   queryBuilder: SelectQueryBuilder<EserviceViewEntities>,
-  entityAlias: string
+  entityAlias: string,
 ): void => {
   const lastRequestPlusPollingFrequency = `
     (
@@ -549,7 +553,7 @@ const addPredicateEservicesReadyForPolling = (
       probingEnabled: true,
     })
     .andWhere(
-      `(${isRequestAndResponseNull} OR ${isIntervalElapsedAndResponseUpdated} OR ${isIntervalElapsedWithThreshold})`
+      `(${isRequestAndResponseNull} OR ${isIntervalElapsedAndResponseUpdated} OR ${isIntervalElapsedWithThreshold})`,
     )
     .andWhere(compareTimestampInterval);
 };
