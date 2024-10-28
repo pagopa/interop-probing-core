@@ -1,6 +1,5 @@
 import express from "express";
 import tenantRouter from "./routes/tenants.js";
-import purposeRouter from "./routes/purposes.js";
 import eServiceRouter from "./routes/eservices.js";
 import { config } from "./config/env.js";
 import { initProducer } from "./producer.js";
@@ -24,7 +23,6 @@ export const producer = await initProducer(
 app.use(express.json());
 app.use("/tenants", tenantRouter);
 app.use("/eservices", eServiceRouter);
-app.use("/purposes", purposeRouter);
 
 app.listen(port, () => {
   // eslint-disable-next-line no-console
