@@ -57,8 +57,8 @@ describe("Message handler V1 test", () => {
             tenantV1Event,
             operationsService,
             ctx,
-            genericLogger
-          )
+            genericLogger,
+          ),
       ).not.toThrowError();
 
       expect(apiClient.saveTenant).toBeCalled();
@@ -68,9 +68,9 @@ describe("Message handler V1 test", () => {
       const tenantV1Event = createTenantEventV1(undefined, uuidv4());
 
       await expect(
-        handleMessageV1(tenantV1Event, operationsService, ctx, genericLogger)
+        handleMessageV1(tenantV1Event, operationsService, ctx, genericLogger),
       ).rejects.toThrow(
-        kafkaMessageMissingData(config.kafkaTopic, tenantV1Event.type)
+        kafkaMessageMissingData(config.kafkaTopic, tenantV1Event.type),
       );
     });
 
@@ -90,14 +90,14 @@ describe("Message handler V1 test", () => {
       const tenantV1Event = createTenantEventV1(tenantV1, uuidv4());
 
       const zodiosValidationError =
-        "Error: Zodios: Invalid Body parameter 'body'";
+        "Error: Zodios: Invalid Path parameter 'tenantId'";
 
       await expect(
-        handleMessageV1(tenantV1Event, operationsService, ctx, genericLogger)
+        handleMessageV1(tenantV1Event, operationsService, ctx, genericLogger),
       ).rejects.toThrow(
         errorSaveTenant(
-          `Error saving tenant with tenantId: ${tenantV1.id}. Details: ${zodiosValidationError}. Data: {"tenantId":"invalid uuid","externalId":"value","origin":"origin","name":"tenant name"}`
-        )
+          `Error saving tenant with tenantId: ${tenantV1.id}. Details: ${zodiosValidationError}. Data: {"externalId":"value","origin":"origin","name":"tenant name"}`,
+        ),
       );
     });
 
@@ -126,12 +126,12 @@ describe("Message handler V1 test", () => {
           tenantV1Event,
           operationsService,
           ctx,
-          genericLogger
+          genericLogger,
         );
       } catch (error) {
         expect(error).toBeInstanceOf(InternalError);
         expect((error as InternalError<ErrorCodes>).code).toBe(
-          "errorSaveTenant"
+          "errorSaveTenant",
         );
       }
     });
@@ -147,8 +147,8 @@ describe("Message handler V1 test", () => {
             mockTenantUpdateV1(uuidv4()),
             operationsService,
             ctx,
-            genericLogger
-          )
+            genericLogger,
+          ),
       ).not.toThrowError();
 
       expect(apiClient.saveTenant).toBeCalled();
@@ -164,12 +164,12 @@ describe("Message handler V1 test", () => {
           mockTenantUpdateV1(uuidv4()),
           operationsService,
           ctx,
-          genericLogger
+          genericLogger,
         );
       } catch (error) {
         expect(error).toBeInstanceOf(InternalError);
         expect((error as InternalError<ErrorCodes>).code).toBe(
-          "errorSaveTenant"
+          "errorSaveTenant",
         );
       }
     });
@@ -185,8 +185,8 @@ describe("Message handler V1 test", () => {
             mockTenantDeleteV1,
             operationsService,
             ctx,
-            genericLogger
-          )
+            genericLogger,
+          ),
       ).not.toThrowError();
 
       expect(apiClient.deleteTenant).toBeCalled();
@@ -202,12 +202,12 @@ describe("Message handler V1 test", () => {
           mockTenantDeleteV1,
           operationsService,
           ctx,
-          genericLogger
+          genericLogger,
         );
       } catch (error) {
         expect(error).toBeInstanceOf(InternalError);
         expect((error as InternalError<ErrorCodes>).code).toBe(
-          "errorDeleteTenant"
+          "errorDeleteTenant",
         );
       }
     });
