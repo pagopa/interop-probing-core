@@ -618,20 +618,44 @@ describe("database test", async () => {
 
     describe("deleteEservice", () => {
       it("should delete an eservice successfully", async () => {
-        const { eserviceId } = await createEservice();
-        
-        console.log(eserviceId);
-        
+        const { eserviceId, eserviceRecordId } = await createEservice();
 
-        // await eserviceService.deleteEservice({ eserviceId });
+        await eserviceProbingResponse
+          .createQueryBuilder()
+          .delete()
+          .where("eservices_record_id = :eserviceRecordId", {
+            eserviceRecordId,
+          })
+          .execute();
+
+        await eserviceProbingRequest
+          .createQueryBuilder()
+          .delete()
+          .where("eservices_record_id = :eserviceRecordId", {
+            eserviceRecordId,
+          })
+          .execute();
+
+        await eserviceService.deleteEservice(eserviceId);
 
         const result = await eservices.findOneBy({
           eserviceId,
         });
         expect(result).toBe(null);
       });
-    });
+      it("should return undefined when trying to delete a non-existent eservice", async () => {
+        const nonExistentId = uuidv4();
+        const result = await eserviceService.deleteEservice(nonExistentId);
+        expect(result).toBe(undefined);
+      });
+      it("should throw an error for an invalid UUID format", async () => {
+        const invalidId = "invalid-uuid-format";
 
+        await expect(
+          eserviceService.deleteEservice(invalidId)
+        ).rejects.toThrow();
+      });
+    });
 
     describe("updateEserviceLastRequest", () => {
       it("e-service last request has correctly updated", async () => {

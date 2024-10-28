@@ -13,24 +13,6 @@ import { randomUUID } from "crypto";
 
 export const eServiceIdV1 = randomUUID();
 
-const EServiceAdded: EServiceEvent = {
-  event_version: 1,
-  type: "EServiceAdded",
-  data: {
-    eservice: {
-      description: "",
-      descriptors: [],
-      id: eServiceIdV1,
-      name: "Eservice-test",
-      producerId: tenantIdV1,
-      technology: 1,
-    },
-  },
-  stream_id: "1",
-  version: 1,
-  timestamp: new Date(),
-};
-
 const descriptor: EServiceDescriptorV1 = {
   id: eServiceIdV1,
   audience: [],
@@ -42,7 +24,23 @@ const descriptor: EServiceDescriptorV1 = {
   docs: [],
   voucherLifespan: 10,
 };
-
+const EServiceAdded: EServiceEvent = {
+  event_version: 1,
+  type: "EServiceAdded",
+  data: {
+    eservice: {
+      description: "",
+      descriptors: [descriptor, descriptor],
+      id: eServiceIdV1,
+      name: "Eservice-test",
+      producerId: tenantIdV1,
+      technology: 1,
+    },
+  },
+  stream_id: "1",
+  version: 1,
+  timestamp: new Date(),
+};
 const ClonedEServiceAdded: EServiceEventV1 = {
   event_version: 1,
   version: 1,
@@ -99,7 +97,7 @@ export const EserviceEventTypeV1 = z.union([
 export type EserviceEventTypeV1 = z.infer<typeof EserviceEventTypeV1>;
 
 export function getEserviceEventV1ByType(
-  type: EserviceEventTypeV1,
+  type: EserviceEventTypeV1
 ): EServiceEvent {
   return match(type)
     .with("EServiceAdded", () => EServiceAdded)

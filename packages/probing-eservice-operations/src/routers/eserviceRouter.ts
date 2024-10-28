@@ -32,73 +32,6 @@ const eServiceRouter = (
             req.params.eserviceId,
             req.params.versionId,
             req.body,
-            logger(req.ctx),
-          );
-          return res.status(204).end();
-        } catch (error) {
-          const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
-          return res.status(errorRes.status).json(errorRes).end();
-        }
-      },
-    )
-    .post(
-      "/eservices/:eserviceId/versions/:versionId/probing/updateState",
-      async (req, res) => {
-        try {
-          await eServiceService.updateEserviceProbingState(
-            req.params.eserviceId,
-            req.params.versionId,
-            req.body,
-            logger(req.ctx),
-          );
-          return res.status(204).end();
-        } catch (error) {
-          const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
-          return res.status(errorRes.status).json(errorRes).end();
-        }
-      },
-    )
-    .post(
-      "/eservices/:eserviceId/versions/:versionId/updateFrequency",
-      async (req, res) => {
-        try {
-          await eServiceService.updateEserviceFrequency(
-            req.params.eserviceId,
-            req.params.versionId,
-            req.body,
-            logger(req.ctx),
-          );
-          return res.status(204).end();
-        } catch (error) {
-          const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
-          return res.status(errorRes.status).json(errorRes).end();
-        }
-      },
-    )
-    .post(
-      "/eservices/:eserviceId/versions/:versionId/saveEservice",
-      async (req, res) => {
-        try {
-          await eServiceService.saveEservice(
-            req.params.eserviceId,
-            req.params.versionId,
-            req.body,
-            logger(req.ctx),
-          );
-          return res.status(204).end();
-        } catch (error) {
-          const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
-          return res.status(errorRes.status).json(errorRes).end();
-        }
-      },
-    )
-    .post(
-      "/tenants/:tenantId/saveTenant", 
-      async (req, res) => {
-        try {
-          await eServiceService.saveTenant(
-            req.params.tenantId, 
-            req.body.name,
             logger(req.ctx)
           );
           return res.status(204).end();
@@ -109,20 +42,72 @@ const eServiceRouter = (
       }
     )
     .post(
-      "/eservices/:eserviceRecordId/updateLastRequest",
+      "/eservices/:eserviceId/versions/:versionId/probing/updateState",
       async (req, res) => {
         try {
-          await eServiceService.updateEserviceLastRequest(
-            Number(req.params.eserviceRecordId),
+          await eServiceService.updateEserviceProbingState(
+            req.params.eserviceId,
+            req.params.versionId,
             req.body,
-            logger(req.ctx),
+            logger(req.ctx)
           );
           return res.status(204).end();
         } catch (error) {
           const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();
         }
-      },
+      }
+    )
+    .post(
+      "/eservices/:eserviceId/versions/:versionId/updateFrequency",
+      async (req, res) => {
+        try {
+          await eServiceService.updateEserviceFrequency(
+            req.params.eserviceId,
+            req.params.versionId,
+            req.body,
+            logger(req.ctx)
+          );
+          return res.status(204).end();
+        } catch (error) {
+          const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
+          return res.status(errorRes.status).json(errorRes).end();
+        }
+      }
+    )
+    .post(
+      "/eservices/:eserviceId/versions/:versionId/saveEservice",
+      async (req, res) => {
+        try {
+          await eServiceService.saveEservice(
+            req.params.eserviceId,
+            req.params.versionId,
+            req.body,
+            logger(req.ctx)
+          );
+          return res.status(204).end();
+        } catch (error) {
+          const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
+          return res.status(errorRes.status).json(errorRes).end();
+        }
+      }
+    )
+
+    .post(
+      "/eservices/:eserviceRecordId/updateLastRequest",
+      async (req, res) => {
+        try {
+          await eServiceService.updateEserviceLastRequest(
+            Number(req.params.eserviceRecordId),
+            req.body,
+            logger(req.ctx)
+          );
+          return res.status(204).end();
+        } catch (error) {
+          const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
+          return res.status(errorRes.status).json(errorRes).end();
+        }
+      }
     )
     .post(
       "/eservices/:eserviceRecordId/updateResponseReceived",
@@ -131,14 +116,14 @@ const eServiceRouter = (
           await eServiceService.updateResponseReceived(
             Number(req.params.eserviceRecordId),
             req.body,
-            logger(req.ctx),
+            logger(req.ctx)
           );
           return res.status(204).end();
         } catch (error) {
           const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
           return res.status(errorRes.status).json(errorRes).end();
         }
-      },
+      }
     );
 
   eServiceRouter
@@ -235,6 +220,19 @@ const eServiceRouter = (
           .end();
       } catch (error) {
         const errorRes = makeApiProblem(error, () => 500, logger(req.ctx));
+        return res.status(errorRes.status).json(errorRes).end();
+      }
+    })
+    .post("/tenants/:tenantId/saveTenant", async (req, res) => {
+      try {
+        await eServiceService.saveTenant(
+          req.params.tenantId,
+          req.body.name,
+          logger(req.ctx)
+        );
+        return res.status(204).end();
+      } catch (error) {
+        const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
         return res.status(errorRes.status).json(errorRes).end();
       }
     })
