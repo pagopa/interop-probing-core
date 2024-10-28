@@ -616,11 +616,14 @@ describe("database test", async () => {
       });
     });
 
-    /* describe("deleteEservice", () => {
+    describe("deleteEservice", () => {
       it("should delete an eservice successfully", async () => {
         const { eserviceId } = await createEservice();
+        
+        console.log(eserviceId);
+        
 
-        await eserviceService.deleteEservice({ eserviceId }, genericLogger);
+        // await eserviceService.deleteEservice({ eserviceId });
 
         const result = await eservices.findOneBy({
           eserviceId,
@@ -628,7 +631,7 @@ describe("database test", async () => {
         expect(result).toBe(null);
       });
     });
-    */
+
 
     describe("updateEserviceLastRequest", () => {
       it("e-service last request has correctly updated", async () => {

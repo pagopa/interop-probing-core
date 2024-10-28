@@ -9,7 +9,6 @@ export const EserviceStatus = z.enum([
   ...Object.values(responseStatus).slice(1),
 ]);
 export type EserviceStatus = z.infer<typeof EserviceStatus>;
-
 export const eserviceInteropState = {
   active: "ACTIVE",
   inactive: "INACTIVE",

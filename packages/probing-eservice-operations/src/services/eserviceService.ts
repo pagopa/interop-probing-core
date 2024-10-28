@@ -149,11 +149,12 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
     },
 
     async saveTenant(
+      tennantId: string,
       data: ApiSaveTenantPayload,
       logger: Logger,
     ): Promise<ApiSaveTenantResponse> {
       const eServiceSaveTenant: TenantSaveRequest = {
-        tenant_id: data.tenantId,
+        tenant_id: tennantId,
         tenant_name: data.name,
       };
 
@@ -247,7 +248,7 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       logger.info("Retrieving eServices Producers");
       return await eserviceQuery.getEservicesProducers(filters, logger);
     },
-    //TODO: delete eservice
+
     async deleteEservice(
       eserviceId: string
     ): Promise<ApiDeleteEserviceResponse> {
