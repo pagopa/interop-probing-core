@@ -3,7 +3,6 @@ import {
   ChangeResponseReceived,
   EserviceProbingUpdateLastRequest,
   EserviceSaveRequest,
-  TenantSaveRequest,
 } from "pagopa-interop-probing-models";
 import { EserviceQuery } from "./db/eserviceQuery.js";
 import {
@@ -28,13 +27,9 @@ import {
   ApiUpdateResponseReceivedPayload,
   ApiUpdateResponseReceivedResponse,
   ApiDeleteEserviceResponse,
-  ApiSaveTenantPayload,
-  ApiSaveTenantResponse,
-  ApiSaveTenantParams,
 } from "pagopa-interop-probing-eservice-operations-client";
 import { eServiceNotFound } from "../model/domain/errors.js";
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, max-params
 export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
   return {
     async updateEserviceState(
@@ -55,9 +50,6 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
 
       eServiceToBeUpdated.state = payload.eServiceState;
 
-      logger.info(
-        `Updating eService State with eserviceId: ${eserviceId}, versionId: ${versionId}`,
-      );
       await eserviceQuery.updateEserviceState(
         eserviceId,
         versionId,
@@ -83,9 +75,6 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
 
       eServiceToBeUpdated.probingEnabled = payload.probingEnabled;
 
-      logger.info(
-        `Updating eService Probing State with eserviceId: ${eserviceId}, versionId: ${versionId}`,
-      );
       await eserviceQuery.updateEserviceProbingState(
         eserviceId,
         versionId,
@@ -113,9 +102,6 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       eServiceToBeUpdated.pollingStartTime = payload.startTime;
       eServiceToBeUpdated.pollingEndTime = payload.endTime;
 
-      logger.info(
-        `Updating eService frequency with eserviceId: ${eserviceId}, versionId: ${versionId}`,
-      );
       await eserviceQuery.updateEserviceFrequency(
         eserviceId,
         versionId,
@@ -127,7 +113,6 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       eserviceId: string,
       versionId: string,
       payload: ApiSaveEservicePayload,
-      logger: Logger,
     ): Promise<ApiSaveEserviceResponse> {
       const eServiceToBeUpdated: EserviceSaveRequest = {
         state: payload.state,
@@ -139,9 +124,6 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
         audience: payload.audience,
       };
 
-      logger.info(
-        `Save eService with eserviceId: ${eserviceId}, versionId: ${versionId}`,
-      );
       return await eserviceQuery.saveEservice(
         eserviceId,
         versionId,
@@ -149,35 +131,20 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       );
     },
 
-    async saveTenant(
-      params: ApiSaveTenantParams,
-      data: ApiSaveTenantPayload,
-      logger: Logger,
-    ): Promise<ApiSaveTenantResponse> {
-      const eServiceSaveTenant: TenantSaveRequest = {
-        tenant_id: params.tenantId,
-        tenant_name: data.name,
-      };
-
-      logger.info(
-        `Save tenant with tenant_id: ${eServiceSaveTenant.tenant_id}`,
-      );
-
-      return await eserviceQuery.saveTenant(eServiceSaveTenant);
+    async deleteEservice(
+      eserviceId: string,
+    ): Promise<ApiDeleteEserviceResponse> {
+      return await eserviceQuery.deleteEservice(eserviceId);
     },
 
     async updateEserviceLastRequest(
       eserviceRecordId: number,
       payload: ApiUpdateLastRequestPayload,
-      logger: Logger,
     ): Promise<ApiUpdateLastRequestResponse> {
       const eServiceToBeUpdated: EserviceProbingUpdateLastRequest = {
         lastRequest: payload.lastRequest,
       };
 
-      logger.info(
-        `Update eService probing last request with eserviceRecordId: ${eserviceRecordId}`,
-      );
       await eserviceQuery.updateEserviceLastRequest(
         eserviceRecordId,
         eServiceToBeUpdated,
@@ -187,16 +154,11 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
     async updateResponseReceived(
       eserviceRecordId: number,
       payload: ApiUpdateResponseReceivedPayload,
-      logger: Logger,
     ): Promise<ApiUpdateResponseReceivedResponse> {
       const eServiceToBeUpdated: ChangeResponseReceived = {
         responseStatus: payload.status,
         responseReceived: payload.responseReceived,
       };
-
-      logger.info(
-        `Update eService probing response received with eserviceRecordId: ${eserviceRecordId}`,
-      );
       await eserviceQuery.updateResponseReceived(
         eserviceRecordId,
         eServiceToBeUpdated,
@@ -207,7 +169,6 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       filters: ApiSearchEservicesQuery,
       logger: Logger,
     ): Promise<ApiSearchEservicesResponse> {
-      logger.info("Retrieving eServices");
       return await eserviceQuery.searchEservices(filters, logger);
     },
 
@@ -215,9 +176,6 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       eserviceRecordId: number,
       logger: Logger,
     ): Promise<ApiEserviceMainDataResponse> {
-      logger.info(
-        `Retrieving eService main data with eserviceRecordId: ${eserviceRecordId}`,
-      );
       return await eserviceQuery.getEserviceMainData(eserviceRecordId, logger);
     },
 
@@ -225,9 +183,6 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       eserviceRecordId: number,
       logger: Logger,
     ): Promise<ApiEserviceProbingDataResponse> {
-      logger.info(
-        `Retrieving eService probing data with eserviceRecordId: ${eserviceRecordId}`,
-      );
       return await eserviceQuery.getEserviceProbingData(
         eserviceRecordId,
         logger,
@@ -238,7 +193,6 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       filters: ApiGetEservicesReadyForPollingQuery,
       logger: Logger,
     ): Promise<ApiGetEservicesReadyForPollingResponse> {
-      logger.debug("Retrieving eServices ready for polling");
       return await eserviceQuery.getEservicesReadyForPolling(filters, logger);
     },
 
@@ -246,14 +200,7 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       filters: ApiGetProducersQuery,
       logger: Logger,
     ): Promise<ApiGetProducersResponse> {
-      logger.info("Retrieving eServices Producers");
       return await eserviceQuery.getEservicesProducers(filters, logger);
-    },
-
-    async deleteEservice(
-      eserviceId: string,
-    ): Promise<ApiDeleteEserviceResponse> {
-      return await eserviceQuery.deleteEservice(eserviceId);
     },
   };
 }

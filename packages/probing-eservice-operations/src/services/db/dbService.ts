@@ -50,7 +50,6 @@ import {
   ApiUpdateResponseReceivedResponse,
 } from "pagopa-interop-probing-eservice-operations-client";
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function modelServiceBuilder(modelRepository: ModelRepository) {
   const eservices = modelRepository.eservices;
   const tenants = modelRepository.tenants;
@@ -104,7 +103,9 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         throw tenantNotFound(eServiceUpdated.producerId);
       }
 
-      const updateEservice = {
+      const eserviceData = {
+        eserviceId,
+        versionId,
         eserviceName: eServiceUpdated.eserviceName,
         producerName: tenant.tenantName,
         basePath: eServiceUpdated.basePath,
@@ -113,40 +114,31 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         audience: eServiceUpdated.audience,
         state: eServiceUpdated.state,
       };
-      const existingEservice = await eservices
-        .createQueryBuilder()
-        .where("eservice_id = :eserviceId AND version_id = :versionId", {
-          eserviceId,
-          versionId,
-        })
-        .getOne();
 
-      if (existingEservice) {
-        await eservices
-          .createQueryBuilder()
-          .update()
-          .set(updateEservice)
-          .where("eservice_id = :eserviceId AND version_id = :versionId", {
-            eserviceId,
-            versionId,
-          })
-          .returning("id")
-          .execute();
-      } else {
-        await eservices
-          .createQueryBuilder()
-          .insert()
-          .values({
-            eserviceRecordId: () =>
-              `nextval('"${config.schemaName}"."eservice_sequence"'::regclass)`,
-            eserviceId,
-            versionId,
-            ...eServiceDefaultValues,
-            ...updateEservice,
-          })
-          .returning("id")
-          .execute();
-      }
+      await eservices
+        .createQueryBuilder()
+        .insert()
+        .values({
+          eserviceRecordId: () =>
+            `nextval('"${config.schemaName}"."eservice_sequence"'::regclass)`,
+          ...eserviceData,
+          ...eServiceDefaultValues,
+        })
+        .orUpdate(
+          [
+            "eservice_id",
+            "version_id",
+            "eservice_name",
+            "producer_name",
+            "base_path",
+            "eservice_technology",
+            "version_number",
+            "audience",
+            "state",
+          ],
+          ["eservice_id", "version_id"],
+        )
+        .execute();
     },
 
     async deleteEservice(eserviceId: string): Promise<void> {
@@ -158,27 +150,26 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     },
 
     async saveTenant(
-      eServiceSaveTenant: TenantSaveRequest,
+      tenantData: TenantSaveRequest,
     ): Promise<ApiSaveTenantResponse> {
-      const existingTenant = await tenants.findOneBy({
-        tenantId: eServiceSaveTenant.tenant_id,
-      });
-
-      if (existingTenant) {
-        throw new Error(
-          `Tenant with ID '${eServiceSaveTenant.tenant_id}' already exists.`,
-        );
-      }
       await tenants
         .createQueryBuilder()
         .insert()
         .values({
           tenantRecordId: () =>
             `nextval('"${config.schemaName}"."tenant_sequence"'::regclass)`,
-          tenantId: eServiceSaveTenant.tenant_id,
-          tenantName: eServiceSaveTenant.tenant_name,
+          tenantId: tenantData.tenant_id,
+          tenantName: tenantData.tenant_name,
         })
-        .returning("tenant_id")
+        .orUpdate(["tenant_name"], ["tenant_id"])
+        .execute();
+    },
+
+    async deleteTenant(tenantId: string): Promise<void> {
+      await tenants
+        .createQueryBuilder()
+        .delete()
+        .where("tenant_id = :tenantId", { tenantId })
         .execute();
     },
 

@@ -83,7 +83,6 @@ const eServiceRouter = (
             req.params.eserviceId,
             req.params.versionId,
             req.body,
-            logger(req.ctx),
           );
           return res.status(204).end();
         } catch (error) {
@@ -92,15 +91,6 @@ const eServiceRouter = (
         }
       },
     )
-    .post("/tenants/:tenantId/saveTenant", async (req, res) => {
-      try {
-        await eServiceService.saveTenant(req.params, req.body, logger(req.ctx));
-        return res.status(204).end();
-      } catch (error) {
-        const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
-        return res.status(errorRes.status).json(errorRes).end();
-      }
-    })
     .post(
       "/eservices/:eserviceId/versions/:versionId/probing/updateState",
       async (req, res) => {
@@ -143,7 +133,6 @@ const eServiceRouter = (
             req.params.eserviceId,
             req.params.versionId,
             req.body,
-            logger(req.ctx),
           );
           return res.status(204).end();
         } catch (error) {
@@ -152,7 +141,16 @@ const eServiceRouter = (
         }
       },
     )
+    .delete("/eservices/:eserviceId/deleteEservice", async (req, res) => {
+      try {
+        await eServiceService.deleteEservice(req.params.eserviceId);
 
+        return res.status(204).end();
+      } catch (error) {
+        const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
+        return res.status(errorRes.status).json(errorRes).end();
+      }
+    })
     .post(
       "/eservices/:eserviceRecordId/updateLastRequest",
       async (req, res) => {
@@ -160,7 +158,6 @@ const eServiceRouter = (
           await eServiceService.updateEserviceLastRequest(
             Number(req.params.eserviceRecordId),
             req.body,
-            logger(req.ctx),
           );
           return res.status(204).end();
         } catch (error) {
@@ -176,7 +173,6 @@ const eServiceRouter = (
           await eServiceService.updateResponseReceived(
             Number(req.params.eserviceRecordId),
             req.body,
-            logger(req.ctx),
           );
           return res.status(204).end();
         } catch (error) {
@@ -184,9 +180,7 @@ const eServiceRouter = (
           return res.status(errorRes.status).json(errorRes).end();
         }
       },
-    );
-
-  eServiceRouter
+    )
     .get("/eservices", async (req, res) => {
       try {
         const eservices = await eServiceService.searchEservices(
@@ -242,28 +236,6 @@ const eServiceRouter = (
         return res.status(errorRes.status).json(errorRes).end();
       }
     })
-    .get("/producers", async (req, res) => {
-      try {
-        const eservices = await eServiceService.getEservicesProducers(
-          {
-            producerName: req.query.producerName,
-            limit: req.query.limit,
-            offset: req.query.offset,
-          },
-          logger(req.ctx),
-        );
-
-        return res
-          .status(200)
-          .json({
-            content: eservices.content,
-          })
-          .end();
-      } catch (error) {
-        const errorRes = makeApiProblem(error, () => 500, logger(req.ctx));
-        return res.status(errorRes.status).json(errorRes).end();
-      }
-    })
     .get("/eservices/polling", async (req, res) => {
       try {
         const eservices = await eServiceService.getEservicesReadyForPolling(
@@ -282,17 +254,30 @@ const eServiceRouter = (
         const errorRes = makeApiProblem(error, () => 500, logger(req.ctx));
         return res.status(errorRes.status).json(errorRes).end();
       }
-    })
-    .delete("/eservices/:eserviceId/deleteEservice", async (req, res) => {
-      try {
-        await eServiceService.deleteEservice(req.params.eserviceId);
-
-        return res.status(204).end();
-      } catch (error) {
-        const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
-        return res.status(errorRes.status).json(errorRes).end();
-      }
     });
+
+  eServiceRouter.get("/producers", async (req, res) => {
+    try {
+      const eservices = await eServiceService.getEservicesProducers(
+        {
+          producerName: req.query.producerName,
+          limit: req.query.limit,
+          offset: req.query.offset,
+        },
+        logger(req.ctx),
+      );
+
+      return res
+        .status(200)
+        .json({
+          content: eservices.content,
+        })
+        .end();
+    } catch (error) {
+      const errorRes = makeApiProblem(error, () => 500, logger(req.ctx));
+      return res.status(errorRes.status).json(errorRes).end();
+    }
+  });
 
   return eServiceRouter;
 };

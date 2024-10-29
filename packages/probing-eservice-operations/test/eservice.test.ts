@@ -540,7 +540,6 @@ describe("database test", async () => {
           payload.eserviceId,
           payload.versionId,
           payload,
-          genericLogger,
         );
 
         const updatedEservice = await eservices.findOneBy({
@@ -575,12 +574,7 @@ describe("database test", async () => {
           audience: ["audience updated"],
         };
 
-        await eserviceService.saveEservice(
-          eserviceId,
-          versionId,
-          payload,
-          genericLogger,
-        );
+        await eserviceService.saveEservice(eserviceId, versionId, payload);
 
         const updatedEservice = await eservices.findOneBy({
           eserviceId,
@@ -610,7 +604,6 @@ describe("database test", async () => {
               payload.eserviceId,
               payload.versionId,
               payload,
-              genericLogger,
             ),
         ).rejects.toThrowError(tenantNotFound(payload.producerId));
       });
@@ -643,11 +636,13 @@ describe("database test", async () => {
         });
         expect(result).toBe(null);
       });
+
       it("should return undefined when trying to delete a non-existent eservice", async () => {
         const nonExistentId = uuidv4();
         const result = await eserviceService.deleteEservice(nonExistentId);
         expect(result).toBe(undefined);
       });
+
       it("should throw an error for an invalid UUID format", async () => {
         const invalidId = "invalid-uuid-format";
 
@@ -668,7 +663,6 @@ describe("database test", async () => {
         await eserviceService.updateEserviceLastRequest(
           eserviceRecordId,
           payload,
-          genericLogger,
         );
 
         const updatedEservice = await eserviceProbingRequest.findOneBy({
@@ -696,7 +690,6 @@ describe("database test", async () => {
         await eserviceService.updateEserviceLastRequest(
           eserviceRecordId,
           payload,
-          genericLogger,
         );
 
         const updatedEservice = await eserviceProbingRequest.findOneBy({
@@ -722,11 +715,7 @@ describe("database test", async () => {
           responseReceived: new Date().toISOString(),
         };
 
-        await eserviceService.updateResponseReceived(
-          eserviceRecordId,
-          payload,
-          genericLogger,
-        );
+        await eserviceService.updateResponseReceived(eserviceRecordId, payload);
 
         const updatedEservice = await eserviceProbingResponse.findOneBy({
           eserviceRecordId,
@@ -753,11 +742,7 @@ describe("database test", async () => {
           responseReceived: new Date().toISOString(),
         };
 
-        await eserviceService.updateResponseReceived(
-          eserviceRecordId,
-          payload,
-          genericLogger,
-        );
+        await eserviceService.updateResponseReceived(eserviceRecordId, payload);
 
         const updatedEservice = await eserviceProbingResponse.findOneBy({
           eserviceRecordId,
