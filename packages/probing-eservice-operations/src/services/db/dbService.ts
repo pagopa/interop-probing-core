@@ -142,11 +142,33 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
     },
 
     async deleteEservice(eserviceId: string): Promise<void> {
-      await eservices
-        .createQueryBuilder()
-        .delete()
-        .where("eservice_id = :eserviceId", { eserviceId })
-        .execute();
+      const eservice = await eservices.findOneBy({
+        eserviceId,
+      });
+
+      if (eservice) {
+        await eserviceProbingResponse
+          .createQueryBuilder()
+          .delete()
+          .where("eservices_record_id = :eserviceRecordId", {
+            eserviceRecordId: eservice.eserviceRecordId,
+          })
+          .execute();
+
+        await eserviceProbingRequest
+          .createQueryBuilder()
+          .delete()
+          .where("eservices_record_id = :eserviceRecordId", {
+            eserviceRecordId: eservice.eserviceRecordId,
+          })
+          .execute();
+
+        await eservices
+          .createQueryBuilder()
+          .delete()
+          .where("eservice_id = :eserviceId", { eserviceId })
+          .execute();
+      }
     },
 
     async saveTenant(
