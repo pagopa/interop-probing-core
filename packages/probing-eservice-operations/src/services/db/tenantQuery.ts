@@ -8,9 +8,9 @@ import {
 export function tenantQueryBuilder(modelService: ModelService) {
   return {
     saveTenant: async (
-      eServiceSaveTenant: TenantSaveRequest,
+      tenantSaveRequest: TenantSaveRequest,
     ): Promise<ApiSaveTenantResponse> =>
-      await modelService.saveTenant(eServiceSaveTenant),
+      await modelService.saveTenant(tenantSaveRequest),
 
     deleteTenant: async (
       eserviceId: string,
