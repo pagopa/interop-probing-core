@@ -12,6 +12,10 @@ CREATE TABLE probing.tenants (
     tenant_name VARCHAR(2048)
 );
 
+ALTER TABLE ${schema_name}.tenants 
+ADD CONSTRAINT pk_tenants PRIMARY KEY (id), 
+ADD CONSTRAINT uq_tenants_tenant_id UNIQUE (tenant_id);
+
 CREATE TABLE probing.eservices (
     id BIGINT NOT NULL,
     base_path VARCHAR(2048) array NOT NULL,
