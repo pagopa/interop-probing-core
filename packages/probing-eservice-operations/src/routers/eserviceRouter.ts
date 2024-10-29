@@ -42,10 +42,10 @@ const eServiceRouter = (
       },
     )
     .post(
-      "/eservices/:eserviceId/versions/:versionId/updateFrequency",
+      "/eservices/:eserviceId/versions/:versionId/probing/updateState",
       async (req, res) => {
         try {
-          await eServiceService.updateEserviceFrequency(
+          await eServiceService.updateEserviceProbingState(
             req.params.eserviceId,
             req.params.versionId,
             req.body,
@@ -59,10 +59,10 @@ const eServiceRouter = (
       },
     )
     .post(
-      "/eservices/:eserviceId/versions/:versionId/probing/updateState",
+      "/eservices/:eserviceId/versions/:versionId/updateFrequency",
       async (req, res) => {
         try {
-          await eServiceService.updateEserviceProbingState(
+          await eServiceService.updateEserviceFrequency(
             req.params.eserviceId,
             req.params.versionId,
             req.body,
