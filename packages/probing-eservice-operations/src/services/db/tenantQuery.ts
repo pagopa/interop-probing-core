@@ -15,7 +15,7 @@ export function tenantQueryBuilder(modelService: ModelService) {
     deleteTenant: async (
       eserviceId: string,
     ): Promise<ApiDeleteEserviceResponse> =>
-      await modelService.deleteEservice(eserviceId),
+      await modelService.deleteTenant(eserviceId),
   };
 }
 

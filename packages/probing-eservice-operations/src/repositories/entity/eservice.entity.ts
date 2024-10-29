@@ -23,10 +23,11 @@ export interface EserviceSchema {
   versionNumber: number;
   audience: string[];
 }
+
 export interface TenantSchema {
   tenantRecordId?: number;
   tenantId: string;
-  tenantName: string;
+  tenantName?: string;
 }
 
 /**
