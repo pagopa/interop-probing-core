@@ -42,23 +42,6 @@ const eServiceRouter = (
       },
     )
     .post(
-      "/eservices/:eserviceId/versions/:versionId/probing/updateState",
-      async (req, res) => {
-        try {
-          await eServiceService.updateEserviceProbingState(
-            req.params.eserviceId,
-            req.params.versionId,
-            req.body,
-            logger(req.ctx),
-          );
-          return res.status(204).end();
-        } catch (error) {
-          const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
-          return res.status(errorRes.status).json(errorRes).end();
-        }
-      },
-    )
-    .post(
       "/eservices/:eserviceId/versions/:versionId/updateFrequency",
       async (req, res) => {
         try {
@@ -80,23 +63,6 @@ const eServiceRouter = (
       async (req, res) => {
         try {
           await eServiceService.updateEserviceProbingState(
-            req.params.eserviceId,
-            req.params.versionId,
-            req.body,
-            logger(req.ctx),
-          );
-          return res.status(204).end();
-        } catch (error) {
-          const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
-          return res.status(errorRes.status).json(errorRes).end();
-        }
-      },
-    )
-    .post(
-      "/eservices/:eserviceId/versions/:versionId/updateFrequency",
-      async (req, res) => {
-        try {
-          await eServiceService.updateEserviceFrequency(
             req.params.eserviceId,
             req.params.versionId,
             req.body,
