@@ -15,8 +15,8 @@ import { tenantServiceBuilder } from "../services/tenantService.js";
 import { tenantQueryBuilder } from "../services/db/tenantQuery.js";
 
 const modelService = modelServiceBuilder(await ModelRepository.init(config));
-const eserviceQuery = tenantQueryBuilder(modelService);
-const tenantService = tenantServiceBuilder(eserviceQuery);
+const tenantQuery = tenantQueryBuilder(modelService);
+const tenantService = tenantServiceBuilder(tenantQuery);
 
 const tenantRouter = (
   ctx: ZodiosContext,
