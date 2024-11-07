@@ -23,10 +23,10 @@ import {
   ApiUpdateEserviceStateResponse,
   ApiUpdateEserviceProbingStateResponse,
   ApiUpdateEserviceFrequencyResponse,
+  ApiDeleteEserviceResponse,
 } from "pagopa-interop-probing-eservice-operations-client";
 import { Logger } from "pagopa-interop-probing-commons";
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
 export function eserviceQueryBuilder(modelService: ModelService) {
   return {
     updateEserviceState: async (
@@ -39,6 +39,7 @@ export function eserviceQueryBuilder(modelService: ModelService) {
         versionId,
         eServiceUpdated,
       ),
+
     updateEserviceProbingState: async (
       eserviceId: string,
       versionId: string,
@@ -49,6 +50,7 @@ export function eserviceQueryBuilder(modelService: ModelService) {
         versionId,
         eServiceUpdated,
       ),
+
     updateEserviceFrequency: async (
       eserviceId: string,
       versionId: string,
@@ -59,12 +61,19 @@ export function eserviceQueryBuilder(modelService: ModelService) {
         versionId,
         eServiceUpdated,
       ),
+
     saveEservice: async (
       eserviceId: string,
       versionId: string,
       eServiceUpdated: EserviceSaveRequest,
     ): Promise<ApiSaveEserviceResponse> =>
       await modelService.saveEservice(eserviceId, versionId, eServiceUpdated),
+
+    deleteEservice: async (
+      eserviceId: string,
+    ): Promise<ApiDeleteEserviceResponse> =>
+      await modelService.deleteEservice(eserviceId),
+
     updateEserviceLastRequest: async (
       eserviceRecordId: number,
       eServiceUpdated: EserviceProbingUpdateLastRequest,
@@ -73,6 +82,7 @@ export function eserviceQueryBuilder(modelService: ModelService) {
         eserviceRecordId,
         eServiceUpdated,
       ),
+
     updateResponseReceived: async (
       eserviceRecordId: number,
       eServiceUpdated: ChangeResponseReceived,
@@ -81,6 +91,7 @@ export function eserviceQueryBuilder(modelService: ModelService) {
         eserviceRecordId,
         eServiceUpdated,
       ),
+
     getEServiceByIdAndVersion: async (
       eserviceId: string,
       versionId: string,
@@ -91,26 +102,31 @@ export function eserviceQueryBuilder(modelService: ModelService) {
         versionId,
         logger,
       ),
+
     searchEservices: async (
       filters: ApiSearchEservicesQuery,
       logger: Logger,
     ): Promise<ApiSearchEservicesResponse> =>
       await modelService.searchEservices(filters, logger),
+
     getEserviceMainData: async (
       eserviceRecordId: number,
       logger: Logger,
     ): Promise<ApiEserviceMainDataResponse> =>
       await modelService.getEserviceMainData(eserviceRecordId, logger),
+
     getEserviceProbingData: async (
       eserviceRecordId: number,
       logger: Logger,
     ): Promise<ApiEserviceProbingDataResponse> =>
       await modelService.getEserviceProbingData(eserviceRecordId, logger),
+
     getEservicesProducers: async (
       filters: ApiGetProducersQuery,
       logger: Logger,
     ): Promise<ApiGetProducersResponse> =>
       await modelService.getEservicesProducers(filters, logger),
+
     getEservicesReadyForPolling: async (
       filters: ApiGetEservicesReadyForPollingQuery,
       logger: Logger,

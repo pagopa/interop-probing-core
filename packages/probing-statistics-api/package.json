@@ -49,6 +49,6 @@
     "pagopa-interop-probing-commons": "workspace:*",
     "pagopa-interop-probing-models": "workspace:*",
     "ts-pattern": "5.0.6",
-    "zod": "3.22.4"
+    "zod": "3.23.8"
   }
 }

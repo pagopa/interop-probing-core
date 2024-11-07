@@ -9,7 +9,6 @@ export const EserviceStatus = z.enum([
   ...Object.values(responseStatus).slice(1),
 ]);
 export type EserviceStatus = z.infer<typeof EserviceStatus>;
-
 export const eserviceInteropState = {
   active: "ACTIVE",
   inactive: "INACTIVE",
@@ -78,7 +77,7 @@ export type ChangeResponseReceived = z.infer<typeof ChangeResponseReceived>;
 
 export const EserviceSaveRequest = z.object({
   eserviceName: z.string(),
-  producerName: z.string(),
+  producerId: z.string(),
   basePath: z.array(z.string()),
   technology: EserviceTechnology,
   state: EserviceInteropState,
@@ -86,6 +85,12 @@ export const EserviceSaveRequest = z.object({
   audience: z.array(z.string()),
 });
 export type EserviceSaveRequest = z.infer<typeof EserviceSaveRequest>;
+
+export const TenantSaveRequest = z.object({
+  tenant_id: z.string(),
+  tenant_name: z.string().optional(),
+});
+export type TenantSaveRequest = z.infer<typeof TenantSaveRequest>;
 
 /**
  * Schema for EService.
