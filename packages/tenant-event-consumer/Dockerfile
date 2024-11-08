@@ -18,7 +18,7 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 COPY tsconfig.json /app/
 COPY turbo.json /app/
 COPY ./packages/tenant-event-consumer /app/packages/tenant-event-consumer
-COPY ./packages/operations/open-api /app/packages/operations/open-api
+COPY ./packages/probing-eservice-operations/open-api /app/packages/probing-eservice-operations/open-api
 COPY ./packages/commons /app/packages/commons
 COPY ./packages/kafka-connector /app/packages/kafka-connector
 COPY ./packages/models /app/packages/models
