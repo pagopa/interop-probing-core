@@ -128,8 +128,8 @@ importers:
   packages/eservice-event-consumer:
     dependencies:
       '@pagopa/interop-outbound-models':
-        specifier: 1.0.4
-        version: 1.0.4
+        specifier: 1.2.0
+        version: 1.2.0
       '@tsconfig/node-lts':
         specifier: 20.1.1
         version: 20.1.1
@@ -989,8 +989,8 @@ importers:
   packages/tenant-event-consumer:
     dependencies:
       '@pagopa/interop-outbound-models':
-        specifier: 1.0.4
-        version: 1.0.4
+        specifier: 1.2.0
+        version: 1.2.0
       '@tsconfig/node-lts':
         specifier: 20.1.1
         version: 20.1.1
@@ -3274,6 +3274,9 @@ packages:
 
   '@pagopa/interop-outbound-models@1.0.4':
     resolution: {integrity: sha512-oSJTeVeMecVYKSceV4ku5w7LFbc7SHFfr8AQF9z3fvi5EStuhmnpVBTA/k/1Wvi58tHgAS3vgKRREchtxsm0Bw==}
+
+  '@pagopa/interop-outbound-models@1.2.0':
+    resolution: {integrity: sha512-hg5W1+OXknBnCcIGSs0VJEPfCidABvQ1AmmVudvUSwgG4lNmxBXSyw8hSFl4Ejryl/h8wKxPgSg5sUvkabnh4w==}
 
   '@pagopa/mui-italia@1.1.0':
     resolution: {integrity: sha512-j3QjBC0Bermmbzxpr/DdGZ4BBrIRMjHM13Ho0xOFiRPn/PEw/BafsXsQfeedUWrQlYMvX6uEzg4tXOEnx43zHw==}
@@ -7125,6 +7128,7 @@ packages:
 
   sudo-prompt@9.2.1:
     resolution: {integrity: sha512-Mu7R0g4ig9TUuGSxJavny5Rv0egCEtpZRNMrZaYS1vxkiIxGiGUwoezU3LazIQ+KE04hTrTfNPgxU5gzi7F5Pw==}
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   superagent@8.1.2:
     resolution: {integrity: sha512-6WTxW1EB6yCxV5VFOIPQruWGHqc3yI7hEmZK6h+pyk69Lk/Ut7rLUY6W/ONF2MjBuGjvmMiIpsrVJ2vjrHlslA==}
@@ -11969,6 +11973,12 @@ snapshots:
       react-router-dom: 6.22.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
 
   '@pagopa/interop-outbound-models@1.0.4':
+    dependencies:
+      '@protobuf-ts/runtime': 2.9.4
+      ts-pattern: 5.2.0
+      zod: 3.23.8
+
+  '@pagopa/interop-outbound-models@1.2.0':
     dependencies:
       '@protobuf-ts/runtime': 2.9.4
       ts-pattern: 5.2.0

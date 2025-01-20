@@ -30,7 +30,7 @@ if (!parsedLoggerConfig.success) {
 
 const logFormat = (
   msg: string,
-  timestamp: string,
+  timestamp: unknown,
   level: string,
   { serviceName, correlationId, messageId }: LoggerMetadata,
 ) => {
@@ -54,11 +54,16 @@ const logFormat = (
 
 export const customFormat = () =>
   winston.format.printf(({ level, message, timestamp, ...meta }) => {
-    const lines = message
+    const lines = `${message}`
       .toString()
       .split("\n")
       .map((line: string) =>
-        logFormat(line, timestamp, level, meta.loggerMetadata),
+        logFormat(
+          line,
+          timestamp,
+          level,
+          meta.loggerMetadata as LoggerMetadata,
+        ),
       );
     return lines.join("\n");
   });
