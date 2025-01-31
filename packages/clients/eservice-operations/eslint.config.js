@@ -12,6 +12,7 @@ export default [
       "vitest.config.ts",
       "**/dist",
       "node_modules",
+      "**/src/model/generated/*.ts",
     ],
   },
   {
