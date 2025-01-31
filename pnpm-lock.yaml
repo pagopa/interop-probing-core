@@ -54,6 +54,9 @@ importers:
       eslint-plugin-prettier:
         specifier: 5.2.3
         version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
+      globals:
+        specifier: ^15.14.0
+        version: 15.14.0
       prettier:
         specifier: 3.2.5
         version: 3.2.5
@@ -124,6 +127,9 @@ importers:
       eslint-plugin-prettier:
         specifier: 5.2.3
         version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
+      globals:
+        specifier: ^15.14.0
+        version: 15.14.0
       prettier:
         specifier: 3.2.5
         version: 3.2.5
@@ -197,6 +203,9 @@ importers:
       eslint-plugin-prettier:
         specifier: 5.2.3
         version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
+      globals:
+        specifier: ^15.14.0
+        version: 15.14.0
       prettier:
         specifier: 3.2.5
         version: 3.2.5
@@ -228,6 +237,9 @@ importers:
         specifier: 5.1.2
         version: 5.1.2
     devDependencies:
+      globals:
+        specifier: ^15.14.0
+        version: 15.14.0
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -286,6 +298,9 @@ importers:
       eslint-plugin-prettier:
         specifier: 5.2.3
         version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
+      globals:
+        specifier: ^15.14.0
+        version: 15.14.0
       prettier:
         specifier: 3.2.5
         version: 3.2.5
@@ -323,6 +338,9 @@ importers:
       eslint-plugin-prettier:
         specifier: 5.2.3
         version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
+      globals:
+        specifier: ^15.14.0
+        version: 15.14.0
       prettier:
         specifier: 3.2.5
         version: 3.2.5
@@ -402,6 +420,9 @@ importers:
       '@types/uuid':
         specifier: 9.0.8
         version: 9.0.8
+      globals:
+        specifier: ^15.14.0
+        version: 15.14.0
       supertest:
         specifier: 6.3.4
         version: 6.3.4
@@ -472,6 +493,9 @@ importers:
       eslint-plugin-prettier:
         specifier: 5.2.3
         version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
+      globals:
+        specifier: ^15.14.0
+        version: 15.14.0
       prettier:
         specifier: 3.2.5
         version: 3.2.5
@@ -557,6 +581,9 @@ importers:
       eslint-plugin-prettier:
         specifier: 5.2.3
         version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
+      globals:
+        specifier: ^15.14.0
+        version: 15.14.0
       prettier:
         specifier: 3.2.5
         version: 3.2.5
@@ -748,6 +775,9 @@ importers:
       eslint-plugin-prettier:
         specifier: 5.2.3
         version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
+      globals:
+        specifier: ^15.14.0
+        version: 15.14.0
       prettier:
         specifier: 3.2.5
         version: 3.2.5
@@ -824,6 +854,9 @@ importers:
       eslint-plugin-prettier:
         specifier: 5.2.3
         version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
+      globals:
+        specifier: ^15.14.0
+        version: 15.14.0
       prettier:
         specifier: 3.2.5
         version: 3.2.5
@@ -909,6 +942,9 @@ importers:
       eslint-plugin-prettier:
         specifier: 5.2.3
         version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
+      globals:
+        specifier: ^15.14.0
+        version: 15.14.0
       prettier:
         specifier: 3.2.5
         version: 3.2.5
@@ -979,6 +1015,9 @@ importers:
       eslint-plugin-prettier:
         specifier: 5.2.3
         version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
+      globals:
+        specifier: ^15.14.0
+        version: 15.14.0
       prettier:
         specifier: 3.2.5
         version: 3.2.5
@@ -1058,6 +1097,9 @@ importers:
       eslint-plugin-prettier:
         specifier: 5.2.3
         version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
+      globals:
+        specifier: ^15.14.0
+        version: 15.14.0
       prettier:
         specifier: 3.2.5
         version: 3.2.5
@@ -5469,6 +5511,10 @@ packages:
 
   globals@14.0.0:
     resolution: {integrity: sha512-oahGvuMGQlPw/ivIYBjVSrWAfWLBeku5tpPE2fOPLi+WHffIWbuh2tCjhyQhTBPMf5E9jDEH4FOmTYgYwbKwtQ==}
+    engines: {node: '>=18'}
+
+  globals@15.14.0:
+    resolution: {integrity: sha512-OkToC372DtlQeje9/zHIo5CT8lRP/FUgEOKBEhU4e0abL7J7CD24fD9ohiLN5hagG/kWCYj4K5oaxxtj2Z0Dig==}
     engines: {node: '>=18'}
 
   globalthis@1.0.4:
@@ -14785,6 +14831,8 @@ snapshots:
   globals@11.12.0: {}
 
   globals@14.0.0: {}
+
+  globals@15.14.0: {}
 
   globalthis@1.0.4:
     dependencies:

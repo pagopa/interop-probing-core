@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { P, match } from "ts-pattern";
 import { ZodError } from "zod";
 import { AxiosError } from "axios";

@@ -1,4 +1,3 @@
-/* eslint-disable max-classes-per-file */
 import { Logger } from "pagopa-interop-probing-commons";
 import {
   AppError,
