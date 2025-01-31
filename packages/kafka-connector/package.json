@@ -23,7 +23,7 @@
     "ts-pattern": "5.1.2"
   },
   "devDependencies": {
-    "globals": "^15.14.0",
+    "globals": "15.14.0",
     "typescript": "5.2.2"
   }
 }
