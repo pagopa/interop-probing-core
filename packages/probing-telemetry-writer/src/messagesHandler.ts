@@ -9,7 +9,6 @@ import { TelemetryWriteService } from "./services/telemetryService.js";
 import { decodeSQSMessage } from "./model/models.js";
 import { makeApplicationError } from "./model/domain/errors.js";
 import { config } from "./utilities/config.js";
-import { error } from "console";
 
 export function processMessage(
   service: TelemetryWriteService,
@@ -25,7 +24,7 @@ export function processMessage(
     try {
       await service.writeRecord(decodeSQSMessage(message), ctx);
     } catch (e: unknown) {
-      throw makeApplicationError(error, logger(ctx));
+      throw makeApplicationError(e, logger(ctx));
     }
   };
 }

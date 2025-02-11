@@ -1,4 +1,3 @@
-/* eslint-disable no-constant-condition */
 import {
   SQSClient,
   ReceiveMessageCommand,
@@ -14,6 +13,7 @@ import { ConsumerConfig } from "../config/consumerConfig.js";
 const serializeError = (error: unknown): string => {
   try {
     return JSON.stringify(error, Object.getOwnPropertyNames(error));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return `${error}`;
   }

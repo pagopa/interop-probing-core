@@ -71,7 +71,7 @@ describe("Consumer queue test", () => {
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationError);
       expect((error as ApplicationError<ErrorCodes>).code).toBe(
-        "GENERIC_ERROR",
+        "DECODE_SQS_MESSAGE_ERROR",
       );
     }
   });

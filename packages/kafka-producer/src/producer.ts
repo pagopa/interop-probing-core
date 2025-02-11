@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { generateAuthToken } from "aws-msk-iam-sasl-signer-js";
 import {
   Consumer,
