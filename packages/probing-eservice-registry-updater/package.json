@@ -34,7 +34,7 @@
   "dependencies": {
     "@tsconfig/node-lts": "20.1.1",
     "@zodios/core": "10.9.6",
-    "axios": "1.7.4",
+    "axios": "1.12.0",
     "dotenv-flow": "3.3.0",
     "pagopa-interop-probing-commons": "workspace:*",
     "pagopa-interop-probing-models": "workspace:*",
