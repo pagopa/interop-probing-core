@@ -2,6 +2,14 @@ CREATE SCHEMA IF NOT EXISTS ${schema_name};
 
 CREATE SEQUENCE IF NOT EXISTS ${schema_name}.eservice_sequence START WITH 1 INCREMENT BY 1;
 
+CREATE SEQUENCE IF NOT EXISTS ${schema_name}.tenant_sequence START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE ${schema_name}.tenants (
+    id BIGINT NOT NULL PRIMARY KEY,
+    tenant_id UUID NOT NULL UNIQUE,
+    tenant_name VARCHAR(2048)
+);
+
 CREATE TABLE ${schema_name}.eservices (
    id BIGINT NOT NULL,
    base_path VARCHAR(2048) array NOT NULL,

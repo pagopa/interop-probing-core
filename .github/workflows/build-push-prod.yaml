@@ -3,10 +3,10 @@ name: "Build & Push Prod"
 on:
   push:
     tags:
-      - '[0-9]+.[0-9]+.[0-9]'
+      - "[0-9]+.[0-9]+.[0-9]"
     paths:
-      - 'packages/**'
-      - '!packages/probing-frontend'
+      - "packages/**"
+      - "!packages/probing-frontend"
 
 jobs:
   build_push_image:
@@ -26,10 +26,6 @@ jobs:
             dockerfile_path: packages/probing-caller
           - image_name: probing-eservice-operations
             dockerfile_path: packages/probing-eservice-operations
-          - image_name: probing-eservice-registry-reader
-            dockerfile_path: packages/probing-eservice-registry-reader
-          - image_name: probing-eservice-registry-updater
-            dockerfile_path: packages/probing-eservice-registry-updater
           - image_name: probing-response-updater
             dockerfile_path: packages/probing-response-updater
           - image_name: probing-scheduler
@@ -38,6 +34,10 @@ jobs:
             dockerfile_path: packages/probing-statistics-api
           - image_name: probing-telemetry-writer
             dockerfile_path: packages/probing-telemetry-writer
+          - image_name: probing-tenant-event-consumer
+            dockerfile_path: packages/tenant-event-consumer
+          - image_name: probing-eservice-event-consumer
+            dockerfile_path: packages/eservice-event-consumer
 
     steps:
       - name: Checkout repository

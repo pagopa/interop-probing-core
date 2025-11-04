@@ -1,4 +1,3 @@
-/* eslint-disable no-constant-condition */
 import {
   SQSClient,
   ReceiveMessageCommand,
@@ -14,6 +13,7 @@ import { ConsumerConfig } from "../config/consumerConfig.js";
 const serializeError = (error: unknown): string => {
   try {
     return JSON.stringify(error, Object.getOwnPropertyNames(error));
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return `${error}`;
   }
@@ -39,6 +39,7 @@ const processQueue = async (
 ): Promise<void> => {
   const command = new ReceiveMessageCommand({
     QueueUrl: config.queueUrl,
+    MessageAttributeNames: ["All"],
     WaitTimeSeconds: config.consumerPollingTimeout,
     MaxNumberOfMessages: 10,
   });
@@ -94,7 +95,8 @@ export const sendMessage = async (
   sqsClient: SQSClient,
   queueUrl: string,
   messageBody: string,
-  messageGroupId?: string,
+  correlationId: string,
+  messageGroupId?: string | null,
 ): Promise<void> => {
   const messageCommandInput: SendMessageCommandInput = {
     QueueUrl: queueUrl,
@@ -104,6 +106,13 @@ export const sendMessage = async (
   if (messageGroupId) {
     messageCommandInput.MessageGroupId = messageGroupId;
   }
+
+  messageCommandInput.MessageAttributes = {
+    correlationId: {
+      DataType: "String",
+      StringValue: correlationId,
+    },
+  };
 
   const command = new SendMessageCommand(messageCommandInput);
 

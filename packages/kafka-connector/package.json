@@ -1,0 +1,29 @@
+{
+  "name": "kafka-connector",
+  "private": true,
+  "description": "PagoPA interop probing Kafka connector",
+  "version": "1.0.0",
+  "type": "module",
+  "main": "dist",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "aws-msk-iam-sasl-signer-js": "1.0.0",
+    "kafkajs": "2.2.4",
+    "pagopa-interop-probing-commons": "workspace:*",
+    "pagopa-interop-probing-models": "workspace:*",
+    "ts-pattern": "5.1.2"
+  },
+  "devDependencies": {
+    "globals": "15.14.0",
+    "typescript": "5.2.2"
+  }
+}

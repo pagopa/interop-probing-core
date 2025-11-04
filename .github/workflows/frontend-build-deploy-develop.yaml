@@ -1,10 +1,10 @@
-name: 'Dev CI/CD'
+name: "Dev CI/CD"
 on:
   push:
     branches:
-      - 'develop'
+      - "develop"
     paths:
-      - 'packages/probing-frontend/**'
+      - "packages/probing-frontend/**"
 
 jobs:
   deploy_dev:
@@ -32,7 +32,7 @@ jobs:
       - name: Set Node.js 20.x
         uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3
         with:
-          node-version: '20'
+          node-version: "20"
       - uses: pnpm/action-setup@v3
         with:
           run_install: true

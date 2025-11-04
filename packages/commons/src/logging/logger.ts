@@ -1,10 +1,16 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import winston from "winston";
 import { LoggerConfig } from "../config/loggerConfig.js";
 
 export type LoggerMetadata = {
   serviceName?: string;
   correlationId?: string | null;
+  messageId?: string | null;
+  eventType?: string;
+  eventVersion?: number;
+  streamId?: string;
+  version?: number;
+  eserviceId?: string;
+  purposeId?: string;
 };
 
 const parsedLoggerConfig = LoggerConfig.safeParse(process.env);
@@ -23,20 +29,22 @@ if (!parsedLoggerConfig.success) {
 
 const logFormat = (
   msg: string,
-  timestamp: string,
+  timestamp: unknown,
   level: string,
-  { serviceName, correlationId }: LoggerMetadata,
+  { serviceName, correlationId, messageId }: LoggerMetadata,
 ) => {
   const serviceLogPart = serviceName ? `[${serviceName}]` : undefined;
   const correlationLogPart = correlationId
     ? `[CID=${correlationId}]`
     : undefined;
 
+  const sqsMessageIdLogPart = messageId ? `[SQS MID=${messageId}]` : undefined;
+
   const firstPart = [timestamp, level.toUpperCase(), serviceLogPart]
     .filter((e) => e !== undefined)
     .join(" ");
 
-  const secondPart = [correlationLogPart]
+  const secondPart = [correlationLogPart, sqsMessageIdLogPart]
     .filter((e) => e !== undefined)
     .join(" ");
 
@@ -45,11 +53,16 @@ const logFormat = (
 
 export const customFormat = () =>
   winston.format.printf(({ level, message, timestamp, ...meta }) => {
-    const lines = message
+    const lines = `${message}`
       .toString()
       .split("\n")
       .map((line: string) =>
-        logFormat(line, timestamp, level, meta.loggerMetadata),
+        logFormat(
+          line,
+          timestamp,
+          level,
+          meta.loggerMetadata as LoggerMetadata,
+        ),
       );
     return lines.join("\n");
   });

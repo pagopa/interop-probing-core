@@ -1,5 +1,6 @@
 import {
   ZodiosBodyByPath,
+  ZodiosHeaderParamsByPath,
   ZodiosPathParamsByPath,
   ZodiosQueryParamsByPath,
   ZodiosResponseByPath,
@@ -44,18 +45,6 @@ export type ApiUpdateEserviceFrequencyResponse = ZodiosResponseByPath<
   "/eservices/:eserviceId/versions/:versionId/updateFrequency"
 >;
 
-export type ApiSaveEservicePayload = ZodiosBodyByPath<
-  Api,
-  "put",
-  "/eservices/:eserviceId/versions/:versionId/saveEservice"
->;
-
-export type ApiSaveEserviceResponse = ZodiosResponseByPath<
-  Api,
-  "put",
-  "/eservices/:eserviceId/versions/:versionId/saveEservice"
->;
-
 export type ApiUpdateResponseReceivedPayload = ZodiosBodyByPath<
   Api,
   "post",
@@ -98,6 +87,12 @@ export type ApiUpdateLastRequestParams = ZodiosPathParamsByPath<
   "/eservices/:eserviceRecordId/updateLastRequest"
 >;
 
+export type ApiUpdateLastRequestHeaders = ZodiosHeaderParamsByPath<
+  Api,
+  "post",
+  "/eservices/:eserviceRecordId/updateLastRequest"
+>;
+
 export type ApiUpdateLastRequestPayload = ZodiosBodyByPath<
   Api,
   "post",
@@ -128,6 +123,12 @@ export type ApiGetEservicesReadyForPollingQuery = ZodiosQueryParamsByPath<
   "/eservices/polling"
 >;
 
+export type ApiGetEservicesReadyForPollingHeaders = ZodiosHeaderParamsByPath<
+  Api,
+  "get",
+  "/eservices/polling"
+>;
+
 export type ApiGetEservicesReadyForPollingResponse = ZodiosResponseByPath<
   Api,
   "get",
@@ -144,4 +145,87 @@ export type ApiEserviceMainDataResponse = ZodiosResponseByPath<
   Api,
   "get",
   "/eservices/mainData/:eserviceRecordId"
+>;
+
+export type ApiSaveEserviceHeaders = ZodiosHeaderParamsByPath<
+  Api,
+  "post",
+  "/eservices/:eserviceId/versions/:versionId/saveEservice"
+>;
+
+export type ApiSaveEservicePayload = ZodiosBodyByPath<
+  Api,
+  "post",
+  "/eservices/:eserviceId/versions/:versionId/saveEservice"
+>;
+
+export type ApiSaveEserviceParams = ZodiosPathParamsByPath<
+  Api,
+  "post",
+  "/eservices/:eserviceId/versions/:versionId/saveEservice"
+>;
+
+export type ApiSaveEserviceResponse = ZodiosResponseByPath<
+  Api,
+  "post",
+  "/eservices/:eserviceId/versions/:versionId/saveEservice"
+>;
+
+export type ApiDeleteEserviceHeaders = ZodiosHeaderParamsByPath<
+  Api,
+  "delete",
+  "/eservices/:eserviceId/deleteEservice"
+>;
+
+export type ApiDeleteEserviceParams = ZodiosPathParamsByPath<
+  Api,
+  "delete",
+  "/eservices/:eserviceId/deleteEservice"
+>;
+
+export type ApiDeleteEserviceResponse = ZodiosResponseByPath<
+  Api,
+  "delete",
+  "/eservices/:eserviceId/deleteEservice"
+>;
+
+export type ApiSaveTenantParams = ZodiosPathParamsByPath<
+  Api,
+  "post",
+  "/tenants/:tenantId/saveTenant"
+>;
+export type ApiSaveTenantHeaders = ZodiosHeaderParamsByPath<
+  Api,
+  "post",
+  "/tenants/:tenantId/saveTenant"
+>;
+
+export type ApiSaveTenantPayload = ZodiosBodyByPath<
+  Api,
+  "post",
+  "/tenants/:tenantId/saveTenant"
+>;
+
+export type ApiSaveTenantResponse = ZodiosResponseByPath<
+  Api,
+  "post",
+  "/tenants/:tenantId/saveTenant"
+>;
+
+export type ApiDeleteTenantHeaders = ZodiosHeaderParamsByPath<
+  Api,
+  "delete",
+  "/tenants/:tenantId/deleteTenant"
+>;
+
+export type ApiDeleteTenantParams = ZodiosPathParamsByPath<
+  Api,
+  "delete",
+  "/tenants/:tenantId/deleteTenant"
+>;
+
+export type ApiDeleteTenantResponse = ZodiosResponseByPath<
+  Api,
+  "delete",
+  "/tenants/:tenantId/deleteTenant"
 >;

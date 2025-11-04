@@ -24,6 +24,12 @@ export interface EserviceSchema {
   audience: string[];
 }
 
+export interface TenantSchema {
+  tenantRecordId?: number;
+  tenantId: string;
+  tenantName?: string;
+}
+
 /**
  * SIMILAR ISSUE: https://github.com/typeorm/typeorm/issues/7098
  * -----------------------------------------------------
@@ -165,6 +171,29 @@ export const Eservice = new EntitySchema<EserviceSchema>({
       type: "varchar",
       array: true,
       length: 2048,
+      nullable: false,
+    },
+  },
+});
+
+export const Tenant = new EntitySchema<TenantSchema>({
+  name: `${config.schemaName}.tenants`,
+  columns: {
+    tenantRecordId: {
+      name: "id",
+      type: "bigint",
+      primary: true,
+      nullable: false,
+    },
+    tenantId: {
+      name: "tenant_id",
+      type: "uuid",
+      nullable: false,
+    },
+    tenantName: {
+      name: "tenant_name",
+      type: "varchar",
+      length: 255,
       nullable: false,
     },
   },

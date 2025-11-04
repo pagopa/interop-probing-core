@@ -105,7 +105,7 @@ function calculatePerformances(
 
       const responseTimes = hourStatistic
         .filter((el: StatisticContent) => el.responseTime !== null)
-        .map((el) => el.responseTime!);
+        .map((el) => el.responseTime!); // eslint-disable-line @typescript-eslint/no-non-null-assertion
 
       let average: number =
         responseTimes.reduce((sum, value) => sum + value, 0) /

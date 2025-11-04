@@ -49,11 +49,64 @@ export class ApiError<T> extends Error {
   }
 }
 
-export type MakeApiProblemFn<T extends string> = (
-  error: unknown,
-  httpMapper: (apiError: ApiError<T | CommonErrorCodes>) => number,
-  logger: { error: (message: string) => void; warn: (message: string) => void },
-) => Problem;
+export class InternalError<T> extends Error {
+  public code: T;
+  public detail: string;
+
+  constructor({ code, detail }: { code: T; detail: string }) {
+    super(detail);
+    this.code = code;
+    this.detail = detail;
+  }
+}
+
+export class ApplicationError<T> extends Error {
+  public code: T;
+  public title: string;
+  public detail: string;
+  public status?: number;
+
+  constructor({
+    code,
+    title,
+    detail,
+    status,
+  }: {
+    code: T;
+    title: string;
+    detail: string;
+    status?: number;
+  }) {
+    super(detail);
+    this.code = code;
+    this.title = title;
+    this.detail = detail;
+    if (status) this.status = status;
+  }
+}
+
+export class AppError extends ApplicationError<string> {
+  constructor({
+    code,
+    title,
+    detail,
+    status,
+  }: {
+    code: string;
+    title: string;
+    detail: string;
+    status?: number;
+  }) {
+    super({ code, title, detail, ...(status && { status }) });
+  }
+}
+
+export const makeAppErrorLogString = (
+  appError: AppError,
+  originalError: unknown,
+): string => {
+  return `- title: ${appError.title} - detail: ${appError.detail} - original error: ${originalError}`;
+};
 
 export const makeProblemLogString = (
   problem: Problem,
@@ -62,6 +115,12 @@ export const makeProblemLogString = (
   const errorsString = problem.errors.map((e) => e.detail).join(" - ");
   return `- title: ${problem.title} - detail: ${problem.detail} - errors: ${errorsString} - original error: ${originalError}`;
 };
+
+export type MakeApiProblemFn<T extends string> = (
+  error: unknown,
+  httpMapper: (apiError: ApiError<T | CommonErrorCodes>) => number,
+  logger: { error: (message: string) => void; warn: (message: string) => void },
+) => Problem;
 
 export function makeApiProblemBuilder<T extends string>(errors: {
   [K in T]: string;
@@ -98,8 +157,11 @@ export function makeApiProblemBuilder<T extends string>(errors: {
 }
 
 const errorCodes = {
-  genericError: "9991",
-  badRequestError: "9992",
+  genericError: "GENERIC_ERROR",
+  badRequestError: "BAD_REQUEST_ERROR",
+  kafkaMessageProcessError: "KAFKA_MESSAGE_PROCESS_ERROR",
+  kafkaMessageMissingData: "KAFKA_MESSAGE_MISSING_DATA",
+  kafkaMessageValueError: "KAFKA_MESSAGE_VALUE_ERROR",
 } as const;
 
 export type CommonErrorCodes = keyof typeof errorCodes;
@@ -121,5 +183,47 @@ export function badRequestError(
     code: "badRequestError",
     title: "Bad request",
     errors,
+  });
+}
+
+/* ===== Internal Error ===== */
+
+export function genericInternalError(
+  details: string,
+): InternalError<CommonErrorCodes> {
+  return new InternalError({
+    code: "genericError",
+    detail: details,
+  });
+}
+
+export function kafkaMessageProcessError(
+  topic: string,
+  partition: number,
+  offset: string,
+  error?: unknown,
+): InternalError<CommonErrorCodes> {
+  return new InternalError({
+    code: "kafkaMessageProcessError",
+    detail: `Error while handling kafka message from topic : ${topic} - partition ${partition} - offset ${offset}. ${error}`,
+  });
+}
+
+export function kafkaMessageMissingData(
+  topic: string,
+  eventType: string,
+): InternalError<CommonErrorCodes> {
+  return new InternalError({
+    code: "kafkaMessageMissingData",
+    detail: `Missing data in kafka message from topic: ${topic} and event type: ${eventType}`,
+  });
+}
+
+export function kafkaMissingMessageValue(
+  topic: string,
+): InternalError<CommonErrorCodes> {
+  return new InternalError({
+    code: "kafkaMessageValueError",
+    detail: `Missing value message in kafka message from topic: ${topic}`,
   });
 }

@@ -9,7 +9,6 @@ import {
 } from "@aws-sdk/client-timestream-write";
 import { config } from "./config.js";
 import { telemetryConstants } from "./constants.js";
-import { genericLogger } from "pagopa-interop-probing-commons";
 import { writeRecordTimestreamError } from "../model/domain/errors.js";
 
 export const timestreamWriteClientBuilder = () => {
@@ -40,9 +39,6 @@ export const timestreamWriteClientBuilder = () => {
 
         await client.send(command);
       } catch (error) {
-        genericLogger.error(
-          `An error occurred while attempting to write a record to Timestream: ${error}`,
-        );
         throw writeRecordTimestreamError(`${error}`);
       }
     },

@@ -1,16 +1,24 @@
-import { describe, expect, it, vi, afterEach } from "vitest";
+import { describe, expect, it, vi, afterAll, beforeAll } from "vitest";
 import { processTask } from "../src/processTask.js";
 import { ApiGetEservicesReadyForPollingQuery } from "pagopa-interop-probing-eservice-operations-client";
 import { config } from "../src/utilities/config.js";
-import { EserviceContentDto } from "pagopa-interop-probing-models";
+import {
+  ApplicationError,
+  correlationIdToHeader,
+  EserviceContentDto,
+} from "pagopa-interop-probing-models";
 import { mockApiClientError } from "./utils.js";
 import {
-  AppError,
+  ErrorCodes,
   apiGetEservicesReadyForPollingError,
   makeApplicationError,
 } from "../src/model/domain/errors.js";
+import { AppContext, genericLogger } from "pagopa-interop-probing-commons";
+
+const mockUUID: string = "mocked-uuid-value";
 
 describe("Process task test", async () => {
+  const totalElements: number = 4;
   const mockEservicesActive: EserviceContentDto[] = [
     {
       eserviceRecordId: 1,
@@ -23,7 +31,7 @@ describe("Process task test", async () => {
   const mockOperationsService = {
     getEservicesReadyForPolling: vi.fn().mockResolvedValue({
       content: mockEservicesActive,
-      totalElements: 4,
+      totalElements,
     }),
     updateLastRequest: vi.fn().mockResolvedValue(undefined),
   };
@@ -32,8 +40,14 @@ describe("Process task test", async () => {
     sendToCallerQueue: vi.fn().mockResolvedValue(undefined),
   };
 
-  afterEach(() => {
-    vi.restoreAllMocks();
+  beforeAll(() => {
+    vi.mock("uuid", () => ({
+      v4: vi.fn(() => mockUUID),
+    }));
+  });
+
+  afterAll(() => {
+    vi.clearAllMocks();
   });
 
   it("Get eservices by calling getEservicesReadyForPolling API, update each eservice by calling updateLastRequest API and send message to queue.", async () => {
@@ -44,11 +58,26 @@ describe("Process task test", async () => {
       limit: config.schedulerLimit,
     };
 
+    const pollingCtx: AppContext = {
+      serviceName: config.applicationName,
+      correlationId: mockUUID,
+    };
+
     await processTask(mockOperationsService, mockProducerService);
 
-    await expect(
-      mockOperationsService.getEservicesReadyForPolling,
-    ).toHaveBeenCalledWith(query);
+    for (let polling = 0; polling < totalElements; polling++) {
+      const headers = {
+        ...correlationIdToHeader(pollingCtx.correlationId),
+      };
+
+      await expect(
+        mockOperationsService.getEservicesReadyForPolling,
+      ).toHaveBeenCalledWith(
+        headers,
+        { ...query, offset: polling },
+        pollingCtx,
+      );
+    }
 
     await expect(
       mockOperationsService.getEservicesReadyForPolling,
@@ -64,6 +93,7 @@ describe("Process task test", async () => {
 
     await expect(mockProducerService.sendToCallerQueue).toHaveBeenCalledWith(
       mockEservicesActive[0],
+      pollingCtx,
     );
   });
 
@@ -74,6 +104,7 @@ describe("Process task test", async () => {
         `Error API getEservicesReadyForPolling. Details: ${apiClientError}`,
         apiClientError,
       ),
+      genericLogger,
     );
 
     vi.spyOn(
@@ -84,9 +115,11 @@ describe("Process task test", async () => {
     try {
       await processTask(mockOperationsService, mockProducerService);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0002");
-      expect((error as AppError).status).toBe(500);
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "API_GET_ESERVICES_READY_FOR_POLLING_ERROR",
+      );
+      expect((error as ApplicationError<ErrorCodes>).status).toBe(500);
     }
   });
 });

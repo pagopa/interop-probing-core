@@ -1,13 +1,31 @@
 import { describe, expect, it, vi, afterAll } from "vitest";
 import { processMessage } from "../src/messagesHandler.js";
-import { AppError } from "../src/model/domain/errors.js";
-import { SQS } from "pagopa-interop-probing-commons";
+import {
+  AppContext,
+  decodeSQSMessageCorrelationId,
+  SQS,
+  WithSQSMessageId,
+} from "pagopa-interop-probing-commons";
 import { decodeSQSMessage } from "../src/model/models.js";
-import { TelemetryKoDto, responseStatus } from "pagopa-interop-probing-models";
+import {
+  ApplicationError,
+  TelemetryKoDto,
+  responseStatus,
+} from "pagopa-interop-probing-models";
+import { v4 as uuidv4 } from "uuid";
+import { ErrorCodes } from "../src/model/domain/errors.js";
+import { config } from "../src/utilities/config.js";
 
 describe("Consumer queue test", () => {
   const mockTelemetryService = {
     writeRecord: vi.fn().mockResolvedValue(undefined),
+  };
+
+  const correlationIdMessageAttribute = {
+    correlationId: {
+      DataType: "String",
+      StringValue: uuidv4(),
+    },
   };
 
   afterAll(() => {
@@ -25,6 +43,14 @@ describe("Consumer queue test", () => {
         koReason: "Connection refused",
         responseTime: 16,
       } as TelemetryKoDto),
+      MessageAttributes: correlationIdMessageAttribute,
+    };
+
+    const { correlationId } = decodeSQSMessageCorrelationId(validMessage);
+    const ctx: WithSQSMessageId<AppContext> = {
+      serviceName: config.applicationName,
+      messageId: validMessage.MessageId,
+      correlationId,
     };
 
     await expect(async () => {
@@ -33,6 +59,7 @@ describe("Consumer queue test", () => {
 
     expect(mockTelemetryService.writeRecord).toHaveBeenCalledWith(
       decodeSQSMessage(validMessage),
+      ctx,
     );
   });
 
@@ -42,8 +69,10 @@ describe("Consumer queue test", () => {
     try {
       await processMessage(mockTelemetryService)(invalidMessage);
     } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0001");
+      expect(error).toBeInstanceOf(ApplicationError);
+      expect((error as ApplicationError<ErrorCodes>).code).toBe(
+        "DECODE_SQS_MESSAGE_ERROR",
+      );
     }
   });
 });

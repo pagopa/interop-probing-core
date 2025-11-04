@@ -1,7 +1,8 @@
 import { ApiError, makeApiProblemBuilder } from "pagopa-interop-probing-models";
 
 export const errorCodes = {
-  eServiceNotFound: "0001",
+  eServiceNotFound: "ESERVICE_NOT_FOUND",
+  tenantNotFound: "TENANT_NOT_FOUND",
 };
 
 export type ErrorCodes = keyof typeof errorCodes;
@@ -36,5 +37,13 @@ export function eServiceProbingDataByRecordIdNotFound(
     detail: `EService probing data by eserviceRecordId ${eserviceRecordId} not found`,
     code: "eServiceNotFound",
     title: "EService not found",
+  });
+}
+
+export function tenantNotFound(tenantId: string): ApiError<ErrorCodes> {
+  return new ApiError({
+    detail: `Tenant by ${tenantId} not found`,
+    code: "tenantNotFound",
+    title: "Tenant not found",
   });
 }
