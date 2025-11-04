@@ -18,7 +18,7 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@pagopa/interop-outbound-models": "1.2.0",
+    "@pagopa/interop-outbound-models": "1.7.1",
     "@tsconfig/node-lts": "20.1.1",
     "@zodios/core": "10.9.6",
     "axios": "1.7.4",
