@@ -134,8 +134,8 @@ importers:
   packages/eservice-event-consumer:
     dependencies:
       '@pagopa/interop-outbound-models':
-        specifier: 1.7.1
-        version: 1.7.1
+        specifier: 1.2.0
+        version: 1.2.0
       '@tsconfig/node-lts':
         specifier: 20.1.1
         version: 20.1.1
@@ -211,7 +211,7 @@ importers:
         version: 5.2.2
       vitest:
         specifier: 0.33.0
-        version: 0.33.0
+        version: 0.33.0(terser@5.44.0)
 
   packages/kafka-connector:
     dependencies:
@@ -263,8 +263,8 @@ importers:
         version: 3.23.8
     devDependencies:
       '@pagopa/interop-outbound-models':
-        specifier: 1.7.1
-        version: 1.7.1
+        specifier: ^1.0.0
+        version: 1.2.0
       '@types/dotenv-flow':
         specifier: 3.3.3
         version: 3.3.3
@@ -306,7 +306,7 @@ importers:
         version: 5.2.2
       vitest:
         specifier: 0.33.0
-        version: 0.33.0
+        version: 0.33.0(terser@5.44.0)
 
   packages/models:
     dependencies:
@@ -428,7 +428,7 @@ importers:
         version: 5.2.2
       vitest:
         specifier: 0.33.0
-        version: 0.33.0
+        version: 0.33.0(terser@5.44.0)
 
   packages/probing-caller:
     dependencies:
@@ -501,7 +501,7 @@ importers:
         version: 5.2.2
       vitest:
         specifier: 0.33.0
-        version: 0.33.0
+        version: 0.33.0(terser@5.44.0)
 
   packages/probing-eservice-operations:
     dependencies:
@@ -592,7 +592,7 @@ importers:
         version: 5.2.2
       vitest:
         specifier: 0.33.0
-        version: 0.33.0
+        version: 0.33.0(terser@5.44.0)
 
   packages/probing-frontend:
     dependencies:
@@ -783,7 +783,7 @@ importers:
         version: 5.2.2
       vitest:
         specifier: 0.33.0
-        version: 0.33.0
+        version: 0.33.0(terser@5.44.0)
 
   packages/probing-scheduler:
     dependencies:
@@ -862,7 +862,7 @@ importers:
         version: 5.2.2
       vitest:
         specifier: 0.33.0
-        version: 0.33.0
+        version: 0.33.0(terser@5.44.0)
 
   packages/probing-statistics-api:
     dependencies:
@@ -953,7 +953,7 @@ importers:
         version: 5.2.2
       vitest:
         specifier: 0.33.0
-        version: 0.33.0
+        version: 0.33.0(terser@5.44.0)
 
   packages/probing-telemetry-writer:
     dependencies:
@@ -1023,13 +1023,13 @@ importers:
         version: 5.2.2
       vitest:
         specifier: 0.33.0
-        version: 0.33.0
+        version: 0.33.0(terser@5.44.0)
 
   packages/tenant-event-consumer:
     dependencies:
       '@pagopa/interop-outbound-models':
-        specifier: 1.7.1
-        version: 1.7.1
+        specifier: 1.2.0
+        version: 1.2.0
       '@tsconfig/node-lts':
         specifier: 20.1.1
         version: 20.1.1
@@ -1105,7 +1105,7 @@ importers:
         version: 5.2.2
       vitest:
         specifier: 0.33.0
-        version: 0.33.0
+        version: 0.33.0(terser@5.44.0)
 
 packages:
 
@@ -2892,8 +2892,8 @@ packages:
       react-i18next: ^13.2.2
       react-router-dom: ^6.16.0
 
-  '@pagopa/interop-outbound-models@1.7.1':
-    resolution: {integrity: sha512-l8M4/lSTpzrzP33WN68MiMrTlNp23avSLFYP5sja4Kl3XOj9ISWAMGCXFnCFlMcsnNbYqJHcu5e5p3c3aAyJOw==}
+  '@pagopa/interop-outbound-models@1.2.0':
+    resolution: {integrity: sha512-hg5W1+OXknBnCcIGSs0VJEPfCidABvQ1AmmVudvUSwgG4lNmxBXSyw8hSFl4Ejryl/h8wKxPgSg5sUvkabnh4w==}
 
   '@pagopa/mui-italia@1.1.0':
     resolution: {integrity: sha512-j3QjBC0Bermmbzxpr/DdGZ4BBrIRMjHM13Ho0xOFiRPn/PEw/BafsXsQfeedUWrQlYMvX6uEzg4tXOEnx43zHw==}
@@ -10708,7 +10708,7 @@ snapshots:
       react-i18next: 13.5.0(i18next@23.10.0)(react-dom@18.2.0(react@18.2.0))(react-native@0.82.1(@babel/core@7.28.5)(@types/react@18.2.64)(react@18.2.0))(react@18.2.0)
       react-router-dom: 6.22.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
 
-  '@pagopa/interop-outbound-models@1.7.1':
+  '@pagopa/interop-outbound-models@1.2.0':
     dependencies:
       '@protobuf-ts/runtime': 2.9.4
       ts-pattern: 5.2.0
@@ -15582,14 +15582,14 @@ snapshots:
 
   vary@1.1.2: {}
 
-  vite-node@0.33.0(@types/node@20.10.4):
+  vite-node@0.33.0(@types/node@20.10.4)(terser@5.44.0):
     dependencies:
       cac: 6.7.14
       debug: 4.4.3
       mlly: 1.8.0
       pathe: 1.1.2
       picocolors: 1.1.1
-      vite: 4.5.14(@types/node@20.10.4)
+      vite: 4.5.14(@types/node@20.10.4)(terser@5.44.0)
     transitivePeerDependencies:
       - '@types/node'
       - less
@@ -15600,7 +15600,7 @@ snapshots:
       - supports-color
       - terser
 
-  vite@4.5.14(@types/node@20.10.4):
+  vite@4.5.14(@types/node@20.10.4)(terser@5.44.0):
     dependencies:
       esbuild: 0.18.20
       postcss: 8.5.6
@@ -15608,6 +15608,7 @@ snapshots:
     optionalDependencies:
       '@types/node': 20.10.4
       fsevents: 2.3.3
+      terser: 5.44.0
 
   vite@5.1.8(@types/node@20.10.4)(terser@5.44.0):
     dependencies:
@@ -15619,7 +15620,7 @@ snapshots:
       fsevents: 2.3.3
       terser: 5.44.0
 
-  vitest@0.33.0:
+  vitest@0.33.0(terser@5.44.0):
     dependencies:
       '@types/chai': 4.3.20
       '@types/chai-subset': 1.3.6(@types/chai@4.3.20)
@@ -15642,8 +15643,8 @@ snapshots:
       strip-literal: 1.3.0
       tinybench: 2.9.0
       tinypool: 0.6.0
-      vite: 4.5.14(@types/node@20.10.4)
-      vite-node: 0.33.0(@types/node@20.10.4)
+      vite: 4.5.14(@types/node@20.10.4)(terser@5.44.0)
+      vite-node: 0.33.0(@types/node@20.10.4)(terser@5.44.0)
       why-is-node-running: 2.3.0
     transitivePeerDependencies:
       - less
