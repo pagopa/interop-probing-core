@@ -163,9 +163,9 @@ describe("database test", async () => {
   });
 
   afterEach(async () => {
-    await eserviceProbingRequest.delete({});
-    await eserviceProbingResponse.delete({});
-    await eservices.delete({});
+    await eserviceProbingResponse.deleteAll();
+    await eserviceProbingRequest.deleteAll();
+    await eservices.deleteAll();
   });
 
   describe("Eservice service", () => {

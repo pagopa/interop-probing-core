@@ -46,7 +46,7 @@
     "pagopa-interop-probing-models": "workspace:*",
     "pg": "8.11.3",
     "ts-pattern": "5.0.6",
-    "typeorm": "0.3.17",
+    "typeorm": "0.3.26",
     "uuid": "9.0.1",
     "zod": "3.23.8"
   }
