@@ -56,7 +56,7 @@ describe("database test", async () => {
   });
 
   afterEach(async () => {
-    await tenants.delete({});
+    await tenants.deleteAll();
   });
 
   describe("Tenant service", () => {
