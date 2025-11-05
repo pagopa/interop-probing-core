@@ -6,7 +6,6 @@ import {
   responseStatus,
   technology,
 } from "pagopa-interop-probing-models";
-import { PostgreSqlContainer } from "@testcontainers/postgresql";
 import { config } from "../src/utilities/config.js";
 import {
   EserviceService,
@@ -48,7 +47,6 @@ import { EserviceProbingRequestSchema } from "../src/repositories/entity/eservic
 import { EserviceProbingResponseSchema } from "../src/repositories/entity/eservice_probing_response.entity.js";
 import { z } from "zod";
 import { nowDateUTC } from "../src/utilities/date.js";
-import { resolve } from "path";
 import {
   ApiGetProducersQuery,
   ApiSearchEservicesQuery,
@@ -138,21 +136,6 @@ describe("database test", async () => {
   };
 
   beforeAll(async () => {
-    const postgreSqlContainer = await new PostgreSqlContainer("postgres:14")
-      .withUsername(config.dbUsername)
-      .withPassword(config.dbPassword)
-      .withDatabase(config.dbName)
-      .withExposedPorts(5432)
-      .withCopyFilesToContainer([
-        {
-          source: resolve(__dirname, "db/init-db.sql"),
-          target: "/docker-entrypoint-initdb.d/01-init.sql",
-        },
-      ])
-      .start();
-
-    config.dbPort = postgreSqlContainer.getMappedPort(5432);
-
     modelRepository = await ModelRepository.init(config);
     eservices = modelRepository.eservices;
     eserviceProbingRequest = modelRepository.eserviceProbingRequest;

@@ -1,9 +1,26 @@
 version: "3"
 name: pagopa-interop-probing
 services:
+  # Postgres DB
+  postgres:
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - ./postgres/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    image: postgres:14
+    ports:
+      - 6000:5432
+    environment:
+      POSTGRES_DB: root
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+    command: -c 'max_connections=512' -c 'wal_level=logical'
+
+  # Zookeeper for Kafka
   zookeeper:
     image: quay.io/debezium/zookeeper:2.3
 
+  # Kafka server
   kafka:
     image: quay.io/debezium/kafka:2.3
     ports:
@@ -19,7 +36,8 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER
       KAFKA_NUM_PARTITIONS: 3
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-
+  
+  # Web GUI for kafka
   kafka-ui:
     container_name: kafka-ui
     image: provectuslabs/kafka-ui:53a6553765a806eda9905c43bfcfe09da6812035

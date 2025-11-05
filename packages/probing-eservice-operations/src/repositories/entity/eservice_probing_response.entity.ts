@@ -12,7 +12,7 @@ export interface EserviceProbingResponseSchema {
 
 export const EserviceProbingResponse =
   new EntitySchema<EserviceProbingResponseSchema>({
-    name: `${config.schemaName}.eservice_probing_responses`,
+    name: `${config.dbSchema}.eservice_probing_responses`,
     columns: {
       eserviceRecordId: {
         name: "eservices_record_id",

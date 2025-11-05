@@ -27,7 +27,7 @@ export interface EserviceViewSchema {
 }
 
 export const EserviceView: EntitySchema<EserviceViewSchema> = new EntitySchema({
-  name: `${config.schemaName}.eservice_view`,
+  name: `${config.dbSchema}.eservice_view`,
   columns: {
     eserviceRecordId: {
       name: "id",
@@ -126,11 +126,11 @@ export const EserviceView: EntitySchema<EserviceViewSchema> = new EntitySchema({
     epr.status AS responseStatus,
     e.audience
   FROM
-  ${config.schemaName}.eservices e
+  ${config.dbSchema}.eservices e
   LEFT JOIN
-  ${config.schemaName}.eservice_probing_responses epr ON epr.eservices_record_id = e.id
+  ${config.dbSchema}.eservice_probing_responses epr ON epr.eservices_record_id = e.id
   LEFT JOIN
-  ${config.schemaName}.eservice_probing_requests epreq ON epreq.eservices_record_id = e.id
+  ${config.dbSchema}.eservice_probing_requests epreq ON epreq.eservices_record_id = e.id
   WHERE
     epr.response_received IS NOT NULL OR epreq.last_request IS NOT NULL
 `,

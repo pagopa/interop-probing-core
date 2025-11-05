@@ -120,7 +120,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         .insert()
         .values({
           eserviceRecordId: () =>
-            `nextval('"${config.schemaName}"."eservice_sequence"'::regclass)`,
+            `nextval('"${config.dbSchema}"."eservice_sequence"'::regclass)`,
           ...eserviceData,
           ...eServiceDefaultValues,
         })
@@ -179,7 +179,7 @@ export function modelServiceBuilder(modelRepository: ModelRepository) {
         .insert()
         .values({
           tenantRecordId: () =>
-            `nextval('"${config.schemaName}"."tenant_sequence"'::regclass)`,
+            `nextval('"${config.dbSchema}"."tenant_sequence"'::regclass)`,
           tenantId: tenantData.tenant_id,
           tenantName: tenantData.tenant_name,
         })

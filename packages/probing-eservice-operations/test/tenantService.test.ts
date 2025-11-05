@@ -1,5 +1,4 @@
 import { afterEach, beforeAll, describe, expect, it } from "vitest";
-import { PostgreSqlContainer } from "@testcontainers/postgresql";
 import { config } from "../src/utilities/config.js";
 import {
   TenantQuery,
@@ -17,7 +16,6 @@ import {
   ModelRepository,
   TenantEntities,
 } from "../src/repositories/modelRepository.js";
-import { resolve } from "path";
 import { v4 as uuidv4 } from "uuid";
 import {
   ApiSaveTenantParams,
@@ -33,21 +31,6 @@ describe("database test", async () => {
   let tenantService: TenantService;
 
   beforeAll(async () => {
-    const postgreSqlContainer = await new PostgreSqlContainer("postgres:14")
-      .withUsername(config.dbUsername)
-      .withPassword(config.dbPassword)
-      .withDatabase(config.dbName)
-      .withExposedPorts(5432)
-      .withCopyFilesToContainer([
-        {
-          source: resolve(__dirname, "db/init-db.sql"),
-          target: "/docker-entrypoint-initdb.d/01-init.sql",
-        },
-      ])
-      .start();
-
-    config.dbPort = postgreSqlContainer.getMappedPort(5432);
-
     modelRepository = await ModelRepository.init(config);
     tenants = modelRepository.tenants;
     modelService = modelServiceBuilder(modelRepository);
