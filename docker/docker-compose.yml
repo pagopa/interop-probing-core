@@ -18,11 +18,11 @@ services:
 
   # Zookeeper for Kafka
   zookeeper:
-    image: quay.io/debezium/zookeeper:2.3
+    image: quay.io/debezium/zookeeper:2.3@sha256:5b1354c4fa3bae600128eaa3ba9487ebd98b0aef40e3a39b32efe7533c8d2604
 
   # Kafka server
   kafka:
-    image: quay.io/debezium/kafka:2.3
+    image: quay.io/debezium/kafka:2.3@sha256:4009c39c2cc42686d1b5f0d2c46b3ff166e6ea98fb9a61d925b90f7fc56358e0
     ports:
       - 9092:9092
       - 29092:29092
@@ -40,7 +40,7 @@ services:
   # Web GUI for kafka
   kafka-ui:
     container_name: kafka-ui
-    image: provectuslabs/kafka-ui:53a6553765a806eda9905c43bfcfe09da6812035
+    image: provectuslabs/kafka-ui:53a6553765a806eda9905c43bfcfe09da6812035@sha256:7317d08c1d58f1c7e67adb936e3b181151bd5534a30b761f75fe8bddbf079ffd
     ports:
       - 8084:8080
     depends_on:
