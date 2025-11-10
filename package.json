@@ -15,7 +15,6 @@
     "start:event:eservice": "turbo start --filter pagopa-interop-probing-eservice-event-consumer",
     "start:event:tenant": "turbo start --filter pagopa-interop-probing-tenant-event-consumer",
     "test": "turbo test",
-    "test:it": "turbo test:it",
     "build": "turbo build",
     "lint": "turbo lint",
     "lint:autofix": "turbo lint:autofix",
@@ -31,6 +30,7 @@
   },
   "devDependencies": {
     "@tsconfig/node-lts": "20.1.3",
+    "vitest": "3.2.4",
     "turbo": "2.2.3"
   },
   "packageManager": "pnpm@9.15.9"

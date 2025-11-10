@@ -66,24 +66,24 @@ describe("Consumer queue test", async () => {
       correlationId,
     };
 
-    await expect(async () => {
-      await processMessage(
+    await expect(
+      processMessage(
         mockProbingCallerService,
         mockProducerService,
-      )(validMessage);
+      )(validMessage),
+    ).resolves.not.toThrowError();
 
-      await expect(
-        mockProbingCallerService.performRequest,
-      ).toHaveBeenCalledWith(decodeSQSMessage(validMessage), ctx);
+    expect(mockProbingCallerService.performRequest).toHaveBeenCalledWith(
+      decodeSQSMessage(validMessage),
+      ctx,
+    );
 
-      await expect(
-        mockProducerService.sendToTelemetryWriterQueue,
-      ).toHaveBeenCalledWith(telemetryResult, ctx);
+    expect(mockProducerService.sendToTelemetryWriterQueue).toHaveBeenCalledWith(
+      telemetryResult,
+      ctx,
+    );
 
-      await expect(
-        mockProducerService.sendToResponseUpdaterQueue,
-      ).toHaveBeenCalled();
-    }).not.toThrowError();
+    expect(mockProducerService.sendToResponseUpdaterQueue).toHaveBeenCalled();
   });
 
   it("given invalid message, method should throw an error", async () => {

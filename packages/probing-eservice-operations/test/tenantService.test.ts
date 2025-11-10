@@ -92,8 +92,8 @@ describe("database test", async () => {
           tenantId: "invalid_tenant_id",
         };
 
-        expect(
-          async () => await tenantService.saveTenant(invalidTenantParams, {}),
+        await expect(
+          tenantService.saveTenant(invalidTenantParams, {}),
         ).rejects.toThrowError(/invalid input syntax for type uuid/);
       });
     });

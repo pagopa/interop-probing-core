@@ -47,14 +47,10 @@ describe("Message handler V1 test", () => {
 
       vi.spyOn(apiClient, "saveEservice").mockResolvedValueOnce(undefined);
 
-      const request = await handleMessageV1(
-        eServiceV1Event,
-        operationsService,
-        ctx,
-        genericLogger,
-      );
+      await expect(
+        handleMessageV1(eServiceV1Event, operationsService, ctx, genericLogger),
+      ).resolves.not.toThrow();
 
-      expect(async () => request).not.toThrowError();
       expect(apiClient.saveEservice).toBeCalled();
     });
 
@@ -128,14 +124,15 @@ describe("Message handler V1 test", () => {
     it("update an Eservice for EserviceUpdated event should return a successfully response", async () => {
       vi.spyOn(apiClient, "saveEservice").mockResolvedValue(undefined);
 
-      const request = await handleMessageV1(
-        mockEserviceUpdateV1,
-        operationsService,
-        ctx,
-        genericLogger,
-      );
+      await expect(
+        handleMessageV1(
+          mockEserviceUpdateV1,
+          operationsService,
+          ctx,
+          genericLogger,
+        ),
+      ).resolves.not.toThrow();
 
-      expect(async () => request).not.toThrowError();
       expect(apiClient.saveEservice).toHaveBeenCalledTimes(2);
     });
 
@@ -164,14 +161,15 @@ describe("Message handler V1 test", () => {
     it("delete an Eservice for EServiceDeleted event should return a successfully response", async () => {
       vi.spyOn(apiClient, "deleteEservice").mockResolvedValueOnce(undefined);
 
-      const request = await handleMessageV1(
-        mockEserviceDeleteV1,
-        operationsService,
-        ctx,
-        genericLogger,
-      );
+      await expect(
+        handleMessageV1(
+          mockEserviceDeleteV1,
+          operationsService,
+          ctx,
+          genericLogger,
+        ),
+      ).resolves.not.toThrow();
 
-      expect(async () => request).not.toThrowError();
       expect(apiClient.deleteEservice).toBeCalled();
     });
 
