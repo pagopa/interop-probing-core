@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, afterAll } from "vitest";
+import { describe, expect, it, vi, afterEach } from "vitest";
 import { sqsMessages } from "./sqsMessages.js";
 import { processMessage } from "../src/messagesHandler.js";
 import {
@@ -25,8 +25,8 @@ describe("Consumer queue test", () => {
     },
   };
 
-  afterAll(() => {
-    vi.restoreAllMocks();
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
   it("given valid message, method should not throw an exception", async () => {
@@ -44,9 +44,9 @@ describe("Consumer queue test", () => {
       correlationId,
     };
 
-    await expect(async () => {
-      await processMessage(mockResponseUpdaterService)(validMessage);
-    }).not.toThrowError();
+    await expect(
+      processMessage(mockResponseUpdaterService)(validMessage),
+    ).resolves.not.toThrowError();
 
     expect(
       mockResponseUpdaterService.updateResponseReceived,

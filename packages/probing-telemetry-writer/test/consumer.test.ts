@@ -53,9 +53,9 @@ describe("Consumer queue test", () => {
       correlationId,
     };
 
-    await expect(async () => {
-      await processMessage(mockTelemetryService)(validMessage);
-    }).not.toThrowError();
+    await expect(
+      processMessage(mockTelemetryService)(validMessage),
+    ).resolves.not.toThrowError();
 
     expect(mockTelemetryService.writeRecord).toHaveBeenCalledWith(
       decodeSQSMessage(validMessage),

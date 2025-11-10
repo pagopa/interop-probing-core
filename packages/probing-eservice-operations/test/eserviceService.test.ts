@@ -264,8 +264,7 @@ describe("database test", async () => {
 
       it("e-service should not be found and an `eServiceProbingDataByRecordIdNotFound` should be thrown", async () => {
         await expect(
-          async () =>
-            await eserviceService.getEserviceMainData(99, genericLogger),
+          eserviceService.getEserviceMainData(99, genericLogger),
         ).rejects.toThrowError(eServiceMainDataByRecordIdNotFound(99));
       });
     });
@@ -282,8 +281,7 @@ describe("database test", async () => {
 
       it("e-service should not be found and an `eServiceProbingDataByRecordIdNotFound` should be thrown", async () => {
         await expect(
-          async () =>
-            await eserviceService.getEserviceProbingData(99, genericLogger),
+          eserviceService.getEserviceProbingData(99, genericLogger),
         ).rejects.toThrowError(eServiceProbingDataByRecordIdNotFound(99));
       });
     });
@@ -387,15 +385,14 @@ describe("database test", async () => {
         const eserviceId = uuidv4();
         const versionId = uuidv4();
         await expect(
-          async () =>
-            await eserviceService.updateEserviceState(
-              eserviceId,
-              versionId,
-              {
-                eServiceState: eserviceInteropState.active,
-              },
-              genericLogger,
-            ),
+          eserviceService.updateEserviceState(
+            eserviceId,
+            versionId,
+            {
+              eServiceState: eserviceInteropState.active,
+            },
+            genericLogger,
+          ),
         ).rejects.toThrowError(eServiceNotFound(eserviceId, versionId));
       });
     });
@@ -428,15 +425,14 @@ describe("database test", async () => {
         const versionId = uuidv4();
 
         await expect(
-          async () =>
-            await eserviceService.updateEserviceProbingState(
-              eserviceId,
-              versionId,
-              {
-                probingEnabled: true,
-              },
-              genericLogger,
-            ),
+          eserviceService.updateEserviceProbingState(
+            eserviceId,
+            versionId,
+            {
+              probingEnabled: true,
+            },
+            genericLogger,
+          ),
         ).rejects.toThrowError(eServiceNotFound(eserviceId, versionId));
       });
     });
@@ -483,17 +479,16 @@ describe("database test", async () => {
         };
 
         await expect(
-          async () =>
-            await eserviceService.updateEserviceFrequency(
-              eserviceId,
-              versionId,
-              {
-                frequency: payload.frequency,
-                startTime: payload.startTime,
-                endTime: payload.endTime,
-              },
-              genericLogger,
-            ),
+          eserviceService.updateEserviceFrequency(
+            eserviceId,
+            versionId,
+            {
+              frequency: payload.frequency,
+              startTime: payload.startTime,
+              endTime: payload.endTime,
+            },
+            genericLogger,
+          ),
         ).rejects.toThrowError(eServiceNotFound(eserviceId, versionId));
       });
     });
@@ -581,13 +576,12 @@ describe("database test", async () => {
           audience: ["audience updated"],
         };
 
-        expect(
-          async () =>
-            await eserviceService.saveEservice(
-              payload.eserviceId,
-              payload.versionId,
-              payload,
-            ),
+        await expect(
+          eserviceService.saveEservice(
+            payload.eserviceId,
+            payload.versionId,
+            payload,
+          ),
         ).rejects.toThrowError(tenantNotFound(payload.producerId));
       });
     });
@@ -641,9 +635,9 @@ describe("database test", async () => {
       it("should not throw an error when attempting to delete a non-existent eservice", async () => {
         const nonExistentId = uuidv4();
 
-        expect(
-          async () => await eserviceService.deleteEservice(nonExistentId),
-        ).not.toThrowError();
+        await expect(
+          eserviceService.deleteEservice(nonExistentId),
+        ).resolves.toBeUndefined();
       });
 
       it("should throw an error if the eserviceId param is invalid", async () => {
@@ -651,11 +645,8 @@ describe("database test", async () => {
           eserviceId: "invalid_uuid",
         };
 
-        expect(
-          async () =>
-            await eserviceService.deleteEservice(
-              invalidEserviceParams.eserviceId,
-            ),
+        await expect(
+          eserviceService.deleteEservice(invalidEserviceParams.eserviceId),
         ).rejects.toThrowError(/invalid input syntax for type uuid/);
       });
     });

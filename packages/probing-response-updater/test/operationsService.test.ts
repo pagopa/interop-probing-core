@@ -39,18 +39,17 @@ describe("eService service test", () => {
     vi.spyOn(apiClient, "updateResponseReceived").mockResolvedValue(undefined);
 
     await expect(
-      async () =>
-        await operationsService.updateResponseReceived(
-          {
-            params: { eserviceRecordId },
-            payload: {
-              status,
-              responseReceived,
-            },
+      operationsService.updateResponseReceived(
+        {
+          params: { eserviceRecordId },
+          payload: {
+            status,
+            responseReceived,
           },
-          ctx,
-        ),
-    ).not.toThrowError();
+        },
+        ctx,
+      ),
+    ).resolves.not.toThrowError();
   });
 
   it("finding the e-service identified by eserviceRecordId, an exception apiUpdateResponseReceivedError should be thrown with status 500", async () => {

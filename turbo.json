@@ -1,14 +1,26 @@
 {
   "$schema": "https://turbo.build/schema.json",
+  "daemon": false,
+  "globalEnv": [
+    "CI"
+  ],
   "tasks": {
     "start": {
       "persistent": true,
       "cache": false,
       "dependsOn": [
-        "generate-client",
-        "generate-model",
-        "^build"
+        "^build",
+        "infra:start"
       ]
+    },
+    "infra:start": {
+      "cache": false
+    },
+    "infra:stop": {
+      "cache": false
+    },
+    "infra:destroy": {
+      "cache": false
     },
     "build": {
       "cache": false,
@@ -44,19 +56,27 @@
         "^test"
       ]
     },
-    "test:it": {
+    "lint": {
       "dependsOn": [
-        "build",
-        "^test:it"
-      ]
+        "^lint"
+      ],
+      "cache": false
     },
-    "lint": {},
-    "lint:autofix": {},
-    "format:write": {},
+    "lint:autofix": {
+      "dependsOn": [
+        "^lint:autofix"
+      ],
+      "cache": false
+    },
     "format:check": {
-      "cache": false,
       "dependsOn": [
         "^format:check"
+      ],
+      "cache": false
+    },
+    "format:write": {
+      "dependsOn": [
+        "^format:write"
       ]
     }
   },
