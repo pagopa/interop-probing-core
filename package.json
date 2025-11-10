@@ -16,6 +16,7 @@
     "start:event:tenant": "turbo start --filter pagopa-interop-probing-tenant-event-consumer",
     "test": "turbo test",
     "build": "turbo build",
+    "check": "turbo check",
     "lint": "turbo lint",
     "lint:autofix": "turbo lint:autofix",
     "format:check": "turbo format:check",

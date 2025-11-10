@@ -10,8 +10,9 @@
     "lint:autofix": "eslint . --fix",
     "format:check": "prettier --check src",
     "format:write": "prettier --write src",
-    "start": "node --watch --no-warnings --loader ts-node/esm -r 'dotenv-flow/config' ./src/index.ts",
+    "start": "tsx -r 'dotenv-flow/config' --watch ./src/index.ts",
     "build": "tsc",
+    "check": "tsc --project tsconfig.check.json",
     "generate-model": "mkdir -p ./src/model/generated && pnpm openapi-zod-client './open-api/api-statistics-interop-v1.yaml' -o './src/model/generated/api.ts'",
     "clean-generated": "pnpm exec rm ./src/model/generated/api.ts"
   },
@@ -34,7 +35,8 @@
     "prettier": "3.2.5",
     "supertest": "6.3.4",
     "ts-node": "10.9.2",
-    "typescript": "5.2.2"
+    "typescript": "5.2.2",
+    "tsx": "4.20.5"
   },
   "dependencies": {
     "@aws-sdk/client-timestream-query": "3.549.0",

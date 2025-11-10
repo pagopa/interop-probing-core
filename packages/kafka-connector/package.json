@@ -10,7 +10,9 @@
   },
   "scripts": {
     "lint": "eslint .",
-    "build": "tsc"
+    "start": "tsx -r 'dotenv-flow/config' --watch ./src/index.ts",
+    "build": "tsc",
+    "check": "tsc --project tsconfig.check.json"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +26,7 @@
   },
   "devDependencies": {
     "globals": "15.14.0",
-    "typescript": "5.2.2"
+    "typescript": "5.2.2",
+    "tsx": "4.20.5"
   }
 }
