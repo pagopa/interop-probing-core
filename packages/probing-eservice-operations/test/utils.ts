@@ -1,130 +1,118 @@
 import {
-  EserviceEntities,
-  EserviceProbingRequestEntities,
-  EserviceProbingResponseEntities,
-  EserviceViewEntities,
-  TenantEntities,
-} from "../src/repositories/modelRepository.js";
-import { InsertResult, ObjectLiteral } from "typeorm";
+  EServiceSQL,
+  TenantSQL,
+  EserviceProbingRequestSQL,
+  EserviceProbingResponseSQL,
+  EserviceViewSQL,
+} from "../src/db/types.js";
 import {
-  EserviceSchema,
-  TenantSchema,
-} from "../src/repositories/entity/eservice.entity.js";
-import { EserviceProbingRequestSchema } from "../src/repositories/entity/eservice_probing_request.entity.js";
-import { EserviceProbingResponseSchema } from "../src/repositories/entity/eservice_probing_response.entity.js";
-import { config } from "../src/utilities/config.js";
-import { EserviceViewSchema } from "../src/repositories/entity/view/eservice.entity.js";
-import { GenericContainer, StartedTestContainer } from "testcontainers";
-import { afterAll, beforeAll } from "vitest";
-import { DbConfig } from "../src/utilities/dbConfig.js";
+  eservicesInProbing,
+  eserviceProbingRequestsInProbing,
+  eserviceProbingResponsesInProbing,
+  eserviceViewInProbing,
+  tenantsInProbing,
+} from "../src/db/drizzle/schema.js";
+import { eq } from "drizzle-orm";
+import { DBService, dbServiceBuilder } from "../src/services/dbService.js";
+import {
+  TenantService,
+  tenantServiceBuilder,
+} from "../src/services/tenantService.js";
+import {
+  EserviceService,
+  eServiceServiceBuilder,
+} from "../src/services/eserviceService.js";
+import { afterEach, inject } from "vitest";
+import { setupTestContainersVitest } from "./utilsSetupTestContainers.js";
 
-export const TEST_POSTGRES_DB_PORT = 5432;
-export const TEST_POSTGRES_DB_IMAGE = "postgres:14";
+type EserviceInsert = Omit<EServiceSQL, "id">;
+type TenantInsert = Omit<TenantSQL, "id">;
+type EserviceProbingRequestInsert = Pick<
+  EserviceProbingRequestSQL,
+  "eservicesRecordId" | "lastRequest"
+>;
+type EserviceProbingResponseInsert = Pick<
+  EserviceProbingResponseSQL,
+  "eservicesRecordId" | "responseReceived" | "status"
+>;
 
-/**
- * Starts a PostgreSQL container for testing purposes.
- *
- * @param config - The configuration for the PostgreSQL container.
- * @returns A promise that resolves to the started test container.
- */
-export const postgreSQLContainer = (config: DbConfig): GenericContainer =>
-  new GenericContainer(TEST_POSTGRES_DB_IMAGE)
-    .withEnvironment({
-      POSTGRES_DB: config.dbName,
-      POSTGRES_USER: config.dbUsername,
-      POSTGRES_PASSWORD: config.dbPassword,
-    })
-    .withCopyFilesToContainer([
-      {
-        source: "../../docker/postgres/init-db.sql",
-        target: "/docker-entrypoint-initdb.d/01-init.sql",
-      },
-    ])
-    .withExposedPorts(TEST_POSTGRES_DB_PORT);
+export const { cleanup, postgresDB: db } = await setupTestContainersVitest(
+  inject("dbConfig"),
+);
 
-let startedPostgreSqlContainer: StartedTestContainer | undefined;
+afterEach(cleanup);
 
-beforeAll(async () => {
-  startedPostgreSqlContainer = await postgreSQLContainer({
-    dbHost: config.dbHost,
-    dbName: config.dbName,
-    dbUsername: config.dbUsername,
-    dbPassword: config.dbPassword,
-    dbPort: config.dbPort,
-    dbSchema: config.dbSchema,
-    dbUseSSL: config.dbUseSSL,
-  }).start();
-
-  config.dbPort = startedPostgreSqlContainer.getMappedPort(5432);
-});
-
-afterAll(async () => {
-  await startedPostgreSqlContainer?.stop();
-});
+export const dbService: DBService = dbServiceBuilder(db);
+export const tenantService: TenantService = tenantServiceBuilder(dbService);
+export const eserviceService: EserviceService =
+  eServiceServiceBuilder(dbService);
 
 export const addEserviceProbingRequest = async (
-  data: EserviceProbingRequestSchema,
-  repository: EserviceProbingRequestEntities,
-): Promise<ObjectLiteral[]> => {
-  const result = await repository.upsert(data, {
-    skipUpdateIfNoValuesChanged: true,
-    conflictPaths: ["eserviceRecordId"],
-  });
-  return result.identifiers;
+  data: EserviceProbingRequestInsert,
+) => {
+  await db
+    .insert(eserviceProbingRequestsInProbing)
+    .values({
+      eservicesRecordId: data.eservicesRecordId,
+      lastRequest: data.lastRequest,
+    })
+    .onConflictDoUpdate({
+      target: eserviceProbingRequestsInProbing.eservicesRecordId,
+      set: { lastRequest: data.lastRequest },
+    });
 };
 
 export const addEserviceProbingResponse = async (
-  data: EserviceProbingResponseSchema,
-  repository: EserviceProbingResponseEntities,
-): Promise<ObjectLiteral[]> => {
-  const result = await repository.upsert(data, {
-    skipUpdateIfNoValuesChanged: true,
-    conflictPaths: ["eserviceRecordId"],
-  });
-  return result.identifiers;
+  data: EserviceProbingResponseInsert,
+) => {
+  await db
+    .insert(eserviceProbingResponsesInProbing)
+    .values({
+      eservicesRecordId: data.eservicesRecordId,
+      responseReceived: data.responseReceived,
+      status: data.status,
+    })
+    .onConflictDoUpdate({
+      target: eserviceProbingResponsesInProbing.eservicesRecordId,
+      set: { responseReceived: data.responseReceived, status: data.status },
+    });
 };
 
-export const addEservice = async (
-  data: EserviceSchema,
-  repository: EserviceEntities,
-): Promise<number> => {
-  const result: InsertResult = await repository
-    .createQueryBuilder()
-    .insert()
-    .values({
-      eserviceRecordId: () =>
-        `nextval('"${config.dbSchema}"."eservice_sequence"'::regclass)`,
-      ...data,
-    })
-    .returning("id")
-    .execute();
+export const addEservice = async (data: EserviceInsert): Promise<number> => {
+  const insertData: EserviceInsert = {
+    ...data,
+  };
 
-  const [eservice]: { id: string }[] = result.raw;
-  return Number(eservice.id);
+  const [row] = await db
+    .insert(eservicesInProbing)
+    .values(insertData)
+    .returning({ id: eservicesInProbing.id });
+
+  return Number(row.id);
 };
 
 export const addTenant = async (
-  data: TenantSchema,
-  repository: TenantEntities,
-): Promise<TenantSchema> => {
-  const result: InsertResult = await repository
-    .createQueryBuilder()
-    .insert()
+  data: TenantInsert,
+): Promise<TenantInsert & { id?: number | bigint }> => {
+  const [row] = await db
+    .insert(tenantsInProbing)
     .values({
-      tenantRecordId: () =>
-        `nextval('"${config.dbSchema}"."tenant_sequence"'::regclass)`,
-      ...data,
+      tenantId: data.tenantId,
+      tenantName: data.tenantName,
     })
-    .returning("*")
-    .execute();
+    .returning();
 
-  const [tenant]: TenantSchema[] = result.raw;
-  return tenant;
+  return row;
 };
 
 export const getEservice = async (
   eserviceRecordId: number,
-  repository: EserviceViewEntities,
-): Promise<EserviceViewSchema | { [key: string]: string }> => {
-  return (await repository.findOneBy({ eserviceRecordId })) || {};
+): Promise<EserviceViewSQL> => {
+  const [row] = await db
+    .select()
+    .from(eserviceViewInProbing)
+    .where(eq(eserviceViewInProbing.id, eserviceRecordId))
+    .limit(1);
+
+  return row;
 };

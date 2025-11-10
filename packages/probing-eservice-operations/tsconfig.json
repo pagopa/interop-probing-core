@@ -1,7 +1,12 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist"
+    "outDir": "dist",
   },
-  "include": ["src", "test"]
+  "include": [
+    "src",
+    "test",
+    "drizzle.config.ts",
+    "test/vitest.config.ts"
+  ]
 }

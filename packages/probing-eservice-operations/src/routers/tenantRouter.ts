@@ -6,20 +6,13 @@ import {
   ZodiosContext,
   logger,
 } from "pagopa-interop-probing-commons";
-import { config } from "../utilities/config.js";
-import { modelServiceBuilder } from "../services/db/dbService.js";
 import { api } from "pagopa-interop-probing-eservice-operations-client";
 import { errorMapper } from "../utilities/errorMapper.js";
-import { ModelRepository } from "../repositories/modelRepository.js";
-import { tenantServiceBuilder } from "../services/tenantService.js";
-import { tenantQueryBuilder } from "../services/db/tenantQuery.js";
-
-const modelService = modelServiceBuilder(await ModelRepository.init(config));
-const tenantQuery = tenantQueryBuilder(modelService);
-const tenantService = tenantServiceBuilder(tenantQuery);
+import { TenantService } from "../services/tenantService.js";
 
 const tenantRouter = (
   ctx: ZodiosContext,
+  tenantService: TenantService,
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const tenantRouter = ctx.router(api.api);
 

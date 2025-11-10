@@ -4,22 +4,22 @@ import {
   ApiSaveTenantParams,
   ApiDeleteTenantResponse,
 } from "pagopa-interop-probing-eservice-operations-client";
-import { TenantQuery } from "./db/tenantQuery.js";
+import { DBService } from "./dbService.js";
 
-export function tenantServiceBuilder(tenantQuery: TenantQuery) {
+export function tenantServiceBuilder(dbService: DBService) {
   return {
     async saveTenant(
       params: ApiSaveTenantParams,
       data: ApiSaveTenantPayload,
     ): Promise<ApiSaveTenantResponse> {
-      return await tenantQuery.saveTenant({
+      return await dbService.saveTenant({
         tenant_id: params.tenantId,
         tenant_name: data.name,
       });
     },
 
     async deleteTenant(tenantId: string): Promise<ApiDeleteTenantResponse> {
-      return await tenantQuery.deleteTenant(tenantId);
+      return await dbService.deleteTenant(tenantId);
     },
   };
 }
