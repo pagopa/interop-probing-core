@@ -10,8 +10,9 @@
     "lint:autofix": "eslint . --fix",
     "format:check": "prettier --check src",
     "format:write": "prettier --write src",
-    "start": "node --watch --no-warnings --loader ts-node/esm -r 'dotenv-flow/config' ./src/index.ts",
-    "build": "tsc"
+    "start": "tsx -r 'dotenv-flow/config' --watch ./src/index.ts",
+    "build": "tsc",
+    "check": "tsc --project tsconfig.check.json"
   },
   "keywords": [],
   "author": "",
@@ -44,6 +45,7 @@
     "globals": "15.14.0",
     "prettier": "3.2.5",
     "ts-node": "10.9.2",
-    "typescript": "5.2.2"
+    "typescript": "5.2.2",
+    "tsx": "4.20.5"
   }
 }
