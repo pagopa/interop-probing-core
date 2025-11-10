@@ -83,13 +83,13 @@ export const eServiceDefaultValues = {
  *   .insert()
  *   .values({
  *     eserviceRecordId: () =>
- *       `nextval('"${config.schemaName}"."eservice_sequence"'::regclass)`,
+ *       `nextval('"${config.dbSchema}"."eservice_sequence"'::regclass)`,
  *     // ... (other values for other columns)
  *   })
  *   .execute();
  */
 export const Eservice = new EntitySchema<EserviceSchema>({
-  name: `${config.schemaName}.eservices`,
+  name: `${config.dbSchema}.eservices`,
   columns: {
     eserviceRecordId: {
       name: "id",
@@ -177,7 +177,7 @@ export const Eservice = new EntitySchema<EserviceSchema>({
 });
 
 export const Tenant = new EntitySchema<TenantSchema>({
-  name: `${config.schemaName}.tenants`,
+  name: `${config.dbSchema}.tenants`,
   columns: {
     tenantRecordId: {
       name: "id",

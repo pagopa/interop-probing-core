@@ -10,7 +10,7 @@ export interface EserviceProbingRequestSchema {
 
 export const EserviceProbingRequest =
   new EntitySchema<EserviceProbingRequestSchema>({
-    name: `${config.schemaName}.eservice_probing_requests`,
+    name: `${config.dbSchema}.eservice_probing_requests`,
     columns: {
       eserviceRecordId: {
         name: "eservices_record_id",
