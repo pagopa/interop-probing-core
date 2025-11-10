@@ -83,18 +83,18 @@ export const addEservice = async (data: EserviceInsert): Promise<number> => {
     ...data,
   };
 
-  const [row] = await db
+  const [eservice] = await db
     .insert(eservicesInProbing)
     .values(insertData)
     .returning({ id: eservicesInProbing.id });
 
-  return Number(row.id);
+  return Number(eservice.id);
 };
 
 export const addTenant = async (
   data: TenantInsert,
 ): Promise<TenantInsert & { id?: number | bigint }> => {
-  const [row] = await db
+  const [tenant] = await db
     .insert(tenantsInProbing)
     .values({
       tenantId: data.tenantId,
@@ -102,17 +102,17 @@ export const addTenant = async (
     })
     .returning();
 
-  return row;
+  return tenant;
 };
 
 export const getEservice = async (
   eserviceRecordId: number,
 ): Promise<EserviceViewSQL> => {
-  const [row] = await db
+  const [eservice] = await db
     .select()
     .from(eserviceViewInProbing)
     .where(eq(eserviceViewInProbing.id, eserviceRecordId))
     .limit(1);
 
-  return row;
+  return eservice;
 };
