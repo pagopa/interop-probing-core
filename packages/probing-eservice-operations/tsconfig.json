@@ -4,9 +4,6 @@
     "outDir": "dist",
   },
   "include": [
-    "src",
-    "test",
-    "drizzle.config.ts",
-    "test/vitest.config.ts"
+    "src"
   ]
 }
