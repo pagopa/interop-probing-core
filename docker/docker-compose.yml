@@ -15,10 +15,14 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
     command: -c 'max_connections=512' -c 'wal_level=logical'
+    networks:
+      - develop-network
 
   # Zookeeper for Kafka
   zookeeper:
     image: quay.io/debezium/zookeeper:2.3@sha256:5b1354c4fa3bae600128eaa3ba9487ebd98b0aef40e3a39b32efe7533c8d2604
+    networks:
+      - develop-network
 
   # Kafka server
   kafka:
@@ -28,6 +32,8 @@ services:
       - 29092:29092
     depends_on:
       - zookeeper
+    networks:
+      - develop-network
     environment:
       ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENERS: LISTENER_DOCKER://kafka:29092,LISTENER_HOST://kafka:9092
@@ -45,9 +51,25 @@ services:
       - 8084:8080
     depends_on:
       - kafka
+    networks:
+      - develop-network
     environment:
       KAFKA_CLUSTERS_0_NAME: local
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+
+  # ElasticMQ is a local SQS-compatible queue system, to replace AWS SQS in local development
+  elasticmq:
+    security_opt:
+      - no-new-privileges:true
+    image: softwaremill/elasticmq-native:1.5.7
+    ports:
+      - 9324:9324
+      - 9325:9325
+    volumes:
+      - ./elasticmq.local.conf:/opt/elasticmq.conf
+    restart: always
+    networks:
+      - develop-network
 
 networks:
   develop-network:

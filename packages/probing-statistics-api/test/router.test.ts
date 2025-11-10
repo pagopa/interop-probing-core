@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import supertest from "supertest";
 import {
   contextMiddleware,
@@ -44,7 +44,7 @@ app.use(statisticsRouter(zodiosCtx)(statisticsService));
 const probingApiClient = supertest(app);
 
 describe("eService Router", () => {
-  beforeEach(() => {
+  afterEach(() => {
     vi.restoreAllMocks();
   });
 

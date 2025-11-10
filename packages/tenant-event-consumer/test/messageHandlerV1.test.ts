@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, afterEach } from "vitest";
 import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
 import {
   OperationsService,
@@ -32,6 +32,10 @@ describe("Message handler V1 test", () => {
     correlationId: uuidv4(),
   };
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   describe("TenantCreated Event", () => {
     it("save a new Tenant for TenantCreated event should return a successfully response", async () => {
       const tenantId = uuidv4();
@@ -51,15 +55,9 @@ describe("Message handler V1 test", () => {
 
       vi.spyOn(apiClient, "saveTenant").mockResolvedValueOnce(undefined);
 
-      expect(
-        async () =>
-          await handleMessageV1(
-            tenantV1Event,
-            operationsService,
-            ctx,
-            genericLogger,
-          ),
-      ).not.toThrowError();
+      await expect(
+        handleMessageV1(tenantV1Event, operationsService, ctx, genericLogger),
+      ).resolves.not.toThrowError();
 
       expect(apiClient.saveTenant).toBeCalled();
     });
@@ -141,15 +139,14 @@ describe("Message handler V1 test", () => {
     it("update a Tenant for TenantUpdated event should return a successfully response", async () => {
       vi.spyOn(apiClient, "saveTenant").mockResolvedValueOnce(undefined);
 
-      expect(
-        async () =>
-          await handleMessageV1(
-            mockTenantUpdateV1(uuidv4()),
-            operationsService,
-            ctx,
-            genericLogger,
-          ),
-      ).not.toThrowError();
+      await expect(
+        handleMessageV1(
+          mockTenantUpdateV1(uuidv4()),
+          operationsService,
+          ctx,
+          genericLogger,
+        ),
+      ).resolves.not.toThrowError();
 
       expect(apiClient.saveTenant).toBeCalled();
     });
@@ -179,15 +176,14 @@ describe("Message handler V1 test", () => {
     it("delete an Tenant for TenantDeleted event should return a successfully response", async () => {
       vi.spyOn(apiClient, "deleteTenant").mockResolvedValueOnce(undefined);
 
-      expect(
-        async () =>
-          await handleMessageV1(
-            mockTenantDeleteV1,
-            operationsService,
-            ctx,
-            genericLogger,
-          ),
-      ).not.toThrowError();
+      await expect(
+        handleMessageV1(
+          mockTenantDeleteV1,
+          operationsService,
+          ctx,
+          genericLogger,
+        ),
+      ).resolves.not.toThrowError();
 
       expect(apiClient.deleteTenant).toBeCalled();
     });

@@ -1,0 +1,114 @@
+name: pagopa-interop-probing
+
+services:
+  probing-api:
+    build:
+      context: ..
+      dockerfile: packages/probing-api/Dockerfile
+    image: interop-probing-probing-api:local
+    networks:
+      - develop-network
+    env_file:
+      - ../packages/probing-api/.env
+    ports:
+      - "3010:3010"
+
+  probing-statistics-api:
+    build:
+      context: ..
+      dockerfile: packages/probing-statistics-api/Dockerfile
+    image: interop-probing-statistics-api:local
+    networks:
+      - develop-network
+    env_file:
+      - ../packages/probing-statistics-api/.env
+    ports:
+      - "3011:3011"
+
+  probing-eservice-operations:
+    build:
+      context: ..
+      dockerfile: packages/probing-eservice-operations/Dockerfile
+    image: interop-probing-eservice-operations:local
+    networks:
+      - develop-network
+    env_file:
+      - ../packages/probing-eservice-operations/.env
+    ports:
+      - "3000:3000"
+  eservice-event-consumer:
+    build:
+      context: ..
+      dockerfile: packages/eservice-event-consumer/Dockerfile
+    image: interop-eservice-event-consumer:local
+    networks:
+      - develop-network
+    env_file:
+      - ../packages/eservice-event-consumer/.env
+    ports:
+      - "3001:3001"
+
+  tenant-event-consumer:
+    build:
+      context: ..
+      dockerfile: packages/tenant-event-consumer/Dockerfile
+    image: interop-tenant-event-consumer:local
+    networks:
+      - develop-network
+    env_file:
+      - ../packages/tenant-event-consumer/.env
+    ports:
+      - "3002:3002"
+
+  probing-scheduler:
+    build:
+      context: ..
+      dockerfile: packages/probing-scheduler/Dockerfile
+    image: interop-probing-scheduler:local
+    networks:
+      - develop-network
+    env_file:
+      - ../packages/probing-scheduler/.env
+    ports:
+      - "3003:3003"
+
+  probing-caller:
+    build:
+      context: ..
+      dockerfile: packages/probing-caller/Dockerfile
+    image: interop-probing-probing-caller:local
+    networks:
+      - develop-network
+    env_file:
+      - ../packages/probing-caller/.env
+    ports:
+      - "3004:3004"
+
+  probing-response-updater:
+    build:
+      context: ..
+      dockerfile: packages/probing-response-updater/Dockerfile
+    image: interop-probing-response-updater:local
+    networks:
+      - develop-network
+    env_file:
+      - ../packages/probing-response-updater/.env
+    ports:
+      - "3005:3005"
+
+  probing-telemetry-writer:
+    build:
+      context: ..
+      dockerfile: packages/probing-telemetry-writer/Dockerfile
+    image: interop-probing-telemetry-writer:local
+    networks:
+      - develop-network
+    env_file:
+      - ../packages/probing-telemetry-writer/.env
+    ports:
+      - "3006:3006"
+
+networks:
+  develop-network:
+    external: true
+    name: interop-probing-develop-network

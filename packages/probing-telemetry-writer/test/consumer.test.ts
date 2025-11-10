@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, afterAll } from "vitest";
+import { describe, expect, it, vi, afterEach } from "vitest";
 import { processMessage } from "../src/messagesHandler.js";
 import {
   AppContext,
@@ -28,8 +28,8 @@ describe("Consumer queue test", () => {
     },
   };
 
-  afterAll(() => {
-    vi.restoreAllMocks();
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
   it("given valid message, method should not throw an exception", async () => {
