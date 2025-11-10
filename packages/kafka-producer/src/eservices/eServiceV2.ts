@@ -1,5 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
+  AgreementApprovalPolicyV2,
+  EServiceDescriptorStateV2,
+  EServiceDescriptorV2,
   EServiceEvent,
   EServiceEventV2,
   EServiceModeV2,
@@ -12,6 +14,24 @@ import { randomUUID } from "crypto";
 
 export const eServiceIdV2 = randomUUID();
 
+export const descriptorV2 = (
+  partialDescriptorV2?: Partial<EServiceDescriptorV2>,
+): EServiceDescriptorV2 => ({
+  id: randomUUID(),
+  agreementApprovalPolicy: AgreementApprovalPolicyV2.AUTOMATIC,
+  audience: ["test.audience"],
+  createdAt: "1" as unknown as bigint,
+  dailyCallsPerConsumer: 100,
+  dailyCallsTotal: 100,
+  rejectionReasons: [],
+  docs: [],
+  serverUrls: ["http://test.com"],
+  state: EServiceDescriptorStateV2.DRAFT,
+  version: "1" as unknown as bigint,
+  voucherLifespan: 100,
+  ...partialDescriptorV2,
+});
+
 const eServiceAddedEventV2: EServiceEvent = {
   event_version: 2,
   type: "EServiceAdded",
@@ -19,12 +39,12 @@ const eServiceAddedEventV2: EServiceEvent = {
     eservice: {
       id: eServiceIdV2,
       producerId: tenantIdV2,
-      createdAt: "1" as any,
+      createdAt: "1" as unknown as bigint,
       description: "eService test description",
       mode: EServiceModeV2.RECEIVE,
       name: "eService test name",
       technology: EServiceTechnologyV2.REST,
-      descriptors: [],
+      descriptors: [descriptorV2()],
     },
   },
   stream_id: "1",
@@ -43,7 +63,7 @@ const eServiceCloned: EServiceEvent = {
     eservice: {
       id: eServiceIdV2,
       producerId: tenantIdV2,
-      createdAt: "1" as any,
+      createdAt: "1" as unknown as bigint,
       description: "eService test description",
       mode: EServiceModeV2.RECEIVE,
       name: "eService test name",
@@ -67,7 +87,7 @@ const EServiceDescriptionUpdated: EServiceEventV2 = {
       name: "",
       producerId: tenantIdV2,
       descriptors: [],
-      createdAt: "1" as any,
+      createdAt: "1" as unknown as bigint,
       mode: EServiceModeV2.RECEIVE,
     },
   },

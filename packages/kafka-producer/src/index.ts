@@ -5,7 +5,7 @@ import { config } from "./config/env.js";
 import { initProducer } from "./producer.js";
 
 const app = express();
-const port = 3005;
+const port = 3007;
 
 export const producer = await initProducer(
   {

@@ -1,4 +1,4 @@
-import { describe, expect, it, vi, afterAll } from "vitest";
+import { describe, expect, it, vi, afterAll, afterEach } from "vitest";
 import { processMessage } from "../src/messagesHandler.js";
 import {
   AppContext,
@@ -42,8 +42,10 @@ describe("Consumer queue test", async () => {
     sendToResponseUpdaterQueue: vi.fn().mockResolvedValue(undefined),
   };
 
+  afterEach(() => vi.restoreAllMocks());
+
   afterAll(() => {
-    vi.restoreAllMocks();
+    vi.clearAllMocks();
   });
 
   it("Reads the message from the queue and pushes it to the polling and telemetry queues.", async () => {
