@@ -7,6 +7,7 @@ import {
 } from "pagopa-interop-probing-models";
 import {
   getEservice,
+  mockEservice,
   addEservice,
   addEserviceProbingRequest,
   addEserviceProbingResponse,
@@ -33,73 +34,10 @@ import {
   ApiSearchEservicesQuery,
 } from "pagopa-interop-probing-eservice-operations-client";
 import { genericLogger } from "pagopa-interop-probing-commons";
-import { eServiceDefaultValues } from "../src/db/constants/eServices.js";
 
 describe("eService service", async () => {
-  interface DataOptions {
-    disableCreationProbingRequest?: boolean;
-    disableCreationProbingResponse?: boolean;
-  }
-
-  const createEservice = async ({
-    options: dataOptions = {},
-    eserviceData: partialEserviceData = {},
-    probingRequestData: partialProbingRequestData = {},
-    probingResponseData: partialProbingResponseData = {},
-  }: {
-    options?: DataOptions;
-    eserviceData?: Partial<Record<string, unknown>>;
-    probingRequestData?: Partial<Record<string, unknown>>;
-    probingResponseData?: Partial<Record<string, unknown>>;
-  } = {}): Promise<{
-    eserviceRecordId: number;
-    eserviceId: string;
-    versionId: string;
-  }> => {
-    const eserviceRecordId = await addEservice({
-      eserviceName: "eService 001",
-      producerName: "eService producer 001",
-      versionNumber: 1,
-      state: eserviceInteropState.inactive,
-      basePath: ["path-1"],
-      eserviceTechnology: technology.rest,
-      audience: ["audience"],
-      eserviceId: uuidv4(),
-      versionId: uuidv4(),
-      ...eServiceDefaultValues,
-      ...partialEserviceData,
-    });
-
-    if (!dataOptions.disableCreationProbingRequest) {
-      await addEserviceProbingRequest({
-        eservicesRecordId: eserviceRecordId,
-        lastRequest: "2024-01-25T00:51:05.733Z",
-        ...partialProbingRequestData,
-      });
-    }
-
-    if (!dataOptions.disableCreationProbingResponse) {
-      await addEserviceProbingResponse({
-        eservicesRecordId: eserviceRecordId,
-        responseReceived: "2024-01-25T00:51:05.736Z",
-        status: responseStatus.ok,
-        ...partialProbingResponseData,
-      });
-    }
-
-    const eserviceRow = await getEservice(eserviceRecordId);
-    const versionId = eserviceRow.versionId!; // eslint-disable-line @typescript-eslint/no-non-null-assertion
-    const eserviceId = eserviceRow.eserviceId!; // eslint-disable-line @typescript-eslint/no-non-null-assertion
-
-    return {
-      eserviceRecordId,
-      eserviceId,
-      versionId,
-    };
-  };
-
   describe("searchEservices", () => {
-    it("service returns searchEservices response object with content empty", async () => {
+    it("should return an empty result when filtering by non-existent e-service name and producer", async () => {
       const filters: ApiSearchEservicesQuery = {
         eserviceName: "eService 001",
         producerName: "eService producer 001",
@@ -113,20 +51,46 @@ describe("eService service", async () => {
         filters,
         genericLogger,
       );
-
       expect(result.content).toStrictEqual([]);
       expect(result.totalElements).toBe(0);
     });
 
-    it("given a list of all state values as parameter, service returns searchEservices response object with content not empty", async () => {
-      const eserviceData = {
-        eserviceName: "eService 001",
-        producerName: "eService producer 001",
-      };
-      await createEservice({ eserviceData });
+    it("should return all e-services when no state filter is provided", async () => {
+      const eService = mockEservice();
+      await addEservice(eService);
 
       const filters: ApiSearchEservicesQuery = {
-        ...eserviceData,
+        eserviceName: eService.eserviceName,
+        producerName: eService.producerName,
+        versionNumber: 1,
+        limit: 2,
+        offset: 0,
+      };
+
+      const result = await eserviceService.searchEservices(
+        filters,
+        genericLogger,
+      );
+      expect(result.totalElements).toBeGreaterThan(0);
+    });
+
+    it("should return all e-services when filtering by all state values (N_D, OFFLINE, ONLINE)", async () => {
+      const eService = mockEservice({ state: eserviceInteropState.inactive });
+      const eserviceRecordId = await addEservice(eService);
+
+      await addEserviceProbingRequest({
+        eservicesRecordId: eserviceRecordId,
+        lastRequest: new Date().toISOString(),
+      });
+      await addEserviceProbingResponse({
+        eservicesRecordId: eserviceRecordId,
+        responseReceived: new Date().toISOString(),
+        status: responseStatus.ok,
+      });
+
+      const filters: ApiSearchEservicesQuery = {
+        eserviceName: eService.eserviceName,
+        producerName: eService.producerName,
         versionNumber: 1,
         state: [
           eserviceMonitorState["n_d"],
@@ -141,22 +105,26 @@ describe("eService service", async () => {
         filters,
         genericLogger,
       );
-      expect(result.totalElements).not.toBe(0);
-      expect(result.offset).toBe(0);
-      expect(result.limit).toBe(2);
-      expect(result.content[0].state).toBe(eserviceInteropState.inactive);
+
+      expect(result.totalElements).toBeGreaterThan(0);
+      expect(result.content[0]).toMatchObject({
+        eserviceName: eService.eserviceName,
+        producerName: eService.producerName,
+      });
     });
 
-    it("given status n_d as parameter, service returns searchEservices response object with content empty", async () => {
-      const eserviceData = {
-        eserviceName: "eService 001",
-        producerName: "eService producer 001",
-      };
-      await createEservice({ eserviceData });
+    it("should return e-services matching N_D filtering (probing disabled case)", async () => {
+      const eService = mockEservice({
+        state: eserviceInteropState.active,
+        probingEnabled: false,
+      });
+
+      await addEservice(eService);
 
       const filters: ApiSearchEservicesQuery = {
-        ...eserviceData,
-        versionNumber: 2,
+        eserviceName: eService.eserviceName,
+        producerName: eService.producerName,
+        versionNumber: 1,
         state: [eserviceMonitorState["n_d"]],
         limit: 2,
         offset: 0,
@@ -167,19 +135,29 @@ describe("eService service", async () => {
         genericLogger,
       );
 
-      expect(result.content).toStrictEqual([]);
-      expect(result.totalElements).toBe(0);
+      expect(result.totalElements).toBeGreaterThan(0);
+      expect(result.content[0]).toMatchObject({
+        eserviceName: eService.eserviceName,
+        producerName: eService.producerName,
+      });
     });
 
-    it("given status offline as parameter, service returns searchEservices response object with content not empty", async () => {
-      const eserviceData = {
-        eserviceName: "eService 001",
-        producerName: "eService producer 001",
-      };
-      await createEservice({ eserviceData });
+    it("should return e-services when state is INACTIVE and filtering by OFFLINE", async () => {
+      const eService = mockEservice();
+      const eserviceRecordId = await addEservice(eService);
+      await addEserviceProbingRequest({
+        eservicesRecordId: eserviceRecordId,
+        lastRequest: new Date().toISOString(),
+      });
+      await addEserviceProbingResponse({
+        eservicesRecordId: eserviceRecordId,
+        responseReceived: new Date().toISOString(),
+        status: responseStatus.ok,
+      });
 
       const filters: ApiSearchEservicesQuery = {
-        ...eserviceData,
+        eserviceName: eService.eserviceName,
+        producerName: eService.producerName,
         versionNumber: 1,
         state: [eserviceMonitorState.offline],
         limit: 2,
@@ -190,25 +168,54 @@ describe("eService service", async () => {
         filters,
         genericLogger,
       );
-
       expect(result.totalElements).toBe(1);
       expect(result.offset).toBe(0);
       expect(result.limit).toBe(2);
       expect(result.content[0].state).toBe(eserviceInteropState.inactive);
     });
+
+    it("should return e-services matching N_D filtering when responseReceived is null", async () => {
+      const eService = mockEservice({
+        state: eserviceInteropState.active,
+        probingEnabled: true,
+      });
+
+      const recordId = await addEservice(eService);
+
+      await addEserviceProbingRequest({
+        eservicesRecordId: recordId,
+        lastRequest: new Date().toISOString(),
+      });
+
+      const filters: ApiSearchEservicesQuery = {
+        eserviceName: eService.eserviceName,
+        state: [eserviceMonitorState["n_d"]],
+        limit: 5,
+        offset: 0,
+      };
+
+      const result = await eserviceService.searchEservices(
+        filters,
+        genericLogger,
+      );
+      expect(result.totalElements).toBeGreaterThan(0);
+    });
   });
 
   describe("getEserviceMainData", () => {
-    it("e-service main data has been retrieved and MainDataEserviceResponse is created", async () => {
-      const eservice = await createEservice();
+    it("should successfully retrieve e-service main data and return a valid MainDataEserviceResponse", async () => {
+      const eService = mockEservice();
+      const eserviceRecordId = await addEservice(eService);
       const result = await eserviceService.getEserviceMainData(
-        eservice.eserviceRecordId,
+        eserviceRecordId,
         genericLogger,
       );
       expect(result).toBeTruthy();
+      expect(result).toHaveProperty("eserviceName", eService.eserviceName);
+      expect(result).toHaveProperty("pollingFrequency");
     });
 
-    it("e-service should not be found and an `eServiceProbingDataByRecordIdNotFound` should be thrown", async () => {
+    it("should throw an `eServiceProbingDataByRecordIdNotFound` error when the e-service is not found", async () => {
       await expect(
         eserviceService.getEserviceMainData(99, genericLogger),
       ).rejects.toThrowError(eServiceMainDataByRecordIdNotFound(99));
@@ -216,16 +223,35 @@ describe("eService service", async () => {
   });
 
   describe("getEserviceProbingData", () => {
-    it("e-service probing data has been retrieved and MainDataEserviceResponse is created", async () => {
-      const eservice = await createEservice();
+    it("should successfully retrieve e-service probing data and return a valid ProbingDataEserviceResponse", async () => {
+      const eService = mockEservice();
+      const eserviceRecordId = await addEservice(eService);
+      await addEserviceProbingRequest({
+        eservicesRecordId: eserviceRecordId,
+        lastRequest: new Date().toISOString(),
+      });
+      await addEserviceProbingResponse({
+        eservicesRecordId: eserviceRecordId,
+        responseReceived: new Date().toISOString(),
+        status: responseStatus.ok,
+      });
+
       const result = await eserviceService.getEserviceProbingData(
-        eservice.eserviceRecordId,
+        eserviceRecordId,
         genericLogger,
       );
       expect(result).toBeTruthy();
+      expect(result).toHaveProperty("probingEnabled", eService.probingEnabled);
+      expect(result).toHaveProperty(
+        "pollingFrequency",
+        eService.pollingFrequency,
+      );
+      expect(result).toHaveProperty("responseReceived");
+      expect(result).toHaveProperty("lastRequest");
+      expect(result).toHaveProperty("responseStatus", responseStatus.ok);
     });
 
-    it("e-service should not be found and an `eServiceProbingDataByRecordIdNotFound` should be thrown", async () => {
+    it("should throw an `eServiceProbingDataByRecordIdNotFound` error when the e-service is not found", async () => {
       await expect(
         eserviceService.getEserviceProbingData(99, genericLogger),
       ).rejects.toThrowError(eServiceProbingDataByRecordIdNotFound(99));
@@ -233,21 +259,18 @@ describe("eService service", async () => {
   });
 
   describe("getEservicesReadyForPolling", () => {
-    it("service returns getEservicesReadyForPolling response object with content not empty", async () => {
-      const eserviceData = {
-        eserviceName: "eService 001",
-        producerName: "eService producer 001",
+    it("should return a non-empty list of e-services ready for polling", async () => {
+      const eService1 = mockEservice({ probingEnabled: true });
+      const eService2 = mockEservice({
         probingEnabled: true,
-      };
-      await createEservice({ eserviceData });
-      await createEservice({
-        eserviceData: { ...eserviceData, state: eserviceInteropState.active },
+        state: eserviceInteropState.active,
       });
+
+      await addEservice(eService1);
+      await addEservice(eService2);
+
       const result = await eserviceService.getEservicesReadyForPolling(
-        {
-          offset: 0,
-          limit: 2,
-        },
+        { offset: 0, limit: 2 },
         genericLogger,
       );
 
@@ -257,51 +280,75 @@ describe("eService service", async () => {
   });
 
   describe("getEservicesProducers", () => {
-    it("given a valid producer name with no matching records, then returns an empty list", async () => {
+    it("should return an empty list when a valid producer name has no matching records", async () => {
+      const eService = mockEservice();
+      await addEservice(eService);
+
       const filters: ApiGetProducersQuery = {
         producerName: "no matching records eService producer",
         limit: 1,
         offset: 0,
       };
-      await createEservice();
-      const producers = await eserviceService.getEservicesProducers(filters);
 
+      const producers = await eserviceService.getEservicesProducers(filters);
       expect(producers.content.length).toBe(0);
     });
 
-    it("given specific valid producer name, then returns a non-empty list", async () => {
+    it("should return all producers when no producer name is provided", async () => {
+      const eService1 = mockEservice({ producerName: "Producer 1" });
+      const eService2 = mockEservice({ producerName: "Producer 2" });
+
+      await addEservice(eService1);
+      await addEservice(eService2);
+
+      const filters: ApiGetProducersQuery = { limit: 10, offset: 0 };
+      const result = await eserviceService.getEservicesProducers(filters);
+
+      expect(result).toBeDefined();
+      expect(result.content.length).toBeGreaterThan(0);
+      expect(result.content).toContain("Producer 1");
+      expect(result.content).toContain("Producer 2");
+    });
+
+    it("should return a non-empty list when given a specific valid producer name", async () => {
+      const eService = mockEservice({ producerName: "eService producer 001" });
+      await addEservice(eService);
+
       const filters: ApiGetProducersQuery = {
-        producerName: "eService producer 001",
+        producerName: eService.producerName,
         limit: 10,
         offset: 0,
       };
-      await createEservice();
-      const result = await eserviceService.getEservicesProducers(filters);
 
+      const result = await eserviceService.getEservicesProducers(filters);
       expect(result.content.length).not.toBe(0);
-      expect(result.content).toContain(filters.producerName);
+      expect(result.content).toContain(eService.producerName);
     });
 
-    it("given partial producerName as parameter, service returns list of 1 producers", async () => {
-      const eServiceProducer1: ApiGetProducersQuery = {
+    it("should return a list of matching producers when given a partial producer name", async () => {
+      const eService1 = mockEservice({ producerName: "eService producer 001" });
+      const eService2 = mockEservice({ producerName: "Another producer" });
+
+      await addEservice(eService1);
+      await addEservice(eService2);
+
+      const filters: ApiGetProducersQuery = {
         producerName: "eService producer",
         limit: 2,
         offset: 0,
       };
-      await createEservice();
-      await createEservice();
-      const producers =
-        await eserviceService.getEservicesProducers(eServiceProducer1);
 
+      const producers = await eserviceService.getEservicesProducers(filters);
       expect(producers.content.length).toBe(1);
     });
   });
 
   describe("updateEserviceState", () => {
-    it("e-service state correctly updated with new state", async () => {
-      const { eserviceId, versionId } = await createEservice({
-        eserviceData: { state: eserviceInteropState.active },
-      });
+    it("should update the e-service state correctly", async () => {
+      const eService = mockEservice({ state: eserviceInteropState.active });
+      const eServiceRecordId = await addEservice(eService);
+      const { eserviceId, versionId } = await getEservice(eServiceRecordId);
+
       await eserviceService.updateEserviceState(eserviceId, versionId, {
         eServiceState: eserviceInteropState.inactive,
       });
@@ -320,9 +367,10 @@ describe("eService service", async () => {
       expect(result?.state).toBe(eserviceInteropState.inactive);
     });
 
-    it("e-service should not be found and an `eServiceNotFound` should be thrown", async () => {
+    it("should throw `eServiceNotFound` when the e-service does not exist", async () => {
       const eserviceId = uuidv4();
       const versionId = uuidv4();
+
       await expect(
         eserviceService.updateEserviceState(eserviceId, versionId, {
           eServiceState: eserviceInteropState.active,
@@ -332,10 +380,10 @@ describe("eService service", async () => {
   });
 
   describe("updateEserviceProbingState", () => {
-    it("e-service probing gets enabled", async () => {
-      const { eserviceId, versionId } = await createEservice({
-        eserviceData: { probingEnabled: false },
-      });
+    it("should enable probing for the specified e-service", async () => {
+      const eService = mockEservice({ probingEnabled: false });
+      const eServiceRecordId = await addEservice(eService);
+      const { eserviceId, versionId } = await getEservice(eServiceRecordId);
 
       await eserviceService.updateEserviceProbingState(eserviceId, versionId, {
         probingEnabled: true,
@@ -368,8 +416,10 @@ describe("eService service", async () => {
   });
 
   describe("updateEserviceFrequency", () => {
-    it("e-service frequency correctly updated with new state", async () => {
-      const { eserviceId, versionId } = await createEservice();
+    it("should update e-service frequency with new state", async () => {
+      const eService = mockEservice();
+      const eServiceRecordId = await addEservice(eService);
+      const { eserviceId, versionId } = await getEservice(eServiceRecordId);
 
       const payload = {
         frequency: 10,
@@ -377,11 +427,11 @@ describe("eService service", async () => {
         endTime: nowDateUTC(8, 0),
       };
 
-      await eserviceService.updateEserviceFrequency(eserviceId, versionId, {
-        frequency: payload.frequency,
-        startTime: payload.startTime,
-        endTime: payload.endTime,
-      });
+      await eserviceService.updateEserviceFrequency(
+        eserviceId,
+        versionId,
+        payload,
+      );
 
       const [updatedEservice] = await db
         .select()
@@ -399,7 +449,7 @@ describe("eService service", async () => {
       expect(updatedEservice?.pollingEndTime).toBeTruthy();
     });
 
-    it("e-service should not be found and an `eServiceNotFound` should be thrown", async () => {
+    it("should throw `eServiceNotFound` when e-service not found", async () => {
       const eserviceId = uuidv4();
       const versionId = uuidv4();
 
@@ -410,22 +460,14 @@ describe("eService service", async () => {
       };
 
       await expect(
-        eserviceService.updateEserviceFrequency(eserviceId, versionId, {
-          frequency: payload.frequency,
-          startTime: payload.startTime,
-          endTime: payload.endTime,
-        }),
+        eserviceService.updateEserviceFrequency(eserviceId, versionId, payload),
       ).rejects.toThrowError(eServiceNotFound(eserviceId, versionId));
     });
   });
 
   describe("saveEservice", () => {
-    it("e-service to save when no eservice was found", async () => {
-      const tenantPayload = {
-        tenantId: uuidv4(),
-        tenantName: "tenant 001",
-      };
-
+    it("should create new e-service when none found", async () => {
+      const tenantPayload = { tenantId: uuidv4(), tenantName: "tenant 001" };
       await addTenant(tenantPayload);
 
       const payload = {
@@ -446,7 +488,7 @@ describe("eService service", async () => {
         payload,
       );
 
-      const [updatedEservice] = await db
+      const [eservice] = await db
         .select()
         .from(eservicesInProbing)
         .where(
@@ -457,22 +499,21 @@ describe("eService service", async () => {
         )
         .limit(1);
 
-      expect(updatedEservice?.eserviceId).toBe(payload.eserviceId);
-      expect(updatedEservice?.eserviceName).toBe(payload.name);
-      expect(updatedEservice?.basePath).toStrictEqual(payload.basePath);
-      expect(updatedEservice?.eserviceTechnology).toBe(payload.technology);
-      expect(updatedEservice?.versionNumber).toBe(payload.versionNumber);
-      expect(updatedEservice?.audience).toStrictEqual(payload.audience);
+      expect(eservice?.eserviceId).toBe(payload.eserviceId);
+      expect(eservice?.eserviceName).toBe(payload.name);
+      expect(eservice?.basePath).toStrictEqual(payload.basePath);
+      expect(eservice?.eserviceTechnology).toBe(payload.technology);
+      expect(eservice?.versionNumber).toBe(payload.versionNumber);
+      expect(eservice?.audience).toStrictEqual(payload.audience);
     });
 
-    it("e-service correctly updated", async () => {
-      const tenantPayload = {
-        tenantId: uuidv4(),
-        tenantName: "tenant 001",
-      };
+    it("should update e-service correctly", async () => {
+      const tenantPayload = { tenantId: uuidv4(), tenantName: "tenant 001" };
       const tenant = await addTenant(tenantPayload);
 
-      const { eserviceId, versionId } = await createEservice();
+      const eService = mockEservice();
+      const eServiceRecordId = await addEservice(eService);
+      const { eserviceId, versionId } = await getEservice(eServiceRecordId);
 
       const payload = {
         name: "eService 004",
@@ -486,7 +527,7 @@ describe("eService service", async () => {
 
       await eserviceService.saveEservice(eserviceId, versionId, payload);
 
-      const [updatedEservice] = await db
+      const [updated] = await db
         .select()
         .from(eservicesInProbing)
         .where(
@@ -497,11 +538,11 @@ describe("eService service", async () => {
         )
         .limit(1);
 
-      expect(updatedEservice?.versionNumber).toBe(payload.versionNumber);
-      expect(updatedEservice?.audience).toStrictEqual(payload.audience);
+      expect(updated?.versionNumber).toBe(payload.versionNumber);
+      expect(updated?.audience).toStrictEqual(payload.audience);
     });
 
-    it("e-service should not be saved and `tenantNotFound` should be thrown", async () => {
+    it("should throw `tenantNotFound` when the tenant does not exist", async () => {
       const payload = {
         name: "eService 004",
         eserviceId: uuidv4(),
@@ -526,12 +567,9 @@ describe("eService service", async () => {
 
   describe("deleteEservice", () => {
     it("should delete an eservice successfully", async () => {
-      const { eserviceId } = await createEservice({
-        options: {
-          disableCreationProbingRequest: true,
-          disableCreationProbingResponse: true,
-        },
-      });
+      const eService = mockEservice();
+      const eServiceRecordId = await addEservice(eService);
+      const { eserviceId } = await getEservice(eServiceRecordId);
 
       await eserviceService.deleteEservice(eserviceId);
 
@@ -540,15 +578,17 @@ describe("eService service", async () => {
         .from(eservicesInProbing)
         .where(eq(eservicesInProbing.eserviceId, eserviceId))
         .limit(1);
-
       expect(result).toBeUndefined();
     });
 
-    it("should delete an eservice with probing data request successfully", async () => {
-      const { eserviceId } = await createEservice({
-        options: {
-          disableCreationProbingRequest: true,
-        },
+    it("should delete an eservice with probing request only", async () => {
+      const eService = mockEservice();
+      const eserviceRecordId = await addEservice(eService);
+      const { eserviceId } = await getEservice(eserviceRecordId);
+
+      await addEserviceProbingRequest({
+        eservicesRecordId: eserviceRecordId,
+        lastRequest: new Date().toISOString(),
       });
 
       await eserviceService.deleteEservice(eserviceId);
@@ -563,7 +603,20 @@ describe("eService service", async () => {
     });
 
     it("should delete an eservice with probing data request and response successfully", async () => {
-      const { eserviceId } = await createEservice();
+      const eService = mockEservice();
+      const eserviceRecordId = await addEservice(eService);
+      const { eserviceId } = await getEservice(eserviceRecordId);
+
+      await addEserviceProbingRequest({
+        eservicesRecordId: eserviceRecordId,
+        lastRequest: new Date().toISOString(),
+      });
+
+      await addEserviceProbingResponse({
+        eservicesRecordId: eserviceRecordId,
+        responseReceived: new Date().toISOString(),
+        status: "ok",
+      });
 
       await eserviceService.deleteEservice(eserviceId);
 
@@ -586,7 +639,7 @@ describe("eService service", async () => {
 
     it("should throw an error if the eserviceId param is invalid", async () => {
       const invalidEserviceParams = {
-        eserviceId: "e",
+        eserviceId: "invalid-id",
       };
 
       await expect(
@@ -596,19 +649,23 @@ describe("eService service", async () => {
   });
 
   describe("updateEserviceLastRequest", () => {
-    it("e-service last request has correctly updated", async () => {
-      const { eserviceRecordId } = await createEservice();
+    it("should correctly update existing probing request", async () => {
+      const eService = mockEservice();
+      const eserviceRecordId = await addEservice(eService);
 
-      const payload = {
+      await addEserviceProbingRequest({
+        eservicesRecordId: eserviceRecordId,
         lastRequest: new Date().toISOString(),
-      };
+      });
+
+      const payload = { lastRequest: new Date().toISOString() };
 
       await eserviceService.updateEserviceLastRequest(
         eserviceRecordId,
         payload,
       );
 
-      const [updatedEservice] = await db
+      const [updatedProbingRequest] = await db
         .select()
         .from(eserviceProbingRequestsInProbing)
         .where(
@@ -619,26 +676,23 @@ describe("eService service", async () => {
         )
         .limit(1);
 
-      expect(new Date(updatedEservice?.lastRequest).toISOString()).toBe(
+      expect(new Date(updatedProbingRequest?.lastRequest).toISOString()).toBe(
         payload.lastRequest,
       );
     });
 
-    it("e-service probing request has been created", async () => {
-      const { eserviceRecordId } = await createEservice({
-        options: { disableCreationProbingRequest: true },
-      });
+    it("should create a new probing request if none exists", async () => {
+      const eService = mockEservice();
+      const eserviceRecordId = await addEservice(eService);
 
-      const payload = {
-        lastRequest: new Date().toISOString(),
-      };
+      const payload = { lastRequest: new Date().toISOString() };
 
       await eserviceService.updateEserviceLastRequest(
         eserviceRecordId,
         payload,
       );
 
-      const [updatedEservice] = await db
+      const [createdProbingRequest] = await db
         .select()
         .from(eserviceProbingRequestsInProbing)
         .where(
@@ -649,43 +703,22 @@ describe("eService service", async () => {
         )
         .limit(1);
 
-      expect(new Date(updatedEservice?.lastRequest).toISOString()).toBe(
+      expect(createdProbingRequest).toBeDefined();
+      expect(new Date(createdProbingRequest?.lastRequest).toISOString()).toBe(
         payload.lastRequest,
       );
     });
   });
 
   describe("updateResponseReceived", () => {
-    it("e-service reponse received has correctly updated", async () => {
-      const { eserviceRecordId } = await createEservice();
+    it("should correctly update existing probing response", async () => {
+      const eService = mockEservice();
+      const eserviceRecordId = await addEservice(eService);
 
-      const payload = {
-        status: responseStatus.ok,
+      await addEserviceProbingResponse({
+        eservicesRecordId: eserviceRecordId,
         responseReceived: new Date().toISOString(),
-      };
-
-      await eserviceService.updateResponseReceived(eserviceRecordId, payload);
-
-      const [updatedEservice] = await db
-        .select()
-        .from(eserviceProbingResponsesInProbing)
-        .where(
-          eq(
-            eserviceProbingResponsesInProbing.eservicesRecordId,
-            eserviceRecordId,
-          ),
-        )
-        .limit(1);
-
-      expect(updatedEservice?.status).toBe(payload.status);
-      expect(new Date(updatedEservice.responseReceived).toISOString()).toBe(
-        payload.responseReceived,
-      );
-    });
-
-    it("e-service probing response object has been created", async () => {
-      const { eserviceRecordId } = await createEservice({
-        options: { disableCreationProbingResponse: true },
+        status: responseStatus.ko,
       });
 
       const payload = {
@@ -712,20 +745,42 @@ describe("eService service", async () => {
       );
     });
 
-    it("given a list of all state values as parameter, service returns searchEservices without probing data", async () => {
-      const eserviceData = {
-        eserviceName: "eService 001",
-        producerName: "eService producer 001",
+    it("should create probing response if none exists", async () => {
+      const eService = mockEservice();
+      const eserviceRecordId = await addEservice(eService);
+
+      const payload = {
+        status: responseStatus.ok,
+        responseReceived: new Date().toISOString(),
       };
-      await createEservice({
-        options: {
-          disableCreationProbingResponse: true,
-          disableCreationProbingRequest: true,
-        },
-      });
+
+      await eserviceService.updateResponseReceived(eserviceRecordId, payload);
+
+      const [createdProbingResponse] = await db
+        .select()
+        .from(eserviceProbingResponsesInProbing)
+        .where(
+          eq(
+            eserviceProbingResponsesInProbing.eservicesRecordId,
+            eserviceRecordId,
+          ),
+        )
+        .limit(1);
+
+      expect(createdProbingResponse).toBeDefined();
+      expect(createdProbingResponse.status).toBe(payload.status);
+      expect(
+        new Date(createdProbingResponse.responseReceived).toISOString(),
+      ).toBe(payload.responseReceived);
+    });
+
+    it("should return eService in searchEservices even without probing data", async () => {
+      const eService = mockEservice();
+      await addEservice(eService);
 
       const filters: ApiSearchEservicesQuery = {
-        ...eserviceData,
+        eserviceName: eService.eserviceName,
+        producerName: eService.producerName,
         versionNumber: 1,
         state: [
           eserviceMonitorState["n_d"],
@@ -740,6 +795,7 @@ describe("eService service", async () => {
         filters,
         genericLogger,
       );
+
       expect(result.totalElements).toBe(1);
       expect(result.offset).toBe(0);
       expect(result.limit).toBe(2);
