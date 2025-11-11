@@ -19,9 +19,8 @@ import {
 import eServiceRouter from "../src/routers/eserviceRouter.js";
 import { config } from "../src/utilities/config.js";
 import {
-  eServiceMainDataByRecordIdNotFound,
-  eServiceNotFound,
-  eServiceProbingDataByRecordIdNotFound,
+  eServiceByRecordIdNotFound,
+  eServiceByVersionIdNotFound,
   makeApiProblem,
 } from "../src/model/domain/errors.js";
 import { errorMapper } from "../src/utilities/errorMapper.js";
@@ -84,7 +83,7 @@ describe("eService Router", () => {
       eServiceState: "ACTIVE",
     };
     const errorRes = makeApiProblem(
-      eServiceNotFound(params.eserviceId, params.versionId),
+      eServiceByVersionIdNotFound(params.eserviceId, params.versionId),
       errorMapper,
       genericLogger,
     );
@@ -197,7 +196,7 @@ describe("eService Router", () => {
     };
 
     const errorRes = makeApiProblem(
-      eServiceNotFound(params.eserviceId, params.versionId),
+      eServiceByVersionIdNotFound(params.eserviceId, params.versionId),
       errorMapper,
       genericLogger,
     );
@@ -276,7 +275,7 @@ describe("eService Router", () => {
     };
 
     const errorRes = makeApiProblem(
-      eServiceNotFound(params.eserviceId, params.versionId),
+      eServiceByVersionIdNotFound(params.eserviceId, params.versionId),
       errorMapper,
       genericLogger,
     );
@@ -473,7 +472,7 @@ describe("eService Router", () => {
     const eserviceRecordId: number = 1;
 
     const errorRes = makeApiProblem(
-      eServiceMainDataByRecordIdNotFound(eserviceRecordId),
+      eServiceByRecordIdNotFound(eserviceRecordId),
       errorMapper,
       genericLogger,
     );
@@ -522,7 +521,7 @@ describe("eService Router", () => {
     const eserviceRecordId: number = 1;
 
     const errorRes = makeApiProblem(
-      eServiceProbingDataByRecordIdNotFound(eserviceRecordId),
+      eServiceByRecordIdNotFound(eserviceRecordId),
       errorMapper,
       genericLogger,
     );

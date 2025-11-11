@@ -1,17 +1,15 @@
 import { Logger } from "pagopa-interop-probing-commons";
 import {
-  ChangeResponseReceived,
   EServiceContent,
   EServiceMainData,
   EServiceProbingData,
-  EserviceProbingUpdateLastRequest,
   EserviceSaveRequest,
   genericError,
   PollingResource,
 } from "pagopa-interop-probing-models";
 import {
-  ApiEserviceMainDataResponse,
-  ApiEserviceProbingDataResponse,
+  ApiGetEserviceMainDataResponse,
+  ApiGetEserviceProbingDataResponse,
   ApiGetEservicesReadyForPollingQuery,
   ApiGetEservicesReadyForPollingResponse,
   ApiGetProducersQuery,
@@ -32,7 +30,11 @@ import {
   ApiUpdateResponseReceivedResponse,
   ApiDeleteEserviceResponse,
 } from "pagopa-interop-probing-eservice-operations-client";
-import { eServiceNotFound } from "../model/domain/errors.js";
+import {
+  eServiceByRecordIdNotFound,
+  eServiceByVersionIdNotFound,
+  eServiceNotFound,
+} from "../model/domain/errors.js";
 import { DBService } from "./dbService.js";
 import { z } from "zod";
 import { safeStringify } from "../utilities/utils.js";
@@ -44,13 +46,13 @@ export function eServiceServiceBuilder(dbService: DBService) {
       versionId: string,
       payload: ApiUpdateEserviceStatePayload,
     ): Promise<ApiUpdateEserviceStateResponse> {
-      const eServiceToBeUpdated = await dbService.getEServiceByIdAndVersion(
+      const eServiceToBeUpdated = await dbService.getEserviceByIdAndVersion(
         eserviceId,
         versionId,
       );
 
       if (!eServiceToBeUpdated) {
-        throw eServiceNotFound(eserviceId, versionId);
+        throw eServiceByVersionIdNotFound(eserviceId, versionId);
       }
 
       await dbService.updateEserviceState(eserviceId, versionId, {
@@ -63,13 +65,13 @@ export function eServiceServiceBuilder(dbService: DBService) {
       versionId: string,
       payload: ApiUpdateEserviceProbingStatePayload,
     ): Promise<ApiUpdateEserviceProbingStateResponse> {
-      const eServiceToBeUpdated = await dbService.getEServiceByIdAndVersion(
+      const eServiceToBeUpdated = await dbService.getEserviceByIdAndVersion(
         eserviceId,
         versionId,
       );
 
       if (!eServiceToBeUpdated) {
-        throw eServiceNotFound(eserviceId, versionId);
+        throw eServiceByVersionIdNotFound(eserviceId, versionId);
       }
 
       await dbService.updateEserviceProbingState(eserviceId, versionId, {
@@ -82,13 +84,13 @@ export function eServiceServiceBuilder(dbService: DBService) {
       versionId: string,
       payload: ApiUpdateEserviceFrequencyPayload,
     ): Promise<ApiUpdateEserviceFrequencyResponse> {
-      const eServiceToBeUpdated = await dbService.getEServiceByIdAndVersion(
+      const eServiceToBeUpdated = await dbService.getEserviceByIdAndVersion(
         eserviceId,
         versionId,
       );
 
       if (!eServiceToBeUpdated) {
-        throw eServiceNotFound(eserviceId, versionId);
+        throw eServiceByVersionIdNotFound(eserviceId, versionId);
       }
 
       if (
@@ -118,45 +120,45 @@ export function eServiceServiceBuilder(dbService: DBService) {
         audience: payload.audience,
       };
 
-      return await dbService.saveEservice(
-        eserviceId,
-        versionId,
-        eServiceToBeUpdated,
-      );
+      await dbService.saveEservice(eserviceId, versionId, eServiceToBeUpdated);
     },
 
     async deleteEservice(
       eserviceId: string,
     ): Promise<ApiDeleteEserviceResponse> {
-      return await dbService.deleteEservice(eserviceId);
+      const eServices = await dbService.getEservicesById(eserviceId);
+      if (eServices.length === 0) {
+        throw eServiceNotFound(eserviceId);
+      }
+
+      await dbService.deleteEservice(eserviceId);
     },
 
     async updateEserviceLastRequest(
       eserviceRecordId: number,
       payload: ApiUpdateLastRequestPayload,
     ): Promise<ApiUpdateLastRequestResponse> {
-      const eServiceToBeUpdated: EserviceProbingUpdateLastRequest = {
-        lastRequest: payload.lastRequest,
-      };
+      const eService = await dbService.getEserviceByRecordId(eserviceRecordId);
 
-      await dbService.updateEserviceLastRequest(
-        eserviceRecordId,
-        eServiceToBeUpdated,
-      );
+      if (!eService) throw eServiceByRecordIdNotFound(eserviceRecordId);
+
+      await dbService.updateEserviceLastRequest(eserviceRecordId, {
+        lastRequest: payload.lastRequest,
+      });
     },
 
     async updateResponseReceived(
       eserviceRecordId: number,
       payload: ApiUpdateResponseReceivedPayload,
     ): Promise<ApiUpdateResponseReceivedResponse> {
-      const eServiceToBeUpdated: ChangeResponseReceived = {
-        responseStatus: payload.status,
+      const eService = await dbService.getEserviceByRecordId(eserviceRecordId);
+
+      if (!eService) throw eServiceByRecordIdNotFound(eserviceRecordId);
+
+      await dbService.updateResponseReceived(eserviceRecordId, {
+        status: payload.status,
         responseReceived: payload.responseReceived,
-      };
-      await dbService.updateResponseReceived(
-        eserviceRecordId,
-        eServiceToBeUpdated,
-      );
+      });
     },
 
     async searchEservices(
@@ -190,8 +192,9 @@ export function eServiceServiceBuilder(dbService: DBService) {
     async getEserviceMainData(
       eserviceRecordId: number,
       logger: Logger,
-    ): Promise<ApiEserviceMainDataResponse> {
+    ): Promise<ApiGetEserviceMainDataResponse> {
       const result = await dbService.getEserviceMainData(eserviceRecordId);
+      if (!result) throw eServiceByRecordIdNotFound(eserviceRecordId);
 
       const parsed = EServiceMainData.safeParse(result);
       if (!parsed.success) {
@@ -209,8 +212,10 @@ export function eServiceServiceBuilder(dbService: DBService) {
     async getEserviceProbingData(
       eserviceRecordId: number,
       logger: Logger,
-    ): Promise<ApiEserviceProbingDataResponse> {
+    ): Promise<ApiGetEserviceProbingDataResponse> {
       const result = await dbService.getEserviceProbingData(eserviceRecordId);
+
+      if (!result) throw eServiceByRecordIdNotFound(eserviceRecordId);
 
       const parsed = EServiceProbingData.safeParse({
         ...result,

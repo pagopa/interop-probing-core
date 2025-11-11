@@ -10,10 +10,7 @@ import { errorMapper } from "../../utilities/errorMapper.js";
 
 export const errorCodes = {
   eServiceNotFound: "ESERVICE_NOT_FOUND",
-  eServiceMainDataByRecordIdNotFound:
-    "ESERVICE_MAIN_DATA_BY_RECORD_ID_NOT_FOUND",
-  eServiceProbingDataByRecordIdNotFound:
-    "ESERVICE_PROBING_DATA_BY_RECORD_ID_NOT_FOUND",
+  eServiceByRecordIdNotFound: "ESERVICE_BY_RECORD_ID_NOT_FOUND",
 };
 
 export type ErrorCodes = keyof typeof errorCodes;
@@ -33,7 +30,7 @@ export const resolveApiProblem = (error: unknown, logger: Logger): Problem => {
   }
 };
 
-export function eServiceNotFound(
+export function eServiceByVersionIdNotFound(
   eserviceId: string,
   versionId: string,
 ): ApiError<ErrorCodes> {
@@ -44,22 +41,12 @@ export function eServiceNotFound(
   });
 }
 
-export function eServiceMainDataByRecordIdNotFound(
+export function eServiceByRecordIdNotFound(
   eserviceRecordId: number,
 ): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: `EService main data by eserviceRecordId ${eserviceRecordId} not found`,
-    code: "eServiceMainDataByRecordIdNotFound",
-    title: "EService not found",
-  });
-}
-
-export function eServiceProbingDataByRecordIdNotFound(
-  eserviceRecordId: number,
-): ApiError<ErrorCodes> {
-  return new ApiError({
-    detail: `EService probing data by eserviceRecordId ${eserviceRecordId} not found`,
-    code: "eServiceProbingDataByRecordIdNotFound",
+    detail: `EService by eserviceRecordId ${eserviceRecordId} not found`,
+    code: "eServiceNotFound",
     title: "EService not found",
   });
 }

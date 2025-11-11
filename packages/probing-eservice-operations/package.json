@@ -6,6 +6,8 @@
   "type": "module",
   "scripts": {
     "test": "vitest --config ./test/vitest.config.ts",
+    "test:integration": "vitest run --config ./test/vitest.integration.config.ts",
+    "test:api": "vitest run --config ./test/vitest.api.config.ts",
     "lint": "eslint .",
     "lint:autofix": "eslint . --fix",
     "format:check": "prettier --check src",
@@ -26,16 +28,18 @@
     "@types/uuid": "9.0.8",
     "@typescript-eslint/eslint-plugin": "8.21.0",
     "@typescript-eslint/parser": "8.21.0",
+    "@types/supertest": "6.0.2",
     "drizzle-kit": "0.31.6",
     "eslint": "9.19.0",
     "eslint-config-prettier": "10.0.1",
     "eslint-plugin-prettier": "5.2.3",
     "globals": "15.14.0",
     "prettier": "3.2.5",
+    "supertest": "7.1.4",
     "testcontainers": "10.6.0",
     "ts-node": "10.9.2",
-    "typescript": "5.2.2",
-    "tsx": "4.20.5"
+    "tsx": "4.20.5",
+    "typescript": "5.2.2"
   },
   "dependencies": {
     "@zodios/core": "10.9.6",

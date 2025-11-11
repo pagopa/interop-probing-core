@@ -4,9 +4,9 @@ import {
   ApiSaveTenantParams,
   ApiSaveTenantPayload,
 } from "pagopa-interop-probing-eservice-operations-client";
-import { tenantsInProbing } from "../src/db/drizzle/schema.js";
+import { tenantsInProbing } from "../../src/db/drizzle/schema.js";
 import { eq } from "drizzle-orm";
-import { db, tenantService } from "./utils.js";
+import { db, tenantService } from "../utils.js";
 
 describe("Tenant service", async () => {
   describe("saveTenant", () => {
@@ -63,13 +63,16 @@ describe("Tenant service", async () => {
       };
 
       await expect(
-        tenantService.saveTenant(invalidTenantParams, {}),
+        tenantService.saveTenant(
+          invalidTenantParams,
+          {} as ApiSaveTenantPayload,
+        ),
       ).rejects.toThrow();
     });
 
     it("should throw when saving tenant with missing name", async () => {
       const tenantParams: ApiSaveTenantParams = { tenantId: uuidv4() };
-      const invalidPayload = {};
+      const invalidPayload = {} as ApiSaveTenantPayload;
 
       await expect(
         tenantService.saveTenant(tenantParams, invalidPayload),

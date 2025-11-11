@@ -4,13 +4,13 @@ import cors, { CorsOptions } from "cors";
 import {
   contextMiddleware,
   loggerMiddleware,
+  queryParamsMiddleware,
   zodiosCtx,
 } from "pagopa-interop-probing-commons";
 import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
 import eServiceRouter from "./routers/eserviceRouter.js";
 import healthRouter from "./routers/healthRouter.js";
 import { config } from "./utilities/config.js";
-import { queryParamsMiddleware } from "./middlewares/query.js";
 
 const operationsApiClient = createApiClient(config.operationsBaseUrl);
 
