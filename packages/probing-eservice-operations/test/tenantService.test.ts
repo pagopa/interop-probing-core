@@ -93,13 +93,13 @@ describe("Tenant service", async () => {
 
       await tenantService.deleteTenant(tenantParams.tenantId);
 
-      const [tenants] = await db
+      const [tenant] = await db
         .select()
         .from(tenantsInProbing)
         .where(eq(tenantsInProbing.tenantId, tenantParams.tenantId))
         .limit(1);
 
-      expect(tenants).toBeUndefined();
+      expect(tenant).toBeUndefined();
     });
 
     it("should throw an error if the tenantId param is invalid", async () => {
