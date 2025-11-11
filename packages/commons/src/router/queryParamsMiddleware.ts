@@ -1,7 +1,7 @@
 import { match, P } from "ts-pattern";
-import { ExpressContext } from "pagopa-interop-probing-commons";
 import { Request, Response, NextFunction } from "express";
 import { ZodiosRouterContextRequestHandler } from "@zodios/express";
+import { ExpressContext } from "../context/context.js";
 
 /**
  * Middleware to preprocess the 'state' query parameter.
