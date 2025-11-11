@@ -2,7 +2,10 @@ import request from "supertest";
 import { describe, it, expect, vi } from "vitest";
 import { v4 as uuidv4 } from "uuid";
 import { api, eServiceService } from "../vitest.api.setup.js";
-import { genericError } from "pagopa-interop-probing-models";
+import {
+  EserviceTechnology,
+  genericError,
+} from "pagopa-interop-probing-models";
 import { ApiGetEservicesReadyForPollingResponse } from "pagopa-interop-probing-eservice-operations-client";
 
 describe("get /eservices/polling router test", () => {
@@ -11,13 +14,13 @@ describe("get /eservices/polling router test", () => {
       {
         eserviceRecordId: 1,
         basePath: ["/api/payments"],
-        technology: "REST",
+        technology: EserviceTechnology.Values.REST,
         audience: ["public"],
       },
       {
         eserviceRecordId: 2,
         basePath: ["/api/invoices"],
-        technology: "SOAP",
+        technology: EserviceTechnology.Values.SOAP,
         audience: ["internal"],
       },
     ],
