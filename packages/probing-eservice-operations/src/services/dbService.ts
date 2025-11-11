@@ -380,15 +380,17 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
     ): Promise<{ content: Pick<EServiceSQL, "producerName">[] }> {
       const { producerName, offset, limit } = filters;
 
+      const whereClause = producerName
+        ? like(
+            sql`UPPER(${eservicesInProbing.producerName})`,
+            sql`UPPER('%' || ${producerName} || '%')`,
+          )
+        : undefined;
+
       const content = await db
         .selectDistinct({ producerName: eservicesInProbing.producerName })
         .from(eservicesInProbing)
-        .where(
-          like(
-            sql`UPPER(${eservicesInProbing.producerName})`,
-            sql`UPPER('%' || ${producerName} || '%')`,
-          ),
-        )
+        .where(whereClause)
         .orderBy(asc(eservicesInProbing.producerName))
         .limit(limit)
         .offset(offset);

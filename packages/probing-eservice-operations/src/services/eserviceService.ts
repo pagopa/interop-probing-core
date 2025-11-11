@@ -91,15 +91,16 @@ export function eServiceServiceBuilder(dbService: DBService) {
         throw eServiceNotFound(eserviceId, versionId);
       }
 
-      if (payload?.frequency == null || isNaN(payload.frequency)) {
-        return;
+      if (
+        typeof payload?.frequency === "number" &&
+        !isNaN(payload?.frequency)
+      ) {
+        await dbService.updateEserviceFrequency(eserviceId, versionId, {
+          pollingStartTime: payload.startTime,
+          pollingEndTime: payload.endTime,
+          pollingFrequency: payload.frequency,
+        });
       }
-
-      await dbService.updateEserviceFrequency(eserviceId, versionId, {
-        pollingStartTime: payload.startTime,
-        pollingEndTime: payload.endTime,
-        pollingFrequency: payload.frequency,
-      });
     },
 
     async saveEservice(
