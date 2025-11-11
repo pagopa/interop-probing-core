@@ -7,7 +7,7 @@ services:
       - no-new-privileges:true
     volumes:
       - ./postgres/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
-    image: postgres:14
+    image: postgres:14@sha256:962ffbe9f6418387643411b127c1db27465e5a23b9a8849bfaf45fa6323963ce
     ports:
       - 6000:5432
     environment:
@@ -61,7 +61,7 @@ services:
   elasticmq:
     security_opt:
       - no-new-privileges:true
-    image: softwaremill/elasticmq-native:1.5.7
+    image: softwaremill/elasticmq-native:1.5.7@sha256:0cb5bcc04638c80af1631e8cf5da9b96b9fb6f46a4164462231065dc516c102f
     ports:
       - 9324:9324
       - 9325:9325
