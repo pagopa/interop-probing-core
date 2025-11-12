@@ -38,6 +38,7 @@ import {
 import { DBService } from "./dbService.js";
 import { z } from "zod";
 import { safeStringify } from "../utilities/utils.js";
+import { eServiceDefaultValues } from "../db/constants/eServices.js";
 
 export function eServiceServiceBuilder(dbService: DBService) {
   return {
@@ -93,16 +94,12 @@ export function eServiceServiceBuilder(dbService: DBService) {
         throw eServiceByVersionIdNotFound(eserviceId, versionId);
       }
 
-      if (
-        typeof payload?.frequency === "number" &&
-        !isNaN(payload?.frequency)
-      ) {
-        await dbService.updateEserviceFrequency(eserviceId, versionId, {
-          pollingStartTime: payload.startTime,
-          pollingEndTime: payload.endTime,
-          pollingFrequency: payload.frequency,
-        });
-      }
+      await dbService.updateEserviceFrequency(eserviceId, versionId, {
+        pollingStartTime: payload.startTime,
+        pollingEndTime: payload.endTime,
+        pollingFrequency:
+          payload.frequency ?? eServiceDefaultValues.pollingFrequency,
+      });
     },
 
     async saveEservice(

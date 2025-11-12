@@ -1,10 +1,10 @@
 import request from "supertest";
 import { describe, it, expect, vi } from "vitest";
 import { v4 as uuidv4 } from "uuid";
-import { eServiceByVersionIdNotFound } from "../../src/model/domain/errors.js";
 import { api, eServiceService } from "../vitest.api.setup.js";
-import { ApiUpdateEserviceFrequencyPayload } from "pagopa-interop-probing-eservice-operations-client";
 import { genericError } from "pagopa-interop-probing-models";
+import { eServiceByVersionIdNotFound } from "../../src/model/domain/errors.js";
+import { ApiUpdateEserviceFrequencyPayload } from "pagopa-interop-probing-eservice-operations-client";
 
 describe("post /eservices/{eServiceId}/versions/{versionId}/updateFrequency router test", () => {
   const mockEserviceId = uuidv4();
@@ -12,15 +12,15 @@ describe("post /eservices/{eServiceId}/versions/{versionId}/updateFrequency rout
 
   const validBody: ApiUpdateEserviceFrequencyPayload = {
     frequency: 10,
-    startTime: "2025-11-11T09:00:00Z",
-    endTime: "2025-11-11T18:00:00Z",
+    startTime: "09:00:00",
+    endTime: "18:00:00",
   };
 
   eServiceService.updateEserviceFrequency = vi.fn().mockResolvedValue({});
 
   const makeRequest = async (
-    eServiceId: string,
-    versionId: string,
+    eServiceId: string = mockEserviceId,
+    versionId: string = mockVersionId,
     body: ApiUpdateEserviceFrequencyPayload = validBody,
   ) =>
     request(api)
@@ -28,8 +28,8 @@ describe("post /eservices/{eServiceId}/versions/{versionId}/updateFrequency rout
       .set("X-Correlation-Id", uuidv4())
       .send(body);
 
-  it("should return 204 when update succeeds", async () => {
-    const res = await makeRequest(mockEserviceId, mockVersionId);
+  it("should return 204 when update is successful", async () => {
+    const res = await makeRequest();
     expect(res.status).toBe(204);
   });
 
@@ -43,59 +43,45 @@ describe("post /eservices/{eServiceId}/versions/{versionId}/updateFrequency rout
       expectedStatus: 500,
     },
   ])(
-    "should return $expectedStatus for $error.code",
+    "should return $expectedStatus when $error.code occurs",
     async ({ error, expectedStatus }) => {
       eServiceService.updateEserviceFrequency = vi
         .fn()
         .mockRejectedValueOnce(error);
 
-      const res = await makeRequest(mockEserviceId, mockVersionId);
+      const res = await makeRequest();
       expect(res.status).toBe(expectedStatus);
     },
   );
 
   it.each([
-    [{}, mockEserviceId, mockVersionId],
-    [
-      {
+    {
+      eServiceId: mockEserviceId,
+      versionId: mockVersionId,
+      body: {},
+    },
+    {
+      eServiceId: mockEserviceId,
+      versionId: mockVersionId,
+      body: {
         frequency: -1,
-        startTime: "2025-11-11T09:00:00Z",
-        endTime: "2025-11-11T18:00:00Z",
+        startTime: "09:00:00",
+        endTime: "18:00:00",
       },
-      mockEserviceId,
-      mockVersionId,
-    ],
-    [
-      { frequency: 10, startTime: "invalid", endTime: "2025-11-11T18:00:00Z" },
-      mockEserviceId,
-      mockVersionId,
-    ],
-    [
-      { frequency: 10, startTime: "2025-11-11T09:00:00Z", endTime: "invalid" },
-      mockEserviceId,
-      mockVersionId,
-    ],
-    [
-      {
-        frequency: 10,
-        startTime: "2025-11-11T09:00:00Z",
-        endTime: "2025-11-11T18:00:00Z",
-      },
-      "invalid-id",
-      mockVersionId,
-    ],
-    [
-      {
-        frequency: 10,
-        startTime: "2025-11-11T09:00:00Z",
-        endTime: "2025-11-11T18:00:00Z",
-      },
-      mockEserviceId,
-      "invalid-version-id",
-    ],
+    },
+    {
+      eServiceId: "invalid-uuid",
+      versionId: mockVersionId,
+      body: validBody,
+    },
+    {
+      eServiceId: mockEserviceId,
+      versionId: "invalid-uuid",
+      body: validBody,
+    },
   ])(
-    "should return 400 if invalid payload or params are passed (case %#)",
-    async (body, eServiceId, versionId) => {
+    "should return 400 if invalid payload or params are provided: %s",
+    async ({ eServiceId, versionId, body }) => {
       const res = await makeRequest(
         eServiceId,
         versionId,

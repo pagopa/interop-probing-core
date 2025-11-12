@@ -39,22 +39,30 @@ describe("post /tenants/{tenantId}/saveTenant router test", () => {
       expectedStatus: 500,
     },
   ])(
-    "should return $expectedStatus when $error.code occurs",
+    "should return $expectedStatus for $error.code",
     async ({ error, expectedStatus }) => {
       tenantService.saveTenant = vi.fn().mockRejectedValueOnce(error);
-
       const res = await makeRequest();
       expect(res.status).toBe(expectedStatus);
     },
   );
 
   it.each([
-    [{}, mockTenantId],
-    [{ name: 123 }, mockTenantId],
-    [validBody, "invalid-uuid"],
+    {
+      tenantId: mockTenantId,
+      body: {},
+    },
+    {
+      tenantId: mockTenantId,
+      body: { name: 123 },
+    },
+    {
+      tenantId: "invalid-uuid",
+      body: validBody,
+    },
   ])(
-    "should return 400 if invalid payload or params are provided (case %#)",
-    async (body, tenantId) => {
+    "should return 400 if invalid payload or params are provided: %s",
+    async ({ tenantId, body }) => {
       const res = await makeRequest(tenantId, body as ApiSaveTenantPayload);
       expect(res.status).toBe(400);
     },

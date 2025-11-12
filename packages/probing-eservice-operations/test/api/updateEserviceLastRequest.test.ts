@@ -2,9 +2,9 @@ import request from "supertest";
 import { describe, it, expect, vi } from "vitest";
 import { v4 as uuidv4 } from "uuid";
 import { api, eServiceService } from "../vitest.api.setup.js";
-import { ApiUpdateLastRequestPayload } from "pagopa-interop-probing-eservice-operations-client";
 import { genericError } from "pagopa-interop-probing-models";
 import { eServiceByRecordIdNotFound } from "../../src/model/domain/errors.js";
+import { ApiUpdateLastRequestPayload } from "pagopa-interop-probing-eservice-operations-client";
 
 describe("post /eservices/{eserviceRecordId}/updateLastRequest router test", () => {
   const mockEserviceRecordId = 12345;
@@ -16,7 +16,7 @@ describe("post /eservices/{eserviceRecordId}/updateLastRequest router test", () 
   eServiceService.updateEserviceLastRequest = vi.fn().mockResolvedValue({});
 
   const makeRequest = async (
-    eserviceRecordId: number | string,
+    eserviceRecordId: number | string = mockEserviceRecordId,
     body: ApiUpdateLastRequestPayload = validBody,
   ) =>
     request(api)
@@ -25,7 +25,7 @@ describe("post /eservices/{eserviceRecordId}/updateLastRequest router test", () 
       .send(body);
 
   it("should return 204 when update succeeds", async () => {
-    const res = await makeRequest(mockEserviceRecordId);
+    const res = await makeRequest();
     expect(res.status).toBe(204);
   });
 
@@ -45,18 +45,27 @@ describe("post /eservices/{eserviceRecordId}/updateLastRequest router test", () 
         .fn()
         .mockRejectedValueOnce(error);
 
-      const res = await makeRequest(mockEserviceRecordId);
+      const res = await makeRequest();
       expect(res.status).toBe(expectedStatus);
     },
   );
 
   it.each([
-    [{}, mockEserviceRecordId],
-    [{ lastRequest: "invalid-date" }, mockEserviceRecordId],
-    [validBody, "invalid-id"],
+    {
+      eserviceRecordId: mockEserviceRecordId,
+      body: {},
+    },
+    {
+      eserviceRecordId: mockEserviceRecordId,
+      body: { lastRequest: "invalid-date" },
+    },
+    {
+      eserviceRecordId: "invalid-id",
+      body: validBody,
+    },
   ])(
-    "should return 400 if invalid payload or params are passed (case %#)",
-    async (body, eserviceRecordId) => {
+    "should return 400 if invalid payload or params are provided: %s",
+    async ({ eserviceRecordId, body }) => {
       const res = await makeRequest(
         eserviceRecordId,
         body as ApiUpdateLastRequestPayload,

@@ -1,10 +1,10 @@
 import request from "supertest";
 import { describe, it, expect, vi } from "vitest";
 import { v4 as uuidv4 } from "uuid";
-import { eServiceByVersionIdNotFound } from "../../src/model/domain/errors.js";
 import { api, eServiceService } from "../vitest.api.setup.js";
-import { ApiUpdateEserviceProbingStatePayload } from "pagopa-interop-probing-eservice-operations-client";
 import { genericError } from "pagopa-interop-probing-models";
+import { eServiceByVersionIdNotFound } from "../../src/model/domain/errors.js";
+import { ApiUpdateEserviceProbingStatePayload } from "pagopa-interop-probing-eservice-operations-client";
 
 describe("post /eservices/{eServiceId}/versions/{versionId}/probing/updateState router test", () => {
   const mockEserviceId = uuidv4();
@@ -17,8 +17,8 @@ describe("post /eservices/{eServiceId}/versions/{versionId}/probing/updateState 
   eServiceService.updateEserviceProbingState = vi.fn().mockResolvedValue({});
 
   const makeRequest = async (
-    eServiceId: string,
-    versionId: string,
+    eServiceId: string = mockEserviceId,
+    versionId: string = mockVersionId,
     body: ApiUpdateEserviceProbingStatePayload = validBody,
   ) =>
     request(api)
@@ -29,7 +29,7 @@ describe("post /eservices/{eServiceId}/versions/{versionId}/probing/updateState 
       .send(body);
 
   it("should return 204 when update succeeds", async () => {
-    const res = await makeRequest(mockEserviceId, mockVersionId);
+    const res = await makeRequest();
     expect(res.status).toBe(204);
   });
 
@@ -49,19 +49,35 @@ describe("post /eservices/{eServiceId}/versions/{versionId}/probing/updateState 
         .fn()
         .mockRejectedValueOnce(error);
 
-      const res = await makeRequest(mockEserviceId, mockVersionId);
+      const res = await makeRequest();
       expect(res.status).toBe(expectedStatus);
     },
   );
 
   it.each([
-    [{}, mockEserviceId, mockVersionId],
-    [{ probingEnabled: "INVALID" }, mockEserviceId, mockVersionId],
-    [{ probingEnabled: true }, "invalid-id", mockVersionId],
-    [{ probingEnabled: true }, mockEserviceId, "invalid-version-id"],
+    {
+      eServiceId: mockEserviceId,
+      versionId: mockVersionId,
+      body: {},
+    },
+    {
+      eServiceId: mockEserviceId,
+      versionId: mockVersionId,
+      body: { probingEnabled: "INVALID" },
+    },
+    {
+      eServiceId: "invalid-uuid",
+      versionId: mockVersionId,
+      body: validBody,
+    },
+    {
+      eServiceId: mockEserviceId,
+      versionId: "invalid-uuid",
+      body: validBody,
+    },
   ])(
-    "should return 400 if invalid payload or params are passed (case %#)",
-    async (body, eServiceId, versionId) => {
+    "should return 400 if invalid payload or params are provided: %s",
+    async ({ eServiceId, versionId, body }) => {
       const res = await makeRequest(
         eServiceId,
         versionId,

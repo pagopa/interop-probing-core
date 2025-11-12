@@ -7,6 +7,7 @@ import {
 import { tenantsInProbing } from "../../src/db/drizzle/schema.js";
 import { eq } from "drizzle-orm";
 import { db, tenantService } from "../utils.js";
+import { tenantNotFound } from "../../src/model/domain/errors.js";
 
 describe("Tenant service", async () => {
   describe("saveTenant", () => {
@@ -68,6 +69,23 @@ describe("Tenant service", async () => {
           {} as ApiSaveTenantPayload,
         ),
       ).rejects.toThrow();
+    });
+
+    it("should throw when saving tenant with missing name", async () => {
+      const tenantParams: ApiSaveTenantParams = { tenantId: uuidv4() };
+      const invalidPayload = {} as ApiSaveTenantPayload;
+
+      await expect(
+        tenantService.saveTenant(tenantParams, invalidPayload),
+      ).rejects.toThrow();
+    });
+
+    it("should throw tenantNotFound if tenant does not exist", async () => {
+      const missingTenantId = uuidv4();
+
+      await expect(tenantService.deleteTenant(missingTenantId)).rejects.toEqual(
+        tenantNotFound(missingTenantId),
+      );
     });
   });
 

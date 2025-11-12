@@ -22,13 +22,12 @@ import {
 } from "../../src/db/drizzle/schema.js";
 import { eq, and } from "drizzle-orm";
 import {
-  eServiceByVersionIdNotFound,
   eServiceByRecordIdNotFound,
-  tenantNotFound,
+  eServiceByVersionIdNotFound,
   eServiceNotFound,
+  tenantNotFound,
 } from "../../src/model/domain/errors.js";
 import { v4 as uuidv4 } from "uuid";
-import { nowDateUTC } from "../../src/utilities/date.js";
 import {
   ApiGetProducersQuery,
   ApiSearchEservicesQuery,
@@ -215,7 +214,7 @@ describe("eService service", async () => {
       expect(result).toHaveProperty("pollingFrequency");
     });
 
-    it("e-service should not be found and an `eServiceByRecordIdNotFound` should be thrown", async () => {
+    it("should throw an `eServiceByRecordIdNotFound` error when the e-service is not found", async () => {
       await expect(
         eserviceService.getEserviceMainData(99, genericLogger),
       ).rejects.toThrowError(eServiceByRecordIdNotFound(99));
@@ -251,7 +250,7 @@ describe("eService service", async () => {
       expect(result).toHaveProperty("responseStatus", responseStatus.ok);
     });
 
-    it("e-service should not be found and an `eServiceByRecordIdNotFound` should be thrown", async () => {
+    it("should throw an `eServiceByRecordIdNotFound` error when the e-service is not found", async () => {
       await expect(
         eserviceService.getEserviceProbingData(99, genericLogger),
       ).rejects.toThrowError(eServiceByRecordIdNotFound(99));
@@ -259,6 +258,14 @@ describe("eService service", async () => {
   });
 
   describe("getEservicesReadyForPolling", () => {
+    it("should return empty list when no eService is ready for polling", async () => {
+      const result = await eserviceService.getEservicesReadyForPolling(
+        { offset: 0, limit: 10 },
+        genericLogger,
+      );
+      expect(result.content).toHaveLength(0);
+    });
+
     it("should return a non-empty list of e-services ready for polling", async () => {
       const eService1 = mockEservice({ probingEnabled: true });
       const eService2 = mockEservice({
@@ -367,7 +374,7 @@ describe("eService service", async () => {
       expect(result?.state).toBe(eserviceInteropState.inactive);
     });
 
-    it("e-service should not be found and an `eServiceByVersionIdNotFound` should be thrown", async () => {
+    it("should throw `eServiceByVersionIdNotFound` when the e-service does not exist", async () => {
       const eserviceId = uuidv4();
       const versionId = uuidv4();
 
@@ -427,8 +434,8 @@ describe("eService service", async () => {
 
       const payload = {
         frequency: 10,
-        startTime: nowDateUTC(8, 0),
-        endTime: nowDateUTC(8, 0),
+        startTime: "09:00:00",
+        endTime: "18:00:00",
       };
 
       await eserviceService.updateEserviceFrequency(
@@ -453,22 +460,18 @@ describe("eService service", async () => {
       expect(updatedEservice?.pollingEndTime).toBeTruthy();
     });
 
-    it("e-service should not be found and an `eServiceByVersionIdNotFound` should be thrown", async () => {
+    it("should throw `eServiceByVersionIdNotFound` when e-service not found", async () => {
       const eserviceId = uuidv4();
       const versionId = uuidv4();
 
       const payload = {
         frequency: 10,
-        startTime: nowDateUTC(8, 0),
-        endTime: nowDateUTC(8, 0),
+        startTime: "09:00:00",
+        endTime: "18:00:00",
       };
 
       await expect(
-        eserviceService.updateEserviceFrequency(eserviceId, versionId, {
-          frequency: payload.frequency,
-          startTime: payload.startTime,
-          endTime: payload.endTime,
-        }),
+        eserviceService.updateEserviceFrequency(eserviceId, versionId, payload),
       ).rejects.toThrowError(
         eServiceByVersionIdNotFound(eserviceId, versionId),
       );
@@ -589,6 +592,46 @@ describe("eService service", async () => {
         .where(eq(eservicesInProbing.eserviceId, eserviceId))
         .limit(1);
       expect(result).toBeUndefined();
+    });
+
+    it("should delete all versions of the same eService", async () => {
+      const eServiceId = uuidv4();
+
+      const eServiceV1 = mockEservice({
+        eserviceId: eServiceId,
+        versionId: uuidv4(),
+        versionNumber: 1,
+      });
+
+      const eServiceV2 = mockEservice({
+        eserviceId: eServiceId,
+        versionId: uuidv4(),
+        versionNumber: 2,
+      });
+
+      const eServiceV3 = mockEservice({
+        eserviceId: eServiceId,
+        versionId: uuidv4(),
+        versionNumber: 3,
+      });
+
+      await addEservice(eServiceV1);
+      await addEservice(eServiceV2);
+      await addEservice(eServiceV3);
+
+      const beforeDelete = await db
+        .select()
+        .from(eservicesInProbing)
+        .where(eq(eservicesInProbing.eserviceId, eServiceId));
+      expect(beforeDelete.length).toBe(3);
+
+      await eserviceService.deleteEservice(eServiceId);
+
+      const afterDelete = await db
+        .select()
+        .from(eservicesInProbing)
+        .where(eq(eservicesInProbing.eserviceId, eServiceId));
+      expect(afterDelete.length).toBe(0);
     });
 
     it("should delete an eservice with probing request only", async () => {

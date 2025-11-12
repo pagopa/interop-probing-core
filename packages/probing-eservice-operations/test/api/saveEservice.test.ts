@@ -1,14 +1,14 @@
 import request from "supertest";
 import { describe, it, expect, vi } from "vitest";
 import { v4 as uuidv4 } from "uuid";
-import { eServiceByVersionIdNotFound } from "../../src/model/domain/errors.js";
 import { api, eServiceService } from "../vitest.api.setup.js";
-import { ApiSaveEservicePayload } from "pagopa-interop-probing-eservice-operations-client";
 import {
+  genericError,
   EserviceInteropState,
   EserviceTechnology,
-  genericError,
 } from "pagopa-interop-probing-models";
+import { eServiceByVersionIdNotFound } from "../../src/model/domain/errors.js";
+import { ApiSaveEservicePayload } from "pagopa-interop-probing-eservice-operations-client";
 
 describe("post /eservices/{eServiceId}/versions/{versionId}/saveEservice router test", () => {
   const mockEserviceId = uuidv4();
@@ -21,14 +21,14 @@ describe("post /eservices/{eServiceId}/versions/{versionId}/saveEservice router 
     technology: EserviceTechnology.Values.REST,
     state: EserviceInteropState.Values.ACTIVE,
     versionNumber: 1,
-    audience: ["public"],
+    audience: ["pagopa.it"],
   };
 
   eServiceService.saveEservice = vi.fn().mockResolvedValue({});
 
   const makeRequest = async (
-    eServiceId: string,
-    versionId: string,
+    eServiceId: string = mockEserviceId,
+    versionId: string = mockVersionId,
     body: ApiSaveEservicePayload = validBody,
   ) =>
     request(api)
@@ -37,7 +37,7 @@ describe("post /eservices/{eServiceId}/versions/{versionId}/saveEservice router 
       .send(body);
 
   it("should return 204 when save succeeds", async () => {
-    const res = await makeRequest(mockEserviceId, mockVersionId);
+    const res = await makeRequest();
     expect(res.status).toBe(204);
   });
 
@@ -55,58 +55,70 @@ describe("post /eservices/{eServiceId}/versions/{versionId}/saveEservice router 
     async ({ error, expectedStatus }) => {
       eServiceService.saveEservice = vi.fn().mockRejectedValueOnce(error);
 
-      const res = await makeRequest(mockEserviceId, mockVersionId);
+      const res = await makeRequest();
       expect(res.status).toBe(expectedStatus);
     },
   );
 
   it.each([
-    [{}, mockEserviceId, mockVersionId],
-    [
-      {
+    {
+      eServiceId: mockEserviceId,
+      versionId: mockVersionId,
+      body: {},
+    },
+    {
+      eServiceId: mockEserviceId,
+      versionId: mockVersionId,
+      body: {
         name: "Partial service",
         producerId: uuidv4(),
       },
-      mockEserviceId,
-      mockVersionId,
-    ],
-    [
-      {
+    },
+    {
+      eServiceId: mockEserviceId,
+      versionId: mockVersionId,
+      body: {
         ...validBody,
         technology: "INVALID_TECHNOLOGY",
       },
-      mockEserviceId,
-      mockVersionId,
-    ],
-    [
-      {
+    },
+    {
+      eServiceId: mockEserviceId,
+      versionId: mockVersionId,
+      body: {
         ...validBody,
         state: "INVALID_STATE",
       },
-      mockEserviceId,
-      mockVersionId,
-    ],
-    [
-      {
+    },
+    {
+      eServiceId: mockEserviceId,
+      versionId: mockVersionId,
+      body: {
         ...validBody,
         versionNumber: -1,
       },
-      mockEserviceId,
-      mockVersionId,
-    ],
-    [
-      {
+    },
+    {
+      eServiceId: mockEserviceId,
+      versionId: mockVersionId,
+      body: {
         ...validBody,
         versionNumber: "invalid-version-number",
       },
-      mockEserviceId,
-      mockVersionId,
-    ],
-    [validBody, "invalid-id", mockVersionId],
-    [validBody, mockEserviceId, "invalid-version-id"],
+    },
+    {
+      eServiceId: "invalid-id",
+      versionId: mockVersionId,
+      body: validBody,
+    },
+    {
+      eServiceId: mockEserviceId,
+      versionId: "invalid-version-id",
+      body: validBody,
+    },
   ])(
-    "should return 400 if invalid payload or params are passed (case %#)",
-    async (body, eServiceId, versionId) => {
+    "should return 400 if invalid payload or params are provided: %s",
+    async ({ eServiceId, versionId, body }) => {
       const res = await makeRequest(
         eServiceId,
         versionId,

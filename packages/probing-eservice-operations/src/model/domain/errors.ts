@@ -3,6 +3,7 @@ import { ApiError, makeApiProblemBuilder } from "pagopa-interop-probing-models";
 export const errorCodes = {
   eServiceNotFound: "ESERVICE_NOT_FOUND",
   eServiceByRecordIdNotFound: "ESERVICE_BY_RECORD_ID_NOT_FOUND",
+  eServiceByVersionIdNotFound: "ESERVICE_BY_VERSION_ID_NOT_FOUND",
   tenantNotFound: "TENANT_NOT_FOUND",
 };
 
@@ -34,7 +35,7 @@ export function eServiceByVersionIdNotFound(
 ): ApiError<ErrorCodes> {
   return new ApiError({
     detail: `EService by ${eserviceId} version ${versionId} not found`,
-    code: "eServiceNotFound",
+    code: "eServiceByVersionIdNotFound",
     title: "EService not found",
   });
 }

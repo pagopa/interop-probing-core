@@ -6,35 +6,38 @@ import {
   EserviceTechnology,
   genericError,
 } from "pagopa-interop-probing-models";
-import { ApiGetEservicesReadyForPollingResponse } from "pagopa-interop-probing-eservice-operations-client";
+import {
+  ApiGetEservicesReadyForPollingResponse,
+  ApiGetEservicesReadyForPollingQuery,
+} from "pagopa-interop-probing-eservice-operations-client";
 
 describe("get /eservices/polling router test", () => {
   const mockResponse: ApiGetEservicesReadyForPollingResponse = {
     content: [
       {
         eserviceRecordId: 1,
-        basePath: ["/api/payments"],
+        basePath: ["/api/services/1"],
         technology: EserviceTechnology.Values.REST,
-        audience: ["public"],
+        audience: ["pagopa.it"],
       },
       {
         eserviceRecordId: 2,
-        basePath: ["/api/invoices"],
+        basePath: ["/api/services/2"],
         technology: EserviceTechnology.Values.SOAP,
-        audience: ["internal"],
+        audience: ["pagopa.it"],
       },
     ],
     totalElements: 2,
   };
 
-  eServiceService.getEservicesReadyForPolling = vi
-    .fn()
-    .mockResolvedValue(mockResponse);
-
-  const validQuery = {
+  const validQuery: ApiGetEservicesReadyForPollingQuery = {
     limit: 10,
     offset: 0,
   };
+
+  eServiceService.getEservicesReadyForPolling = vi
+    .fn()
+    .mockResolvedValue(mockResponse);
 
   const makeRequest = async (query: Record<string, unknown> = validQuery) =>
     request(api)
@@ -42,8 +45,8 @@ describe("get /eservices/polling router test", () => {
       .set("X-Correlation-Id", uuidv4())
       .query(query);
 
-  it("should return 200 and a list of polling eservices when succeeds", async () => {
-    const res = await makeRequest();
+  it("should return 200 and a list of e-services ready for polling when succeeds", async () => {
+    const res = await makeRequest(validQuery);
     expect(res.status).toBe(200);
     expect(res.body).toEqual(mockResponse);
   });
@@ -60,19 +63,19 @@ describe("get /eservices/polling router test", () => {
         .fn()
         .mockRejectedValueOnce(error);
 
-      const res = await makeRequest();
+      const res = await makeRequest(validQuery);
       expect(res.status).toBe(expectedStatus);
     },
   );
 
   it.each([
-    { ...validQuery, limit: -1 },
-    { ...validQuery, limit: 999 },
-    { ...validQuery, offset: -5 },
-    { ...validQuery, limit: "not-a-number" },
-    { ...validQuery, offset: "invalid" },
-    { offset: 0 },
+    {},
     { limit: 10 },
+    { offset: 0 },
+    { limit: -1, offset: 0 },
+    { limit: 200, offset: 0 },
+    { limit: "invalid", offset: 0 },
+    { limit: 10, offset: "invalid" },
   ])("should return 400 for invalid query params: %s", async (query) => {
     const res = await makeRequest(query as Record<string, unknown>);
     expect(res.status).toBe(400);
