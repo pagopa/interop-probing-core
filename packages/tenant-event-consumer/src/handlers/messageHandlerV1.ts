@@ -32,7 +32,7 @@ export async function handleMessageV1(
           {
             externalId: tenant.externalId?.value,
             origin: tenant.externalId?.origin,
-            name: tenant.name,
+            name: tenant.name || "N/A",
           },
           logger,
         );

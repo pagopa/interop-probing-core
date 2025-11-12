@@ -11,18 +11,12 @@ import {
   ApiGetProducersQuery,
   ApiSearchEservicesQuery,
 } from "pagopa-interop-probing-eservice-operations-client";
-import {
-  tenantNotFound,
-  eServiceMainDataByRecordIdNotFound,
-  eServiceProbingDataByRecordIdNotFound,
-} from "../model/domain/errors.js";
+import { tenantNotFound } from "../model/domain/errors.js";
 import {
   ChangeEserviceStateRequest,
   ChangeEserviceProbingStateRequest,
   EserviceSaveRequest,
   TenantSaveRequest,
-  EserviceProbingUpdateLastRequest,
-  ChangeResponseReceived,
   eserviceInteropState,
   eserviceMonitorState,
   responseStatus,
@@ -30,8 +24,11 @@ import {
 import { config } from "../utilities/config.js";
 import type {
   DrizzleReturnType,
+  EserviceProbingRequestSQL,
+  EserviceProbingResponseSQL,
   EServiceSQL,
   EserviceViewSQL,
+  TenantSQL,
 } from "../db/index.js";
 import { eServiceDefaultValues } from "../db/constants/eServices.js";
 
@@ -138,33 +135,9 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
     },
 
     async deleteEservice(eserviceId: string): Promise<void> {
-      const [eservice] = await db
-        .select()
-        .from(eservicesInProbing)
-        .where(eq(eservicesInProbing.eserviceId, eserviceId))
-        .limit(1);
-
-      if (eservice) {
-        await db
-          .delete(eserviceProbingResponsesInProbing)
-          .where(
-            eq(
-              eserviceProbingResponsesInProbing.eservicesRecordId,
-              Number(eservice.id),
-            ),
-          );
-        await db
-          .delete(eserviceProbingRequestsInProbing)
-          .where(
-            eq(
-              eserviceProbingRequestsInProbing.eservicesRecordId,
-              Number(eservice.id),
-            ),
-          );
-        await db
-          .delete(eservicesInProbing)
-          .where(eq(eservicesInProbing.eserviceId, eserviceId));
-      }
+      await db
+        .delete(eservicesInProbing)
+        .where(eq(eservicesInProbing.eserviceId, eserviceId));
     },
 
     async saveTenant(tenantData: TenantSaveRequest): Promise<void> {
@@ -186,9 +159,19 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
         .where(eq(tenantsInProbing.tenantId, tenantId));
     },
 
+    async getTenantById(tenantId: string): Promise<TenantSQL | undefined> {
+      const [tenant] = await db
+        .select()
+        .from(tenantsInProbing)
+        .where(eq(tenantsInProbing.tenantId, tenantId))
+        .limit(1);
+
+      return tenant;
+    },
+
     async updateEserviceLastRequest(
       eserviceRecordId: number,
-      eServiceUpdated: EserviceProbingUpdateLastRequest,
+      eServiceUpdated: Pick<EserviceProbingRequestSQL, "lastRequest">,
     ): Promise<void> {
       await db
         .insert(eserviceProbingRequestsInProbing)
@@ -204,25 +187,28 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
 
     async updateResponseReceived(
       eserviceRecordId: number,
-      eServiceUpdated: ChangeResponseReceived,
+      eServiceUpdated: Pick<
+        EserviceProbingResponseSQL,
+        "responseReceived" | "status"
+      >,
     ): Promise<void> {
       await db
         .insert(eserviceProbingResponsesInProbing)
         .values({
           eservicesRecordId: eserviceRecordId,
           responseReceived: eServiceUpdated.responseReceived,
-          status: eServiceUpdated.responseStatus,
+          status: eServiceUpdated.status,
         })
         .onConflictDoUpdate({
           target: eserviceProbingResponsesInProbing.eservicesRecordId,
           set: {
             responseReceived: eServiceUpdated.responseReceived,
-            status: eServiceUpdated.responseStatus,
+            status: eServiceUpdated.status,
           },
         });
     },
 
-    async getEServiceByIdAndVersion(
+    async getEserviceByIdAndVersion(
       eserviceId: string,
       versionId: string,
     ): Promise<EServiceSQL | undefined> {
@@ -238,6 +224,27 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
         .limit(1);
 
       return data;
+    },
+
+    async getEservicesById(eserviceId: string): Promise<EServiceSQL[]> {
+      const eservices = await db
+        .select()
+        .from(eservicesInProbing)
+        .where(and(eq(eservicesInProbing.eserviceId, eserviceId)));
+
+      return eservices;
+    },
+
+    async getEserviceByRecordId(
+      eserviceRecordId: number,
+    ): Promise<EServiceSQL | undefined> {
+      const [eservice] = await db
+        .select()
+        .from(eservicesInProbing)
+        .where(eq(eservicesInProbing.id, BigInt(eserviceRecordId)))
+        .limit(1);
+
+      return eservice;
     },
 
     async searchEservices(filters: ApiSearchEservicesQuery): Promise<{
@@ -276,15 +283,16 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
     async getEserviceMainData(
       eserviceRecordId: number,
     ): Promise<
-      Pick<
-        EserviceViewSQL,
-        | "eserviceName"
-        | "producerName"
-        | "versionNumber"
-        | "eserviceId"
-        | "versionId"
-        | "pollingFrequency"
-      >
+      | Pick<
+          EserviceViewSQL,
+          | "eserviceName"
+          | "producerName"
+          | "versionNumber"
+          | "eserviceId"
+          | "versionId"
+          | "pollingFrequency"
+        >
+      | undefined
     > {
       const [data] = await db
         .select({
@@ -299,23 +307,22 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
         .where(eq(eservicesInProbing.id, BigInt(eserviceRecordId)))
         .limit(1);
 
-      if (!data) throw eServiceMainDataByRecordIdNotFound(eserviceRecordId);
-
       return data;
     },
 
     async getEserviceProbingData(
       eserviceRecordId: number,
     ): Promise<
-      Pick<
-        EserviceViewSQL,
-        | "probingEnabled"
-        | "state"
-        | "responseReceived"
-        | "lastRequest"
-        | "status"
-        | "pollingFrequency"
-      >
+      | Pick<
+          EserviceViewSQL,
+          | "probingEnabled"
+          | "state"
+          | "responseReceived"
+          | "lastRequest"
+          | "status"
+          | "pollingFrequency"
+        >
+      | undefined
     > {
       const [data] = await db
         .select({
@@ -330,8 +337,6 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
         .where(eq(eserviceViewInProbing.id, eserviceRecordId))
         .orderBy(asc(eserviceViewInProbing.id))
         .limit(1);
-
-      if (!data) throw eServiceProbingDataByRecordIdNotFound(eserviceRecordId);
 
       return data;
     },

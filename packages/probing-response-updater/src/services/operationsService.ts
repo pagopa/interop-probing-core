@@ -21,7 +21,7 @@ export const operationsServiceBuilder = (
       ctx: WithSQSMessageId<AppContext>,
     ): Promise<ApiUpdateResponseReceivedResponse> {
       try {
-        await operationsApiClient.updateResponseReceived(
+        await operationsApiClient.updateEserviceResponseReceived(
           {
             status: payload.status,
             responseReceived: payload.responseReceived,
