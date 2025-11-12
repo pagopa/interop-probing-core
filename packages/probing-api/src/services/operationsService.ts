@@ -25,7 +25,7 @@ export const operationsServiceBuilder = (
     payload: ApiUpdateResponseReceivedPayload,
     ctx: AppContext,
   ): Promise<void> {
-    await operationsApiClient.updateResponseReceived(
+    await operationsApiClient.updateEserviceResponseReceived(
       {
         status: payload.status,
         responseReceived: payload.responseReceived,

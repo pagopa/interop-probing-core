@@ -5,6 +5,7 @@ import {
   ApiDeleteTenantResponse,
 } from "pagopa-interop-probing-eservice-operations-client";
 import { DBService } from "./dbService.js";
+import { tenantNotFound } from "../model/domain/errors.js";
 
 export function tenantServiceBuilder(dbService: DBService) {
   return {
@@ -19,6 +20,12 @@ export function tenantServiceBuilder(dbService: DBService) {
     },
 
     async deleteTenant(tenantId: string): Promise<ApiDeleteTenantResponse> {
+      const tenant = await dbService.getTenantById(tenantId);
+
+      if (!tenant) {
+        throw tenantNotFound(tenantId);
+      }
+
       return await dbService.deleteTenant(tenantId);
     },
   };

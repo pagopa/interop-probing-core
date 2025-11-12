@@ -57,7 +57,7 @@ export const operationsServiceBuilder = (
         logger(ctx).info(
           `Performing updateLastRequest with eserviceRecordId ${params.eserviceRecordId}. Payload: ${JSON.stringify(payload)}`,
         );
-        return await operationsApiClient.updateLastRequest(payload, {
+        return await operationsApiClient.updateEserviceLastRequest(payload, {
           params,
           headers,
         });

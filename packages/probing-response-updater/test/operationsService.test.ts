@@ -36,7 +36,9 @@ describe("eService service test", () => {
       correlationId: uuidv4(),
     };
 
-    vi.spyOn(apiClient, "updateResponseReceived").mockResolvedValue(undefined);
+    vi.spyOn(apiClient, "updateEserviceResponseReceived").mockResolvedValue(
+      undefined,
+    );
 
     await expect(
       operationsService.updateResponseReceived(
@@ -66,7 +68,7 @@ describe("eService service test", () => {
 
     const apiClientError = mockApiClientError(500, "Internal server error");
 
-    vi.spyOn(apiClient, "updateResponseReceived").mockRejectedValueOnce(
+    vi.spyOn(apiClient, "updateEserviceResponseReceived").mockRejectedValueOnce(
       apiClientError,
     );
 

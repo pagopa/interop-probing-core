@@ -21,10 +21,10 @@ import {
 } from "../src/db/drizzle/schema.js";
 import { eq, and } from "drizzle-orm";
 import {
-  eServiceMainDataByRecordIdNotFound,
-  eServiceNotFound,
-  eServiceProbingDataByRecordIdNotFound,
+  eServiceByVersionIdNotFound,
+  eServiceByRecordIdNotFound,
   tenantNotFound,
+  eServiceNotFound,
 } from "../src/model/domain/errors.js";
 import { v4 as uuidv4 } from "uuid";
 import { nowDateUTC } from "../src/utilities/date.js";
@@ -208,10 +208,10 @@ describe("eService service", async () => {
       expect(result).toBeTruthy();
     });
 
-    it("e-service should not be found and an `eServiceProbingDataByRecordIdNotFound` should be thrown", async () => {
+    it("e-service should not be found and an `eServiceByRecordIdNotFound` should be thrown", async () => {
       await expect(
         eserviceService.getEserviceMainData(99, genericLogger),
-      ).rejects.toThrowError(eServiceMainDataByRecordIdNotFound(99));
+      ).rejects.toThrowError(eServiceByRecordIdNotFound(99));
     });
   });
 
@@ -225,10 +225,10 @@ describe("eService service", async () => {
       expect(result).toBeTruthy();
     });
 
-    it("e-service should not be found and an `eServiceProbingDataByRecordIdNotFound` should be thrown", async () => {
+    it("e-service should not be found and an `eServiceByRecordIdNotFound` should be thrown", async () => {
       await expect(
         eserviceService.getEserviceProbingData(99, genericLogger),
-      ).rejects.toThrowError(eServiceProbingDataByRecordIdNotFound(99));
+      ).rejects.toThrowError(eServiceByRecordIdNotFound(99));
     });
   });
 
@@ -320,14 +320,16 @@ describe("eService service", async () => {
       expect(result?.state).toBe(eserviceInteropState.inactive);
     });
 
-    it("e-service should not be found and an `eServiceNotFound` should be thrown", async () => {
+    it("e-service should not be found and an `eServiceByVersionIdNotFound` should be thrown", async () => {
       const eserviceId = uuidv4();
       const versionId = uuidv4();
       await expect(
         eserviceService.updateEserviceState(eserviceId, versionId, {
           eServiceState: eserviceInteropState.active,
         }),
-      ).rejects.toThrowError(eServiceNotFound(eserviceId, versionId));
+      ).rejects.toThrowError(
+        eServiceByVersionIdNotFound(eserviceId, versionId),
+      );
     });
   });
 
@@ -355,7 +357,7 @@ describe("eService service", async () => {
       expect(result?.probingEnabled).toBe(true);
     });
 
-    it("e-service should not be found and an `eServiceNotFound` should be thrown", async () => {
+    it("e-service should not be found and an `eServiceByVersionIdNotFound` should be thrown", async () => {
       const eserviceId = uuidv4();
       const versionId = uuidv4();
 
@@ -363,7 +365,9 @@ describe("eService service", async () => {
         eserviceService.updateEserviceProbingState(eserviceId, versionId, {
           probingEnabled: true,
         }),
-      ).rejects.toThrowError(eServiceNotFound(eserviceId, versionId));
+      ).rejects.toThrowError(
+        eServiceByVersionIdNotFound(eserviceId, versionId),
+      );
     });
   });
 
@@ -399,7 +403,7 @@ describe("eService service", async () => {
       expect(updatedEservice?.pollingEndTime).toBeTruthy();
     });
 
-    it("e-service should not be found and an `eServiceNotFound` should be thrown", async () => {
+    it("e-service should not be found and an `eServiceByVersionIdNotFound` should be thrown", async () => {
       const eserviceId = uuidv4();
       const versionId = uuidv4();
 
@@ -415,7 +419,9 @@ describe("eService service", async () => {
           startTime: payload.startTime,
           endTime: payload.endTime,
         }),
-      ).rejects.toThrowError(eServiceNotFound(eserviceId, versionId));
+      ).rejects.toThrowError(
+        eServiceByVersionIdNotFound(eserviceId, versionId),
+      );
     });
   });
 
@@ -576,12 +582,12 @@ describe("eService service", async () => {
       expect(result).toBeUndefined();
     });
 
-    it("should not throw an error when attempting to delete a non-existent eservice", async () => {
+    it("should throw eServiceNotFound when attempting to delete a non-existent eService", async () => {
       const nonExistentId = uuidv4();
 
       await expect(
         eserviceService.deleteEservice(nonExistentId),
-      ).resolves.toBeUndefined();
+      ).rejects.toThrowError(eServiceNotFound(nonExistentId));
     });
 
     it("should throw an error if the eserviceId param is invalid", async () => {

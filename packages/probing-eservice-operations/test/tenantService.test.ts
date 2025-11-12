@@ -64,7 +64,10 @@ describe("Tenant service", async () => {
       };
 
       await expect(
-        tenantService.saveTenant(invalidTenantParams, {}),
+        tenantService.saveTenant(
+          invalidTenantParams,
+          {} as ApiSaveTenantPayload,
+        ),
       ).rejects.toThrow();
     });
   });
