@@ -1,8 +1,14 @@
-import { genericLogger } from "pagopa-interop-probing-commons";
+import { startServer } from "pagopa-interop-probing-commons";
 import { config } from "./utilities/config.js";
-import app from "./app.js";
+import { createApp } from "./app.js";
+import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
+import {
+  OperationsService,
+  operationsServiceBuilder,
+} from "./services/operationsService.js";
 
-// App
-app.listen(config.port, config.host, () => {
-  genericLogger.info(`listening on ${config.host}:${config.port}`);
-});
+const operationsApiClient = createApiClient(config.operationsBaseUrl);
+const operationsService: OperationsService =
+  operationsServiceBuilder(operationsApiClient);
+
+startServer(createApp(operationsService), config);

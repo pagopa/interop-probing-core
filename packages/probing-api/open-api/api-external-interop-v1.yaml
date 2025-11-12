@@ -281,6 +281,7 @@ paths:
           required: false
           description: the e-service's version
           schema:
+            minimum: 1
             type: integer
         - name: state
           in: query
@@ -408,6 +409,7 @@ paths:
           description: the e-service's record id
           schema:
             type: integer
+            minimum: 1
             format: int64
       responses:
         "200":
@@ -420,6 +422,13 @@ paths:
         "400":
           description: >-
             The provided input data is invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: >-
+            The e-service hasn't been found
           content:
             application/json:
               schema:
@@ -459,6 +468,7 @@ paths:
           description: the e-service's record id
           schema:
             type: integer
+            minimum: 1
             format: int64
       responses:
         "200":
@@ -471,6 +481,13 @@ paths:
         "400":
           description: >-
             The provided input data is invalid
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Problem"
+        "404":
+          description: >-
+            The e-service hasn't been found
           content:
             application/json:
               schema:
@@ -557,6 +574,7 @@ components:
           $ref: "#/components/schemas/EserviceStateFE"
         versionNumber:
           title: the e-service's version
+          minimum: 1
           type: integer
 
     SearchEserviceResponse:
@@ -596,6 +614,7 @@ components:
           type: string
         versionNumber:
           title: the e-service's version
+          minimum: 1
           type: integer
         producerName:
           title: Service producer name
