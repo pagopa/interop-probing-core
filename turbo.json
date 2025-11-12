@@ -53,8 +53,24 @@
     "test": {
       "dependsOn": [
         "build",
-        "^test"
+        "^test",
+        "test:integration",
+        "test:api"
       ]
+    },
+    "test:integration": {
+      "dependsOn": [
+        "build",
+        "^test:integration"
+      ],
+      "cache": false
+    },
+    "test:api": {
+      "dependsOn": [
+        "build",
+        "^test:api"
+      ],
+      "cache": false
     },
     "check": {
       "dependsOn": [

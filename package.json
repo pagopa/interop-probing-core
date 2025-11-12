@@ -15,6 +15,8 @@
     "start:event:eservice": "turbo start --filter pagopa-interop-probing-eservice-event-consumer",
     "start:event:tenant": "turbo start --filter pagopa-interop-probing-tenant-event-consumer",
     "test": "turbo test",
+    "test:integration": "turbo test:integration",
+    "test:api": "turbo test:api",
     "build": "turbo build",
     "check": "turbo check",
     "lint": "turbo lint",
