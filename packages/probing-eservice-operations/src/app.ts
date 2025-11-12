@@ -2,6 +2,7 @@ import {
   contextMiddleware,
   loggerMiddleware,
   zodiosCtx,
+  queryParamsMiddleware,
 } from "pagopa-interop-probing-commons";
 import eServiceRouter from "./routers/eserviceRouter.js";
 import tenantRouter from "./routers/tenantRouter.js";
@@ -23,6 +24,7 @@ const dbRepository = dbServiceBuilder(db);
 const eServiceService = eServiceServiceBuilder(dbRepository);
 const tenantService = tenantServiceBuilder(dbRepository);
 
+app.use(queryParamsMiddleware);
 app.use(contextMiddleware(config.applicationName));
 app.use(loggerMiddleware(config.applicationName));
 app.use(eServiceRouter(zodiosCtx, eServiceService));
