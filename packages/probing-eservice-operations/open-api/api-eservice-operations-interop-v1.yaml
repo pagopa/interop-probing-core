@@ -1013,11 +1013,11 @@ components:
         startTime:
           title: Service verification start time
           type: string
-          format: date-time
+          format: time
         endTime:
           title: Service verification end time
           type: string
-          format: date-time
+          format: time
     Producer:
       type: object
       properties:

@@ -4,10 +4,10 @@ import {
   ApiSaveTenantParams,
   ApiSaveTenantPayload,
 } from "pagopa-interop-probing-eservice-operations-client";
-
-import { tenantsInProbing } from "../src/db/drizzle/schema.js";
+import { tenantsInProbing } from "../../src/db/drizzle/schema.js";
 import { eq } from "drizzle-orm";
-import { db, tenantService } from "./utils.js";
+import { db, tenantService } from "../utils.js";
+import { tenantNotFound } from "../../src/model/domain/errors.js";
 
 describe("Tenant service", async () => {
   describe("saveTenant", () => {
@@ -21,13 +21,13 @@ describe("Tenant service", async () => {
 
       await tenantService.saveTenant(tenantParams, tenantPayload);
 
-      const [result] = await db
+      const [tenant] = await db
         .select()
         .from(tenantsInProbing)
         .where(eq(tenantsInProbing.tenantId, tenantParams.tenantId))
         .limit(1);
 
-      expect(result?.tenantId).toBe(tenantParams.tenantId);
+      expect(tenant?.tenantId).toBe(tenantParams.tenantId);
     });
 
     it("should update name of existing tenant successfully", async () => {
@@ -49,13 +49,13 @@ describe("Tenant service", async () => {
 
       await tenantService.saveTenant(tenantParams, tenantPayloadUpdated);
 
-      const [result] = await db
+      const [tenant] = await db
         .select()
         .from(tenantsInProbing)
         .where(eq(tenantsInProbing.tenantId, tenantParams.tenantId))
         .limit(1);
 
-      expect(result?.tenantName).toBe(tenantPayloadUpdated.name);
+      expect(tenant?.tenantName).toBe(tenantPayloadUpdated.name);
     });
 
     it("should throw an error if the tenantId param is invalid", async () => {
@@ -69,6 +69,23 @@ describe("Tenant service", async () => {
           {} as ApiSaveTenantPayload,
         ),
       ).rejects.toThrow();
+    });
+
+    it("should throw when saving tenant with missing name", async () => {
+      const tenantParams: ApiSaveTenantParams = { tenantId: uuidv4() };
+      const invalidPayload = {} as ApiSaveTenantPayload;
+
+      await expect(
+        tenantService.saveTenant(tenantParams, invalidPayload),
+      ).rejects.toThrow();
+    });
+
+    it("should throw tenantNotFound if tenant does not exist", async () => {
+      const missingTenantId = uuidv4();
+
+      await expect(tenantService.deleteTenant(missingTenantId)).rejects.toEqual(
+        tenantNotFound(missingTenantId),
+      );
     });
   });
 
@@ -88,13 +105,13 @@ describe("Tenant service", async () => {
 
       await tenantService.deleteTenant(tenantParams.tenantId);
 
-      const [result] = await db
+      const [tenant] = await db
         .select()
         .from(tenantsInProbing)
         .where(eq(tenantsInProbing.tenantId, tenantParams.tenantId))
         .limit(1);
 
-      expect(result).toBeUndefined();
+      expect(tenant).toBeUndefined();
     });
 
     it("should throw an error if the tenantId param is invalid", async () => {

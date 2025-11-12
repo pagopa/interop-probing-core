@@ -76,7 +76,11 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
     ): Promise<void> {
       await db
         .update(eservicesInProbing)
-        .set({ pollingFrequency: payload.pollingFrequency }) // TODO: why only pollingFrequency?
+        .set({
+          pollingFrequency: payload.pollingFrequency,
+          pollingStartTime: payload.pollingStartTime,
+          pollingEndTime: payload.pollingEndTime,
+        })
         .where(
           and(
             eq(eservicesInProbing.eserviceId, eserviceId),
