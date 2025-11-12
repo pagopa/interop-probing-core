@@ -2,7 +2,7 @@ import baseConfig from "@probing/eslint-config/backend";
 import eslintIgnores from "@probing/eslint-config/ignores";
 
 export default [
-  eslintIgnores,
+  { ignores: [...eslintIgnores.ignores, "eslint.config.js"] },
   ...baseConfig,
   {
     languageOptions: {

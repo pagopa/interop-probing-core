@@ -1,10 +1,14 @@
 import { Logger } from "pagopa-interop-probing-commons";
 import {
   ChangeResponseReceived,
+  EServiceContent,
+  EServiceMainData,
+  EServiceProbingData,
   EserviceProbingUpdateLastRequest,
   EserviceSaveRequest,
+  genericError,
+  PollingResource,
 } from "pagopa-interop-probing-models";
-import { EserviceQuery } from "./db/eserviceQuery.js";
 import {
   ApiEserviceMainDataResponse,
   ApiEserviceProbingDataResponse,
@@ -29,84 +33,74 @@ import {
   ApiDeleteEserviceResponse,
 } from "pagopa-interop-probing-eservice-operations-client";
 import { eServiceNotFound } from "../model/domain/errors.js";
+import { DBService } from "./dbService.js";
+import { z } from "zod";
+import { safeStringify } from "../utilities/utils.js";
 
-export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
+export function eServiceServiceBuilder(dbService: DBService) {
   return {
     async updateEserviceState(
       eserviceId: string,
       versionId: string,
       payload: ApiUpdateEserviceStatePayload,
-      logger: Logger,
     ): Promise<ApiUpdateEserviceStateResponse> {
-      const eServiceToBeUpdated = await eserviceQuery.getEServiceByIdAndVersion(
+      const eServiceToBeUpdated = await dbService.getEServiceByIdAndVersion(
         eserviceId,
         versionId,
-        logger,
       );
 
       if (!eServiceToBeUpdated) {
         throw eServiceNotFound(eserviceId, versionId);
       }
 
-      eServiceToBeUpdated.state = payload.eServiceState;
-
-      await eserviceQuery.updateEserviceState(
-        eserviceId,
-        versionId,
-        eServiceToBeUpdated,
-      );
+      await dbService.updateEserviceState(eserviceId, versionId, {
+        state: payload.eServiceState,
+      });
     },
 
     async updateEserviceProbingState(
       eserviceId: string,
       versionId: string,
       payload: ApiUpdateEserviceProbingStatePayload,
-      logger: Logger,
     ): Promise<ApiUpdateEserviceProbingStateResponse> {
-      const eServiceToBeUpdated = await eserviceQuery.getEServiceByIdAndVersion(
+      const eServiceToBeUpdated = await dbService.getEServiceByIdAndVersion(
         eserviceId,
         versionId,
-        logger,
       );
 
       if (!eServiceToBeUpdated) {
         throw eServiceNotFound(eserviceId, versionId);
       }
 
-      eServiceToBeUpdated.probingEnabled = payload.probingEnabled;
-
-      await eserviceQuery.updateEserviceProbingState(
-        eserviceId,
-        versionId,
-        eServiceToBeUpdated,
-      );
+      await dbService.updateEserviceProbingState(eserviceId, versionId, {
+        probingEnabled: payload.probingEnabled,
+      });
     },
 
     async updateEserviceFrequency(
       eserviceId: string,
       versionId: string,
       payload: ApiUpdateEserviceFrequencyPayload,
-      logger: Logger,
     ): Promise<ApiUpdateEserviceFrequencyResponse> {
-      const eServiceToBeUpdated = await eserviceQuery.getEServiceByIdAndVersion(
+      const eServiceToBeUpdated = await dbService.getEServiceByIdAndVersion(
         eserviceId,
         versionId,
-        logger,
       );
 
       if (!eServiceToBeUpdated) {
         throw eServiceNotFound(eserviceId, versionId);
       }
 
-      eServiceToBeUpdated.pollingFrequency = payload.frequency;
-      eServiceToBeUpdated.pollingStartTime = payload.startTime;
-      eServiceToBeUpdated.pollingEndTime = payload.endTime;
-
-      await eserviceQuery.updateEserviceFrequency(
-        eserviceId,
-        versionId,
-        eServiceToBeUpdated,
-      );
+      if (
+        typeof payload?.frequency === "number" &&
+        !isNaN(payload?.frequency)
+      ) {
+        await dbService.updateEserviceFrequency(eserviceId, versionId, {
+          pollingStartTime: payload.startTime,
+          pollingEndTime: payload.endTime,
+          pollingFrequency: payload.frequency,
+        });
+      }
     },
 
     async saveEservice(
@@ -124,7 +118,7 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
         audience: payload.audience,
       };
 
-      return await eserviceQuery.saveEservice(
+      return await dbService.saveEservice(
         eserviceId,
         versionId,
         eServiceToBeUpdated,
@@ -134,7 +128,7 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
     async deleteEservice(
       eserviceId: string,
     ): Promise<ApiDeleteEserviceResponse> {
-      return await eserviceQuery.deleteEservice(eserviceId);
+      return await dbService.deleteEservice(eserviceId);
     },
 
     async updateEserviceLastRequest(
@@ -145,7 +139,7 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
         lastRequest: payload.lastRequest,
       };
 
-      await eserviceQuery.updateEserviceLastRequest(
+      await dbService.updateEserviceLastRequest(
         eserviceRecordId,
         eServiceToBeUpdated,
       );
@@ -159,7 +153,7 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
         responseStatus: payload.status,
         responseReceived: payload.responseReceived,
       };
-      await eserviceQuery.updateResponseReceived(
+      await dbService.updateResponseReceived(
         eserviceRecordId,
         eServiceToBeUpdated,
       );
@@ -169,38 +163,104 @@ export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
       filters: ApiSearchEservicesQuery,
       logger: Logger,
     ): Promise<ApiSearchEservicesResponse> {
-      return await eserviceQuery.searchEservices(filters, logger);
+      const result = await dbService.searchEservices(filters);
+
+      const mappedContent = result.content.map((el) => ({
+        ...el,
+        eserviceRecordId: String(el.id),
+        technology: el.eserviceTechnology,
+      }));
+
+      const parsed = z.array(EServiceContent).safeParse(mappedContent);
+      if (!parsed.success) {
+        logger.error(
+          `Unable to parse eservices items: parsed ${safeStringify(parsed)} - data ${safeStringify(mappedContent)} `,
+        );
+        throw genericError("Unable to parse eservices items");
+      }
+
+      return {
+        content: parsed.data,
+        limit: result.limit,
+        offset: result.offset,
+        totalElements: result.totalElements,
+      };
     },
 
     async getEserviceMainData(
       eserviceRecordId: number,
       logger: Logger,
     ): Promise<ApiEserviceMainDataResponse> {
-      return await eserviceQuery.getEserviceMainData(eserviceRecordId, logger);
+      const result = await dbService.getEserviceMainData(eserviceRecordId);
+
+      const parsed = EServiceMainData.safeParse(result);
+      if (!parsed.success) {
+        logger.error(
+          `Unable to parse eservice mainData item: parsed ${safeStringify(parsed)} - data ${safeStringify(
+            result,
+          )} `,
+        );
+        throw genericError("Unable to parse eservice mainData item");
+      }
+
+      return parsed.data;
     },
 
     async getEserviceProbingData(
       eserviceRecordId: number,
       logger: Logger,
     ): Promise<ApiEserviceProbingDataResponse> {
-      return await eserviceQuery.getEserviceProbingData(
-        eserviceRecordId,
-        logger,
-      );
+      const result = await dbService.getEserviceProbingData(eserviceRecordId);
+
+      const parsed = EServiceProbingData.safeParse({
+        ...result,
+        responseStatus: result.status,
+      });
+      if (!parsed.success) {
+        logger.error(
+          `Unable to parse eservice probingData item: parsed ${safeStringify(parsed)} - data ${safeStringify(
+            result,
+          )} `,
+        );
+        throw genericError("Unable to parse eservice probingData item");
+      }
+
+      return parsed.data;
     },
 
     async getEservicesReadyForPolling(
       filters: ApiGetEservicesReadyForPollingQuery,
       logger: Logger,
     ): Promise<ApiGetEservicesReadyForPollingResponse> {
-      return await eserviceQuery.getEservicesReadyForPolling(filters, logger);
+      const result = await dbService.getEservicesReadyForPolling(filters);
+
+      const mappedContent = result.content.map((el) => ({
+        ...el,
+        eserviceRecordId: String(el.id),
+        technology: el.eserviceTechnology,
+      }));
+
+      const parsed = z.array(PollingResource).safeParse(mappedContent);
+      if (!parsed.success) {
+        logger.error(
+          `Unable to parse eservices ready for polling items: parsed ${safeStringify(parsed)} - data ${safeStringify(mappedContent)} `,
+        );
+        throw genericError("Unable to parse eservices ready for polling items");
+      }
+
+      return {
+        content: parsed.data,
+        totalElements: result.totalElements,
+      };
     },
 
     async getEservicesProducers(
       filters: ApiGetProducersQuery,
-      logger: Logger,
     ): Promise<ApiGetProducersResponse> {
-      return await eserviceQuery.getEservicesProducers(filters, logger);
+      const result = await dbService.getEservicesProducers(filters);
+      return {
+        content: result.content.map((el) => el.producerName),
+      };
     },
   };
 }

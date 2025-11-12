@@ -153,14 +153,14 @@ export const EServiceContent = z.object({
   producerName: z.string(),
   state: EserviceInteropState,
   responseReceived: z
-    .date()
-    .transform((date) => date.toISOString())
+    .string()
+    .transform((date) => new Date(date).toISOString())
     .nullish()
     .transform((value) => (value === null ? undefined : value))
     .optional(),
   lastRequest: z
-    .date()
-    .transform((date) => date.toISOString())
+    .string()
+    .transform((date) => new Date(date).toISOString())
     .nullish()
     .transform((value) => (value === null ? undefined : value))
     .optional(),
@@ -200,12 +200,12 @@ export const EServiceProbingData = z.object({
   probingEnabled: z.boolean(),
   state: EserviceInteropState,
   responseReceived: z
-    .date()
-    .transform((date) => date.toISOString())
+    .string()
+    .transform((date) => new Date(date).toISOString())
     .nullish(),
   lastRequest: z
-    .date()
-    .transform((date) => date.toISOString())
+    .string()
+    .transform((date) => new Date(date).toISOString())
     .nullish(),
   responseStatus: EserviceStatus.nullish(),
   pollingFrequency: z.number().int(),

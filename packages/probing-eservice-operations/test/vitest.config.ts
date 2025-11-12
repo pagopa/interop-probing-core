@@ -1,3 +1,15 @@
 import baseConfig, { mergeConfig } from "@probing/vitest-config";
 
-export default mergeConfig(baseConfig, {});
+const overrideConfig = {
+  ...baseConfig,
+  test: {
+    ...baseConfig.test,
+    setupFiles: [],
+  },
+};
+
+export default mergeConfig(overrideConfig, {
+  test: {
+    globalSetup: ["./test/utilsSetupTestContainersGlobal.ts"],
+  },
+});

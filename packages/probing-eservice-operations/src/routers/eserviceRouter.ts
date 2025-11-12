@@ -6,20 +6,13 @@ import {
   ZodiosContext,
   logger,
 } from "pagopa-interop-probing-commons";
-import { config } from "../utilities/config.js";
-import { modelServiceBuilder } from "../services/db/dbService.js";
-import { eServiceServiceBuilder } from "../services/eserviceService.js";
-import { eserviceQueryBuilder } from "../services/db/eserviceQuery.js";
+import { EserviceService } from "../services/eserviceService.js";
 import { api } from "pagopa-interop-probing-eservice-operations-client";
 import { errorMapper } from "../utilities/errorMapper.js";
-import { ModelRepository } from "../repositories/modelRepository.js";
-
-const modelService = modelServiceBuilder(await ModelRepository.init(config));
-const eserviceQuery = eserviceQueryBuilder(modelService);
-const eServiceService = eServiceServiceBuilder(eserviceQuery);
 
 const eServiceRouter = (
   ctx: ZodiosContext,
+  eServiceService: EserviceService,
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const eServiceRouter = ctx.router(api.api);
 
@@ -32,7 +25,6 @@ const eServiceRouter = (
             req.params.eserviceId,
             req.params.versionId,
             req.body,
-            logger(req.ctx),
           );
           return res.status(204).end();
         } catch (error) {
@@ -49,7 +41,6 @@ const eServiceRouter = (
             req.params.eserviceId,
             req.params.versionId,
             req.body,
-            logger(req.ctx),
           );
           return res.status(204).end();
         } catch (error) {
@@ -66,7 +57,6 @@ const eServiceRouter = (
             req.params.eserviceId,
             req.params.versionId,
             req.body,
-            logger(req.ctx),
           );
           return res.status(204).end();
         } catch (error) {
@@ -208,14 +198,11 @@ const eServiceRouter = (
 
   eServiceRouter.get("/producers", async (req, res) => {
     try {
-      const eservices = await eServiceService.getEservicesProducers(
-        {
-          producerName: req.query.producerName,
-          limit: req.query.limit,
-          offset: req.query.offset,
-        },
-        logger(req.ctx),
-      );
+      const eservices = await eServiceService.getEservicesProducers({
+        producerName: req.query.producerName,
+        limit: req.query.limit,
+        offset: req.query.offset,
+      });
 
       return res
         .status(200)
