@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "vitest --config ./test/vitest.config.ts",
+    "test:api": "vitest run --config ./test/vitest.api.config.ts",
     "lint": "eslint .",
     "lint:autofix": "eslint . --fix",
     "format:check": "prettier --check src",
