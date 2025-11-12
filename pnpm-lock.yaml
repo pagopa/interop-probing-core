@@ -72,27 +72,9 @@ importers:
         specifier: 3.23.8
         version: 3.23.8
     devDependencies:
-      '@typescript-eslint/eslint-plugin':
-        specifier: 8.21.0
-        version: 8.21.0(@typescript-eslint/parser@8.21.0(eslint@9.19.0)(typescript@5.2.2))(eslint@9.19.0)(typescript@5.2.2)
-      '@typescript-eslint/parser':
-        specifier: 8.21.0
-        version: 8.21.0(eslint@9.19.0)(typescript@5.2.2)
-      eslint:
-        specifier: 9.19.0
-        version: 9.19.0
-      eslint-config-prettier:
-        specifier: 10.0.1
-        version: 10.0.1(eslint@9.19.0)
-      eslint-plugin-prettier:
-        specifier: 5.2.3
-        version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
-      globals:
-        specifier: 15.14.0
-        version: 15.14.0
-      prettier:
-        specifier: 3.2.5
-        version: 3.2.5
+      '@probing/eslint-config':
+        specifier: workspace:*
+        version: link:../../../configs/eslint-config
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@types/node@20.10.4)(typescript@5.2.2)
@@ -139,33 +121,15 @@ importers:
         specifier: 3.3.0
         version: 3.3.0(zod@3.23.8)
     devDependencies:
+      '@probing/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint-config
       '@types/express':
         specifier: 4.17.21
         version: 4.17.21
       '@types/node':
         specifier: 20.10.4
         version: 20.10.4
-      '@typescript-eslint/eslint-plugin':
-        specifier: 8.21.0
-        version: 8.21.0(@typescript-eslint/parser@8.21.0(eslint@9.19.0)(typescript@5.2.2))(eslint@9.19.0)(typescript@5.2.2)
-      '@typescript-eslint/parser':
-        specifier: 8.21.0
-        version: 8.21.0(eslint@9.19.0)(typescript@5.2.2)
-      eslint:
-        specifier: 9.19.0
-        version: 9.19.0
-      eslint-config-prettier:
-        specifier: 10.0.1
-        version: 10.0.1(eslint@9.19.0)
-      eslint-plugin-prettier:
-        specifier: 5.2.3
-        version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
-      globals:
-        specifier: 15.14.0
-        version: 15.14.0
-      prettier:
-        specifier: 3.2.5
-        version: 3.2.5
       typescript:
         specifier: 5.2.2
         version: 5.2.2
@@ -212,6 +176,9 @@ importers:
         specifier: 3.23.8
         version: 3.23.8
     devDependencies:
+      '@probing/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint-config
       '@probing/vitest-config':
         specifier: workspace:*
         version: link:../../configs/vitest-config
@@ -224,27 +191,6 @@ importers:
       '@types/uuid':
         specifier: 9.0.8
         version: 9.0.8
-      '@typescript-eslint/eslint-plugin':
-        specifier: 8.21.0
-        version: 8.21.0(@typescript-eslint/parser@8.21.0(eslint@9.19.0)(typescript@5.2.2))(eslint@9.19.0)(typescript@5.2.2)
-      '@typescript-eslint/parser':
-        specifier: 8.21.0
-        version: 8.21.0(eslint@9.19.0)(typescript@5.2.2)
-      eslint:
-        specifier: 9.19.0
-        version: 9.19.0
-      eslint-config-prettier:
-        specifier: 10.0.1
-        version: 10.0.1(eslint@9.19.0)
-      eslint-plugin-prettier:
-        specifier: 5.2.3
-        version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
-      globals:
-        specifier: 15.14.0
-        version: 15.14.0
-      prettier:
-        specifier: 3.2.5
-        version: 3.2.5
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@types/node@20.10.4)(typescript@5.2.2)
@@ -310,6 +256,9 @@ importers:
       '@pagopa/interop-outbound-models':
         specifier: 1.7.1
         version: 1.7.1
+      '@probing/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint-config
       '@types/dotenv-flow':
         specifier: 3.3.3
         version: 3.3.3
@@ -322,27 +271,6 @@ importers:
       '@types/uuid':
         specifier: 9.0.8
         version: 9.0.8
-      '@typescript-eslint/eslint-plugin':
-        specifier: 8.21.0
-        version: 8.21.0(@typescript-eslint/parser@8.21.0(eslint@9.19.0)(typescript@5.2.2))(eslint@9.19.0)(typescript@5.2.2)
-      '@typescript-eslint/parser':
-        specifier: 8.21.0
-        version: 8.21.0(eslint@9.19.0)(typescript@5.2.2)
-      eslint:
-        specifier: 9.19.0
-        version: 9.19.0
-      eslint-config-prettier:
-        specifier: 10.0.1
-        version: 10.0.1(eslint@9.19.0)
-      eslint-plugin-prettier:
-        specifier: 5.2.3
-        version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
-      globals:
-        specifier: 15.14.0
-        version: 15.14.0
-      prettier:
-        specifier: 3.2.5
-        version: 3.2.5
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@types/node@20.10.4)(typescript@5.2.2)
@@ -362,27 +290,9 @@ importers:
         specifier: 3.23.8
         version: 3.23.8
     devDependencies:
-      '@typescript-eslint/eslint-plugin':
-        specifier: 8.21.0
-        version: 8.21.0(@typescript-eslint/parser@8.21.0(eslint@9.19.0)(typescript@5.2.2))(eslint@9.19.0)(typescript@5.2.2)
-      '@typescript-eslint/parser':
-        specifier: 8.21.0
-        version: 8.21.0(eslint@9.19.0)(typescript@5.2.2)
-      eslint:
-        specifier: 9.19.0
-        version: 9.19.0
-      eslint-config-prettier:
-        specifier: 10.0.1
-        version: 10.0.1(eslint@9.19.0)
-      eslint-plugin-prettier:
-        specifier: 5.2.3
-        version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
-      globals:
-        specifier: 15.14.0
-        version: 15.14.0
-      prettier:
-        specifier: 3.2.5
-        version: 3.2.5
+      '@probing/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint-config
       tsc-esm-fix:
         specifier: 2.20.21
         version: 2.20.21
@@ -511,6 +421,9 @@ importers:
         specifier: 3.23.8
         version: 3.23.8
     devDependencies:
+      '@probing/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint-config
       '@probing/vitest-config':
         specifier: workspace:*
         version: link:../../configs/vitest-config
@@ -523,27 +436,6 @@ importers:
       '@types/uuid':
         specifier: 9.0.8
         version: 9.0.8
-      '@typescript-eslint/eslint-plugin':
-        specifier: 8.21.0
-        version: 8.21.0(@typescript-eslint/parser@8.21.0(eslint@9.19.0)(typescript@5.2.2))(eslint@9.19.0)(typescript@5.2.2)
-      '@typescript-eslint/parser':
-        specifier: 8.21.0
-        version: 8.21.0(eslint@9.19.0)(typescript@5.2.2)
-      eslint:
-        specifier: 9.19.0
-        version: 9.19.0
-      eslint-config-prettier:
-        specifier: 10.0.1
-        version: 10.0.1(eslint@9.19.0)
-      eslint-plugin-prettier:
-        specifier: 5.2.3
-        version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
-      globals:
-        specifier: 15.14.0
-        version: 15.14.0
-      prettier:
-        specifier: 3.2.5
-        version: 3.2.5
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@types/node@20.10.4)(typescript@5.2.2)
@@ -596,6 +488,9 @@ importers:
         specifier: 3.23.8
         version: 3.23.8
     devDependencies:
+      '@probing/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint-config
       '@probing/vitest-config':
         specifier: workspace:*
         version: link:../../configs/vitest-config
@@ -617,30 +512,9 @@ importers:
       '@types/uuid':
         specifier: 9.0.8
         version: 9.0.8
-      '@typescript-eslint/eslint-plugin':
-        specifier: 8.21.0
-        version: 8.21.0(@typescript-eslint/parser@8.21.0(eslint@9.19.0)(typescript@5.2.2))(eslint@9.19.0)(typescript@5.2.2)
-      '@typescript-eslint/parser':
-        specifier: 8.21.0
-        version: 8.21.0(eslint@9.19.0)(typescript@5.2.2)
       drizzle-kit:
         specifier: 0.31.6
         version: 0.31.6
-      eslint:
-        specifier: 9.19.0
-        version: 9.19.0
-      eslint-config-prettier:
-        specifier: 10.0.1
-        version: 10.0.1(eslint@9.19.0)
-      eslint-plugin-prettier:
-        specifier: 5.2.3
-        version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
-      globals:
-        specifier: 15.14.0
-        version: 15.14.0
-      prettier:
-        specifier: 3.2.5
-        version: 3.2.5
       supertest:
         specifier: 7.1.4
         version: 7.1.4
@@ -729,6 +603,12 @@ importers:
         specifier: 4.5.2
         version: 4.5.2(@types/react@18.2.64)(immer@9.0.6)(react@18.2.0)
     devDependencies:
+      '@probing/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint-config
+      '@probing/vitest-config':
+        specifier: workspace:*
+        version: link:../../configs/vitest-config
       '@types/d3':
         specifier: latest
         version: 7.4.3
@@ -738,36 +618,9 @@ importers:
       '@types/react-dom':
         specifier: 18.2.21
         version: 18.2.21
-      '@typescript-eslint/eslint-plugin':
-        specifier: 8.21.0
-        version: 8.21.0(@typescript-eslint/parser@8.21.0(eslint@9.19.0)(typescript@5.2.2))(eslint@9.19.0)(typescript@5.2.2)
-      '@typescript-eslint/parser':
-        specifier: 8.21.0
-        version: 8.21.0(eslint@9.19.0)(typescript@5.2.2)
       '@vitejs/plugin-react':
         specifier: 4.2.1
         version: 4.2.1(vite@5.4.21(@types/node@20.10.4)(terser@5.44.0))
-      eslint:
-        specifier: 9.19.0
-        version: 9.19.0
-      eslint-config-prettier:
-        specifier: 10.0.1
-        version: 10.0.1(eslint@9.19.0)
-      eslint-plugin-prettier:
-        specifier: 5.2.3
-        version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
-      eslint-plugin-react:
-        specifier: 7.37.4
-        version: 7.37.4(eslint@9.19.0)
-      eslint-plugin-react-hooks:
-        specifier: 5.1.0
-        version: 5.1.0(eslint@9.19.0)
-      eslint-plugin-react-refresh:
-        specifier: 0.4.18
-        version: 0.4.18(eslint@9.19.0)
-      prettier:
-        specifier: 3.2.5
-        version: 3.2.5
       tsx:
         specifier: 4.20.5
         version: 4.20.5
@@ -811,6 +664,9 @@ importers:
         specifier: 3.23.8
         version: 3.23.8
     devDependencies:
+      '@probing/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint-config
       '@probing/vitest-config':
         specifier: workspace:*
         version: link:../../configs/vitest-config
@@ -823,27 +679,6 @@ importers:
       '@types/uuid':
         specifier: 9.0.8
         version: 9.0.8
-      '@typescript-eslint/eslint-plugin':
-        specifier: 8.21.0
-        version: 8.21.0(@typescript-eslint/parser@8.21.0(eslint@9.19.0)(typescript@5.2.2))(eslint@9.19.0)(typescript@5.2.2)
-      '@typescript-eslint/parser':
-        specifier: 8.21.0
-        version: 8.21.0(eslint@9.19.0)(typescript@5.2.2)
-      eslint:
-        specifier: 9.19.0
-        version: 9.19.0
-      eslint-config-prettier:
-        specifier: 10.0.1
-        version: 10.0.1(eslint@9.19.0)
-      eslint-plugin-prettier:
-        specifier: 5.2.3
-        version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
-      globals:
-        specifier: 15.14.0
-        version: 15.14.0
-      prettier:
-        specifier: 3.2.5
-        version: 3.2.5
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@types/node@20.10.4)(typescript@5.2.2)
@@ -893,6 +728,9 @@ importers:
         specifier: 3.23.8
         version: 3.23.8
     devDependencies:
+      '@probing/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint-config
       '@probing/vitest-config':
         specifier: workspace:*
         version: link:../../configs/vitest-config
@@ -905,27 +743,6 @@ importers:
       '@types/uuid':
         specifier: 9.0.8
         version: 9.0.8
-      '@typescript-eslint/eslint-plugin':
-        specifier: 8.21.0
-        version: 8.21.0(@typescript-eslint/parser@8.21.0(eslint@9.19.0)(typescript@5.2.2))(eslint@9.19.0)(typescript@5.2.2)
-      '@typescript-eslint/parser':
-        specifier: 8.21.0
-        version: 8.21.0(eslint@9.19.0)(typescript@5.2.2)
-      eslint:
-        specifier: 9.19.0
-        version: 9.19.0
-      eslint-config-prettier:
-        specifier: 10.0.1
-        version: 10.0.1(eslint@9.19.0)
-      eslint-plugin-prettier:
-        specifier: 5.2.3
-        version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
-      globals:
-        specifier: 15.14.0
-        version: 15.14.0
-      prettier:
-        specifier: 3.2.5
-        version: 3.2.5
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@types/node@20.10.4)(typescript@5.2.2)
@@ -978,6 +795,9 @@ importers:
         specifier: 3.23.8
         version: 3.23.8
     devDependencies:
+      '@probing/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint-config
       '@probing/vitest-config':
         specifier: workspace:*
         version: link:../../configs/vitest-config
@@ -996,27 +816,6 @@ importers:
       '@types/supertest':
         specifier: 6.0.2
         version: 6.0.2
-      '@typescript-eslint/eslint-plugin':
-        specifier: 8.21.0
-        version: 8.21.0(@typescript-eslint/parser@8.21.0(eslint@9.19.0)(typescript@5.2.2))(eslint@9.19.0)(typescript@5.2.2)
-      '@typescript-eslint/parser':
-        specifier: 8.21.0
-        version: 8.21.0(eslint@9.19.0)(typescript@5.2.2)
-      eslint:
-        specifier: 9.19.0
-        version: 9.19.0
-      eslint-config-prettier:
-        specifier: 10.0.1
-        version: 10.0.1(eslint@9.19.0)
-      eslint-plugin-prettier:
-        specifier: 5.2.3
-        version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
-      globals:
-        specifier: 15.14.0
-        version: 15.14.0
-      prettier:
-        specifier: 3.2.5
-        version: 3.2.5
       supertest:
         specifier: 6.3.4
         version: 6.3.4
@@ -1060,6 +859,9 @@ importers:
         specifier: 3.23.8
         version: 3.23.8
     devDependencies:
+      '@probing/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint-config
       '@probing/vitest-config':
         specifier: workspace:*
         version: link:../../configs/vitest-config
@@ -1072,27 +874,6 @@ importers:
       '@types/uuid':
         specifier: 9.0.8
         version: 9.0.8
-      '@typescript-eslint/eslint-plugin':
-        specifier: 8.21.0
-        version: 8.21.0(@typescript-eslint/parser@8.21.0(eslint@9.19.0)(typescript@5.2.2))(eslint@9.19.0)(typescript@5.2.2)
-      '@typescript-eslint/parser':
-        specifier: 8.21.0
-        version: 8.21.0(eslint@9.19.0)(typescript@5.2.2)
-      eslint:
-        specifier: 9.19.0
-        version: 9.19.0
-      eslint-config-prettier:
-        specifier: 10.0.1
-        version: 10.0.1(eslint@9.19.0)
-      eslint-plugin-prettier:
-        specifier: 5.2.3
-        version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
-      globals:
-        specifier: 15.14.0
-        version: 15.14.0
-      prettier:
-        specifier: 3.2.5
-        version: 3.2.5
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@types/node@20.10.4)(typescript@5.2.2)
@@ -1145,6 +926,9 @@ importers:
         specifier: 3.23.8
         version: 3.23.8
     devDependencies:
+      '@probing/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint-config
       '@probing/vitest-config':
         specifier: workspace:*
         version: link:../../configs/vitest-config
@@ -1157,27 +941,6 @@ importers:
       '@types/uuid':
         specifier: 9.0.8
         version: 9.0.8
-      '@typescript-eslint/eslint-plugin':
-        specifier: 8.21.0
-        version: 8.21.0(@typescript-eslint/parser@8.21.0(eslint@9.19.0)(typescript@5.2.2))(eslint@9.19.0)(typescript@5.2.2)
-      '@typescript-eslint/parser':
-        specifier: 8.21.0
-        version: 8.21.0(eslint@9.19.0)(typescript@5.2.2)
-      eslint:
-        specifier: 9.19.0
-        version: 9.19.0
-      eslint-config-prettier:
-        specifier: 10.0.1
-        version: 10.0.1(eslint@9.19.0)
-      eslint-plugin-prettier:
-        specifier: 5.2.3
-        version: 5.2.3(eslint-config-prettier@10.0.1(eslint@9.19.0))(eslint@9.19.0)(prettier@3.2.5)
-      globals:
-        specifier: 15.14.0
-        version: 15.14.0
-      prettier:
-        specifier: 3.2.5
-        version: 3.2.5
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@types/node@20.10.4)(typescript@5.2.2)
@@ -5091,11 +4854,6 @@ packages:
     engines: {node: '>=10'}
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0
-
-  eslint-plugin-react-refresh@0.4.18:
-    resolution: {integrity: sha512-IRGEoFn3OKalm3hjfolEWGqoF/jPqeEYFp+C8B0WMzwGwBMvlRDQd06kghDhF0C61uJ6WfSDhEZE/sAQjduKgw==}
-    peerDependencies:
-      eslint: '>=8.40'
 
   eslint-plugin-react@7.37.4:
     resolution: {integrity: sha512-BGP0jRmfYyvOyvMoRX/uoUeW+GqNj9y16bPQzqAHf3AYII/tDs+jMN0dBVkl88/OZwNGwrVFxE7riHsXVfy/LQ==}
@@ -13563,10 +13321,6 @@ snapshots:
       eslint-config-prettier: 10.0.1(eslint@9.19.0)
 
   eslint-plugin-react-hooks@5.1.0(eslint@9.19.0):
-    dependencies:
-      eslint: 9.19.0
-
-  eslint-plugin-react-refresh@0.4.18(eslint@9.19.0):
     dependencies:
       eslint: 9.19.0
 
