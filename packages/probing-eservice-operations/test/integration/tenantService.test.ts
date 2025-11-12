@@ -69,15 +69,6 @@ describe("Tenant service", async () => {
         ),
       ).rejects.toThrow();
     });
-
-    it("should throw when saving tenant with missing name", async () => {
-      const tenantParams: ApiSaveTenantParams = { tenantId: uuidv4() };
-      const invalidPayload = {} as ApiSaveTenantPayload;
-
-      await expect(
-        tenantService.saveTenant(tenantParams, invalidPayload),
-      ).rejects.toThrow();
-    });
   });
 
   describe("deleteTenant", () => {

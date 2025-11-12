@@ -82,8 +82,8 @@ describe("fromEPDToMonitorState", () => {
         state: eserviceInteropState.active,
         probingEnabled: true,
         pollingFrequency: 5,
-        lastRequest: minutesAgo(120), // too old
-        responseReceived: minutesAgo(200), // older
+        lastRequest: minutesAgo(120),
+        responseReceived: minutesAgo(200),
         responseStatus: responseStatus.ok,
       },
       expected: eserviceMonitorState["n_d"],
@@ -108,7 +108,7 @@ describe("fromEPDToMonitorState", () => {
         probingEnabled: true,
         pollingFrequency: 5,
         lastRequest: minutesAgo(5),
-        responseReceived: minutesAhead(1), // newer than request
+        responseReceived: minutesAhead(1),
         responseStatus: responseStatus.ok,
       },
       expected: eserviceMonitorState.online,

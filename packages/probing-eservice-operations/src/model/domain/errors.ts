@@ -23,7 +23,7 @@ export function eServiceByRecordIdNotFound(
 ): ApiError<ErrorCodes> {
   return new ApiError({
     detail: `EService by eserviceRecordId ${eserviceRecordId} not found`,
-    code: "eServiceNotFound",
+    code: "eServiceByRecordIdNotFound",
     title: "EService not found",
   });
 }

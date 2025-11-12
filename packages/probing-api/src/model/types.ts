@@ -1,62 +1,168 @@
 import {
   ZodiosBodyByPath,
+  ZodiosHeaderParamsByPath,
+  ZodiosPathParamsByPath,
   ZodiosQueryParamsByPath,
   ZodiosResponseByPath,
 } from "@zodios/core";
 import { api } from "./generated/api.js";
 
-export type Api = typeof api.api;
+export type ProbingApi = typeof api.api;
 
-export type ApiUpdateEserviceStatePayload = ZodiosBodyByPath<
-  Api,
+/* 
+  =========================================
+  E-SERVICES API  
+  =========================================
+*/
+
+// ---------- Update State ----------
+export type ProbingApiUpdateEserviceStateParams = ZodiosPathParamsByPath<
+  ProbingApi,
+  "post",
+  "/eservices/:eserviceId/versions/:versionId/updateState"
+>;
+export type ProbingApiUpdateEserviceStateHeaders = ZodiosHeaderParamsByPath<
+  ProbingApi,
+  "post",
+  "/eservices/:eserviceId/versions/:versionId/updateState"
+>;
+export type ProbingApiUpdateEserviceStatePayload = ZodiosBodyByPath<
+  ProbingApi,
+  "post",
+  "/eservices/:eserviceId/versions/:versionId/updateState"
+>;
+export type ProbingApiUpdateEserviceStateResponse = ZodiosResponseByPath<
+  ProbingApi,
   "post",
   "/eservices/:eserviceId/versions/:versionId/updateState"
 >;
 
-export type ApiUpdateEserviceProbingStatePayload = ZodiosBodyByPath<
-  Api,
+// ---------- Update Probing State ----------
+export type ProbingApiUpdateEserviceProbingStateParams = ZodiosPathParamsByPath<
+  ProbingApi,
+  "post",
+  "/eservices/:eserviceId/versions/:versionId/probing/updateState"
+>;
+export type ProbingApiUpdateEserviceProbingStateHeaders =
+  ZodiosHeaderParamsByPath<
+    ProbingApi,
+    "post",
+    "/eservices/:eserviceId/versions/:versionId/probing/updateState"
+  >;
+export type ProbingApiUpdateEserviceProbingStatePayload = ZodiosBodyByPath<
+  ProbingApi,
+  "post",
+  "/eservices/:eserviceId/versions/:versionId/probing/updateState"
+>;
+export type ProbingApiUpdateEserviceProbingStateResponse = ZodiosResponseByPath<
+  ProbingApi,
   "post",
   "/eservices/:eserviceId/versions/:versionId/probing/updateState"
 >;
 
-export type ApiUpdateEserviceFrequencyPayload = ZodiosBodyByPath<
-  Api,
+// ---------- Update Frequency ----------
+export type ProbingApiUpdateEserviceFrequencyParams = ZodiosPathParamsByPath<
+  ProbingApi,
+  "post",
+  "/eservices/:eserviceId/versions/:versionId/updateFrequency"
+>;
+export type ProbingApiUpdateEserviceFrequencyHeaders = ZodiosHeaderParamsByPath<
+  ProbingApi,
+  "post",
+  "/eservices/:eserviceId/versions/:versionId/updateFrequency"
+>;
+export type ProbingApiUpdateEserviceFrequencyPayload = ZodiosBodyByPath<
+  ProbingApi,
+  "post",
+  "/eservices/:eserviceId/versions/:versionId/updateFrequency"
+>;
+export type ProbingApiUpdateEserviceFrequencyResponse = ZodiosResponseByPath<
+  ProbingApi,
   "post",
   "/eservices/:eserviceId/versions/:versionId/updateFrequency"
 >;
 
-export type ApiSearchEservicesResponse = ZodiosResponseByPath<
-  Api,
+// ---------- Search / List eServices ----------
+export type ProbingApiSearchEservicesQuery = ZodiosQueryParamsByPath<
+  ProbingApi,
+  "get",
+  "/eservices"
+>;
+export type ProbingApiSearchEservicesHeaders = ZodiosHeaderParamsByPath<
+  ProbingApi,
+  "get",
+  "/eservices"
+>;
+export type ProbingApiSearchEservicesResponse = ZodiosResponseByPath<
+  ProbingApi,
   "get",
   "/eservices"
 >;
 
-export type ApiSearchEservicesQuery = ZodiosQueryParamsByPath<
-  Api,
+// ---------- Eservice Main Data ----------
+export type ProbingApiGetEserviceMainDataParams = ZodiosPathParamsByPath<
+  ProbingApi,
   "get",
-  "/eservices"
+  "/eservices/mainData/:eserviceRecordId"
 >;
-
-export type ApiGetEserviceMainDataResponse = ZodiosResponseByPath<
-  Api,
+export type ProbingApiGetEserviceMainDataHeaders = ZodiosHeaderParamsByPath<
+  ProbingApi,
+  "get",
+  "/eservices/mainData/:eserviceRecordId"
+>;
+export type ProbingApiGetEserviceMainDataResponse = ZodiosResponseByPath<
+  ProbingApi,
   "get",
   "/eservices/mainData/:eserviceRecordId"
 >;
 
-export type ApiGetEserviceProbingDataResponse = ZodiosResponseByPath<
-  Api,
+// ---------- Eservice Probing Data ----------
+export type ProbingApiGetEserviceProbingDataParams = ZodiosPathParamsByPath<
+  ProbingApi,
+  "get",
+  "/eservices/probingData/:eserviceRecordId"
+>;
+export type ProbingApiGetEserviceProbingDataHeaders = ZodiosHeaderParamsByPath<
+  ProbingApi,
+  "get",
+  "/eservices/probingData/:eserviceRecordId"
+>;
+export type ProbingApiGetEserviceProbingDataResponse = ZodiosResponseByPath<
+  ProbingApi,
   "get",
   "/eservices/probingData/:eserviceRecordId"
 >;
 
-export type ApiGetProducersResponse = ZodiosResponseByPath<
-  Api,
+/* 
+  =========================================
+  PRODUCERS API  
+  =========================================
+*/
+
+export type ProbingApiGetProducersQuery = ZodiosQueryParamsByPath<
+  ProbingApi,
+  "get",
+  "/producers"
+>;
+export type ProbingApiGetProducersHeaders = ZodiosHeaderParamsByPath<
+  ProbingApi,
+  "get",
+  "/producers"
+>;
+export type ProbingApiGetProducersResponse = ZodiosResponseByPath<
+  ProbingApi,
   "get",
   "/producers"
 >;
 
-export type ApiGetProducersQuery = ZodiosQueryParamsByPath<
-  Api,
+/* 
+  =========================================
+  STATUS API  
+  =========================================
+*/
+
+export type ProbingApiGetHealthStatusResponse = ZodiosResponseByPath<
+  ProbingApi,
   "get",
-  "/producers"
+  "/status"
 >;

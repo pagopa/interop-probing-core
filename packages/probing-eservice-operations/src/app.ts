@@ -10,7 +10,7 @@ import { config } from "./utilities/config.js";
 import { EserviceService } from "./services/eserviceService.js";
 import { TenantService } from "./services/tenantService.js";
 
-export async function createApp(
+export function createApp(
   eServiceService: EserviceService,
   tenantService: TenantService,
 ) {

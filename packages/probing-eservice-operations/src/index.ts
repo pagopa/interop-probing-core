@@ -12,4 +12,4 @@ const dbRepository = dbServiceBuilder(db);
 const eServiceService = eServiceServiceBuilder(dbRepository);
 const tenantService = tenantServiceBuilder(dbRepository);
 
-startServer(await createApp(eServiceService, tenantService), config);
+startServer(createApp(eServiceService, tenantService), config);

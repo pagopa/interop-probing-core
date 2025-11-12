@@ -5,4 +5,4 @@ import { TenantService } from "../src/services/tenantService.js";
 export const eServiceService = {} as EserviceService;
 export const tenantService = {} as TenantService;
 
-export const api = await createApp(eServiceService, tenantService);
+export const api = createApp(eServiceService, tenantService);
