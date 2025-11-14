@@ -1,17 +1,13 @@
 CREATE SCHEMA IF NOT EXISTS probing;
 
-CREATE SEQUENCE IF NOT EXISTS probing.eservice_sequence START WITH 1 INCREMENT BY 1;
-
-CREATE SEQUENCE IF NOT EXISTS probing.tenant_sequence START WITH 1 INCREMENT BY 1;
-
 CREATE TABLE IF NOT EXISTS probing.tenants (
-    id BIGSERIAL PRIMARY KEY,
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     tenant_id UUID NOT NULL UNIQUE,
     tenant_name VARCHAR(2048)
 );
 
 CREATE TABLE IF NOT EXISTS probing.eservices (
-    id BIGSERIAL PRIMARY KEY,
+    id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     eservice_id UUID NOT NULL,
     version_id UUID NOT NULL,
     eservice_name VARCHAR(255) NOT NULL,
@@ -30,12 +26,12 @@ CREATE TABLE IF NOT EXISTS probing.eservices (
 );
 
 CREATE TABLE IF NOT EXISTS probing.eservice_probing_requests (
-    eservices_record_id BIGINT PRIMARY KEY REFERENCES probing.eservices (id) ON DELETE CASCADE,
+    eservices_record_id BIGINT PRIMARY KEY REFERENCES probing.eservices(id) ON DELETE CASCADE,
     last_request TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS probing.eservice_probing_responses (
-    eservices_record_id BIGINT PRIMARY KEY REFERENCES probing.eservices (id) ON DELETE CASCADE,
+    eservices_record_id BIGINT PRIMARY KEY REFERENCES probing.eservices(id) ON DELETE CASCADE,
     response_received TIMESTAMP WITH TIME ZONE NOT NULL,
     status VARCHAR(2) NOT NULL
 );
