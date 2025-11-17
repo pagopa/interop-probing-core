@@ -39,7 +39,8 @@ describe("eService service test", () => {
 
     await expect(
       operationsService.updateResponseReceived(
-        { params: { eserviceRecordId }, payload: { status, responseReceived } },
+        eserviceRecordId,
+        { status, responseReceived },
         ctx,
       ),
     ).resolves.not.toThrow();
@@ -66,7 +67,8 @@ describe("eService service test", () => {
 
     await expect(
       operationsService.updateResponseReceived(
-        { params: { eserviceRecordId }, payload: { status, responseReceived } },
+        eserviceRecordId,
+        { status, responseReceived },
         ctx,
       ),
     ).rejects.toMatchObject({

@@ -1,4 +1,3 @@
-import { UpdateResponseReceivedApi } from "../model/models.js";
 import { ZodiosInstance } from "@zodios/core";
 import {
   Api,
@@ -9,37 +8,38 @@ import {
   logger,
   WithSQSMessageId,
 } from "pagopa-interop-probing-commons";
+import {
+  correlationIdToHeader,
+  UpdateResponseReceivedDto,
+} from "pagopa-interop-probing-models";
 import { apiUpdateResponseReceivedError } from "../model/domain/errors.js";
-import { correlationIdToHeader } from "pagopa-interop-probing-models";
 
 export const operationsServiceBuilder = (
   operationsApiClient: ZodiosInstance<Api>,
 ) => {
   return {
     async updateResponseReceived(
-      { params, payload }: UpdateResponseReceivedApi,
+      eserviceRecordId: number,
+      payload: Pick<UpdateResponseReceivedDto, "status" | "responseReceived">,
       ctx: WithSQSMessageId<AppContext>,
     ): Promise<ApiUpdateResponseReceivedResponse> {
       try {
+        logger(ctx).info(
+          `Updating eService response received with eserviceRecordId: ${eserviceRecordId} and responseReceived: ${payload.responseReceived}`,
+        );
+
         await operationsApiClient.updateEserviceResponseReceived(
           {
             status: payload.status,
             responseReceived: payload.responseReceived,
           },
           {
-            params: { eserviceRecordId: params.eserviceRecordId },
+            params: { eserviceRecordId },
             headers: { ...correlationIdToHeader(ctx.correlationId) },
           },
         );
-
-        logger(ctx).info(
-          `Updating eService response received with eserviceRecordId: ${params.eserviceRecordId} and responseReceived: ${payload.responseReceived}`,
-        );
       } catch (error: unknown) {
-        throw apiUpdateResponseReceivedError(
-          `Error updating eService response received with eserviceRecordId: ${params.eserviceRecordId}. Details: ${error}`,
-          error,
-        );
+        throw apiUpdateResponseReceivedError(eserviceRecordId, error);
       }
     },
   };

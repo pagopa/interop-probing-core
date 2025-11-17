@@ -3,13 +3,14 @@ import { sqsMessages } from "./sqsMessages.js";
 import { processMessage } from "../src/messagesHandler.js";
 import {
   AppContext,
+  decodeSQSMessage,
   decodeSQSMessageCorrelationId,
   SQS,
   WithSQSMessageId,
 } from "pagopa-interop-probing-commons";
-import { decodeSQSMessage } from "../src/model/models.js";
 import { v4 as uuidv4 } from "uuid";
 import { config } from "../src/utilities/config.js";
+import { UpdateResponseReceivedDto } from "pagopa-interop-probing-models";
 
 describe("Consumer queue test", () => {
   const mockResponseUpdaterService = {
@@ -42,13 +43,25 @@ describe("Consumer queue test", () => {
       correlationId,
     };
 
+    const decoded = decodeSQSMessage<UpdateResponseReceivedDto>(
+      validMessage,
+      UpdateResponseReceivedDto,
+    );
+
     await expect(
       processMessage(mockResponseUpdaterService)(validMessage),
     ).resolves.not.toThrow();
 
     expect(
       mockResponseUpdaterService.updateResponseReceived,
-    ).toHaveBeenCalledWith(decodeSQSMessage(validMessage), ctx);
+    ).toHaveBeenCalledWith(
+      decoded.eserviceRecordId,
+      {
+        status: decoded.status,
+        responseReceived: decoded.responseReceived,
+      },
+      ctx,
+    );
   });
 
   it("should throw decode error for invalid message object", async () => {
@@ -57,7 +70,7 @@ describe("Consumer queue test", () => {
     await expect(
       processMessage(mockResponseUpdaterService)(invalidMessage),
     ).rejects.toMatchObject({
-      code: "DECODE_SQS_MESSAGE_ERROR",
+      code: "decodeSQSMessageError",
     });
   });
 
@@ -72,7 +85,7 @@ describe("Consumer queue test", () => {
     await expect(
       processMessage(mockResponseUpdaterService)(emptyMessage),
     ).rejects.toMatchObject({
-      code: "DECODE_SQS_MESSAGE_ERROR",
+      code: "decodeSQSMessageError",
     });
 
     expect(
@@ -93,7 +106,7 @@ describe("Consumer queue test", () => {
     await expect(
       processMessage(mockResponseUpdaterService)(messageMissingId),
     ).rejects.toMatchObject({
-      code: "DECODE_SQS_MESSAGE_ERROR",
+      code: "decodeSQSMessageError",
     });
 
     expect(
@@ -114,7 +127,7 @@ describe("Consumer queue test", () => {
     await expect(
       processMessage(mockResponseUpdaterService)(messageMissingResponse),
     ).rejects.toMatchObject({
-      code: "DECODE_SQS_MESSAGE_ERROR",
+      code: "decodeSQSMessageError",
     });
 
     expect(
@@ -133,7 +146,7 @@ describe("Consumer queue test", () => {
     await expect(
       processMessage(mockResponseUpdaterService)(messageMissingStatus),
     ).rejects.toMatchObject({
-      code: "DECODE_SQS_MESSAGE_ERROR",
+      code: "decodeSQSMessageError",
     });
 
     expect(
@@ -152,7 +165,7 @@ describe("Consumer queue test", () => {
     await expect(
       processMessage(mockResponseUpdaterService)(badFormattedMessage),
     ).rejects.toMatchObject({
-      code: "DECODE_SQS_MESSAGE_ERROR",
+      code: "decodeSQSMessageError",
     });
 
     expect(

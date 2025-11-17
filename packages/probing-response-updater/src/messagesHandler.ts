@@ -1,14 +1,15 @@
 import {
   AppContext,
+  decodeSQSMessage,
   decodeSQSMessageCorrelationId,
   logger,
   SQS,
   WithSQSMessageId,
 } from "pagopa-interop-probing-commons";
 import { OperationsService } from "./services/operationsService.js";
-import { decodeSQSMessage } from "./model/models.js";
-import { makeApplicationError } from "./model/domain/errors.js";
 import { config } from "./utilities/config.js";
+import { errorMapper } from "./utilities/errorMapper.js";
+import { UpdateResponseReceivedDto } from "pagopa-interop-probing-models";
 
 export function processMessage(
   service: OperationsService,
@@ -22,9 +23,21 @@ export function processMessage(
     };
 
     try {
-      await service.updateResponseReceived(decodeSQSMessage(message), ctx);
+      const decodedMessage = decodeSQSMessage<UpdateResponseReceivedDto>(
+        message,
+        UpdateResponseReceivedDto,
+      );
+
+      await service.updateResponseReceived(
+        decodedMessage.eserviceRecordId,
+        {
+          status: decodedMessage.status,
+          responseReceived: decodedMessage.responseReceived,
+        },
+        ctx,
+      );
     } catch (error: unknown) {
-      throw makeApplicationError(error, logger(ctx));
+      throw errorMapper(error, logger(ctx));
     }
   };
 }
