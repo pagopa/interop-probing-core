@@ -79,7 +79,7 @@ describe("Telemetry service test", () => {
     });
   });
 
-  it("should throw a real InfluxDB error", async () => {
+  it("should throw a telemetryWriteError", async () => {
     const eServiceTelemetry = {
       eserviceRecordId: 9999,
       checkTime: Date.now().toString(),
