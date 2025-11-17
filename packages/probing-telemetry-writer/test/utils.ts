@@ -19,7 +19,7 @@ export const telemetryWriteService: TelemetryWriteService =
 export const getTelemetryByEServiceRecordId = async (
   eserviceRecordId: number,
 ): Promise<TelemetryPointInfluxModel> => {
-  const [eserviceTelemetry] =
+  const [eServiceTelemetry] =
     await telemetryManager.query<TelemetryPointInfluxModel>(
       `
     from(bucket: "${process.env.INFLUX_BUCKET}")
@@ -38,5 +38,5 @@ export const getTelemetryByEServiceRecordId = async (
     `,
     );
 
-  return eserviceTelemetry;
+  return eServiceTelemetry;
 };
