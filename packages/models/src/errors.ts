@@ -162,6 +162,7 @@ const errorCodes = {
   kafkaMessageProcessError: "KAFKA_MESSAGE_PROCESS_ERROR",
   kafkaMessageMissingData: "KAFKA_MESSAGE_MISSING_DATA",
   kafkaMessageValueError: "KAFKA_MESSAGE_VALUE_ERROR",
+  invalidSqsMessage: "INVALID_SQS_MESSAGE",
 } as const;
 
 export type CommonErrorCodes = keyof typeof errorCodes;
@@ -241,5 +242,17 @@ export function kafkaMissingMessageValue(
   return new InternalError({
     code: "kafkaMessageValueError",
     detail: `Missing value message in kafka message from topic: ${topic}`,
+  });
+}
+
+export function invalidSqsMessage(
+  messageId: string | undefined,
+  error: unknown,
+): InternalError<CommonErrorCodes> {
+  return new InternalError({
+    code: "invalidSqsMessage",
+    detail: `Error while validating SQS message for id ${messageId}: ${parseErrorMessage(
+      error,
+    )}`,
   });
 }

@@ -1,30 +1,33 @@
-import { SQS } from "pagopa-interop-probing-commons";
+import {
+  initTelemetryManager,
+  logger,
+  SQS,
+  TelemetryManager,
+} from "pagopa-interop-probing-commons";
 import { config } from "./utilities/config.js";
 import { processMessage } from "./messagesHandler.js";
 import {
   TelemetryWriteService,
   telemetryWriteServiceBuilder,
 } from "./services/telemetryService.js";
-import {
-  TimestreamWriteClientHandler,
-  timestreamWriteClientBuilder,
-} from "./utilities/timestreamWriteClientHandler.js";
 
-const timestreamWriteClient: TimestreamWriteClientHandler =
-  timestreamWriteClientBuilder();
-const telemetryService: TelemetryWriteService = telemetryWriteServiceBuilder(
-  timestreamWriteClient,
-);
+const telemetryManager: TelemetryManager = initTelemetryManager(config);
+const telemetryWriteService: TelemetryWriteService =
+  telemetryWriteServiceBuilder(telemetryManager);
 
-const sqsClient: SQS.SQSClient = await SQS.instantiateClient({
+const sqsClient: SQS.SQSClient = SQS.instantiateClient({
   region: config.awsRegion,
+  logLevel: config.logLevel,
 });
 
 await SQS.runConsumer(
   sqsClient,
   {
     queueUrl: config.sqsEndpointTelemetryResultQueue,
-    consumerPollingTimeout: config.consumerPollingTimeout,
+    maxNumberOfMessages: config.maxNumberOfMessages,
+    waitTimeSeconds: config.waitTimeSeconds,
+    visibilityTimeout: config.visibilityTimeout,
   },
-  processMessage(telemetryService),
+  processMessage(telemetryWriteService),
+  logger({ serviceName: config.applicationName }),
 );

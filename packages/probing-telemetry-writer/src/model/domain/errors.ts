@@ -60,16 +60,6 @@ export function genericError(detail: string): ApplicationError<ErrorCodes> {
   });
 }
 
-export function writeRecordTimestreamError(
-  detail: string,
-): ApplicationError<ErrorCodes> {
-  return new ApplicationError({
-    detail: `${detail}`,
-    code: "writeRecordTimestreamError",
-    title: `Timestream record write failed`,
-  });
-}
-
 export function decodeSQSMessageError(
   detail: string,
 ): ApplicationError<ErrorCodes> {
