@@ -271,7 +271,7 @@ function calculateFailures(values: TelemetryPoint[]): FailureContent[] {
     ) {
       const failure: FailureContent = {
         status: status,
-        time: changeDateFormat(values[0].time, TimeFormat.ISO_8601_LOCAL),
+        time: changeDateFormat(values[0].time, TimeFormat.YY_MM_DD_HH_MM_SS),
       };
       failures.push(failure);
     }
