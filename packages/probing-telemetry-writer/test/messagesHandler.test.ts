@@ -20,7 +20,7 @@ describe("Consumer queue test", () => {
     vi.clearAllMocks();
   });
 
-  it("given valid message, method should not throw an exception", async () => {
+  it("should process a valid message without throwing", async () => {
     const validMessage: SQS.Message = {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
@@ -39,7 +39,7 @@ describe("Consumer queue test", () => {
     ).resolves.not.toThrow();
   });
 
-  it("given invalid message, method should throw a decode error", async () => {
+  it("should throw a decode error when the message is invalid", async () => {
     const invalidMessage = {};
 
     await expect(
