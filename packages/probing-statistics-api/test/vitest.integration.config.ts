@@ -10,6 +10,7 @@ const overrideConfig = {
 
 export default mergeConfig(overrideConfig, {
   test: {
+    include: ["./test/integration/**/*.test.ts"],
     globalSetup: ["./test/vitestGlobalSetup.ts"],
   },
 });

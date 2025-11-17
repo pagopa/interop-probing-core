@@ -87,6 +87,9 @@ importers:
       '@aws-sdk/client-sqs':
         specifier: 3.507.0
         version: 3.507.0
+      '@influxdata/influxdb-client':
+        specifier: 1.35.0
+        version: 1.35.0
       '@types/uuid':
         specifier: 9.0.8
         version: 9.0.8
@@ -133,6 +136,36 @@ importers:
       typescript:
         specifier: 5.2.2
         version: 5.2.2
+
+  packages/commons-test:
+    devDependencies:
+      '@probing/eslint-config':
+        specifier: workspace:*
+        version: link:../../configs/eslint-config
+      '@types/dotenv-flow':
+        specifier: 3.3.3
+        version: 3.3.3
+      dotenv-flow:
+        specifier: 4.1.0
+        version: 4.1.0
+      pagopa-interop-probing-commons:
+        specifier: workspace:*
+        version: link:../commons
+      pagopa-interop-probing-models:
+        specifier: workspace:*
+        version: link:../models
+      testcontainers:
+        specifier: 10.9.0
+        version: 10.9.0
+      ts-pattern:
+        specifier: 5.0.6
+        version: 5.0.6
+      typescript:
+        specifier: 5.2.2
+        version: 5.2.2
+      zod:
+        specifier: 3.23.8
+        version: 3.23.8
 
   packages/eservice-event-consumer:
     dependencies:
@@ -289,6 +322,9 @@ importers:
       zod:
         specifier: 3.23.8
         version: 3.23.8
+      zod-validation-error:
+        specifier: 3.3.0
+        version: 3.3.0(zod@3.23.8)
     devDependencies:
       '@probing/eslint-config':
         specifier: workspace:*
@@ -755,9 +791,9 @@ importers:
 
   packages/probing-statistics-api:
     dependencies:
-      '@aws-sdk/client-timestream-query':
-        specifier: 3.549.0
-        version: 3.549.0
+      '@influxdata/influxdb-client':
+        specifier: 1.35.0
+        version: 1.35.0
       '@tsconfig/node-lts':
         specifier: 20.1.1
         version: 20.1.1
@@ -791,6 +827,9 @@ importers:
       ts-pattern:
         specifier: 5.0.6
         version: 5.0.6
+      uuid:
+        specifier: 13.0.0
+        version: 13.0.0
       zod:
         specifier: 3.23.8
         version: 3.23.8
@@ -816,9 +855,15 @@ importers:
       '@types/supertest':
         specifier: 6.0.2
         version: 6.0.2
+      '@types/uuid':
+        specifier: 9.0.8
+        version: 9.0.8
+      pagopa-interop-probing-commons-test:
+        specifier: workspace:*
+        version: link:../commons-test
       supertest:
-        specifier: 6.3.4
-        version: 6.3.4
+        specifier: 7.1.4
+        version: 7.1.4
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@types/node@20.10.4)(typescript@5.2.2)
@@ -1195,10 +1240,6 @@ packages:
   '@aws-sdk/client-textract@3.6.1':
     resolution: {integrity: sha512-nLrBzWDt3ToiGVFF4lW7a/eZpI2zjdvu7lwmOWyXX8iiPzhBVVEfd5oOorRyJYBsGMslp4sqV8TBkU5Ld/a97Q==}
     engines: {node: '>=10.0.0'}
-
-  '@aws-sdk/client-timestream-query@3.549.0':
-    resolution: {integrity: sha512-k5JCpIcfPEPx/CcklL2CKBy7hmPR+8YdnNItmpGYHbTxGaN6YISQXdCgc7DiR5w6KaHJxqc6dF45G+r1mTW+2g==}
-    engines: {node: '>=14.0.0'}
 
   '@aws-sdk/client-timestream-write@3.549.0':
     resolution: {integrity: sha512-VuOg+ApuCvQFUWfYlIv2Djb/8aHHDyg92O4dkYLCh5MhS/ty4j1WaW4zHuG9OCqlWFFsKhCJKunr8AOFgD/ZFQ==}
@@ -2639,6 +2680,9 @@ packages:
   '@humanwhocodes/retry@0.4.3':
     resolution: {integrity: sha512-bV0Tgo9K4hfPCek+aMAn81RppFKv2ySDQeMoSZuvTASywNTnVJCArCZE2FWqpvIatKu7VMRLWlR1EazvVhDyhQ==}
     engines: {node: '>=18.18'}
+
+  '@influxdata/influxdb-client@1.35.0':
+    resolution: {integrity: sha512-woWMi8PDpPQpvTsRaUw4Ig+nOGS/CWwAwS66Fa1Vr/EkW+NEwxI8YfPBsdBMn33jK2Y86/qMiiuX/ROHIkJLTw==}
 
   '@isaacs/cliui@8.0.2':
     resolution: {integrity: sha512-O8jcjabXaleOG9DQ0+ARXWZBTfnP4WNAqzuiJK7ll44AmxGKv/J2M4TPjxjY3znBCfvBXFzucm1twdyFybFqEA==}
@@ -4608,6 +4652,10 @@ packages:
   dotenv-flow@3.3.0:
     resolution: {integrity: sha512-GLSvRqDZ1TGhloS6ZCZ5chdqqv/3XMqZxAnX9rliJiHn6uyJLguKeu+3M2kcagBkoVCnLWYfbR4rfFe1xSU39A==}
     engines: {node: '>= 8.0.0'}
+
+  dotenv-flow@4.1.0:
+    resolution: {integrity: sha512-0cwP9jpQBQfyHwvE0cRhraZMkdV45TQedA8AAUZMsFzvmLcQyc1HPv+oX0OOYwLFjIlvgVepQ+WuQHbqDaHJZg==}
+    engines: {node: '>= 12.0.0'}
 
   dotenv@16.6.1:
     resolution: {integrity: sha512-uBq4egWHTcTt33a72vpSG0z3HnPuIl6NqYcTrKEg2azoEyl2hpW0zqlxysq2pK9HlDIHyHyakeYaYnSAwd8bow==}
@@ -6685,6 +6733,9 @@ packages:
   testcontainers@10.6.0:
     resolution: {integrity: sha512-FDJ3o3J8IMu1V7Uc6lNZ2MAD8+BV4HdpR/Vf5mHtgYHKdn6k1EbGFwtnvVNOxanJ99FCjf/EU8eA5ZQ4yjlsGA==}
 
+  testcontainers@10.9.0:
+    resolution: {integrity: sha512-LN+cKAOd61Up9SVMJW+3VFVGeVQG8JBqZhEQo2U0HBfIsAynyAXcsLBSo+KZrOfy9SBz7pGHctWN/KabLDbNFA==}
+
   text-decoder@1.2.3:
     resolution: {integrity: sha512-3/o9z3X0X0fTupwsYvR03pJ/DjWuqqrfwBgTQzdWDiQSm9KitAyz/9WqsT2JQW7KV2m+bC2ol/zqpW37NHxLaA==}
 
@@ -7011,6 +7062,10 @@ packages:
 
   uuid@11.1.0:
     resolution: {integrity: sha512-0/A9rDy9P7cJ+8w1c9WD9V//9Wj15Ce2MPz8Ri6032usz+NfePxx5AcN3bN+r6ZL6jEo066/yNYB3tn4pQEx+A==}
+    hasBin: true
+
+  uuid@13.0.0:
+    resolution: {integrity: sha512-XQegIaBTVUjSHliKqcnFqYypAd4S+WCYt5NIeRs6w/UAry7z8Y9j5ZwRRL4kzq9U3sD6v+85er9FvkEaBpji2w==}
     hasBin: true
 
   uuid@3.4.0:
@@ -8640,53 +8695,6 @@ snapshots:
       tslib: 2.8.1
     transitivePeerDependencies:
       - react-native
-
-  '@aws-sdk/client-timestream-query@3.549.0':
-    dependencies:
-      '@aws-crypto/sha256-browser': 3.0.0
-      '@aws-crypto/sha256-js': 3.0.0
-      '@aws-sdk/client-sts': 3.549.0(@aws-sdk/credential-provider-node@3.549.0)
-      '@aws-sdk/core': 3.549.0
-      '@aws-sdk/credential-provider-node': 3.549.0
-      '@aws-sdk/middleware-endpoint-discovery': 3.535.0
-      '@aws-sdk/middleware-host-header': 3.535.0
-      '@aws-sdk/middleware-logger': 3.535.0
-      '@aws-sdk/middleware-recursion-detection': 3.535.0
-      '@aws-sdk/middleware-user-agent': 3.540.0
-      '@aws-sdk/region-config-resolver': 3.535.0
-      '@aws-sdk/types': 3.535.0
-      '@aws-sdk/util-endpoints': 3.540.0
-      '@aws-sdk/util-user-agent-browser': 3.535.0
-      '@aws-sdk/util-user-agent-node': 3.535.0
-      '@smithy/config-resolver': 2.2.0
-      '@smithy/core': 1.4.2
-      '@smithy/fetch-http-handler': 2.5.0
-      '@smithy/hash-node': 2.2.0
-      '@smithy/invalid-dependency': 2.2.0
-      '@smithy/middleware-content-length': 2.2.0
-      '@smithy/middleware-endpoint': 2.5.1
-      '@smithy/middleware-retry': 2.3.1
-      '@smithy/middleware-serde': 2.3.0
-      '@smithy/middleware-stack': 2.2.0
-      '@smithy/node-config-provider': 2.3.0
-      '@smithy/node-http-handler': 2.5.0
-      '@smithy/protocol-http': 3.3.0
-      '@smithy/smithy-client': 2.5.1
-      '@smithy/types': 2.12.0
-      '@smithy/url-parser': 2.2.0
-      '@smithy/util-base64': 2.3.0
-      '@smithy/util-body-length-browser': 2.2.0
-      '@smithy/util-body-length-node': 2.3.0
-      '@smithy/util-defaults-mode-browser': 2.2.1
-      '@smithy/util-defaults-mode-node': 2.3.1
-      '@smithy/util-endpoints': 1.2.0
-      '@smithy/util-middleware': 2.2.0
-      '@smithy/util-retry': 2.2.0
-      '@smithy/util-utf8': 2.3.0
-      tslib: 2.8.1
-      uuid: 9.0.1
-    transitivePeerDependencies:
-      - aws-crt
 
   '@aws-sdk/client-timestream-write@3.549.0':
     dependencies:
@@ -10646,6 +10654,8 @@ snapshots:
   '@humanwhocodes/module-importer@1.0.1': {}
 
   '@humanwhocodes/retry@0.4.3': {}
+
+  '@influxdata/influxdb-client@1.35.0': {}
 
   '@isaacs/cliui@8.0.2':
     dependencies:
@@ -13052,6 +13062,10 @@ snapshots:
   dotenv-flow@3.3.0:
     dependencies:
       dotenv: 8.6.0
+
+  dotenv-flow@4.1.0:
+    dependencies:
+      dotenv: 16.6.1
 
   dotenv@16.6.1: {}
 
@@ -15534,6 +15548,30 @@ snapshots:
       - react-native-b4a
       - supports-color
 
+  testcontainers@10.9.0:
+    dependencies:
+      '@balena/dockerignore': 1.0.2
+      '@types/dockerode': 3.3.45
+      archiver: 5.3.2
+      async-lock: 1.4.1
+      byline: 5.0.0
+      debug: 4.4.3
+      docker-compose: 0.24.8
+      dockerode: 3.3.5
+      get-port: 5.1.1
+      node-fetch: 2.7.0
+      proper-lockfile: 4.1.2
+      properties-reader: 2.3.0
+      ssh-remote-port-forward: 1.0.4
+      tar-fs: 3.1.1
+      tmp: 0.2.5
+    transitivePeerDependencies:
+      - bare-abort-controller
+      - bare-buffer
+      - encoding
+      - react-native-b4a
+      - supports-color
+
   text-decoder@1.2.3:
     dependencies:
       b4a: 1.7.3
@@ -15817,6 +15855,8 @@ snapshots:
   uuid@10.0.0: {}
 
   uuid@11.1.0: {}
+
+  uuid@13.0.0: {}
 
   uuid@3.4.0: {}
 

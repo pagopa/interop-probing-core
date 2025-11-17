@@ -1,8 +1,8 @@
 {
-  "name": "pagopa-interop-probing-models",
-  "version": "1.0.0",
+  "name": "pagopa-interop-probing-commons-test",
   "private": true,
-  "description": "PagoPA Interoperability probing models",
+  "version": "1.0.0",
+  "description": "PagoPA Interoperability Probing common test utilities",
   "main": "dist",
   "type": "module",
   "exports": {
@@ -16,17 +16,17 @@
     "build": "tsc",
     "check": "tsc --project tsconfig.check.json"
   },
-  "keywords": [],
   "author": "",
   "license": "Apache-2.0",
-  "dependencies": {
-    "ts-pattern": "5.0.6",
-    "zod": "3.23.8",
-    "zod-validation-error": "3.3.0"
-  },
   "devDependencies": {
     "@probing/eslint-config": "workspace:*",
-    "tsc-esm-fix": "2.20.21",
-    "typescript": "5.2.2"
+    "@types/dotenv-flow": "3.3.3",
+    "pagopa-interop-probing-commons": "workspace:*",
+    "pagopa-interop-probing-models": "workspace:*",
+    "dotenv-flow": "4.1.0",
+    "testcontainers": "10.9.0",
+    "ts-pattern": "5.0.6",
+    "typescript": "5.2.2",
+    "zod": "3.23.8"
   }
 }

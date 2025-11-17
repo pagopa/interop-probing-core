@@ -1,52 +1,82 @@
-import { QueryResponse } from "@aws-sdk/client-timestream-query";
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { afterEach, inject } from "vitest";
+import {
+  telemetryQueryServiceBuilder,
+  TelemetryQueryService,
+} from "../src/services/telemetryQueryService.js";
+import {
+  TelemetryPoint,
+  TelemetryDimensions,
+  TelemetryFields,
+  TelemetryMeasurement,
+  TelemetryStatus,
+} from "pagopa-interop-probing-models";
+import { setupTestContainersVitest } from "pagopa-interop-probing-commons-test";
+import { TelemetryRecord } from "pagopa-interop-probing-commons";
+import { statisticsServiceBuilder } from "../src/services/statisticsService.js";
 
-export const mockTimestreamResponseQuery: QueryResponse = {
-  ColumnInfo: [
-    { Name: "time", Type: { ScalarType: "TIMESTAMP" } },
-    { Name: "status", Type: { ScalarType: "VARCHAR" } },
-    { Name: "response_time", Type: { ScalarType: "INTEGER" } },
-  ],
-  QueryId: "AEBQEANS7FHWTWXJ2TMW2SOV5ZXML72NAFHBFEFY7F2PVRNVVXQ4OADG53EJV4A",
-  QueryStatus: {
-    CumulativeBytesMetered: 10000000,
-    CumulativeBytesScanned: 148,
-    ProgressPercentage: 100,
-  },
-  Rows: [
+export const { cleanup, telemetryManager } = await setupTestContainersVitest(
+  inject("influxDBConfig")!,
+);
+
+afterEach(cleanup);
+
+export const telemetryQueryService: TelemetryQueryService =
+  telemetryQueryServiceBuilder(telemetryManager!);
+export const statisticsService = statisticsServiceBuilder(
+  telemetryQueryService,
+);
+
+export const mockStatistic = (
+  overrides: Partial<TelemetryPoint> = {},
+): TelemetryPoint => ({
+  time: overrides.time ?? new Date().toISOString(),
+  status: overrides.status ?? "OK",
+  responseTime: overrides.responseTime ?? 120,
+});
+
+export const mockTelemetryRecord = (params: {
+  eserviceRecordId: number;
+  status: TelemetryStatus;
+  responseTime: number;
+  timestamp: Date | number;
+  koReason?: string;
+}): TelemetryRecord => {
+  const dimensions: Array<{ name: TelemetryDimensions; value: string }> = [
     {
-      Data: [
-        { ScalarValue: "2024-03-13 21:00:00.000000000" },
-        { ScalarValue: "OK" },
-        { ScalarValue: "50" },
-      ],
+      name: TelemetryDimensions.ESERVICE_RECORD_ID,
+      value: String(params.eserviceRecordId),
+    },
+  ];
+
+  if (params.status === "KO" && params.koReason) {
+    dimensions.push({
+      name: TelemetryDimensions.KO_REASON,
+      value: params.koReason,
+    });
+  }
+
+  const fields: Array<{ name: TelemetryFields; value: string | number }> = [
+    {
+      name: TelemetryFields.STATUS,
+      value: params.status,
     },
     {
-      Data: [
-        { ScalarValue: "2024-03-13 21:03:00.000000000" },
-        { ScalarValue: "KO" },
-        { ScalarValue: "16" },
-      ],
+      name: TelemetryFields.RESPONSE_TIME,
+      value: Number(params.responseTime),
     },
-    {
-      Data: [
-        { ScalarValue: "2024-03-13 21:06:00.000000000" },
-        { ScalarValue: "KO" },
-        { ScalarValue: "16" },
-      ],
-    },
-    {
-      Data: [
-        { ScalarValue: "2024-03-13 21:09:00.000000000" },
-        { ScalarValue: "N_D" },
-        { ScalarValue: undefined },
-      ],
-    },
-    {
-      Data: [
-        { ScalarValue: "2024-03-13 21:12:00.000000000" },
-        { ScalarValue: "N_D" },
-        { ScalarValue: undefined },
-      ],
-    },
-  ],
+  ];
+
+  return {
+    measurement: TelemetryMeasurement.TELEMETRY,
+    timestamp: params.timestamp,
+    dimensions,
+    fields,
+  };
+};
+
+export const addTelemetry = async (
+  telemetry: TelemetryRecord,
+): Promise<void> => {
+  await telemetryManager.writeRecord(telemetry);
 };
