@@ -1,5 +1,8 @@
 CREATE SCHEMA IF NOT EXISTS probing;
 
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+
+-- Tables
 CREATE TABLE IF NOT EXISTS probing.tenants (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     tenant_id UUID NOT NULL UNIQUE,
@@ -36,6 +39,7 @@ CREATE TABLE IF NOT EXISTS probing.eservice_probing_responses (
     status VARCHAR(2) NOT NULL
 );
 
+-- Views
 CREATE
 OR REPLACE VIEW probing.eservice_view AS
 SELECT
@@ -60,3 +64,24 @@ FROM
     probing.eservices e
     LEFT JOIN probing.eservice_probing_responses epr ON epr.eservices_record_id = e.id
     LEFT JOIN probing.eservice_probing_requests epreq ON epreq.eservices_record_id = e.id;
+
+-- Indexes
+CREATE INDEX IF NOT EXISTS eservices_producer_upper_trgm_idx ON probing.eservices USING GIN ((UPPER(producer_name)) gin_trgm_ops);
+
+CREATE INDEX IF NOT EXISTS eservices_name_upper_trgm_idx ON probing.eservices USING GIN ((UPPER(eservice_name)) gin_trgm_ops);
+
+CREATE INDEX IF NOT EXISTS eservices_state_idx ON probing.eservices (state);
+
+CREATE INDEX IF NOT EXISTS eservices_polling_ready_idx ON probing.eservices (
+    state,
+    probing_enabled,
+    polling_start_time,
+    polling_end_time
+)
+WHERE
+    state = 'ACTIVE'
+    AND probing_enabled = true;
+
+CREATE INDEX IF NOT EXISTS probing_requests_last_request_idx ON probing.eservice_probing_requests (last_request);
+
+CREATE INDEX IF NOT EXISTS probing_responses_received_idx ON probing.eservice_probing_responses (response_received);
