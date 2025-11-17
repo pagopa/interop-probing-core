@@ -721,6 +721,9 @@ importers:
       '@types/uuid':
         specifier: 9.0.8
         version: 9.0.8
+      pagopa-interop-probing-commons-test:
+        specifier: workspace:*
+        version: link:../commons-test
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@types/node@20.10.4)(typescript@5.2.2)

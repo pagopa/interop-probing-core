@@ -6,7 +6,7 @@ import {
   operationsServiceBuilder,
 } from "../src/services/operationsService.js";
 import { config } from "./../src/utilities/config.js";
-import { mockApiClientError } from "./utils.js";
+import { mockApiClientError } from "pagopa-interop-probing-commons-test";
 import { v4 as uuidv4 } from "uuid";
 import { WithSQSMessageId, AppContext } from "pagopa-interop-probing-commons";
 
