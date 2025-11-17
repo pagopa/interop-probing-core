@@ -2,20 +2,19 @@ import { describe, expect, it, vi, afterAll, afterEach } from "vitest";
 import { processMessage } from "../src/messagesHandler.js";
 import {
   AppContext,
+  decodeSQSMessage,
   decodeSQSMessageCorrelationId,
   SQS,
   WithSQSMessageId,
 } from "pagopa-interop-probing-commons";
-import { decodeSQSMessage } from "../src/model/models.js";
 import { callerConstants } from "../src/utilities/constants.js";
 import {
-  ApplicationError,
+  EserviceContentDto,
   responseStatus,
   TelemetryDto,
 } from "pagopa-interop-probing-models";
 import { config } from "../src/utilities/config.js";
 import { v4 as uuidv4 } from "uuid";
-import { ErrorCodes } from "../src/model/domain/errors.js";
 
 describe("Consumer queue test", async () => {
   const telemetryResult: TelemetryDto = {
@@ -43,12 +42,9 @@ describe("Consumer queue test", async () => {
   };
 
   afterEach(() => vi.restoreAllMocks());
+  afterAll(() => vi.clearAllMocks());
 
-  afterAll(() => {
-    vi.clearAllMocks();
-  });
-
-  it("Reads the message from the queue and pushes it to the polling and telemetry queues.", async () => {
+  it("should read a valid message and push telemetry updates to the correct queues", async () => {
     const validMessage: SQS.Message = {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
@@ -73,10 +69,10 @@ describe("Consumer queue test", async () => {
         mockProbingCallerService,
         mockProducerService,
       )(validMessage),
-    ).resolves.not.toThrowError();
+    ).resolves.not.toThrow();
 
     expect(mockProbingCallerService.performRequest).toHaveBeenCalledWith(
-      decodeSQSMessage(validMessage),
+      decodeSQSMessage<EserviceContentDto>(validMessage, EserviceContentDto),
       ctx,
     );
 
@@ -88,19 +84,16 @@ describe("Consumer queue test", async () => {
     expect(mockProducerService.sendToResponseUpdaterQueue).toHaveBeenCalled();
   });
 
-  it("given invalid message, method should throw an error", async () => {
+  it("should throw decodeSQSMessageError when the message is invalid", async () => {
     const invalidMessage = {};
 
-    try {
-      await processMessage(
+    await expect(
+      processMessage(
         mockProbingCallerService,
         mockProducerService,
-      )(invalidMessage);
-    } catch (error) {
-      expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe(
-        "DECODE_SQS_MESSAGE_ERROR",
-      );
-    }
+      )(invalidMessage),
+    ).rejects.toMatchObject({
+      code: "decodeSQSMessageError",
+    });
   });
 });

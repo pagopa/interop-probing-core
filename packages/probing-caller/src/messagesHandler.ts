@@ -6,14 +6,15 @@ import {
   WithSQSMessageId,
 } from "pagopa-interop-probing-commons";
 import { CallerService } from "./services/callerService.js";
-import { decodeSQSMessage } from "./model/models.js";
-import { makeApplicationError } from "./model/domain/errors.js";
+import { decodeSQSMessage } from "pagopa-interop-probing-commons";
 import { ProducerService } from "./services/producerService.js";
 import {
   UpdateResponseReceivedDto,
   TelemetryDto,
+  EserviceContentDto,
 } from "pagopa-interop-probing-models";
 import { config } from "./utilities/config.js";
+import { errorMapper } from "./utilities/errorMapper.js";
 
 export function processMessage(
   callerService: CallerService,
@@ -29,7 +30,7 @@ export function processMessage(
 
     try {
       const telemetryResult: TelemetryDto = await callerService.performRequest(
-        decodeSQSMessage(message),
+        decodeSQSMessage<EserviceContentDto>(message, EserviceContentDto),
         ctx,
       );
       const pollingResult: UpdateResponseReceivedDto = {
@@ -41,7 +42,7 @@ export function processMessage(
       await producerService.sendToTelemetryWriterQueue(telemetryResult, ctx);
       await producerService.sendToResponseUpdaterQueue(pollingResult, ctx);
     } catch (error: unknown) {
-      throw makeApplicationError(error, logger(ctx));
+      throw errorMapper(error, logger(ctx));
     }
   };
 }
