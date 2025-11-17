@@ -15,9 +15,10 @@ import {
 } from "./services/statisticsService.js";
 
 const telemetryManager: TelemetryManager = initTelemetryManager(config);
-const telemetryService: TelemetryQueryService =
+const telemetryQueryService: TelemetryQueryService =
   telemetryQueryServiceBuilder(telemetryManager);
-const statisticsService: StatisticsService =
-  statisticsServiceBuilder(telemetryService);
+const statisticsService: StatisticsService = statisticsServiceBuilder(
+  telemetryQueryService,
+);
 
 startServer(createApp(statisticsService), config);
