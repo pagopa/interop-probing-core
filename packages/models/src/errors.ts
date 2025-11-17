@@ -1,5 +1,6 @@
 import { P, match } from "ts-pattern";
-import { z } from "zod";
+import { fromZodError } from "zod-validation-error";
+import { z, ZodError } from "zod";
 
 export const ProblemError = z.object({
   code: z.string(),
@@ -164,6 +165,22 @@ const errorCodes = {
 } as const;
 
 export type CommonErrorCodes = keyof typeof errorCodes;
+
+export function parseErrorMessage(error: unknown): string {
+  if (error instanceof ZodError) {
+    return fromZodError(error).message;
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  if (typeof error === "string") {
+    return error;
+  }
+
+  return `${JSON.stringify(error)}`;
+}
 
 export function genericError(details: string): ApiError<CommonErrorCodes> {
   return new ApiError({

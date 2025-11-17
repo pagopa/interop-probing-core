@@ -42,7 +42,7 @@ services:
       KAFKA_INTER_BROKER_LISTENER_NAME: LISTENER_DOCKER
       KAFKA_NUM_PARTITIONS: 3
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
-  
+
   # Web GUI for kafka
   kafka-ui:
     container_name: kafka-ui
@@ -70,6 +70,25 @@ services:
     restart: always
     networks:
       - develop-network
+
+  # InfluxDB — local instance
+  influxdb:
+    image: influxdb:2.7
+    container_name: influxdb
+    ports:
+      - "8086:8086"
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=root
+      - DOCKER_INFLUXDB_INIT_PASSWORD=root@root!
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=token
+      - DOCKER_INFLUXDB_INIT_ORG=probing
+      - DOCKER_INFLUXDB_INIT_BUCKET=probing-bucket
+    volumes:
+      - ./influxdb-data:/var/lib/influxdb2
+    networks:
+      - develop-network
+    restart: unless-stopped
 
 networks:
   develop-network:

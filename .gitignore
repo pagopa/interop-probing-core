@@ -47,3 +47,6 @@ packages/clients/*/src/model/generated
 
 # Test environment
 .env.packages
+
+# Docker volumes
+influxdb-data

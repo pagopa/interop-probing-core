@@ -45,12 +45,14 @@ paths:
           description: The e-service record id
           schema:
             type: integer
+            minimum: 1
             format: int64
         - name: pollingFrequency
           in: query
           required: true
           description: The e-service polling frequency
           schema:
+            minimum: 1
             type: integer
       responses:
         "200":
@@ -58,7 +60,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/StatisticsEserviceResponse"
+                $ref: "#/components/schemas/TelemetryDataEserviceResponse"
         "400":
           description: The provided input data is invalid
           content:
@@ -99,12 +101,14 @@ paths:
           description: The e-service record id
           schema:
             type: integer
+            minimum: 1
             format: int64
         - name: pollingFrequency
           in: query
           required: true
           description: The e-service polling frequency
           schema:
+            minimum: 1
             type: integer
         - name: startDate
           in: query
@@ -126,7 +130,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/StatisticsEserviceResponse"
+                $ref: "#/components/schemas/TelemetryDataEserviceResponse"
         "400":
           description: The provided input data is invalid
           content:
@@ -155,19 +159,36 @@ paths:
 
 components:
   schemas:
-    StatisticContent:
+    PerformanceContent:
       type: object
       properties:
         responseTime:
           title: Response time
           type: integer
           format: int64
-        status:
-          $ref: "#/components/schemas/EserviceStatus"
         time:
           title: date of telemetry
           type: string
           format: date-time
+      required:
+        - responseTime
+        - time
+
+    FailureContent:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+            - KO
+            - N_D
+        time:
+          title: date of telemetry
+          type: string
+          format: date-time
+      required:
+        - status
+        - time
 
     PercentageContent:
       type: object
@@ -177,10 +198,12 @@ components:
           type: number
           format: float
         status:
-          title: status of telemetry
-          type: string
+          $ref: "#/components/schemas/EserviceStatus"
+      required:
+        - value
+        - status
 
-    StatisticsEserviceResponse:
+    TelemetryDataEserviceResponse:
       type: object
       required:
         - performances
@@ -191,12 +214,12 @@ components:
           title: eservice status values list
           type: array
           items:
-            $ref: "#/components/schemas/StatisticContent"
+            $ref: "#/components/schemas/PerformanceContent"
         failures:
           title: eservice status failures list
           type: array
           items:
-            $ref: "#/components/schemas/StatisticContent"
+            $ref: "#/components/schemas/FailureContent"
         percentages:
           title: eservice status percentages list
           type: array
@@ -204,10 +227,11 @@ components:
             $ref: "#/components/schemas/PercentageContent"
 
     EserviceStatus:
+      title: status of telemetry
       type: string
       enum:
         - OK
-        - "N_D"
+        - N_D
         - KO
 
     Problem:
