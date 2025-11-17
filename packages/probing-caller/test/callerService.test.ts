@@ -15,7 +15,10 @@ import {
   apiClientBuilder,
 } from "../src/utilities/apiClientHandler.js";
 import { callerConstants } from "../src/utilities/constants.js";
-import { mockApiClientError, mockApiClientResponse } from "./utils.js";
+import {
+  mockApiClientError,
+  mockApiClientResponse,
+} from "pagopa-interop-probing-commons-test";
 import {
   KMSClientHandler,
   kmsClientBuilder,
