@@ -145,6 +145,9 @@ importers:
       '@types/dotenv-flow':
         specifier: 3.3.3
         version: 3.3.3
+      axios:
+        specifier: 1.12.0
+        version: 1.12.0
       dotenv-flow:
         specifier: 4.1.0
         version: 4.1.0
@@ -472,6 +475,9 @@ importers:
       '@types/uuid':
         specifier: 9.0.8
         version: 9.0.8
+      pagopa-interop-probing-commons-test:
+        specifier: workspace:*
+        version: link:../commons-test
       ts-node:
         specifier: 10.9.2
         version: 10.9.2(@types/node@20.10.4)(typescript@5.2.2)
