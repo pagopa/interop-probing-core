@@ -19,24 +19,24 @@ export const telemetryWriteService: TelemetryWriteService =
 export const getTelemetryByEServiceRecordId = async (
   eserviceRecordId: number,
 ): Promise<TelemetryPointInfluxModel> => {
-  const [eserviceTelemetries] =
+  const [eserviceTelemetry] =
     await telemetryManager.query<TelemetryPointInfluxModel>(
       `
-      from(bucket: "${process.env.INFLUX_BUCKET}")
-        |> range(start: 0)
-        |> filter(fn: (r) => r["_measurement"] == "telemetry")
-        |> filter(fn: (r) => r["eservice_record_id"] == "${eserviceRecordId}")
-        |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
-        |> keep(columns: ["_time", "status", "response_time", "ko_reason", "eservice_record_id"])
-        |> map(fn: (r) => ({
+    from(bucket: "${process.env.INFLUX_BUCKET}")
+      |> range(start: 0)
+      |> filter(fn: (r) => r["_measurement"] == "telemetry")
+      |> filter(fn: (r) => r["eservice_record_id"] == "${eserviceRecordId}")
+      |> pivot(rowKey: ["_time"], columnKey: ["_field"], valueColumn: "_value")
+      |> keep(columns: ["_time", "status", "response_time", "ko_reason", "eservice_record_id"])
+      |> map(fn: (r) => ({
           time: r._time,
-          status: if exists r.status then r.status else "",
-          response_time: if exists r.response_time then r.response_time else 0.0,
-          ko_reason: if exists r.ko_reason then r.ko_reason else "",
+          status: r.status,
+          response_time: r.response_time,
+          ko_reason: r.ko_reason,
           eservice_record_id: r.eservice_record_id,
-        }))
-      `,
+      }))
+    `,
     );
 
-  return eserviceTelemetries;
+  return eserviceTelemetry;
 };
