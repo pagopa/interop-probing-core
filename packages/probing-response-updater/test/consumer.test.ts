@@ -8,10 +8,8 @@ import {
   WithSQSMessageId,
 } from "pagopa-interop-probing-commons";
 import { decodeSQSMessage } from "../src/model/models.js";
-import { ApplicationError } from "pagopa-interop-probing-models";
 import { v4 as uuidv4 } from "uuid";
 import { config } from "../src/utilities/config.js";
-import { ErrorCodes } from "../src/model/domain/errors.js";
 
 describe("Consumer queue test", () => {
   const mockResponseUpdaterService = {
@@ -29,7 +27,7 @@ describe("Consumer queue test", () => {
     vi.clearAllMocks();
   });
 
-  it("given valid message, method should not throw an exception", async () => {
+  it("should process a valid message without throwing", async () => {
     const validMessage: SQS.Message = {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
@@ -46,27 +44,24 @@ describe("Consumer queue test", () => {
 
     await expect(
       processMessage(mockResponseUpdaterService)(validMessage),
-    ).resolves.not.toThrowError();
+    ).resolves.not.toThrow();
 
     expect(
       mockResponseUpdaterService.updateResponseReceived,
     ).toHaveBeenCalledWith(decodeSQSMessage(validMessage), ctx);
   });
 
-  it("given invalid message, method should throw an error", async () => {
+  it("should throw decode error for invalid message object", async () => {
     const invalidMessage = {};
 
-    try {
-      await processMessage(mockResponseUpdaterService)(invalidMessage);
-    } catch (error) {
-      expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe(
-        "DECODE_SQS_MESSAGE_ERROR",
-      );
-    }
+    await expect(
+      processMessage(mockResponseUpdaterService)(invalidMessage),
+    ).rejects.toMatchObject({
+      code: "DECODE_SQS_MESSAGE_ERROR",
+    });
   });
 
-  it("given empty message, method should throw an error", async () => {
+  it("should throw decode error for empty message body", async () => {
     const emptyMessage: SQS.Message = {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
@@ -74,21 +69,19 @@ describe("Consumer queue test", () => {
       MessageAttributes: correlationIdMessageAttribute,
     };
 
-    try {
-      await processMessage(mockResponseUpdaterService)(emptyMessage);
-    } catch (error) {
-      expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe(
-        "DECODE_SQS_MESSAGE_ERROR",
-      );
-      expect(
-        mockResponseUpdaterService.updateResponseReceived,
-      ).not.toBeCalled();
-    }
+    await expect(
+      processMessage(mockResponseUpdaterService)(emptyMessage),
+    ).rejects.toMatchObject({
+      code: "DECODE_SQS_MESSAGE_ERROR",
+    });
+
+    expect(
+      mockResponseUpdaterService.updateResponseReceived,
+    ).not.toHaveBeenCalled();
   });
 
-  it("when eserviceRecordId field is missing, method should throw an error", async () => {
-    const missingEserviceRecordId: SQS.Message = {
+  it("should throw decode error when eserviceRecordId is missing", async () => {
+    const messageMissingId: SQS.Message = {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
       Body: JSON.stringify(
@@ -97,21 +90,19 @@ describe("Consumer queue test", () => {
       MessageAttributes: correlationIdMessageAttribute,
     };
 
-    try {
-      await processMessage(mockResponseUpdaterService)(missingEserviceRecordId);
-    } catch (error) {
-      expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe(
-        "DECODE_SQS_MESSAGE_ERROR",
-      );
-      expect(
-        mockResponseUpdaterService.updateResponseReceived,
-      ).not.toBeCalled();
-    }
+    await expect(
+      processMessage(mockResponseUpdaterService)(messageMissingId),
+    ).rejects.toMatchObject({
+      code: "DECODE_SQS_MESSAGE_ERROR",
+    });
+
+    expect(
+      mockResponseUpdaterService.updateResponseReceived,
+    ).not.toHaveBeenCalled();
   });
 
-  it("when responseReceived is missing, method should throw an error", async () => {
-    const missingResponseReceived: SQS.Message = {
+  it("should throw decode error when responseReceived is missing", async () => {
+    const messageMissingResponse: SQS.Message = {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
       Body: JSON.stringify(
@@ -120,57 +111,52 @@ describe("Consumer queue test", () => {
       MessageAttributes: correlationIdMessageAttribute,
     };
 
-    try {
-      await processMessage(mockResponseUpdaterService)(missingResponseReceived);
-    } catch (error) {
-      expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe(
-        "DECODE_SQS_MESSAGE_ERROR",
-      );
-      expect(
-        mockResponseUpdaterService.updateResponseReceived,
-      ).not.toBeCalled();
-    }
+    await expect(
+      processMessage(mockResponseUpdaterService)(messageMissingResponse),
+    ).rejects.toMatchObject({
+      code: "DECODE_SQS_MESSAGE_ERROR",
+    });
+
+    expect(
+      mockResponseUpdaterService.updateResponseReceived,
+    ).not.toHaveBeenCalled();
   });
 
-  it("when status is missing, method should throw an error", async () => {
-    const missingStatus: SQS.Message = {
+  it("should throw decode error when status is missing", async () => {
+    const messageMissingStatus: SQS.Message = {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
       Body: JSON.stringify(sqsMessages.messageChangeResponseReceivedNoStatus),
       MessageAttributes: correlationIdMessageAttribute,
     };
 
-    try {
-      await processMessage(mockResponseUpdaterService)(missingStatus);
-    } catch (error) {
-      expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe(
-        "DECODE_SQS_MESSAGE_ERROR",
-      );
-      expect(
-        mockResponseUpdaterService.updateResponseReceived,
-      ).not.toBeCalled();
-    }
+    await expect(
+      processMessage(mockResponseUpdaterService)(messageMissingStatus),
+    ).rejects.toMatchObject({
+      code: "DECODE_SQS_MESSAGE_ERROR",
+    });
+
+    expect(
+      mockResponseUpdaterService.updateResponseReceived,
+    ).not.toHaveBeenCalled();
   });
 
-  it("when responseReceived is bad formatted, method should throw an error", async () => {
-    const badFormattedResponseReceived: SQS.Message = {
+  it("should throw decode error when responseReceived has invalid format", async () => {
+    const badFormattedMessage: SQS.Message = {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
       Body: JSON.stringify(sqsMessages.messageBadFormattedResponseReceived),
       MessageAttributes: correlationIdMessageAttribute,
     };
 
-    try {
-      await processMessage(mockResponseUpdaterService)(
-        badFormattedResponseReceived,
-      );
-    } catch (error) {
-      expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe(
-        "DECODE_SQS_MESSAGE_ERROR",
-      );
-    }
+    await expect(
+      processMessage(mockResponseUpdaterService)(badFormattedMessage),
+    ).rejects.toMatchObject({
+      code: "DECODE_SQS_MESSAGE_ERROR",
+    });
+
+    expect(
+      mockResponseUpdaterService.updateResponseReceived,
+    ).not.toHaveBeenCalled();
   });
 });
