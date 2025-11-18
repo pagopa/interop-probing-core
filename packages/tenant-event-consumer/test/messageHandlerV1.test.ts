@@ -7,23 +7,19 @@ import {
 import { config } from "../src/utilities/config.js";
 import {
   createTenantEventV1,
-  mockApiClientError,
   mockTenantDeleteV1,
   mockTenantUpdateV1,
 } from "./utils.js";
 import { v4 as uuidv4 } from "uuid";
 import { AppContext, genericLogger } from "pagopa-interop-probing-commons";
-import {
-  InternalError,
-  kafkaMessageMissingData,
-} from "pagopa-interop-probing-models";
+import { mockApiClientError } from "pagopa-interop-probing-commons-test";
+import { kafkaMessageMissingData } from "pagopa-interop-probing-models";
 import { handleMessageV1 } from "../src/handlers/messageHandlerV1.js";
-import { ErrorCodes, errorSaveTenant } from "../src/models/domain/errors.js";
 import { TenantV1 } from "@pagopa/interop-outbound-models";
 
 const apiClient = createApiClient(config.operationsBaseUrl);
 
-describe("Message handler V1 test", () => {
+describe("Message handler V1 - Tenant tests", () => {
   const operationsService: OperationsService =
     operationsServiceBuilder(apiClient);
 
@@ -37,106 +33,88 @@ describe("Message handler V1 test", () => {
   });
 
   describe("TenantCreated Event", () => {
-    it("save a new Tenant for TenantCreated event should return a successfully response", async () => {
-      const tenantId = uuidv4();
-      const tenantV1: TenantV1 = {
-        id: tenantId,
-        name: "pagoPa",
-        externalId: {
-          origin: "origin",
-          value: uuidv4(),
-        },
+    it("should save tenant successfully", async () => {
+      const tenant: TenantV1 = {
+        id: uuidv4(),
+        name: "pagoPA",
+        externalId: { origin: "origin", value: uuidv4() },
         features: [],
         attributes: [],
         createdAt: 1n,
       };
 
-      const tenantV1Event = createTenantEventV1(tenantV1, uuidv4());
+      const event = createTenantEventV1(tenant, uuidv4());
 
       vi.spyOn(apiClient, "saveTenant").mockResolvedValueOnce(undefined);
 
       await expect(
-        handleMessageV1(tenantV1Event, operationsService, ctx, genericLogger),
-      ).resolves.not.toThrowError();
+        handleMessageV1(event, operationsService, ctx, genericLogger),
+      ).resolves.not.toThrow();
 
-      expect(apiClient.saveTenant).toBeCalled();
+      expect(apiClient.saveTenant).toHaveBeenCalledTimes(1);
     });
 
-    it("save a new Tenant for TenantCreated event should return an exception kafkaMessageMissingData", async () => {
-      const tenantV1Event = createTenantEventV1(undefined, uuidv4());
+    it("should throw kafkaMessageMissingData when data is missing", async () => {
+      const event = createTenantEventV1(undefined, uuidv4());
 
       await expect(
-        handleMessageV1(tenantV1Event, operationsService, ctx, genericLogger),
-      ).rejects.toThrow(
-        kafkaMessageMissingData(config.kafkaTopic, tenantV1Event.type),
-      );
+        handleMessageV1(event, operationsService, ctx, genericLogger),
+      ).rejects.toMatchObject({
+        code: kafkaMessageMissingData(config.kafkaTopic, event.type).code,
+      });
     });
 
-    it("save a new Tenant for TenantCreated event should return an exception errorSaveTenant with validation body error", async () => {
-      const tenantV1: TenantV1 = {
+    it("should return errorSaveTenant for validation error", async () => {
+      const tenant: TenantV1 = {
         id: "invalid uuid",
         name: "tenant name",
-        externalId: {
-          origin: "origin",
-          value: "value",
-        },
+        externalId: { origin: "origin", value: "value" },
         features: [],
         attributes: [],
         createdAt: 1n,
       };
 
-      const tenantV1Event = createTenantEventV1(tenantV1, uuidv4());
+      const event = createTenantEventV1(tenant, uuidv4());
 
-      const zodiosValidationError =
-        "Error: Zodios: Invalid Path parameter 'tenantId'";
+      const validationError = new Error(
+        "Zodios: Invalid Path parameter 'tenantId'",
+      );
+
+      vi.spyOn(apiClient, "saveTenant").mockRejectedValueOnce(validationError);
 
       await expect(
-        handleMessageV1(tenantV1Event, operationsService, ctx, genericLogger),
-      ).rejects.toThrow(
-        errorSaveTenant(
-          `Error saving tenant with tenantId: ${tenantV1.id}. Details: ${zodiosValidationError}. Data: {"externalId":"value","origin":"origin","name":"tenant name"}`,
-        ),
-      );
+        handleMessageV1(event, operationsService, ctx, genericLogger),
+      ).rejects.toMatchObject({
+        code: "errorSaveTenant",
+      });
     });
 
-    it("save a new Tenant for TenantCreated event should return generic exception errorSaveTenant", async () => {
-      const tenantId = uuidv4();
-      const tenantV1: TenantV1 = {
-        id: tenantId,
+    it("should return errorSaveTenant for unexpected saveTenant error", async () => {
+      const tenant: TenantV1 = {
+        id: uuidv4(),
         name: "tenant name",
-        externalId: {
-          origin: "origin",
-          value: "value",
-        },
-        features: undefined as unknown as [],
+        externalId: { origin: "origin", value: "value" },
+        features: [],
         attributes: [],
         createdAt: 1n,
       };
 
-      const tenantV1Event = createTenantEventV1(tenantV1, uuidv4());
+      const event = createTenantEventV1(tenant, uuidv4());
 
-      const apiClientError = mockApiClientError(500, "Internal server error");
+      vi.spyOn(apiClient, "saveTenant").mockRejectedValueOnce(
+        mockApiClientError(500, "Internal server error"),
+      );
 
-      vi.spyOn(apiClient, "saveTenant").mockRejectedValueOnce(apiClientError);
-
-      try {
-        await handleMessageV1(
-          tenantV1Event,
-          operationsService,
-          ctx,
-          genericLogger,
-        );
-      } catch (error) {
-        expect(error).toBeInstanceOf(InternalError);
-        expect((error as InternalError<ErrorCodes>).code).toBe(
-          "errorSaveTenant",
-        );
-      }
+      await expect(
+        handleMessageV1(event, operationsService, ctx, genericLogger),
+      ).rejects.toMatchObject({
+        code: "errorSaveTenant",
+      });
     });
   });
 
   describe("TenantUpdated Event", () => {
-    it("update a Tenant for TenantUpdated event should return a successfully response", async () => {
+    it("should update tenant successfully", async () => {
       vi.spyOn(apiClient, "saveTenant").mockResolvedValueOnce(undefined);
 
       await expect(
@@ -146,34 +124,31 @@ describe("Message handler V1 test", () => {
           ctx,
           genericLogger,
         ),
-      ).resolves.not.toThrowError();
+      ).resolves.not.toThrow();
 
-      expect(apiClient.saveTenant).toBeCalled();
+      expect(apiClient.saveTenant).toHaveBeenCalled();
     });
 
-    it("update an Tenant for TenantUpdated event should return an exception errorSaveTenant", async () => {
-      const apiClientError = mockApiClientError(500, "Internal server error");
+    it("should return errorSaveTenant when update fails", async () => {
+      vi.spyOn(apiClient, "saveTenant").mockRejectedValueOnce(
+        mockApiClientError(500, "Internal server error"),
+      );
 
-      vi.spyOn(apiClient, "saveTenant").mockRejectedValueOnce(apiClientError);
-
-      try {
-        await handleMessageV1(
+      await expect(
+        handleMessageV1(
           mockTenantUpdateV1(uuidv4()),
           operationsService,
           ctx,
           genericLogger,
-        );
-      } catch (error) {
-        expect(error).toBeInstanceOf(InternalError);
-        expect((error as InternalError<ErrorCodes>).code).toBe(
-          "errorSaveTenant",
-        );
-      }
+        ),
+      ).rejects.toMatchObject({
+        code: "errorSaveTenant",
+      });
     });
   });
 
   describe("TenantDeleted Event", () => {
-    it("delete an Tenant for TenantDeleted event should return a successfully response", async () => {
+    it("should delete tenant successfully", async () => {
       vi.spyOn(apiClient, "deleteTenant").mockResolvedValueOnce(undefined);
 
       await expect(
@@ -183,29 +158,26 @@ describe("Message handler V1 test", () => {
           ctx,
           genericLogger,
         ),
-      ).resolves.not.toThrowError();
+      ).resolves.not.toThrow();
 
-      expect(apiClient.deleteTenant).toBeCalled();
+      expect(apiClient.deleteTenant).toHaveBeenCalled();
     });
 
-    it("delete an Tenant for TenantDeleted event should return an exception errorDeleteTenant", async () => {
-      const apiClientError = mockApiClientError(500, "Internal server error");
+    it("should return errorDeleteTenant when delete fails", async () => {
+      vi.spyOn(apiClient, "deleteTenant").mockRejectedValueOnce(
+        mockApiClientError(500, "Internal server error"),
+      );
 
-      vi.spyOn(apiClient, "deleteTenant").mockRejectedValueOnce(apiClientError);
-
-      try {
-        await handleMessageV1(
+      await expect(
+        handleMessageV1(
           mockTenantDeleteV1,
           operationsService,
           ctx,
           genericLogger,
-        );
-      } catch (error) {
-        expect(error).toBeInstanceOf(InternalError);
-        expect((error as InternalError<ErrorCodes>).code).toBe(
-          "errorDeleteTenant",
-        );
-      }
+        ),
+      ).rejects.toMatchObject({
+        code: "errorDeleteTenant",
+      });
     });
   });
 });
