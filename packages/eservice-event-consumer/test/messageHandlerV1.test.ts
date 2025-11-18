@@ -18,6 +18,7 @@ import { mockApiClientError } from "pagopa-interop-probing-commons-test";
 import { kafkaMessageMissingData } from "pagopa-interop-probing-models";
 import { handleMessageV1 } from "../src/handlers/messageHandlerV1.js";
 import { EServiceEventV1 } from "@pagopa/interop-outbound-models";
+import { errorSaveEservice } from "../src/models/domain/errors.js";
 
 const apiClient = createApiClient(config.operationsBaseUrl);
 
@@ -31,7 +32,7 @@ describe("Message handler V1 test", () => {
   };
 
   describe("EserviceAdded Event", () => {
-    it("should save a new e-service successfully", async () => {
+    it("save a new Eservice for EServiceAdded event should return a successfully response", async () => {
       const eServiceId = uuidv4();
       const producerId = "producer-test-id";
       const eserviceV1 = createEServiceV1({
@@ -40,31 +41,30 @@ describe("Message handler V1 test", () => {
         descriptors: [],
       });
 
-      const event = createEserviceAddedEventV1(eserviceV1, uuidv4());
+      const eServiceV1Event = createEserviceAddedEventV1(eserviceV1, uuidv4());
 
       vi.spyOn(apiClient, "saveEservice").mockResolvedValueOnce(undefined);
 
       await expect(
-        handleMessageV1(event, operationsService, ctx, genericLogger),
+        handleMessageV1(eServiceV1Event, operationsService, ctx, genericLogger),
       ).resolves.not.toThrow();
 
       expect(apiClient.saveEservice).toHaveBeenCalled();
     });
 
-    it("should throw kafkaMessageMissingData when event.data is missing", async () => {
-      const event = createEserviceAddedEventV1(undefined, uuidv4());
+    it("save a new Eservice for EServiceAdded event should return an exception kafkaMessageMissingData", async () => {
+      const eServiceV1Event = createEserviceAddedEventV1(undefined, uuidv4());
 
       await expect(
-        handleMessageV1(event, operationsService, ctx, genericLogger),
-      ).rejects.toMatchObject({
-        code: kafkaMessageMissingData(config.kafkaTopic, event.type).code,
-      });
+        handleMessageV1(eServiceV1Event, operationsService, ctx, genericLogger),
+      ).rejects.toThrow(
+        kafkaMessageMissingData(config.kafkaTopic, eServiceV1Event.type),
+      );
     });
 
-    it("should map validation error into errorSaveEservice", async () => {
+    it("save a new Eservice for EServiceAdded event should return an exception errorSaveEservice with validation body error", async () => {
       const eServiceId = uuidv4();
       const producerId = "producer-id";
-
       const eserviceV1 = createEServiceV1({
         id: eServiceId,
         producerId,
@@ -72,27 +72,21 @@ describe("Message handler V1 test", () => {
         name: "eservice name",
       });
 
-      const event = createEserviceAddedEventV1(eserviceV1, uuidv4());
+      const eServiceV1Event = createEserviceAddedEventV1(eserviceV1, uuidv4());
 
-      const zodiosValidationError = new Error(
-        "Zodios: Invalid Body parameter 'body'",
-      );
-
-      vi.spyOn(apiClient, "saveEservice").mockRejectedValueOnce(
-        zodiosValidationError,
-      );
+      const zodiosValidationError =
+        "Error: Zodios: Invalid Body parameter 'body'";
 
       await expect(
-        handleMessageV1(event, operationsService, ctx, genericLogger),
-      ).rejects.toMatchObject({
-        code: "errorSaveEservice",
-      });
+        handleMessageV1(eServiceV1Event, operationsService, ctx, genericLogger),
+      ).rejects.toThrow(
+        errorSaveEservice(eServiceId, producerId, zodiosValidationError),
+      );
     });
 
-    it("should return errorSaveEservice when saveEservice fails unexpectedly", async () => {
+    it("save a new Eservice for EServiceAdded event should return generic exception errorSaveEservice", async () => {
       const eServiceId = uuidv4();
       const producerId = uuidv4();
-
       const eserviceV1 = createEServiceV1({
         id: eServiceId,
         producerId,
@@ -100,22 +94,22 @@ describe("Message handler V1 test", () => {
         name: "eservice name",
       });
 
-      const event = createEserviceAddedEventV1(eserviceV1, uuidv4());
+      const eServiceV1Event = createEserviceAddedEventV1(eserviceV1, uuidv4());
 
       const apiClientError = mockApiClientError(500, "Internal server error");
 
       vi.spyOn(apiClient, "saveEservice").mockRejectedValueOnce(apiClientError);
 
       await expect(
-        handleMessageV1(event, operationsService, ctx, genericLogger),
-      ).rejects.toMatchObject({
-        code: "errorSaveEservice",
-      });
+        handleMessageV1(eServiceV1Event, operationsService, ctx, genericLogger),
+      ).rejects.toThrow(
+        errorSaveEservice(eServiceId, producerId, apiClientError),
+      );
     });
   });
 
   describe("EserviceUpdated Event", () => {
-    it("should update the e-service successfully", async () => {
+    it("update an Eservice for EserviceUpdated event should return a successfully response", async () => {
       vi.spyOn(apiClient, "saveEservice").mockResolvedValue(undefined);
 
       await expect(
@@ -130,7 +124,7 @@ describe("Message handler V1 test", () => {
       expect(apiClient.saveEservice).toHaveBeenCalledTimes(2);
     });
 
-    it("should return errorSaveEservice when update fails", async () => {
+    it("update an Eservice for EserviceUpdated event should return an exception errorSaveEservice", async () => {
       const apiClientError = mockApiClientError(500, "Internal server error");
 
       vi.spyOn(apiClient, "saveEservice").mockRejectedValueOnce(apiClientError);
@@ -149,7 +143,7 @@ describe("Message handler V1 test", () => {
   });
 
   describe("EServiceDeleted Event", () => {
-    it("should delete the e-service successfully", async () => {
+    it("delete an Eservice for EServiceDeleted event should return a successfully response", async () => {
       vi.spyOn(apiClient, "deleteEservice").mockResolvedValueOnce(undefined);
 
       await expect(
@@ -164,7 +158,7 @@ describe("Message handler V1 test", () => {
       expect(apiClient.deleteEservice).toHaveBeenCalled();
     });
 
-    it("should return errorDeleteEservice when deleteEservice fails", async () => {
+    it("delete an Eservice for EServiceDeleted event should return an exception errorDeleteEservice", async () => {
       const apiClientError = mockApiClientError(500, "Internal server error");
 
       vi.spyOn(apiClient, "deleteEservice").mockRejectedValueOnce(
@@ -185,7 +179,7 @@ describe("Message handler V1 test", () => {
   });
 
   describe("ClonedEServiceAdded Event", () => {
-    it("should clone the e-service successfully", async () => {
+    it("clone an Eservice for ClonedEServiceAdded event should return a successfully response", async () => {
       vi.spyOn(apiClient, "saveEservice").mockResolvedValue(undefined);
 
       await handleMessageV1(
@@ -198,7 +192,7 @@ describe("Message handler V1 test", () => {
       expect(apiClient.saveEservice).toHaveBeenCalledTimes(2);
     });
 
-    it("should return errorSaveEservice when cloning fails", async () => {
+    it("clone an Eservice for ClonedEServiceAdded event should return an exception errorSaveEservice", async () => {
       const apiClientError = mockApiClientError(500, "Internal server error");
 
       vi.spyOn(apiClient, "saveEservice").mockRejectedValueOnce(apiClientError);
@@ -216,26 +210,26 @@ describe("Message handler V1 test", () => {
     });
   });
 
-  describe("Ignored events", () => {
-    it("should skip irrelevant event types and log info", async () => {
+  describe("Events to be ignored", () => {
+    it("invoking handleMessageV1 should ignore specific event types and log an info message for each ignored event", async () => {
       const spy = vi.spyOn(genericLogger, "info");
 
-      const ignoredEvents = [
-        "EServiceDocumentAdded",
-        "EServiceDocumentDeleted",
-        "EServiceDocumentUpdated",
-        "MovedAttributesFromEserviceToDescriptors",
-        "EServiceDescriptorAdded",
-        "EServiceDescriptorUpdated",
-        "EServiceWithDescriptorsDeleted",
+      const events = [
+        { type: "EServiceDocumentAdded" },
+        { type: "EServiceDocumentDeleted" },
+        { type: "EServiceDocumentUpdated" },
+        { type: "MovedAttributesFromEserviceToDescriptors" },
+        { type: "EServiceDescriptorAdded" },
+        { type: "EServiceDescriptorUpdated" },
+        { type: "EServiceWithDescriptorsDeleted" },
       ];
 
-      for (const type of ignoredEvents) {
+      for (const event of events) {
         await handleMessageV1(
           {
             event_version: 1,
             version: 1,
-            type,
+            type: event.type,
             timestamp: new Date(),
             stream_id: "1",
             data: {},
@@ -245,10 +239,12 @@ describe("Message handler V1 test", () => {
           genericLogger,
         );
 
-        expect(spy).toHaveBeenCalledWith(`Skip event ${type} (not relevant)`);
+        expect(spy).toHaveBeenCalledWith(
+          `Skip event ${event.type} (not relevant)`,
+        );
       }
 
-      expect(spy).toHaveBeenCalledTimes(ignoredEvents.length);
+      expect(spy).toHaveBeenCalledTimes(events.length);
     });
   });
 });
