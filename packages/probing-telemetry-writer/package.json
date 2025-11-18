@@ -32,13 +32,12 @@
   },
   "dependencies": {
     "@aws-sdk/client-timestream-write": "3.549.0",
-    "@tsconfig/node-lts": "20.1.1",
     "@zodios/core": "10.9.6",
-    "dotenv-flow": "3.3.0",
+    "dotenv-flow": "4.1.0",
     "pagopa-interop-probing-commons": "workspace:*",
     "pagopa-interop-probing-models": "workspace:*",
-    "ts-pattern": "5.0.6",
-    "uuid": "10.0.0",
+    "ts-pattern": "5.1.2",
+    "uuid": "13.0.0",
     "zod": "3.23.8"
   }
 }

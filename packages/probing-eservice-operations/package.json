@@ -30,7 +30,7 @@
     "@types/supertest": "6.0.2",
     "drizzle-kit": "0.31.6",
     "supertest": "7.1.4",
-    "testcontainers": "10.6.0",
+    "testcontainers": "10.9.0",
     "ts-node": "10.9.2",
     "tsx": "4.20.5",
     "typescript": "5.2.2"
@@ -38,16 +38,15 @@
   "dependencies": {
     "@zodios/core": "10.9.6",
     "@zodios/express": "10.6.1",
-    "dotenv-flow": "3.3.0",
+    "dotenv-flow": "4.1.0",
     "drizzle-orm": "0.44.7",
-    "express": "4.20.0",
+    "express": "4.21.2",
     "pagopa-interop-probing-commons": "workspace:*",
     "pagopa-interop-probing-eservice-operations-client": "workspace:*",
     "pagopa-interop-probing-models": "workspace:*",
     "pg": "8.15.6",
-    "ts-pattern": "5.0.6",
-    "typeorm": "0.3.26",
-    "uuid": "9.0.1",
+    "ts-pattern": "5.1.2",
+    "uuid": "13.0.0",
     "zod": "3.23.8"
   }
 }
