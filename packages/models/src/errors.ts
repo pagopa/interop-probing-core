@@ -163,6 +163,8 @@ const errorCodes = {
   kafkaMessageMissingData: "KAFKA_MESSAGE_MISSING_DATA",
   kafkaMessageValueError: "KAFKA_MESSAGE_VALUE_ERROR",
   invalidSqsMessage: "INVALID_SQS_MESSAGE",
+  decodeSQSMessageError: "DECODE_SQS_MESSAGE_ERROR",
+  decodeSQSCorrelationIdMessageError: "DECODE_SQS_CORRELATION_ID_MESSAGE_ERROR",
 } as const;
 
 export type CommonErrorCodes = keyof typeof errorCodes;
@@ -254,5 +256,29 @@ export function invalidSqsMessage(
     detail: `Error while validating SQS message for id ${messageId}: ${parseErrorMessage(
       error,
     )}`,
+  });
+}
+
+export function decodeSQSMessageError(
+  messageId: string | undefined,
+  error: unknown,
+): InternalError<CommonErrorCodes> {
+  return new InternalError({
+    detail: `Failed to decode SQS ApplicationAuditEvent message with MessageId: ${messageId}. Error details: ${JSON.stringify(
+      error,
+    )}`,
+    code: "decodeSQSMessageError",
+  });
+}
+
+export function decodeSQSCorrelationIdMessageError(
+  messageId: string | undefined,
+  error: unknown,
+): InternalError<CommonErrorCodes> {
+  return new InternalError({
+    detail: `Failed to decode SQS correlationId attribute message with MessageId: ${messageId}. Error details: ${JSON.stringify(
+      error,
+    )}`,
+    code: "decodeSQSCorrelationIdMessageError",
   });
 }

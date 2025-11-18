@@ -5,29 +5,26 @@ import {
 } from "../src/services/callerService.js";
 import {
   AppContext,
+  decodeSQSMessage,
   decodeSQSMessageCorrelationId,
-  genericLogger,
   SQS,
   WithSQSMessageId,
 } from "pagopa-interop-probing-commons";
-import { decodeSQSMessage } from "../src/model/models.js";
 import {
   ApiClientHandler,
   apiClientBuilder,
 } from "../src/utilities/apiClientHandler.js";
 import { callerConstants } from "../src/utilities/constants.js";
-import { mockApiClientError, mockApiClientResponse } from "./utils.js";
+import {
+  mockApiClientError,
+  mockApiClientResponse,
+} from "pagopa-interop-probing-commons-test";
 import {
   KMSClientHandler,
   kmsClientBuilder,
 } from "../src/utilities/kmsClientHandler.js";
+import { buildJWTError } from "../src/model/domain/errors.js";
 import {
-  buildJWTError,
-  ErrorCodes,
-  makeApplicationError,
-} from "../src/model/domain/errors.js";
-import {
-  ApplicationError,
   EserviceContentDto,
   TelemetryKoDto,
 } from "pagopa-interop-probing-models";
@@ -54,7 +51,7 @@ describe("caller service test", () => {
     vi.restoreAllMocks();
   });
 
-  it("Test KO CONNECTION_REFUSED call probing - REST", async () => {
+  it("should mark REST probing as KO when the connection is refused", async () => {
     const validMessage: SQS.Message = {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
@@ -83,7 +80,10 @@ describe("caller service test", () => {
     vi.spyOn(kmsClientHandler, "buildJWT").mockResolvedValue(mockJWT);
     vi.spyOn(apiClientHandler, "sendREST").mockRejectedValue(apiClientError);
 
-    const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
+    const eservice = decodeSQSMessage<EserviceContentDto>(
+      validMessage,
+      EserviceContentDto,
+    );
     const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
     const telemetryResult = await callerService.performRequest(eservice, ctx);
@@ -103,7 +103,7 @@ describe("caller service test", () => {
     );
   });
 
-  it("Test KO 502 Bad Gateway call probing - REST", async () => {
+  it("should mark REST probing as KO when a 502 Bad Gateway error occurs", async () => {
     const validMessage: SQS.Message = {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
@@ -128,10 +128,14 @@ describe("caller service test", () => {
       "Bad Gateway",
       "ERR_BAD_RESPONSE",
     );
+
     vi.spyOn(apiClientHandler, "sendREST").mockRejectedValue(apiClientError);
     vi.spyOn(kmsClientHandler, "buildJWT").mockResolvedValue(mockJWT);
 
-    const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
+    const eservice = decodeSQSMessage<EserviceContentDto>(
+      validMessage,
+      EserviceContentDto,
+    );
     const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
     const telemetryResult = await callerService.performRequest(eservice, ctx);
@@ -140,14 +144,14 @@ describe("caller service test", () => {
     expect((telemetryResult as TelemetryKoDto).koReason).toBe("502");
     expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
 
-    await expect(apiClientHandler.sendREST).toHaveBeenCalledWith(
+    expect(apiClientHandler.sendREST).toHaveBeenCalledWith(
       baseUrl,
       mockJWT,
       ctx,
     );
   });
 
-  it("Test KO CONNECTION_TIMEOUT call probing - SOAP", async () => {
+  it("should mark SOAP probing as KO when the connection times out", async () => {
     const validMessage: SQS.Message = {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
@@ -172,10 +176,14 @@ describe("caller service test", () => {
       "connect ETIMEDOUT",
       "ETIMEDOUT",
     );
+
     vi.spyOn(apiClientHandler, "sendSOAP").mockRejectedValue(apiClientError);
     vi.spyOn(kmsClientHandler, "buildJWT").mockResolvedValue(mockJWT);
 
-    const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
+    const eservice = decodeSQSMessage<EserviceContentDto>(
+      validMessage,
+      EserviceContentDto,
+    );
     const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
     const telemetryResult = await callerService.performRequest(eservice, ctx);
@@ -186,14 +194,14 @@ describe("caller service test", () => {
     );
     expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
 
-    await expect(apiClientHandler.sendSOAP).toHaveBeenCalledWith(
+    expect(apiClientHandler.sendSOAP).toHaveBeenCalledWith(
       baseUrl,
       mockJWT,
       ctx,
     );
   });
 
-  it("Test OK call probing - SOAP", async () => {
+  it("should mark SOAP probing as OK when the service responds successfully", async () => {
     const validMessage: SQS.Message = {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
@@ -214,10 +222,14 @@ describe("caller service test", () => {
     };
 
     const apiClientResponse = mockApiClientResponse(undefined);
+
     vi.spyOn(apiClientHandler, "sendSOAP").mockResolvedValue(apiClientResponse);
     vi.spyOn(kmsClientHandler, "buildJWT").mockResolvedValue(mockJWT);
 
-    const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
+    const eservice = decodeSQSMessage<EserviceContentDto>(
+      validMessage,
+      EserviceContentDto,
+    );
     const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
     const telemetryResult = await callerService.performRequest(eservice, ctx);
@@ -225,14 +237,14 @@ describe("caller service test", () => {
     expect(telemetryResult.status).toBe("OK");
     expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
 
-    await expect(apiClientHandler.sendSOAP).toHaveBeenCalledWith(
+    expect(apiClientHandler.sendSOAP).toHaveBeenCalledWith(
       baseUrl,
       mockJWT,
       ctx,
     );
   });
 
-  it("Test OK call probing - REST", async () => {
+  it("should mark REST probing as OK when the service responds successfully", async () => {
     const validMessage: SQS.Message = {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
@@ -253,10 +265,14 @@ describe("caller service test", () => {
     };
 
     const apiClientResponse = mockApiClientResponse(undefined);
+
     vi.spyOn(apiClientHandler, "sendREST").mockResolvedValue(apiClientResponse);
     vi.spyOn(kmsClientHandler, "buildJWT").mockResolvedValue(mockJWT);
 
-    const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
+    const eservice = decodeSQSMessage<EserviceContentDto>(
+      validMessage,
+      EserviceContentDto,
+    );
     const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
 
     const telemetryResult = await callerService.performRequest(eservice, ctx);
@@ -264,14 +280,14 @@ describe("caller service test", () => {
     expect(telemetryResult.status).toBe("OK");
     expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
 
-    await expect(apiClientHandler.sendREST).toHaveBeenCalledWith(
+    expect(apiClientHandler.sendREST).toHaveBeenCalledWith(
       baseUrl,
       mockJWT,
       ctx,
     );
   });
 
-  it("Test build JWT throws error", async () => {
+  it("should throw a buildJWTError when JWT generation fails", async () => {
     const validMessage: SQS.Message = {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
@@ -291,25 +307,23 @@ describe("caller service test", () => {
       correlationId,
     };
 
-    const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
-    const mockBuildJwtError = makeApplicationError(
-      buildJWTError(`Failed to generate signature.`),
-      genericLogger,
+    const eservice = decodeSQSMessage<EserviceContentDto>(
+      validMessage,
+      EserviceContentDto,
     );
 
-    vi.spyOn(kmsClientHandler, "buildJWT").mockRejectedValue(mockBuildJwtError);
+    const buildErr = buildJWTError("Failed to generate signature.");
 
-    try {
-      await callerService.performRequest(eservice, ctx);
-    } catch (error) {
-      expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe(
-        "BUILD_JWT_ERROR",
-      );
-    }
+    vi.spyOn(kmsClientHandler, "buildJWT").mockRejectedValue(buildErr);
+
+    await expect(
+      callerService.performRequest(eservice, ctx),
+    ).rejects.toMatchObject({
+      code: "buildJWTError",
+    });
   });
 
-  it("Test generic error performRequest", async () => {
+  it("should return a KO telemetry with genericError when performRequest fails unexpectedly", async () => {
     const validMessage: SQS.Message = {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
@@ -329,20 +343,20 @@ describe("caller service test", () => {
       correlationId,
     };
 
+    vi.spyOn(kmsClientHandler, "buildJWT").mockResolvedValue(mockJWT);
     vi.spyOn(apiClientHandler, "sendSOAP").mockRejectedValue(
       new Error("Generic Error"),
     );
-    vi.spyOn(kmsClientHandler, "buildJWT").mockResolvedValue(mockJWT);
 
-    const eservice: EserviceContentDto = decodeSQSMessage(validMessage);
+    const eservice = decodeSQSMessage<EserviceContentDto>(
+      validMessage,
+      EserviceContentDto,
+    );
 
-    try {
-      await callerService.performRequest(eservice, ctx);
-    } catch (error) {
-      expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe(
-        "GENERIC_ERROR",
-      );
-    }
+    const telemetryResult = await callerService.performRequest(eservice, ctx);
+
+    expect(telemetryResult.status).toBe("KO");
+    expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
+    expect((telemetryResult as TelemetryKoDto).koReason).toBe("Unknown");
   });
 });
