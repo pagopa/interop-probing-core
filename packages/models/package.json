@@ -22,7 +22,8 @@
   "dependencies": {
     "ts-pattern": "5.0.6",
     "zod": "3.23.8",
-    "zod-validation-error": "3.3.0"
+    "zod-validation-error": "3.3.0",
+    "uuid": "13.0.0"
   },
   "devDependencies": {
     "@probing/eslint-config": "workspace:*",

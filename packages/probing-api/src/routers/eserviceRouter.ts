@@ -3,7 +3,6 @@ import { ZodiosRouter } from "@zodios/express";
 import {
   ExpressContext,
   ZodiosContext,
-  logger,
   zodiosValidationErrorToApiProblem,
 } from "pagopa-interop-probing-commons";
 import { resolveApiProblem } from "../model/domain/errors.js";
@@ -30,7 +29,7 @@ const eServiceRouter = (
         );
         return res.status(204).end();
       } catch (error) {
-        const errorRes = resolveApiProblem(error, logger(req.ctx));
+        const errorRes = resolveApiProblem(error, req.ctx);
         return res.status(errorRes.status).json(errorRes).end();
       }
     },
@@ -48,7 +47,7 @@ const eServiceRouter = (
         );
         return res.status(204).end();
       } catch (error) {
-        const errorRes = resolveApiProblem(error, logger(req.ctx));
+        const errorRes = resolveApiProblem(error, req.ctx);
         return res.status(errorRes.status).json(errorRes).end();
       }
     },
@@ -66,7 +65,7 @@ const eServiceRouter = (
         );
         return res.status(204).end();
       } catch (error) {
-        const errorRes = resolveApiProblem(error, logger(req.ctx));
+        const errorRes = resolveApiProblem(error, req.ctx);
         return res.status(errorRes.status).json(errorRes).end();
       }
     },
@@ -80,7 +79,7 @@ const eServiceRouter = (
       );
       return res.status(200).json(eservices).end();
     } catch (error) {
-      const errorRes = resolveApiProblem(error, logger(req.ctx));
+      const errorRes = resolveApiProblem(error, req.ctx);
       return res.status(errorRes.status).json(errorRes).end();
     }
   });
@@ -93,7 +92,7 @@ const eServiceRouter = (
       );
       return res.status(200).json(eServiceMainData).end();
     } catch (error) {
-      const errorRes = resolveApiProblem(error, logger(req.ctx));
+      const errorRes = resolveApiProblem(error, req.ctx);
       return res.status(errorRes.status).json(errorRes).end();
     }
   });
@@ -108,7 +107,7 @@ const eServiceRouter = (
 
       return res.status(200).json(eServiceProbingData).end();
     } catch (error) {
-      const errorRes = resolveApiProblem(error, logger(req.ctx));
+      const errorRes = resolveApiProblem(error, req.ctx);
       return res.status(errorRes.status).json(errorRes).end();
     }
   });
@@ -121,7 +120,7 @@ const eServiceRouter = (
       );
       return res.status(200).json(producers).end();
     } catch (error) {
-      const errorRes = resolveApiProblem(error, logger(req.ctx));
+      const errorRes = resolveApiProblem(error, req.ctx);
       return res.status(errorRes.status).json(errorRes).end();
     }
   });
