@@ -30,7 +30,7 @@ const headLabels = (t: TFunction<'common', 'table'>): Array<string> => {
 
 export const MonitoringTable: React.FC = () => {
   const { t } = useTranslation('common', { keyPrefix: 'table' })
-  const totalEServicesRef = React.useRef<number | undefined>()
+  const [totalEServices, setTotalEServices] = React.useState<number | undefined>()
   const { paginationParams, paginationProps, getTotalPageCount } = usePagination({ limit: 10 })
   const [producersAutocompleteTextInput, setProducersAutocompleteTextInput] =
     useAutocompleteTextInput()
@@ -58,6 +58,7 @@ export const MonitoringTable: React.FC = () => {
       name: 'versionNumber',
       type: 'numeric',
       label: t('serviceVersionFilter'),
+      min: 1,
     },
     {
       name: 'state',
@@ -78,10 +79,11 @@ export const MonitoringTable: React.FC = () => {
 
   const { data: eservices, refetch, isLoading } = MonitoringQueries.useGetList(params)
 
-  // We want to keep the totalElements in a ref, so that we can use it in the Pagination component even if the eservices data is re-fetched
-  if (!totalEServicesRef.current) {
-    totalEServicesRef.current = eservices?.totalElements
-  }
+  React.useEffect(() => {
+    if (eservices?.totalElements !== undefined) {
+      setTotalEServices(eservices.totalElements)
+    }
+  }, [eservices?.totalElements])
 
   const handleRefetch = useHandleRefetch<EService>(refetch)
 
@@ -115,7 +117,7 @@ export const MonitoringTable: React.FC = () => {
         </Table>
       )}
 
-      <Pagination {...paginationProps} totalPages={getTotalPageCount(totalEServicesRef.current)} />
+  <Pagination {...paginationProps} totalPages={getTotalPageCount(totalEServices)} />
     </>
   )
 }
