@@ -1,11 +1,15 @@
 import {
   ApiError,
+  generateId,
   makeApiProblemBuilder,
-  makeProblemLogString,
   Problem,
 } from "pagopa-interop-probing-models";
 import { AxiosError } from "axios";
-import { Logger } from "pagopa-interop-probing-commons";
+import {
+  AppContext,
+  genericLogger,
+  logger,
+} from "pagopa-interop-probing-commons";
 import { errorMapper } from "../../utilities/errorMapper.js";
 
 export const errorCodes = {
@@ -17,16 +21,20 @@ export type ErrorCodes = keyof typeof errorCodes;
 
 export const makeApiProblem = makeApiProblemBuilder(errorCodes);
 
-export const resolveApiProblem = (error: unknown, logger: Logger): Problem => {
-  const axiosApiProblem = Problem.safeParse(
-    (error as AxiosError).response?.data,
-  );
+export const resolveApiProblem = (error: unknown, ctx: AppContext): Problem => {
+  try {
+    const axiosApiProblem = Problem.safeParse(
+      (error as AxiosError).response?.data,
+    );
 
-  if (axiosApiProblem.success) {
-    logger.warn(makeProblemLogString(axiosApiProblem.data, error));
-    return axiosApiProblem.data;
-  } else {
-    return makeApiProblem(error, errorMapper, logger);
+    if (axiosApiProblem.success) {
+      return axiosApiProblem.data;
+    } else {
+      return makeApiProblem(error, errorMapper, logger(ctx), ctx.correlationId);
+    }
+  } catch (error) {
+    genericLogger.info(`Error on resolveApiProblem: - ${error}`);
+    return makeApiProblem(error, errorMapper, logger({ ...ctx }), generateId());
   }
 };
 

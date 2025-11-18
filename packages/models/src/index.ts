@@ -5,3 +5,4 @@ export * from "./headers.js";
 export * from "./telemetry/statistic.js";
 export * from "./telemetry/telemetry.js";
 export * from "./telemetry/db.js";
+export * from "./brandedIds.js";

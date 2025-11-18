@@ -22,7 +22,12 @@ const tenantRouter = (
         await tenantService.saveTenant(req.params, req.body);
         return res.status(204).end();
       } catch (error) {
-        const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
+        const errorRes = makeApiProblem(
+          error,
+          errorMapper,
+          logger(req.ctx),
+          req.ctx.correlationId,
+        );
         return res.status(errorRes.status).json(errorRes).end();
       }
     })
@@ -32,7 +37,12 @@ const tenantRouter = (
 
         return res.status(204).end();
       } catch (error) {
-        const errorRes = makeApiProblem(error, errorMapper, logger(req.ctx));
+        const errorRes = makeApiProblem(
+          error,
+          errorMapper,
+          logger(req.ctx),
+          req.ctx.correlationId,
+        );
         return res.status(errorRes.status).json(errorRes).end();
       }
     });
