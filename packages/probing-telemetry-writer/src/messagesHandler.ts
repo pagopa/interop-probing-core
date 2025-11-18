@@ -1,14 +1,15 @@
 import {
   AppContext,
+  decodeSQSMessage,
   decodeSQSMessageCorrelationId,
   logger,
   SQS,
   WithSQSMessageId,
 } from "pagopa-interop-probing-commons";
 import { TelemetryWriteService } from "./services/telemetryService.js";
-import { decodeSQSMessage } from "./model/models.js";
-import { makeApplicationError } from "./model/domain/errors.js";
 import { config } from "./utilities/config.js";
+import { errorMapper } from "./utilities/errorMapper.js";
+import { TelemetryDto } from "pagopa-interop-probing-models";
 
 export function processMessage(
   service: TelemetryWriteService,
@@ -22,9 +23,14 @@ export function processMessage(
     };
 
     try {
-      await service.writeRecord(decodeSQSMessage(message), logger(ctx));
-    } catch (e: unknown) {
-      throw makeApplicationError(e, logger(ctx));
+      const decodedMessage = decodeSQSMessage<TelemetryDto>(
+        message,
+        TelemetryDto,
+      );
+
+      await service.writeRecord(decodedMessage, logger(ctx));
+    } catch (error: unknown) {
+      throw errorMapper(error, logger(ctx));
     }
   };
 }
