@@ -1,5 +1,6 @@
 import {
   AppContext,
+  logger,
   SQS,
   WithSQSMessageId,
 } from "pagopa-interop-probing-commons";
@@ -15,6 +16,9 @@ export const producerServiceBuilder = (sqsClient: SQS.SQSClient) => {
       message: TelemetryDto,
       ctx: WithSQSMessageId<AppContext>,
     ): Promise<void> {
+      logger(ctx).info(
+        `Performing sendToTelemetryWriterQueue with eserviceRecordId ${message.eserviceRecordId}. Payload: ${JSON.stringify(message)}`,
+      );
       await SQS.sendMessage(
         sqsClient,
         config.sqsEndpointTelemetryResultQueue,
@@ -26,6 +30,9 @@ export const producerServiceBuilder = (sqsClient: SQS.SQSClient) => {
       message: UpdateResponseReceivedDto,
       ctx: WithSQSMessageId<AppContext>,
     ): Promise<void> {
+      logger(ctx).info(
+        `Performing sendToResponseUpdaterQueue with eserviceRecordId ${message.eserviceRecordId}. Payload: ${JSON.stringify(message)}`,
+      );
       await SQS.sendMessage(
         sqsClient,
         config.sqsEndpointPollResultQueue,
