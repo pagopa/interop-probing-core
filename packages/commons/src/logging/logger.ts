@@ -53,16 +53,15 @@ const logFormat = (
 
 export const customFormat = () =>
   winston.format.printf(({ level, message, timestamp, ...meta }) => {
+    if (!meta.loggerMetadata) {
+      // eslint-disable-next-line no-console
+      console.warn(`[WARN] loggerMetadata not found for message: ${message}`);
+    }
     const lines = `${message}`
       .toString()
       .split("\n")
       .map((line: string) =>
-        logFormat(
-          line,
-          timestamp,
-          level,
-          meta.loggerMetadata as LoggerMetadata,
-        ),
+        logFormat(line, timestamp, level, meta.loggerMetadata || {}),
       );
     return lines.join("\n");
   });

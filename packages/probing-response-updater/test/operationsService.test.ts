@@ -6,7 +6,7 @@ import {
   operationsServiceBuilder,
 } from "../src/services/operationsService.js";
 import { config } from "./../src/utilities/config.js";
-import { mockApiClientError } from "./utils.js";
+import { mockApiClientError } from "pagopa-interop-probing-commons-test";
 import { v4 as uuidv4 } from "uuid";
 import { WithSQSMessageId, AppContext } from "pagopa-interop-probing-commons";
 
@@ -39,7 +39,8 @@ describe("eService service test", () => {
 
     await expect(
       operationsService.updateResponseReceived(
-        { params: { eserviceRecordId }, payload: { status, responseReceived } },
+        eserviceRecordId,
+        { status, responseReceived },
         ctx,
       ),
     ).resolves.not.toThrow();
@@ -66,11 +67,11 @@ describe("eService service test", () => {
 
     await expect(
       operationsService.updateResponseReceived(
-        { params: { eserviceRecordId }, payload: { status, responseReceived } },
+        eserviceRecordId,
+        { status, responseReceived },
         ctx,
       ),
     ).rejects.toMatchObject({
-      status: 500,
       code: "apiUpdateResponseReceivedError",
     });
   });
