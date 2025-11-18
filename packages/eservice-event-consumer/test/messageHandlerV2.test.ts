@@ -8,23 +8,23 @@ import { config } from "../src/utilities/config.js";
 import {
   createEserviceAddedEventV2,
   createV2Event,
-  mockApiClientError,
   mockEserviceCloneV2,
   mockEserviceDeleteV2,
 } from "./utils.js";
 import { v4 as uuidv4 } from "uuid";
 import { AppContext, genericLogger } from "pagopa-interop-probing-commons";
-import {
-  InternalError,
-  kafkaMessageMissingData,
-} from "pagopa-interop-probing-models";
+import { mockApiClientError } from "pagopa-interop-probing-commons-test";
+import { kafkaMessageMissingData } from "pagopa-interop-probing-models";
 import { handleMessageV2 } from "../src/handlers/messageHandlerV2.js";
-import { ErrorCodes, errorSaveEservice } from "../src/models/domain/errors.js";
-import { EServiceDescriptorStateV2 } from "@pagopa/interop-outbound-models";
+import {
+  EServiceDescriptorStateV2,
+  EServiceEventV2,
+} from "@pagopa/interop-outbound-models";
+import { errorSaveEservice } from "../src/models/domain/errors.js";
 
 const apiClient = createApiClient(config.operationsBaseUrl);
 
-describe("Message handler V2 test", () => {
+describe("Message handler V2 - EService tests", () => {
   const operationsService: OperationsService =
     operationsServiceBuilder(apiClient);
 
@@ -107,9 +107,7 @@ describe("Message handler V2 test", () => {
       await expect(
         handleMessageV2(eServiceV2Event, operationsService, ctx, genericLogger),
       ).rejects.toThrow(
-        errorSaveEservice(
-          `Error saving eService: ${eServiceId}, tenantId: ${producerId}. Details: ${zodiosValidationError}`,
-        ),
+        errorSaveEservice(eServiceId, producerId, zodiosValidationError),
       );
     });
 
@@ -131,19 +129,11 @@ describe("Message handler V2 test", () => {
 
       vi.spyOn(apiClient, "saveEservice").mockRejectedValueOnce(apiClientError);
 
-      try {
-        await handleMessageV2(
-          eServiceV2Event,
-          operationsService,
-          ctx,
-          genericLogger,
-        );
-      } catch (error) {
-        expect(error).toBeInstanceOf(InternalError);
-        expect((error as InternalError<ErrorCodes>).code).toBe(
-          "errorSaveEservice",
-        );
-      }
+      await expect(
+        handleMessageV2(eServiceV2Event, operationsService, ctx, genericLogger),
+      ).rejects.toThrow(
+        errorSaveEservice(eServiceId, producerId, apiClientError),
+      );
     });
   });
 
@@ -170,19 +160,16 @@ describe("Message handler V2 test", () => {
         apiClientError,
       );
 
-      try {
-        await handleMessageV2(
+      await expect(
+        handleMessageV2(
           mockEserviceDeleteV2,
           operationsService,
           ctx,
           genericLogger,
-        );
-      } catch (error) {
-        expect(error).toBeInstanceOf(InternalError);
-        expect((error as InternalError<ErrorCodes>).code).toBe(
-          "errorDeleteEservice",
-        );
-      }
+        ),
+      ).rejects.toMatchObject({
+        code: "errorDeleteEservice",
+      });
     });
   });
 
@@ -230,11 +217,11 @@ describe("Message handler V2 test", () => {
           {
             event_version: 2,
             version: 1,
-            type: event.type as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+            type: event.type,
             timestamp: new Date(),
             stream_id: "1",
             data: {},
-          },
+          } as EServiceEventV2,
           operationsService,
           ctx,
           genericLogger,

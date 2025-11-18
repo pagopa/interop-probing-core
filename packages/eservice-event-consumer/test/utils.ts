@@ -1,4 +1,3 @@
-import { AxiosError, AxiosRequestHeaders } from "axios";
 import {
   EServiceDescriptorV1,
   EServiceModeV1,
@@ -189,20 +188,3 @@ export const mockEserviceCloneV2: EServiceEventV2 = {
     },
   },
 };
-
-export function mockApiClientError(
-  status: number,
-  statusText: string,
-): AxiosError {
-  const mockAxiosError = new AxiosError(statusText);
-  mockAxiosError.response = {
-    status: status,
-    statusText: statusText,
-    headers: {},
-    config: {
-      headers: {} as AxiosRequestHeaders,
-    },
-    data: {},
-  };
-  return mockAxiosError;
-}

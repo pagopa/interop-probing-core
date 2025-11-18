@@ -26,6 +26,10 @@ export const operationsServiceBuilder = (
       logger: Logger,
     ): Promise<ApiSaveEserviceResponse> {
       try {
+        logger.info(
+          `eService saved with eserviceId: ${data.eserviceId}, versionId: ${params.versionId}, tenantId: ${data.producerId}.`,
+        );
+
         await operationsApiClient.saveEservice(
           {
             eserviceId: data.eserviceId,
@@ -42,14 +46,8 @@ export const operationsServiceBuilder = (
             params,
           },
         );
-
-        logger.info(
-          `eService saved with eserviceId: ${data.eserviceId}, versionId: ${params.versionId}, tenantId: ${data.producerId}.`,
-        );
       } catch (error: unknown) {
-        throw errorSaveEservice(
-          `Error saving eService: ${data.eserviceId}, tenantId: ${data.producerId}. Details: ${error}`,
-        );
+        throw errorSaveEservice(params.eserviceId, data.producerId, error);
       }
     },
     async deleteEservice(
@@ -58,16 +56,14 @@ export const operationsServiceBuilder = (
       logger: Logger,
     ): Promise<ApiDeleteEserviceResponse> {
       try {
+        logger.info(`eService deleted with eserviceId: ${params.eserviceId}.`);
+
         await operationsApiClient.deleteEservice(undefined, {
           headers,
           params,
         });
-
-        logger.info(`eService deleted with eserviceId: ${params.eserviceId}.`);
       } catch (error: unknown) {
-        throw errorDeleteEservice(
-          `Error deleting eService: ${params.eserviceId}. Details: ${error}`,
-        );
+        throw errorDeleteEservice(params.eserviceId, error);
       }
     },
   };

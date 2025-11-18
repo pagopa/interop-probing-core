@@ -7,16 +7,23 @@ export const errorCodes = {
 
 export type ErrorCodes = keyof typeof errorCodes;
 
-export function errorDeleteEservice(detail: string): InternalError<ErrorCodes> {
+export function errorDeleteEservice(
+  eserviceId: string,
+  error: unknown,
+): InternalError<ErrorCodes> {
   return new InternalError({
-    detail: `${detail}`,
+    detail: `Error deleting eService: ${eserviceId}. Details: ${error}`,
     code: "errorDeleteEservice",
   });
 }
 
-export function errorSaveEservice(detail: string): InternalError<ErrorCodes> {
+export function errorSaveEservice(
+  eserviceId: string,
+  producerId: string,
+  error: unknown,
+): InternalError<ErrorCodes> {
   return new InternalError({
-    detail: `${detail}`,
+    detail: `Error saving eService: ${eserviceId}, tenantId: ${producerId}. Details: ${error}`,
     code: "errorSaveEservice",
   });
 }
