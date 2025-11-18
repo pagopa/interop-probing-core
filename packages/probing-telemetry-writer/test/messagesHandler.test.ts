@@ -45,7 +45,7 @@ describe("Consumer queue test", () => {
     await expect(
       processMessage(mockTelemetryService)(invalidMessage),
     ).rejects.toMatchObject({
-      code: "DECODE_SQS_MESSAGE_ERROR",
+      code: "decodeSQSMessageError",
       detail: expect.any(String),
     });
   });

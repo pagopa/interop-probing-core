@@ -25,7 +25,7 @@ export interface TelemetryRecord {
 }
 
 export type TelemetryManager = {
-  writeRecord(record: TelemetryRecord): Promise<void>;
+  writeRecord(telemetry: TelemetryRecord): Promise<void>;
   query<T = Record<string, unknown>>(query: string): Promise<T[]>;
   cleanBucket(): Promise<void>;
 };
