@@ -3,22 +3,18 @@ import { processTask } from "../src/processTask.js";
 import { ApiGetEservicesReadyForPollingQuery } from "pagopa-interop-probing-eservice-operations-client";
 import { config } from "../src/utilities/config.js";
 import {
-  ApplicationError,
   correlationIdToHeader,
   EserviceContentDto,
 } from "pagopa-interop-probing-models";
-import { mockApiClientError } from "./utils.js";
-import {
-  ErrorCodes,
-  apiGetEservicesReadyForPollingError,
-  makeApplicationError,
-} from "../src/model/domain/errors.js";
-import { AppContext, genericLogger } from "pagopa-interop-probing-commons";
+import { apiGetEservicesReadyForPollingError } from "../src/model/domain/errors.js";
+import { AppContext } from "pagopa-interop-probing-commons";
+import { mockApiClientError } from "pagopa-interop-probing-commons-test";
 
-const mockUUID: string = "mocked-uuid-value";
+const mockUUID = "mocked-uuid-value";
 
 describe("Process task test", async () => {
-  const totalElements: number = 4;
+  const totalElements = 4;
+
   const mockEservicesActive: EserviceContentDto[] = [
     {
       eserviceRecordId: 1,
@@ -50,15 +46,15 @@ describe("Process task test", async () => {
     vi.clearAllMocks();
   });
 
-  it("Get eservices by calling getEservicesReadyForPolling API, update each eservice by calling updateLastRequest API and send message to queue.", async () => {
+  it("should get e-services, update last request and push each item to the caller queue", async () => {
     config.schedulerLimit = 1;
 
-    const query: ApiGetEservicesReadyForPollingQuery = {
+    const baseQuery: ApiGetEservicesReadyForPollingQuery = {
       offset: 0,
       limit: config.schedulerLimit,
     };
 
-    const pollingCtx: AppContext = {
+    const ctx: AppContext = {
       serviceName: config.applicationName,
       correlationId: mockUUID,
     };
@@ -66,60 +62,45 @@ describe("Process task test", async () => {
     await processTask(mockOperationsService, mockProducerService);
 
     for (let polling = 0; polling < totalElements; polling++) {
-      const headers = {
-        ...correlationIdToHeader(pollingCtx.correlationId),
-      };
+      const headers = { ...correlationIdToHeader(ctx.correlationId) };
 
-      await expect(
+      expect(
         mockOperationsService.getEservicesReadyForPolling,
-      ).toHaveBeenCalledWith(
-        headers,
-        { ...query, offset: polling },
-        pollingCtx,
-      );
+      ).toHaveBeenCalledWith(headers, { ...baseQuery, offset: polling }, ctx);
     }
 
-    await expect(
+    expect(
       mockOperationsService.getEservicesReadyForPolling,
-    ).toHaveBeenCalledTimes(4);
+    ).toHaveBeenCalledTimes(totalElements);
 
-    await expect(mockOperationsService.updateLastRequest).toHaveBeenCalledTimes(
-      4,
+    expect(mockOperationsService.updateLastRequest).toHaveBeenCalledTimes(
+      totalElements,
     );
 
-    await expect(mockProducerService.sendToCallerQueue).toHaveBeenCalledTimes(
-      4,
+    expect(mockProducerService.sendToCallerQueue).toHaveBeenCalledTimes(
+      totalElements,
     );
 
-    await expect(mockProducerService.sendToCallerQueue).toHaveBeenCalledWith(
+    expect(mockProducerService.sendToCallerQueue).toHaveBeenCalledWith(
       mockEservicesActive[0],
-      pollingCtx,
+      ctx,
     );
   });
 
-  it("Invoke processTask should throw an error when getEservicesReadyForPolling returns a response error", async () => {
+  it("should throw apiGetEservicesReadyForPollingError when getEservicesReadyForPolling fails", async () => {
     const apiClientError = mockApiClientError(500, "Internal server error");
-    const operationsClientError = makeApplicationError(
-      apiGetEservicesReadyForPollingError(
-        `Error API getEservicesReadyForPolling. Details: ${apiClientError}`,
-        apiClientError,
-      ),
-      genericLogger,
-    );
 
     vi.spyOn(
       mockOperationsService,
       "getEservicesReadyForPolling",
-    ).mockRejectedValueOnce(operationsClientError);
+    ).mockRejectedValueOnce(
+      apiGetEservicesReadyForPollingError(apiClientError),
+    );
 
-    try {
-      await processTask(mockOperationsService, mockProducerService);
-    } catch (error) {
-      expect(error).toBeInstanceOf(ApplicationError);
-      expect((error as ApplicationError<ErrorCodes>).code).toBe(
-        "API_GET_ESERVICES_READY_FOR_POLLING_ERROR",
-      );
-      expect((error as ApplicationError<ErrorCodes>).status).toBe(500);
-    }
+    await expect(
+      processTask(mockOperationsService, mockProducerService),
+    ).rejects.toMatchObject({
+      code: "apiGetEservicesReadyForPollingError",
+    });
   });
 });
