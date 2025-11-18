@@ -22,7 +22,7 @@ export function processMessage(
     };
 
     try {
-      await service.writeRecord(decodeSQSMessage(message), ctx);
+      await service.writeRecord(decodeSQSMessage(message), logger(ctx));
     } catch (e: unknown) {
       throw makeApplicationError(e, logger(ctx));
     }

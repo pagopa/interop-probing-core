@@ -1,4 +1,4 @@
-import { genericLogger, SQS } from "pagopa-interop-probing-commons";
+import { genericLogger, logger, SQS } from "pagopa-interop-probing-commons";
 import { config } from "./utilities/config.js";
 import { processMessage } from "./messagesHandler.js";
 import {
@@ -20,6 +20,7 @@ import {
 
 const sqsClient: SQS.SQSClient = await SQS.instantiateClient({
   region: config.awsRegion,
+  logLevel: config.logLevel,
 });
 const kmsClientHandler: KMSClientHandler = kmsClientBuilder();
 const apiClientHandler: ApiClientHandler = apiClientBuilder();
@@ -33,7 +34,10 @@ await SQS.runConsumer(
   sqsClient,
   {
     queueUrl: config.sqsEndpointPollQueue,
-    consumerPollingTimeout: config.consumerPollingTimeout,
+    maxNumberOfMessages: config.maxNumberOfMessages,
+    waitTimeSeconds: config.waitTimeSeconds,
+    visibilityTimeout: config.visibilityTimeout,
   },
   processMessage(callerService, producerService),
+  logger({ serviceName: config.applicationName }),
 ).catch(genericLogger.error);

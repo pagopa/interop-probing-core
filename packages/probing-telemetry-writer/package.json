@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "test": "vitest --config ./test/vitest.config.ts",
+    "test:integration": "vitest run --config ./test/vitest.integration.config.ts",
     "lint": "eslint .",
     "lint:autofix": "eslint . --fix",
     "format:check": "prettier --check src",
@@ -23,9 +24,11 @@
     "@types/dotenv-flow": "3.3.3",
     "@types/node": "20.10.4",
     "@types/uuid": "9.0.8",
+    "pagopa-interop-probing-commons-test": "workspace:*",
     "ts-node": "10.9.2",
     "typescript": "5.2.2",
-    "tsx": "4.20.5"
+    "tsx": "4.20.5",
+    "supertest": "7.1.4"
   },
   "dependencies": {
     "@aws-sdk/client-timestream-write": "3.549.0",

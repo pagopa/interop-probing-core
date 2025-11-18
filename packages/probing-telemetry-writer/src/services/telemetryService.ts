@@ -1,23 +1,40 @@
-import { TelemetryDto } from "pagopa-interop-probing-models";
-import { TimestreamWriteClientHandler } from "../utilities/timestreamWriteClientHandler.js";
 import {
-  AppContext,
-  logger,
-  WithSQSMessageId,
+  TelemetryDimensions,
+  TelemetryFields,
+  TelemetryMeasurement,
+  TelemetryDto,
+} from "pagopa-interop-probing-models";
+import {
+  TelemetryManager,
+  Logger,
+  TelemetryRecord,
+  TelemetryDimension,
+  TelemetryField,
 } from "pagopa-interop-probing-commons";
 
 export const telemetryWriteServiceBuilder = (
-  timestreamWriteClient: TimestreamWriteClientHandler,
+  telemetryManager: TelemetryManager,
 ) => {
   return {
     async writeRecord(
-      telemetry: TelemetryDto,
-      ctx: WithSQSMessageId<AppContext>,
+      eserviceTelemetry: TelemetryDto,
+      logger: Logger,
     ): Promise<void> {
-      logger(ctx).info(
-        `Writing Telemetry with eserviceRecordId: ${telemetry.eserviceRecordId}`,
+      logger.info(
+        `Writing Telemetry with eserviceRecordId: ${eserviceTelemetry.eserviceRecordId}`,
       );
-      await timestreamWriteClient.writeRecord(telemetry);
+
+      const dimensions = buildDimensions(eserviceTelemetry);
+      const fields = buildFields(eserviceTelemetry);
+
+      const record: TelemetryRecord = {
+        measurement: TelemetryMeasurement.TELEMETRY,
+        timestamp: Number(eserviceTelemetry.checkTime),
+        dimensions,
+        fields,
+      };
+
+      await telemetryManager.writeRecord(record);
     },
   };
 };
@@ -25,3 +42,37 @@ export const telemetryWriteServiceBuilder = (
 export type TelemetryWriteService = ReturnType<
   typeof telemetryWriteServiceBuilder
 >;
+
+function buildDimensions(telemetry: TelemetryDto): TelemetryDimension[] {
+  return [
+    {
+      name: TelemetryDimensions.ESERVICE_RECORD_ID,
+      value: String(telemetry.eserviceRecordId),
+    },
+    ...(telemetry.status === "KO" && telemetry.koReason
+      ? [
+          {
+            name: TelemetryDimensions.KO_REASON,
+            value: String(telemetry.koReason),
+          },
+        ]
+      : []),
+  ];
+}
+
+function buildFields(telemetry: TelemetryDto): TelemetryField[] {
+  return [
+    {
+      name: TelemetryFields.STATUS,
+      value: String(telemetry.status),
+    },
+    ...(telemetry.responseTime !== undefined
+      ? [
+          {
+            name: TelemetryFields.RESPONSE_TIME,
+            value: Number(telemetry.responseTime),
+          },
+        ]
+      : []),
+  ];
+}
