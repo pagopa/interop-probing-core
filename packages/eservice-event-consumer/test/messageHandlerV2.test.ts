@@ -24,7 +24,7 @@ import { errorSaveEservice } from "../src/models/domain/errors.js";
 
 const apiClient = createApiClient(config.operationsBaseUrl);
 
-describe("Message handler V2 test", () => {
+describe("Message handler V2 - EService tests", () => {
   const operationsService: OperationsService =
     operationsServiceBuilder(apiClient);
 
