@@ -12,7 +12,6 @@ import {
 import {
   apiGetEservicesReadyForPollingError,
   apiUpdateLastRequestError,
-  makeApplicationError,
 } from "../model/domain/errors.js";
 import {
   WithSQSMessageId,
@@ -38,13 +37,7 @@ export const operationsServiceBuilder = (
           headers,
         });
       } catch (error: unknown) {
-        throw makeApplicationError(
-          apiGetEservicesReadyForPollingError(
-            `Error API getEservicesReadyForPolling. Details: ${error}`,
-            error,
-          ),
-          logger(ctx),
-        );
+        throw apiGetEservicesReadyForPollingError(error);
       }
     },
     async updateLastRequest(
@@ -62,13 +55,7 @@ export const operationsServiceBuilder = (
           headers,
         });
       } catch (error: unknown) {
-        throw makeApplicationError(
-          apiUpdateLastRequestError(
-            `Error API updateLastRequest. Details: ${error}`,
-            error,
-          ),
-          logger(ctx),
-        );
+        throw apiUpdateLastRequestError(params.eserviceRecordId, error);
       }
     },
   };

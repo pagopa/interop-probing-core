@@ -1,4 +1,3 @@
-import { makeApplicationError } from "./model/domain/errors.js";
 import { ProducerService } from "./services/producerService.js";
 import { OperationsService } from "./services/operationsService.js";
 import { config } from "./utilities/config.js";
@@ -9,6 +8,7 @@ import {
 import { AppContext, logger } from "pagopa-interop-probing-commons";
 import { correlationIdToHeader } from "pagopa-interop-probing-models";
 import { v4 as uuidv4 } from "uuid";
+import { errorMapper } from "./utilities/errorMapper.js";
 
 export async function processTask(
   operationsService: OperationsService,
@@ -73,6 +73,6 @@ export async function processTask(
 
     logger(mainCtx).info(`End processing eservices ready for polling.`);
   } catch (error: unknown) {
-    throw makeApplicationError(error, logger(mainCtx));
+    throw errorMapper(error, logger(mainCtx));
   }
 }
