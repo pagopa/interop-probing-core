@@ -62,7 +62,6 @@ export async function handleMessageV1(
         }
       },
     )
-
     .with(
       {
         type: "EServiceDeleted",
