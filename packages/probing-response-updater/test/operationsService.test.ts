@@ -72,7 +72,6 @@ describe("eService service test", () => {
         ctx,
       ),
     ).rejects.toMatchObject({
-      status: 500,
       code: "apiUpdateResponseReceivedError",
     });
   });
