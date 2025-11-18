@@ -287,7 +287,7 @@ describe("caller service test", () => {
     );
   });
 
-  it("should throw a BUILD_JWT_ERROR when JWT generation fails", async () => {
+  it("should throw a buildJWTError when JWT generation fails", async () => {
     const validMessage: SQS.Message = {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
