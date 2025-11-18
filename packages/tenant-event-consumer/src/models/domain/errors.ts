@@ -7,16 +7,22 @@ export const errorCodes = {
 
 export type ErrorCodes = keyof typeof errorCodes;
 
-export function errorDeleteTenant(detail: string): InternalError<ErrorCodes> {
+export function errorDeleteTenant(
+  tenantId: string,
+  error: unknown,
+): InternalError<ErrorCodes> {
   return new InternalError({
-    detail: `${detail}`,
+    detail: `Error deleting tenant with tenantId: ${tenantId}. Details: ${error}`,
     code: "errorDeleteTenant",
   });
 }
 
-export function errorSaveTenant(detail: string): InternalError<ErrorCodes> {
+export function errorSaveTenant(
+  tenantId: string,
+  error: unknown,
+): InternalError<ErrorCodes> {
   return new InternalError({
-    detail: `${detail}`,
+    detail: `Error saving tenant with tenantId: ${tenantId}. Details: ${error}`,
     code: "errorSaveTenant",
   });
 }

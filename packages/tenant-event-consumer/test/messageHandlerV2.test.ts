@@ -7,23 +7,20 @@ import {
 import { config } from "../src/utilities/config.js";
 import {
   createTenantEventV2,
-  mockApiClientError,
   mockTenantDeleteV2,
   mockTenantUpdateV2,
 } from "./utils.js";
 import { v4 as uuidv4 } from "uuid";
 import { AppContext, genericLogger } from "pagopa-interop-probing-commons";
-import {
-  InternalError,
-  kafkaMessageMissingData,
-} from "pagopa-interop-probing-models";
+import { mockApiClientError } from "pagopa-interop-probing-commons-test";
+import { kafkaMessageMissingData } from "pagopa-interop-probing-models";
 import { handleMessageV2 } from "../src/handlers/messageHandlerV2.js";
-import { ErrorCodes, errorSaveTenant } from "../src/models/domain/errors.js";
-import { TenantV2 } from "@pagopa/interop-outbound-models";
+import { TenantEventV2, TenantV2 } from "@pagopa/interop-outbound-models";
+import { errorSaveTenant } from "../src/models/domain/errors.js";
 
 const apiClient = createApiClient(config.operationsBaseUrl);
 
-describe("Message handler V2 test", () => {
+describe("Message handler V2 - Tenant tests", () => {
   const operationsService: OperationsService =
     operationsServiceBuilder(apiClient);
 
@@ -61,7 +58,7 @@ describe("Message handler V2 test", () => {
         handleMessageV2(tenantV2Event, operationsService, ctx, genericLogger),
       ).resolves.not.toThrowError();
 
-      expect(apiClient.saveTenant).toBeCalled();
+      expect(apiClient.saveTenant).toHaveBeenCalledTimes(1);
     });
 
     it("save a new Tenant for TenantOnboarded event should return an exception kafkaMessageMissingData", async () => {
@@ -96,11 +93,7 @@ describe("Message handler V2 test", () => {
 
       await expect(
         handleMessageV2(tenantV2Event, operationsService, ctx, genericLogger),
-      ).rejects.toThrow(
-        errorSaveTenant(
-          `Error saving tenant with tenantId: ${tenantV2.id}. Details: ${zodiosValidationError}. Data: {"externalId":"value","origin":"origin","name":"tenant name"}`,
-        ),
-      );
+      ).rejects.toThrow(errorSaveTenant(tenantV2.id, zodiosValidationError));
     });
 
     it("save a new Tenant for TenantOnboarded event should return generic exception errorSaveTenant", async () => {
@@ -125,19 +118,9 @@ describe("Message handler V2 test", () => {
 
       vi.spyOn(apiClient, "saveTenant").mockRejectedValueOnce(apiClientError);
 
-      try {
-        await handleMessageV2(
-          tenantV2Event,
-          operationsService,
-          ctx,
-          genericLogger,
-        );
-      } catch (error) {
-        expect(error).toBeInstanceOf(InternalError);
-        expect((error as InternalError<ErrorCodes>).code).toBe(
-          "errorSaveTenant",
-        );
-      }
+      await expect(
+        handleMessageV2(tenantV2Event, operationsService, ctx, genericLogger),
+      ).rejects.toThrow(errorSaveTenant(tenantV2.id, apiClientError));
     });
   });
 
@@ -162,19 +145,16 @@ describe("Message handler V2 test", () => {
 
       vi.spyOn(apiClient, "saveTenant").mockRejectedValueOnce(apiClientError);
 
-      try {
-        await handleMessageV2(
+      await expect(
+        handleMessageV2(
           mockTenantUpdateV2(uuidv4()),
           operationsService,
           ctx,
           genericLogger,
-        );
-      } catch (error) {
-        expect(error).toBeInstanceOf(InternalError);
-        expect((error as InternalError<ErrorCodes>).code).toBe(
-          "errorSaveTenant",
-        );
-      }
+        ),
+      ).rejects.toMatchObject({
+        code: "errorSaveTenant",
+      });
     });
   });
 
@@ -199,19 +179,16 @@ describe("Message handler V2 test", () => {
 
       vi.spyOn(apiClient, "deleteTenant").mockRejectedValueOnce(apiClientError);
 
-      try {
-        await handleMessageV2(
+      await expect(
+        handleMessageV2(
           mockTenantDeleteV2,
           operationsService,
           ctx,
           genericLogger,
-        );
-      } catch (error) {
-        expect(error).toBeInstanceOf(InternalError);
-        expect((error as InternalError<ErrorCodes>).code).toBe(
-          "errorDeleteTenant",
-        );
-      }
+        ),
+      ).rejects.toMatchObject({
+        code: "errorDeleteTenant",
+      });
     });
   });
 
@@ -237,11 +214,11 @@ describe("Message handler V2 test", () => {
           {
             event_version: 2,
             version: 1,
-            type: event.type as any, // eslint-disable-line @typescript-eslint/no-explicit-any
+            type: event.type,
             timestamp: new Date(),
             stream_id: "1",
             data: {},
-          },
+          } as TenantEventV2,
           operationsService,
           ctx,
           genericLogger,

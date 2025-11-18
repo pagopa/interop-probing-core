@@ -7,23 +7,20 @@ import {
 import { config } from "../src/utilities/config.js";
 import {
   createTenantEventV1,
-  mockApiClientError,
   mockTenantDeleteV1,
   mockTenantUpdateV1,
 } from "./utils.js";
 import { v4 as uuidv4 } from "uuid";
 import { AppContext, genericLogger } from "pagopa-interop-probing-commons";
-import {
-  InternalError,
-  kafkaMessageMissingData,
-} from "pagopa-interop-probing-models";
+import { mockApiClientError } from "pagopa-interop-probing-commons-test";
+import { kafkaMessageMissingData } from "pagopa-interop-probing-models";
 import { handleMessageV1 } from "../src/handlers/messageHandlerV1.js";
-import { ErrorCodes, errorSaveTenant } from "../src/models/domain/errors.js";
 import { TenantV1 } from "@pagopa/interop-outbound-models";
+import { errorSaveTenant } from "../src/models/domain/errors.js";
 
 const apiClient = createApiClient(config.operationsBaseUrl);
 
-describe("Message handler V1 test", () => {
+describe("Message handler V1 - Tenant tests", () => {
   const operationsService: OperationsService =
     operationsServiceBuilder(apiClient);
 
@@ -59,7 +56,7 @@ describe("Message handler V1 test", () => {
         handleMessageV1(tenantV1Event, operationsService, ctx, genericLogger),
       ).resolves.not.toThrowError();
 
-      expect(apiClient.saveTenant).toBeCalled();
+      expect(apiClient.saveTenant).toHaveBeenCalledTimes(1);
     });
 
     it("save a new Tenant for TenantCreated event should return an exception kafkaMessageMissingData", async () => {
@@ -92,11 +89,7 @@ describe("Message handler V1 test", () => {
 
       await expect(
         handleMessageV1(tenantV1Event, operationsService, ctx, genericLogger),
-      ).rejects.toThrow(
-        errorSaveTenant(
-          `Error saving tenant with tenantId: ${tenantV1.id}. Details: ${zodiosValidationError}. Data: {"externalId":"value","origin":"origin","name":"tenant name"}`,
-        ),
-      );
+      ).rejects.toThrow(errorSaveTenant(tenantV1.id, zodiosValidationError));
     });
 
     it("save a new Tenant for TenantCreated event should return generic exception errorSaveTenant", async () => {
@@ -119,19 +112,9 @@ describe("Message handler V1 test", () => {
 
       vi.spyOn(apiClient, "saveTenant").mockRejectedValueOnce(apiClientError);
 
-      try {
-        await handleMessageV1(
-          tenantV1Event,
-          operationsService,
-          ctx,
-          genericLogger,
-        );
-      } catch (error) {
-        expect(error).toBeInstanceOf(InternalError);
-        expect((error as InternalError<ErrorCodes>).code).toBe(
-          "errorSaveTenant",
-        );
-      }
+      await expect(
+        handleMessageV1(tenantV1Event, operationsService, ctx, genericLogger),
+      ).rejects.toThrow(errorSaveTenant(tenantV1.id, apiClientError));
     });
   });
 
@@ -156,19 +139,16 @@ describe("Message handler V1 test", () => {
 
       vi.spyOn(apiClient, "saveTenant").mockRejectedValueOnce(apiClientError);
 
-      try {
-        await handleMessageV1(
+      await expect(
+        handleMessageV1(
           mockTenantUpdateV1(uuidv4()),
           operationsService,
           ctx,
           genericLogger,
-        );
-      } catch (error) {
-        expect(error).toBeInstanceOf(InternalError);
-        expect((error as InternalError<ErrorCodes>).code).toBe(
-          "errorSaveTenant",
-        );
-      }
+        ),
+      ).rejects.toMatchObject({
+        code: "errorSaveTenant",
+      });
     });
   });
 
@@ -193,19 +173,16 @@ describe("Message handler V1 test", () => {
 
       vi.spyOn(apiClient, "deleteTenant").mockRejectedValueOnce(apiClientError);
 
-      try {
-        await handleMessageV1(
+      await expect(
+        handleMessageV1(
           mockTenantDeleteV1,
           operationsService,
           ctx,
           genericLogger,
-        );
-      } catch (error) {
-        expect(error).toBeInstanceOf(InternalError);
-        expect((error as InternalError<ErrorCodes>).code).toBe(
-          "errorDeleteTenant",
-        );
-      }
+        ),
+      ).rejects.toMatchObject({
+        code: "errorDeleteTenant",
+      });
     });
   });
 });

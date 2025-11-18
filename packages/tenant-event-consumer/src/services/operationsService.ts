@@ -22,6 +22,8 @@ export const operationsServiceBuilder = (
       logger: Logger,
     ): Promise<ApiSaveTenantResponse> {
       try {
+        logger.info(`Saving tenant with tenantId: ${data.tenantId}.`);
+
         await operationsApiClient.saveTenant(
           {
             name: data.name,
@@ -33,14 +35,8 @@ export const operationsServiceBuilder = (
             params,
           },
         );
-
-        logger.info(`Tenant saved with tenantId: ${data.tenantId}.`);
       } catch (error: unknown) {
-        throw errorSaveTenant(
-          `Error saving tenant with tenantId: ${
-            params.tenantId
-          }. Details: ${error}. Data: ${JSON.stringify(data)}`,
-        );
+        throw errorSaveTenant(params.tenantId, error);
       }
     },
     async deleteTenant(
@@ -49,16 +45,14 @@ export const operationsServiceBuilder = (
       logger: Logger,
     ): Promise<ApiDeleteTenantResponse> {
       try {
+        logger.info(`Deleting tenant with tenantId: ${params.tenantId}.`);
+
         await operationsApiClient.deleteTenant(undefined, {
           headers,
           params,
         });
-
-        logger.info(`Tenant deleted with tenantId: ${params.tenantId}.`);
       } catch (error: unknown) {
-        throw errorDeleteTenant(
-          `Error deleting tenant with tenantId: ${params.tenantId}. Details: ${error}`,
-        );
+        throw errorDeleteTenant(params.tenantId, error);
       }
     },
   };
