@@ -53,11 +53,20 @@ export type ChangeEserviceStateRequest = z.infer<
 >;
 
 export const ChangeProbingFrequencyRequest = z.object({
-  pollingFrequency: z.number().int().gte(1).default(5).optional(),
-  pollingStartTime: z.string(),
-  pollingEndTime: z.string(),
+  frequency: z.number().int().gte(1),
+  startTime: z
+    .string()
+    .regex(
+      /^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/,
+      "Invalid time format, expected HH:mm",
+    ),
+  endTime: z
+    .string()
+    .regex(
+      /^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/,
+      "Invalid time format, expected HH:mm",
+    ),
 });
-
 export type ChangeProbingFrequencyRequest = z.infer<
   typeof ChangeProbingFrequencyRequest
 >;
