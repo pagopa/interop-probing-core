@@ -32,7 +32,7 @@
     "openapi-zod-client": "1.13.4",
     "supertest": "7.1.4",
     "ts-node": "10.9.2",
-    "typescript": "5.2.2",
+    "typescript": "5.7.3",
     "tsx": "4.20.5"
   },
   "dependencies": {

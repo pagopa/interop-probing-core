@@ -24,7 +24,7 @@
   "devDependencies": {
     "@probing/eslint-config": "workspace:*",
     "ts-node": "10.9.2",
-    "typescript": "5.2.2"
+    "typescript": "5.7.3"
   },
   "dependencies": {
     "@zodios/core": "10.9.6",

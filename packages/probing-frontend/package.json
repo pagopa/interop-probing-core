@@ -22,7 +22,9 @@
     "@pagopa/mui-italia": "1.1.0",
     "@tanstack/react-query": "4.36.1",
     "@tanstack/react-query-devtools": "4.36.1",
-    "aws-amplify": "5.3.17",
+    "aws-amplify": "6.15.8",
+    "@aws-amplify/auth": "6.17.0",
+    "@aws-amplify/core": "6.14.0",
     "axios": "1.12.0",
     "d3": "7.8.5",
     "i18next": "23.10.0",
@@ -37,12 +39,12 @@
   "devDependencies": {
     "@probing/eslint-config": "workspace:*",
     "@probing/vitest-config": "workspace:*",
+    "@types/d3": "latest",
     "@types/react": "18.2.64",
     "@types/react-dom": "18.2.21",
-    "@vitejs/plugin-react": "4.2.1",
-    "@types/d3": "latest",
-    "typescript": "5.2.2",
+    "@vitejs/plugin-react": "5.1.1",
     "tsx": "4.20.5",
-    "vite": "5.4.11"
+    "typescript": "5.7.3",
+    "vite": "7.2.2"
   }
 }
