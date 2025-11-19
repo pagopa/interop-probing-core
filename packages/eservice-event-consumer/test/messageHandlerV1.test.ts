@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, afterEach } from "vitest";
 import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
 import {
   OperationsService,
@@ -30,6 +30,11 @@ describe("Message handler V1 - EService tests", () => {
     serviceName: config.applicationName,
     correlationId: uuidv4(),
   };
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.clearAllMocks();
+  });
 
   describe("EserviceAdded Event", () => {
     it("save a new Eservice for EServiceAdded event should return a successfully response", async () => {

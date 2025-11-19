@@ -24,9 +24,9 @@
     "pagopa-interop-probing-commons": "workspace:*",
     "pagopa-interop-probing-models": "workspace:*",
     "dotenv-flow": "4.1.0",
-    "testcontainers": "10.9.0",
-    "ts-pattern": "5.0.6",
-    "typescript": "5.2.2",
+    "testcontainers": "11.8.1",
+    "ts-pattern": "5.1.2",
+    "typescript": "5.7.3",
     "zod": "3.23.8",
     "axios": "1.12.0"
   }
