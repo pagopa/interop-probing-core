@@ -27,14 +27,14 @@ async function login(loginForm: LoginForm): Promise<void> {
     await signIn({ username, password })
     const session: AuthSession = await fetchAuthSession()
     const jwt = session.tokens?.idToken?.toString()
-    if (jwt) {
-      TokenStorage.set(jwt)
-    }
+    if (!jwt) throw new AuthenticationError()
+    TokenStorage.set(jwt)
   } catch {
     TokenStorage.clear()
     throw new AuthenticationError()
   }
 }
+
 async function logout() {
   try {
     await signOut()
