@@ -1008,7 +1008,6 @@ components:
         frequency:
           title: Service verification frequency in minutes
           type: integer
-          default: 5
           minimum: 1
         startTime:
           title: Service verification start time
