@@ -1,4 +1,4 @@
-name: "Dev CI/CD"
+name: "Frontend Build"
 on:
   push:
     branches:
@@ -8,9 +8,8 @@ on:
 
 jobs:
   deploy_dev:
-    name: Build and deploy frontend in development environment
+    name: Build frontend release
     runs-on: ubuntu-latest
-    environment: dev
     env:
       VITE_AWS_USER_POOL_ID: ${{ vars.VITE_AWS_USER_POOL_ID }}
       VITE_AWS_USER_POOLS_WEB_CLIENT_ID: ${{ vars.VITE_AWS_USER_POOLS_WEB_CLIENT_ID }}
@@ -20,31 +19,47 @@ jobs:
       VITE_BASE_PATH: ${{ vars.VITE_BASE_PATH }}
     permissions:
       id-token: write
-      contents: read
+      contents: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@ac593985615ec2ede58e132d2e21d2b1cbd6127c
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@67fbcbb121271f7775d2e7715933280b06314838
-        with:
-          role-to-assume: ${{ secrets.IAM_ROLE }}
-          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Checkout repository
+        uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
+      
       - name: Set Node.js 20.x
         uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3
         with:
           node-version: "20"
+      
       - uses: pnpm/action-setup@v3
         with:
           run_install: true
+      
       - name: Install dependencies
         run: |
           pnpm install
+      
       - name: Build project
         run: |
           pnpm turbo build --filter probing-frontend
-      - name: Copy files to S3 Hosting bucket
+      
+      - name: Create archive
         run: |
-          aws s3 sync packages/probing-frontend/dist/ s3://${{ secrets.S3_BUCKET_NAME }} --delete
-      - name: Create invalidation for Cloudfront Distribution
-        run: |
-          aws cloudfront create-invalidation --distribution-id ${{ secrets.DISTRIBUTION_ID }} --paths "/*"
+          cd packages/probing-frontend
+          zip -r ../../probing-frontend.zip dist/
+      
+      - name: Compute new release version
+        uses: cycjimmy/semantic-release-action@v3
+        id: compute-new-release-version
+        with:
+          dry_run: true
+          semantic_version: 19.0.5
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.compute-new-release-version.outputs.new_version }}
+          name: probing-frontend-${{ steps.compute-new-release-version.outputs.new_version }}
+          files: probing-frontend.zip
+          draft: false
+          prerelease: false
