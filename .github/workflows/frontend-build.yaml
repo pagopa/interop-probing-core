@@ -43,8 +43,8 @@ jobs:
       
       - name: Create archive
         run: |
-          cd packages/probing-frontend
-          zip -r ../../probing-frontend.zip dist/
+          cd packages/probing-frontend/dist
+          zip -r ../../probing-frontend.zip .
       
       - name: Compute new release version
         uses: cycjimmy/semantic-release-action@v3
