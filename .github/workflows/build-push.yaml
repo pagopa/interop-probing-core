@@ -19,6 +19,8 @@ concurrency:
 jobs:
   find_dockerfiles:
     name: Find Dockerfiles
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     outputs:
       packages: ${{ steps.set_packages_output.outputs.packages }}
