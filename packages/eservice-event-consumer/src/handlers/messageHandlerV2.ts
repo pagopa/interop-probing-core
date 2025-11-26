@@ -13,6 +13,8 @@ import {
 import { P, match } from "ts-pattern";
 import { config } from "../utilities/config.js";
 import { OperationsService } from "../services/operationsService.js";
+import { z } from "zod";
+import { sanitizeData } from "../utilities/utils.js";
 
 export async function handleMessageV2(
   event: EServiceEventV2,
@@ -37,6 +39,14 @@ export async function handleMessageV2(
         }
 
         for (const descriptor of eservice.descriptors) {
+          const parsedBasePath = z
+            .array(z.string().transform(sanitizeData))
+            .parse(descriptor.serverUrls);
+
+          const parsedAudience = z
+            .array(z.string().transform(sanitizeData))
+            .parse(descriptor.serverUrls);
+
           await operationsService.saveEservice(
             { ...correlationIdToHeader(ctx.correlationId) },
             { eserviceId: eservice.id, versionId: descriptor.id },
@@ -44,7 +54,7 @@ export async function handleMessageV2(
               eserviceId: eservice.id,
               producerId: eservice.producerId,
               name: eservice.name,
-              basePath: descriptor.serverUrls,
+              basePath: parsedBasePath,
               versionNumber: Number(descriptor.version),
               technology:
                 eservice.technology === EServiceTechnologyV2.SOAP
@@ -54,7 +64,7 @@ export async function handleMessageV2(
                 descriptor.state === EServiceDescriptorStateV2.PUBLISHED
                   ? eserviceInteropState.active
                   : eserviceInteropState.inactive,
-              audience: descriptor.audience,
+              audience: parsedAudience,
             },
             logger,
           );
