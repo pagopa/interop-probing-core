@@ -9,7 +9,7 @@ on:
       - "packages/probing-frontend/**"
 
 jobs:
-  deploy:
+  build_frontend_release:
     name: Build frontend release
     runs-on: ubuntu-latest
     environment: ${{ github.ref_type == 'branch' && github.ref == 'refs/heads/develop' ? 'dev' : github.ref_type == 'tag' ? 'prod' : '' }}
