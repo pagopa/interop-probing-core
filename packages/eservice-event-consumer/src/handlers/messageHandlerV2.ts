@@ -45,7 +45,7 @@ export async function handleMessageV2(
 
           const parsedAudience = z
             .array(z.string().transform(sanitizeData))
-            .parse(descriptor.serverUrls);
+            .parse(descriptor.audience);
 
           await operationsService.saveEservice(
             { ...correlationIdToHeader(ctx.correlationId) },
