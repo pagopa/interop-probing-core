@@ -499,7 +499,10 @@ export function addPredicateEservices(filters: ApiSearchEservicesQuery): {
   if (!state || allStates) {
     return {
       where: sql.join(clauses.length ? clauses : [sql`TRUE`], sql` AND `),
-      orderBy: asc(eserviceViewInProbing.eserviceName),
+      orderBy: sql`
+        split_part(${eserviceViewInProbing.eserviceName}, ' ', 2)::int ASC,
+        ${eserviceViewInProbing.eserviceName} ASC
+      `,
       distinct: false,
     };
   }
