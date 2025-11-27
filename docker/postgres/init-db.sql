@@ -85,3 +85,5 @@ WHERE
 CREATE INDEX IF NOT EXISTS probing_requests_last_request_idx ON probing.eservice_probing_requests (last_request);
 
 CREATE INDEX IF NOT EXISTS probing_responses_received_idx ON probing.eservice_probing_responses (response_received);
+
+CREATE INDEX IF NOT EXISTS eservices_name_numeric_idx ON probing.eservices ((split_part(eservice_name, ' ', 2) :: int));

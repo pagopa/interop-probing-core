@@ -38,7 +38,6 @@ import {
 import { DBService } from "./dbService.js";
 import { z } from "zod";
 import { safeStringify } from "../utilities/utils.js";
-import { eServiceDefaultValues } from "../db/constants/eServices.js";
 
 export function eServiceServiceBuilder(dbService: DBService) {
   return {
@@ -97,8 +96,7 @@ export function eServiceServiceBuilder(dbService: DBService) {
       await dbService.updateEserviceFrequency(eserviceId, versionId, {
         pollingStartTime: payload.startTime,
         pollingEndTime: payload.endTime,
-        pollingFrequency:
-          payload.frequency ?? eServiceDefaultValues.pollingFrequency,
+        pollingFrequency: payload.frequency,
       });
     },
 
@@ -166,6 +164,7 @@ export function eServiceServiceBuilder(dbService: DBService) {
 
       const mappedContent = result.content.map((el) => ({
         ...el,
+        responseStatus: el.status,
         eserviceRecordId: String(el.id),
         technology: el.eserviceTechnology,
       }));
