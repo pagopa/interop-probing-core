@@ -13,6 +13,8 @@ import {
   kafkaMessageMissingData,
   technology,
 } from "pagopa-interop-probing-models";
+import { z } from "zod";
+import { sanitizeData } from "../utilities/utils.js";
 
 export async function handleMessageV1(
   event: EServiceEventV1,
@@ -37,6 +39,14 @@ export async function handleMessageV1(
         const { eservice } = evt.data;
 
         for (const descriptor of eservice.descriptors) {
+          const parsedBasePath = z
+            .array(z.string().transform(sanitizeData))
+            .parse(descriptor.serverUrls);
+
+          const parsedAudience = z
+            .array(z.string().transform(sanitizeData))
+            .parse(descriptor.audience);
+
           await operationsService.saveEservice(
             { ...correlationIdToHeader(ctx.correlationId) },
             { eserviceId: eservice.id, versionId: descriptor.id },
@@ -44,7 +54,7 @@ export async function handleMessageV1(
               eserviceId: eservice.id,
               producerId: eservice.producerId,
               name: eservice.name,
-              basePath: descriptor.serverUrls,
+              basePath: parsedBasePath,
               versionNumber: Number(descriptor.version),
               technology:
                 eservice.technology === EServiceTechnologyV1.SOAP
@@ -54,7 +64,7 @@ export async function handleMessageV1(
                 descriptor.state === EServiceDescriptorStateV1.PUBLISHED
                   ? eserviceInteropState.active
                   : eserviceInteropState.inactive,
-              audience: descriptor.audience,
+              audience: parsedAudience,
             },
 
             logger,
