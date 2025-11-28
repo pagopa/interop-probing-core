@@ -164,6 +164,7 @@ export function eServiceServiceBuilder(dbService: DBService) {
 
       const mappedContent = result.content.map((el) => ({
         ...el,
+        responseStatus: el.status,
         eserviceRecordId: String(el.id),
         technology: el.eserviceTechnology,
       }));

@@ -411,59 +411,6 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
 
 export type DBService = ReturnType<typeof dbServiceBuilder>;
 
-export function probingDisabledPredicate(): SQL {
-  return sql`
-    (
-      probing_enabled = false
-      OR last_request IS NULL
-      OR (
-        TRUNC(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60) > polling_frequency
-        AND response_received < last_request
-      )
-      OR response_received IS NULL
-    )
-  `;
-}
-
-export function probingEnabledPredicate({
-  isStateOffline,
-  isStateOnline,
-}: {
-  isStateOffline?: boolean;
-  isStateOnline?: boolean;
-}): SQL {
-  const stateClauses: SQL[] = [];
-
-  if (isStateOffline) {
-    stateClauses.push(
-      sql`(state = ${eserviceInteropState.inactive} OR status = ${responseStatus.ko})`,
-    );
-  }
-
-  if (isStateOnline) {
-    stateClauses.push(
-      sql`(state = ${eserviceInteropState.active} AND status = ${responseStatus.ok})`,
-    );
-  }
-
-  const stateSql =
-    stateClauses.length > 0 ? sql.join(stateClauses, sql` OR `) : sql`TRUE`;
-
-  return sql`
-    (
-      ${stateSql}
-      AND probing_enabled = true
-      AND last_request IS NOT NULL
-      AND response_received IS NOT NULL
-      AND (
-        TRUNC(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60)
-        < (polling_frequency * ${config.minOfTolleranceMultiplier})
-        OR response_received > last_request
-      )
-    )
-  `;
-}
-
 export function addPredicateEservices(filters: ApiSearchEservicesQuery): {
   where: SQL;
   orderBy: SQL;
@@ -507,32 +454,75 @@ export function addPredicateEservices(filters: ApiSearchEservicesQuery): {
     };
   }
 
-  if (isStateND) {
-    const predicate = sql`
-      (
-        (
-          ${probingEnabledPredicate({ isStateOffline, isStateOnline })}
-        )
-        OR (
-          ${probingDisabledPredicate()}
-        )
-      )
-    `;
+  const statePredicates: SQL[] = [];
 
-    return {
-      where: sql.join([...clauses, predicate], sql` AND `),
-      orderBy: asc(eserviceViewInProbing.id),
-      distinct: false,
-    };
-  }
+  if (isStateOnline) statePredicates.push(predicateOnline());
+  if (isStateOffline) statePredicates.push(predicateOffline());
+  if (isStateND) statePredicates.push(predicateND());
 
-  const predicate = probingEnabledPredicate({ isStateOffline, isStateOnline });
+  const predicateByState = sql`(${sql.join(statePredicates, sql` OR `)})`;
 
   return {
-    where: sql.join([...clauses, predicate], sql` AND `),
+    where: sql.join([...clauses, predicateByState], sql` AND `),
     orderBy: asc(eserviceViewInProbing.id),
-    distinct: true,
+    distinct: false,
   };
+}
+
+export function predicateOnline(): SQL {
+  return sql`
+    (
+      status = ${responseStatus.ok}
+      AND state = ${eserviceInteropState.active}
+      AND probing_enabled = true
+      AND last_request IS NOT NULL
+      AND response_received IS NOT NULL
+      AND (
+        TRUNC(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60)
+        < (polling_frequency * ${config.minOfTolleranceMultiplier})
+        AND response_received > last_request
+      )
+    )
+  `;
+}
+
+export function predicateOffline(): SQL {
+  return sql`
+    (
+      (
+        status = ${responseStatus.ko}
+        AND state = ${eserviceInteropState.active}
+        AND probing_enabled = true
+        AND last_request IS NOT NULL
+        AND response_received IS NOT NULL
+        AND (
+          TRUNC(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60)
+          < (polling_frequency * ${config.minOfTolleranceMultiplier})
+          AND response_received > last_request
+        )
+      )
+      OR
+      (
+        state = ${eserviceInteropState.inactive}
+      )
+    )
+  `;
+}
+
+export function predicateND(): SQL {
+  return sql`
+    (
+      state = ${eserviceInteropState.active}
+      AND (
+        probing_enabled = false
+        OR last_request IS NULL
+        OR response_received IS NULL
+        OR TRUNC(EXTRACT(EPOCH FROM (CURRENT_TIMESTAMP - last_request)) / 60)
+            > (polling_frequency * ${config.minOfTolleranceMultiplier})
+        OR response_received < last_request
+      )
+    )
+  `;
 }
 
 export function addPredicateEservicesReadyForPolling(): SQL {
