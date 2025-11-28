@@ -8,6 +8,7 @@ import {
 import { resolveApiProblem } from "../model/domain/errors.js";
 import { OperationsService } from "../services/operationsService.js";
 import { api } from "../model/generated/api.js";
+import { ChangeProbingFrequencyRequest } from "pagopa-interop-probing-models";
 
 const eServiceRouter = (
   ctx: ZodiosContext,
@@ -55,8 +56,18 @@ const eServiceRouter = (
 
   router.post(
     "/eservices/:eserviceId/versions/:versionId/updateFrequency",
-    async (req, res) => {
+    async (req, res, next) => {
       try {
+        const parsedBody = ChangeProbingFrequencyRequest.safeParse(req.body);
+        if (!parsedBody.success) {
+          return zodiosValidationErrorToApiProblem(
+            { context: "body", error: parsedBody.error.errors },
+            req,
+            res,
+            next,
+          );
+        }
+
         await operationsService.updateEserviceFrequency(
           req.params.eserviceId,
           req.params.versionId,
