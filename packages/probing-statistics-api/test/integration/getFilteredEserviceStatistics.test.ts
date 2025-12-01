@@ -674,19 +674,21 @@ describe("getFilteredEserviceStatistics", () => {
     });
   });
 
-  it("should throw INVALID_DATE_RANGE when startDate is older than one year", async () => {
+  it("should throw INVALID_DATE_RANGE when date range exceeds 12 months", async () => {
     const eserviceRecordId = 1;
 
-    const old = new Date();
-    old.setFullYear(old.getFullYear() - 2);
+    const start = new Date();
+    start.setFullYear(start.getFullYear() - 2);
+
+    const end = new Date();
 
     await expect(
       statisticsService.getFilteredEserviceStatistics(
         { eserviceRecordId },
         {
           pollingFrequency: 5,
-          startDate: old.toISOString(),
-          endDate: new Date().toISOString(),
+          startDate: start.toISOString(),
+          endDate: end.toISOString(),
         },
       ),
     ).rejects.toMatchObject({
