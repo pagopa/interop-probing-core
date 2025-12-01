@@ -25,7 +25,7 @@ const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000)
 export const ChartWrapper: React.FC<ChartWrapperProps> = ({ eserviceId, pollingFrequency }) => {
   const { t } = useTranslation('common', { keyPrefix: 'detailsPage' })
   const jwt = useJwt()
-  const [_, setSearchParams] = useSearchParams()
+  const [, setSearchParams] = useSearchParams()
 
   const { data: eservicesTelemetry, isInitialLoading } = MonitoringQueries.useGetTelemetryData({
     eserviceId,
