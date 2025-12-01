@@ -26,6 +26,7 @@ import {
   timeUnitToMS,
   truncatedTo,
 } from "../utilities/date.js";
+import { validateFilteredDateRange } from "../utilities/dateValidator.js";
 
 export const statisticsServiceBuilder = (
   telemetryQueryService: TelemetryQueryService,
@@ -46,6 +47,8 @@ export const statisticsServiceBuilder = (
       params: ApiFilteredStatisticsEservicesParams,
       query: ApiFilteredStatisticsEservicesQuery,
     ): Promise<ApiFilteredStatisticsEservicesResponse> {
+      validateFilteredDateRange(query.startDate, query.endDate);
+
       const content = await telemetryQueryService.findStatistics({
         eserviceRecordId: params.eserviceRecordId,
         pollingFrequency: query.pollingFrequency,

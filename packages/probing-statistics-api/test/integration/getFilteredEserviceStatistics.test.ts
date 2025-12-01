@@ -656,4 +656,60 @@ describe("getFilteredEserviceStatistics", () => {
     expect(eservicesStatusKO).toBeLessThan(10);
     expect(eservicesStatusND).toBeGreaterThan(80);
   });
+
+  it("should throw INVALID_DATE_RANGE when date range is invalid", async () => {
+    const eserviceRecordId = 1;
+
+    await expect(
+      statisticsService.getFilteredEserviceStatistics(
+        { eserviceRecordId },
+        {
+          pollingFrequency: 5,
+          startDate: "2025-01-10T00:00:00Z",
+          endDate: "2025-01-05T00:00:00Z",
+        },
+      ),
+    ).rejects.toMatchObject({
+      code: "invalidFilterDate",
+    });
+  });
+
+  it("should throw INVALID_DATE_RANGE when startDate is older than one year", async () => {
+    const eserviceRecordId = 1;
+
+    const old = new Date();
+    old.setFullYear(old.getFullYear() - 2);
+
+    await expect(
+      statisticsService.getFilteredEserviceStatistics(
+        { eserviceRecordId },
+        {
+          pollingFrequency: 5,
+          startDate: old.toISOString(),
+          endDate: new Date().toISOString(),
+        },
+      ),
+    ).rejects.toMatchObject({
+      code: "invalidFilterDate",
+    });
+  });
+
+  it("should throw INVALID_DATE_RANGE when endDate is in the future", async () => {
+    const eserviceRecordId = 1;
+
+    const future = new Date(Date.now() + 10_000);
+
+    await expect(
+      statisticsService.getFilteredEserviceStatistics(
+        { eserviceRecordId },
+        {
+          pollingFrequency: 5,
+          startDate: new Date().toISOString(),
+          endDate: future.toISOString(),
+        },
+      ),
+    ).rejects.toMatchObject({
+      code: "invalidFilterDate",
+    });
+  });
 });
