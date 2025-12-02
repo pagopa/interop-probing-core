@@ -39,24 +39,24 @@ services:
   eservice-event-consumer:
     build:
       context: ..
-      dockerfile: packages/eservice-event-consumer/Dockerfile
-    image: interop-eservice-event-consumer:local
+      dockerfile: packages/probing-eservice-event-consumer/Dockerfile
+    image: interop-probing-eservice-event-consumer:local
     networks:
       - develop-network
     env_file:
-      - ../packages/eservice-event-consumer/.env
+      - ../packages/probing-eservice-event-consumer/.env
     ports:
       - "3001:3001"
 
   tenant-event-consumer:
     build:
       context: ..
-      dockerfile: packages/tenant-event-consumer/Dockerfile
-    image: interop-tenant-event-consumer:local
+      dockerfile: packages/probing-tenant-event-consumer/Dockerfile
+    image: interop-probing-tenant-event-consumer:local
     networks:
       - develop-network
     env_file:
-      - ../packages/tenant-event-consumer/.env
+      - ../packages/probing-tenant-event-consumer/.env
     ports:
       - "3002:3002"
 
