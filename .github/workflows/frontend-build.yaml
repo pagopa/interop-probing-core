@@ -29,11 +29,9 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@a5ac7e51b41094c92402da3b24376905380afc29 # v4
 
-      - name: Set Node.js 20.x
-        uses: actions/setup-node@1a4442cacd436585916779262731d5b162bc6ec7 # v3
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
-          node-version: "20"
-          registry-url: 'https://npm.pkg.github.com'
+          node-version-file: ./package.json
 
       - uses: pnpm/action-setup@41ff72655975bd51cab0327fa583b6e92b6d3061 # v4.2.0
         with:
@@ -41,7 +39,7 @@ jobs:
 
       - name: Build project
         run: |
-          pnpm turbo build --filter probing-frontend
+          pnpm build --filter probing-frontend
 
       - name: Create package.json in /dist folder
         run: |
