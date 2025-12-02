@@ -55,10 +55,10 @@ export function createApp(operationsService: OperationsService) {
   app.use(express.urlencoded({ extended: true }));
   app.use(cors(corsOptions));
 
+  app.use(healthRouter);
   app.use(queryParamsMiddleware);
   app.use(contextMiddleware(config.applicationName));
   app.use(loggerMiddleware(config.applicationName));
-  app.use(healthRouter);
   app.use(eServiceRouter(zodiosCtx, operationsService));
 
   return app;

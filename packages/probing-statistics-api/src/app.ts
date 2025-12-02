@@ -55,9 +55,9 @@ export function createApp(statisticsService: StatisticsService) {
   app.use(express.urlencoded({ extended: true }));
   app.use(cors(corsOptions));
 
+  app.use(healthRouter);
   app.use(loggerMiddleware(config.applicationName));
   app.use(contextMiddleware(config.applicationName));
-  app.use(healthRouter);
   app.use(statisticsRouter(zodiosCtx, statisticsService));
 
   return app;
