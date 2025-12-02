@@ -84,7 +84,7 @@ jobs:
         if: ${{ github.ref_type == 'branch' }}
         uses: docker/metadata-action@c1e51972afc2121e065aed6d45c65596fe445f3f
         with:
-          images: ${{ steps.login-ecr.outputs.registry }}/probing-${{ env.PACKAGE_NAME }}
+          images: ${{ steps.login-ecr.outputs.registry }}/probing-be-${{ env.PACKAGE_NAME }}
           flavor: |
             latest=false
             prefix=
@@ -97,7 +97,7 @@ jobs:
         if: ${{ github.ref_type == 'tag' }}
         uses: docker/metadata-action@c1e51972afc2121e065aed6d45c65596fe445f3f
         with:
-          images: ${{ steps.login-ecr.outputs.registry }}/probing-${{ env.PACKAGE_NAME }}
+          images: ${{ steps.login-ecr.outputs.registry }}/probing-be-${{ env.PACKAGE_NAME }}
           flavor: |
             latest=false
             prefix=
@@ -157,7 +157,7 @@ jobs:
         if: ${{ github.ref_type == 'tag' }}
         uses: docker/metadata-action@c1e51972afc2121e065aed6d45c65596fe445f3f
         with:
-          images: ${{ steps.login-ecr.outputs.registry }}/probing-${{ env.PACKAGE_NAME }}
+          images: ${{ steps.login-ecr.outputs.registry }}/probing-be-${{ env.PACKAGE_NAME }}
           flavor: |
             latest=false
             prefix=
