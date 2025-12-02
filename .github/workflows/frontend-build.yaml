@@ -64,7 +64,7 @@ jobs:
 
       - name: Publish package to GitHub Packages
         env:
-            NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            NODE_AUTH_TOKEN: ${{ secrets.NPM_KEY }}
         run: |
           cd packages/probing-frontend/dist
-          pnpm publish --no-git-checks
+          npm publish --provenance --access public
