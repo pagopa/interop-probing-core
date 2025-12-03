@@ -12,8 +12,9 @@ import {
   timestamp,
 } from "drizzle-orm/pg-core";
 import { sql } from "drizzle-orm";
+import { config } from "../../utilities/config.js";
 
-export const probing = pgSchema("probing");
+export const probing = pgSchema(config.dbSchema);
 
 export const eserviceSequenceInProbing = probing.sequence("eservice_sequence", {
   startWith: "1",
