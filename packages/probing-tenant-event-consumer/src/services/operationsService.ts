@@ -7,6 +7,7 @@ import {
   ApiSaveTenantPayload,
   ApiSaveTenantHeaders,
   ApiSaveTenantResponse,
+  ApiSaveTenantParams,
 } from "pagopa-interop-probing-eservice-operations-client";
 import { errorDeleteTenant, errorSaveTenant } from "../models/domain/errors.js";
 import { Logger } from "pagopa-interop-probing-commons";
@@ -17,7 +18,7 @@ export const operationsServiceBuilder = (
   return {
     async saveTenant(
       headers: ApiSaveTenantHeaders,
-      params: ApiDeleteTenantParams,
+      params: ApiSaveTenantParams,
       data: ApiSaveTenantPayload,
       logger: Logger,
     ): Promise<ApiSaveTenantResponse> {
