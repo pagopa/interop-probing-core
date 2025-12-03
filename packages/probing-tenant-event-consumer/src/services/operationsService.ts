@@ -22,7 +22,7 @@ export const operationsServiceBuilder = (
       logger: Logger,
     ): Promise<ApiSaveTenantResponse> {
       try {
-        logger.info(`Saving tenant with tenantId: ${data.tenantId}.`);
+        logger.info(`Saving tenant with tenantId: ${params.tenantId}.`);
 
         await operationsApiClient.saveTenant(
           {
