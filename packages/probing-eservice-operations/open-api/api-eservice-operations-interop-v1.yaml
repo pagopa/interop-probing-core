@@ -34,7 +34,7 @@ paths:
         - name: eserviceId
           in: path
           required: true
-          description: The e-service name
+          description: The e-service ID
           schema:
             type: string
             format: uuid
@@ -76,13 +76,13 @@ paths:
                   - code: 000-1234
                     detail: The requested resource could not be found on the server.
         "500":
-          description: A managed error has occured during the request elaboration
+          description: A managed error has occurred during the request elaboration
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
               example:
-                type: string
+                type: "about:blank"
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
@@ -110,7 +110,7 @@ paths:
         - name: eserviceId
           in: path
           required: true
-          description: The e-service name
+          description: The e-service ID
           schema:
             type: string
             format: uuid
@@ -152,13 +152,13 @@ paths:
                   - code: 000-1234
                     detail: The requested resource could not be found on the server.
         "500":
-          description: A managed error has occured during the request elaboration
+          description: A managed error has occurred during the request elaboration
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
               example:
-                type: string
+                type: "about:blank"
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
@@ -188,7 +188,7 @@ paths:
         - name: eserviceId
           in: path
           required: true
-          description: The e-service name
+          description: The e-service ID
           schema:
             type: string
             format: uuid
@@ -230,13 +230,13 @@ paths:
                   - code: 000-1234
                     detail: The requested resource could not be found on the server.
         "500":
-          description: A managed error has occured during the request elaboration
+          description: A managed error has occurred during the request elaboration
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
               example:
-                type: string
+                type: "about:blank"
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
@@ -248,8 +248,8 @@ paths:
                       again later.
   /eservices:
     get:
-      summary: Retrive e-services by filters
-      description: Retrive e-services by filters
+      summary: Retrieve e-services by filters
+      description: Retrieve e-services by filters
       tags:
         - Read
       operationId: searchEservices
@@ -280,7 +280,6 @@ paths:
           description: the e-service's name
           schema:
             type: string
-            format: string
         - name: producerName
           in: query
           required: false
@@ -316,13 +315,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
         "500":
-          description: A managed error has occured during the request elaboration
+          description: A managed error has occurred during the request elaboration
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
               example:
-                type: string
+                type: "about:blank"
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
@@ -382,13 +381,13 @@ paths:
                   - code: 000-1234
                     detail: The requested resource could not be found on the server.
         "500":
-          description: A managed error has occured during the request elaboration
+          description: A managed error has occurred during the request elaboration
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
               example:
-                type: string
+                type: "about:blank"
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
@@ -396,12 +395,12 @@ paths:
                 errors:
                   - code: 000-1234
                     detail: >-
-                      The server is currently down for maintenance. Please ry
+                      The server is currently down for maintenance. Please try
                       again later.
   "/eservices/probingData/{eserviceRecordId}":
     get:
-      summary: Retrive e-service probing data
-      description: Retrive e-service probing data
+      summary: Retrieve e-service probing data
+      description: Retrieve e-service probing data
       tags:
         - Read
       operationId: getEserviceProbingData
@@ -448,13 +447,13 @@ paths:
                   - code: 000-1234
                     detail: The requested resource could not be found on the server.
         "500":
-          description: A managed error has occured during the request elaboration
+          description: A managed error has occurred during the request elaboration
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
               example:
-                type: string
+                type: "about:blank"
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
@@ -462,11 +461,12 @@ paths:
                 errors:
                   - code: 000-1234
                     detail: >-
-                      The server is currently down for maintenance. Please ry
+                      The server is currently down for maintenance. Please try
                       again later.
   "/producers":
     get:
-      summary: Retrive e-services producers
+      summary: Retrieve e-services producers
+      description: Retrieve e-services producers
       tags:
         - Read
       operationId: getEservicesProducers
@@ -511,13 +511,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
         "500":
-          description: A managed error has occured during the request elaboration
+          description: A managed error has occurred during the request elaboration
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
               example:
-                type: string
+                type: "about:blank"
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
@@ -541,7 +541,7 @@ paths:
         - name: eserviceId
           in: path
           required: true
-          description: The e-service name
+          description: The e-service ID
           schema:
             type: string
             format: uuid
@@ -576,13 +576,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
         "500":
-          description: A managed error has occured during the request elaboration
+          description: A managed error has occurred during the request elaboration
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
               example:
-                type: string
+                type: "about:blank"
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
@@ -605,7 +605,7 @@ paths:
         - name: eserviceId
           in: path
           required: true
-          description: The e-service name
+          description: The e-service ID
           schema:
             type: string
             format: uuid
@@ -627,13 +627,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
         "500":
-          description: A managed error has occured during the request elaboration
+          description: A managed error has occurred during the request elaboration
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
               example:
-                type: string
+                type: "about:blank"
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
@@ -645,8 +645,8 @@ paths:
                       again later.
   "/eservices/polling":
     get:
-      summary: Retrive eservices ready for polling
-      description: Retrive eservices ready for polling
+      summary: Retrieve e-services ready for polling
+      description: Retrieve e-services ready for polling
       tags:
         - Read
       operationId: getEservicesReadyForPolling
@@ -687,13 +687,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
         "500":
-          description: A managed error has occured during the request elaboration
+          description: A managed error has occurred during the request elaboration
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
               example:
-                type: string
+                type: "about:blank"
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
@@ -745,13 +745,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
         "500":
-          description: A managed error has occured during the request elaboration
+          description: A managed error has occurred during the request elaboration
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
               example:
-                type: string
+                type: "about:blank"
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
@@ -803,13 +803,13 @@ paths:
               schema:
                 $ref: "#/components/schemas/Problem"
         "500":
-          description: A managed error has occured during the request elaboration
+          description: A managed error has occurred during the request elaboration
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
               example:
-                type: string
+                type: "about:blank"
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
@@ -832,7 +832,7 @@ paths:
         - name: tenantId
           in: path
           required: true
-          description: The e-service name
+          description: The tenant ID
           schema:
             type: string
             format: uuid
@@ -1185,7 +1185,7 @@ components:
         - content
       properties:
         content:
-          title: list of producers names
+          title: list of producer names
           type: array
           items:
             type: string
@@ -1211,6 +1211,7 @@ components:
         - OK
         - KO
     Problem:
+      type: object
       properties:
         type:
           description: URI reference of type definition
@@ -1220,7 +1221,6 @@ components:
             The HTTP status code generated by the origin server for this
             occurrence of the problem.
           example: 503
-          exclusiveMaximum: true
           maximum: 600
           minimum: 100
           type: integer
@@ -1256,6 +1256,7 @@ components:
         - title
         - errors
     ProblemError:
+      type: object
       properties:
         code:
           description: Internal code of the error
