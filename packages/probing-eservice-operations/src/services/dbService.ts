@@ -245,7 +245,7 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
       const [eservice] = await db
         .select()
         .from(eservicesInProbing)
-        .where(eq(eservicesInProbing.id, BigInt(eserviceRecordId)))
+        .where(eq(eservicesInProbing.id, eserviceRecordId))
         .limit(1);
 
       return eservice;
@@ -308,7 +308,7 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
           pollingFrequency: eservicesInProbing.pollingFrequency,
         })
         .from(eservicesInProbing)
-        .where(eq(eservicesInProbing.id, BigInt(eserviceRecordId)))
+        .where(eq(eservicesInProbing.id, eserviceRecordId))
         .limit(1);
 
       return data;
@@ -446,10 +446,7 @@ export function addPredicateEservices(filters: ApiSearchEservicesQuery): {
   if (!state || allStates) {
     return {
       where: sql.join(clauses.length ? clauses : [sql`TRUE`], sql` AND `),
-      orderBy: sql`
-        split_part(${eserviceViewInProbing.eserviceName}, ' ', 2)::int ASC,
-        ${eserviceViewInProbing.eserviceName} ASC
-      `,
+      orderBy: asc(eserviceViewInProbing.eserviceName),
       distinct: false,
     };
   }

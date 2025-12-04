@@ -121,7 +121,7 @@ export const getEservice = async (
   const [eservice] = await db
     .select()
     .from(eservicesInProbing)
-    .where(eq(eservicesInProbing.id, BigInt(eserviceRecordId)))
+    .where(eq(eservicesInProbing.id, eserviceRecordId))
     .limit(1);
   return eservice;
 };

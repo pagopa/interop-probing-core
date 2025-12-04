@@ -1,7 +1,6 @@
 import {
   pgSchema,
   unique,
-  bigserial,
   uuid,
   varchar,
   integer,
@@ -16,27 +15,10 @@ import { config } from "../../utilities/config.js";
 
 export const probing = pgSchema(config.dbSchema);
 
-export const eserviceSequenceInProbing = probing.sequence("eservice_sequence", {
-  startWith: "1",
-  increment: "1",
-  minValue: "1",
-  maxValue: "9223372036854775807",
-  cache: "1",
-  cycle: false,
-});
-export const tenantSequenceInProbing = probing.sequence("tenant_sequence", {
-  startWith: "1",
-  increment: "1",
-  minValue: "1",
-  maxValue: "9223372036854775807",
-  cache: "1",
-  cycle: false,
-});
-
 export const tenantsInProbing = probing.table(
   "tenants",
   {
-    id: bigserial({ mode: "bigint" }).primaryKey().notNull(),
+    id: bigint({ mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
     tenantId: uuid("tenant_id").notNull(),
     tenantName: varchar("tenant_name", { length: 2048 }),
   },
@@ -46,7 +28,7 @@ export const tenantsInProbing = probing.table(
 export const eservicesInProbing = probing.table(
   "eservices",
   {
-    id: bigserial({ mode: "bigint" }).primaryKey().notNull(),
+    id: bigint({ mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
     eserviceId: uuid("eservice_id").notNull(),
     versionId: uuid("version_id").notNull(),
     eserviceName: varchar("eservice_name", { length: 255 }).notNull(),
@@ -141,5 +123,8 @@ export const eserviceViewInProbing = probing
     audience: varchar({ length: 2048 }),
   })
   .as(
-    sql`SELECT e.id, e.eservice_id, e.eservice_name, e.producer_name, e.version_id, e.state, epr.status, e.probing_enabled, e.version_number, epr.response_received, epreq.last_request, e.polling_frequency, e.polling_start_time, e.polling_end_time, e.base_path, e.eservice_technology, e.audience FROM probing.eservices e LEFT JOIN probing.eservice_probing_responses epr ON epr.eservices_record_id = e.id LEFT JOIN probing.eservice_probing_requests epreq ON epreq.eservices_record_id = e.id`,
+    sql`SELECT e.id, e.eservice_id, e.eservice_name, e.producer_name, e.version_id, e.state, epr.status, e.probing_enabled, e.version_number, epr.response_received, epreq.last_request, e.polling_frequency, e.polling_start_time, e.polling_end_time, e.base_path, e.eservice_technology, e.audience
+      FROM ${config.dbSchema}.eservices e
+      LEFT JOIN ${config.dbSchema}.eservice_probing_responses epr ON epr.eservices_record_id = e.id
+      LEFT JOIN ${config.dbSchema}.eservice_probing_requests epreq ON epreq.eservices_record_id = e.id`,
   );
