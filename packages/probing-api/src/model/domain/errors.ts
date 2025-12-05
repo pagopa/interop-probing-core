@@ -43,7 +43,7 @@ export function eServiceByVersionIdNotFound(
   versionId: string,
 ): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: `EService by ${eserviceId} version ${versionId} not found`,
+    detail: `EService with eserviceId ${eserviceId} and versionId ${versionId} not found`,
     code: "eServiceNotFound",
     title: "EService not found",
   });
@@ -53,7 +53,7 @@ export function eServiceByRecordIdNotFound(
   eserviceRecordId: number,
 ): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: `EService by eserviceRecordId ${eserviceRecordId} not found`,
+    detail: `EService with eserviceRecordId ${eserviceRecordId} not found`,
     code: "eServiceByRecordIdNotFound",
     title: "EService not found",
   });
