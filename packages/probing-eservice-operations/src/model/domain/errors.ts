@@ -13,7 +13,7 @@ export const makeApiProblem = makeApiProblemBuilder(errorCodes);
 
 export function eServiceNotFound(eserviceId: string): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: `EService by ${eserviceId} not found`,
+    detail: `EService with eserviceId ${eserviceId} not found`,
     code: "eServiceNotFound",
     title: "EService not found",
   });
@@ -23,7 +23,7 @@ export function eServiceByRecordIdNotFound(
   eserviceRecordId: number,
 ): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: `EService by eserviceRecordId ${eserviceRecordId} not found`,
+    detail: `EService with eserviceRecordId ${eserviceRecordId} not found`,
     code: "eServiceByRecordIdNotFound",
     title: "EService not found",
   });
@@ -34,7 +34,7 @@ export function eServiceByVersionIdNotFound(
   versionId: string,
 ): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: `EService by ${eserviceId} version ${versionId} not found`,
+    detail: `EService with eserviceId ${eserviceId} and versionId ${versionId} not found`,
     code: "eServiceByVersionIdNotFound",
     title: "EService not found",
   });
@@ -42,7 +42,7 @@ export function eServiceByVersionIdNotFound(
 
 export function tenantNotFound(tenantId: string): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: `Tenant by ${tenantId} not found`,
+    detail: `Tenant with tenantId ${tenantId} not found`,
     code: "tenantNotFound",
     title: "Tenant not found",
   });
