@@ -11,6 +11,7 @@ import {
   producerServiceBuilder,
 } from "./services/producerService.js";
 import cron from "node-cron";
+import { genericLogger } from "pagopa-interop-probing-commons";
 
 const sqsClient: SQS.SQSClient = await SQS.instantiateClient({
   region: config.awsRegion,
@@ -21,12 +22,27 @@ const operationsService: OperationsService =
   operationsServiceBuilder(operationsApiClient);
 const producerService: ProducerService = producerServiceBuilder(sqsClient);
 
+let isRunning = false;
+
+genericLogger.info(
+  `Scheduler started with cron expression: ${config.schedulerCronExpression}`,
+);
+
 cron
   .schedule(
     config.schedulerCronExpression,
-    () => processTask(operationsService, producerService),
-    {
-      scheduled: true,
+    async () => {
+      try {
+        if (isRunning) {
+          genericLogger.info("Previous run still in progress. Skipping.");
+          return;
+        }
+        isRunning = true;
+        await processTask(operationsService, producerService);
+      } finally {
+        isRunning = false;
+      }
     },
+    { scheduled: true },
   )
   .start();
