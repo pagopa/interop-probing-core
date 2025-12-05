@@ -30,8 +30,9 @@ export const ChartWrapper: React.FC<ChartWrapperProps> = ({ eserviceId, pollingF
   const { data: eservicesTelemetry, isInitialLoading } = MonitoringQueries.useGetTelemetryData({
     eserviceId,
     pollingFrequency,
-  })
-
+    },
+    { enabled: !jwt }
+  )
   const {
     filtersParams: { startDate, endDate },
     ...handlers
@@ -96,7 +97,7 @@ export const ChartWrapper: React.FC<ChartWrapperProps> = ({ eserviceId, pollingF
       },
       eserviceId,
       {
-        enabled: hasValidFilters,
+        enabled: hasValidFilters && !!jwt,
       }
     )
 
