@@ -26,7 +26,7 @@ export const { routes, reactRouterDOMRoutes, hooks, components, utils } = new In
   })
   .addRoute({
     key: 'MONITORING_DETAIL',
-    path: '/monitoring/:id',
+    path: '/monitoraggio/:id',
     element: <MonitoringDetailPage />,
     public: true,
     authLevels: ['admin'],
