@@ -65,7 +65,8 @@ jobs:
           EOF
 
       - name: Publish package to NPM
+        env:
+            NODE_AUTH_TOKEN: ${{ secrets.NPM_KEY }}
         run: |
           cd packages/probing-frontend/dist
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_KEY }}" > .npmrc
           npm publish --provenance --access public
