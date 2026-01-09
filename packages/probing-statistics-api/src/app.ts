@@ -33,8 +33,6 @@ export function createApp(statisticsService: StatisticsService) {
     }),
   );
 
-  app.use(cors());
-
   app.use(
     helmet.hsts({
       includeSubDomains: true,
@@ -49,12 +47,12 @@ export function createApp(statisticsService: StatisticsService) {
   const corsOptions: CorsOptions = {
     origin: config.corsOriginAllowed,
     methods: ["POST", "PUT", "GET", "OPTIONS", "DELETE"],
-    allowedHeaders: "*",
+    allowedHeaders: ["Content-Type", "Authorization"],
   };
+  app.use(cors(corsOptions));
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
-  app.use(cors(corsOptions));
 
   app.use(healthRouter);
   app.use(loggerMiddleware(config.applicationName));
