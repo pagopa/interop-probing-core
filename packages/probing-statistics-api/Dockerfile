@@ -22,6 +22,10 @@ COPY ./packages/models /app/packages/models
 RUN pnpm build
 RUN rm -rf /app/packages/probing-statistics-api/dist/test
 
+RUN groupadd -r app && useradd -rm -g app app
+RUN chown -R app:app /app && chmod -R 700 /app
+USER app
+
 WORKDIR /app/packages/probing-statistics-api
 
 CMD [ "node", "." ]

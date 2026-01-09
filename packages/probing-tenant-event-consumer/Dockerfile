@@ -27,6 +27,10 @@ COPY ./packages/clients/eservice-operations /app/packages/clients/eservice-opera
 RUN pnpm build
 RUN rm -rf /app/packages/probing-tenant-event-consumer/dist/test
 
+RUN groupadd -r app && useradd -rm -g app app
+RUN chown -R app:app /app && chmod -R 700 /app
+USER app
+
 WORKDIR /app/packages/probing-tenant-event-consumer
 
 CMD [ "node", "." ]
