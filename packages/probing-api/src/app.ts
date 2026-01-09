@@ -3,6 +3,7 @@ import express from "express";
 import cors, { CorsOptions } from "cors";
 import {
   contextMiddleware,
+  errorsToApiProblemsMiddleware,
   loggerMiddleware,
   queryParamsMiddleware,
   zodiosCtx,
@@ -52,6 +53,7 @@ export function createApp(operationsService: OperationsService) {
     allowedHeaders: "*",
   };
 
+  app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
   app.use(cors(corsOptions));
 
@@ -60,6 +62,8 @@ export function createApp(operationsService: OperationsService) {
   app.use(contextMiddleware(config.applicationName));
   app.use(loggerMiddleware(config.applicationName));
   app.use(eServiceRouter(zodiosCtx, operationsService));
+
+  app.use(errorsToApiProblemsMiddleware);
 
   return app;
 }
