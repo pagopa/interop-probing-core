@@ -1,5 +1,6 @@
 import {
   contextMiddleware,
+  errorsToApiProblemsMiddleware,
   loggerMiddleware,
   zodiosCtx,
 } from "pagopa-interop-probing-commons";
@@ -59,6 +60,8 @@ export function createApp(statisticsService: StatisticsService) {
   app.use(loggerMiddleware(config.applicationName));
   app.use(contextMiddleware(config.applicationName));
   app.use(statisticsRouter(zodiosCtx, statisticsService));
+
+  app.use(errorsToApiProblemsMiddleware);
 
   return app;
 }
