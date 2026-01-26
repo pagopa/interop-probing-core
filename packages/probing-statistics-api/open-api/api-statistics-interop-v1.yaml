@@ -89,6 +89,8 @@ paths:
 
   "/telemetryData/eservices/filtered/{eserviceRecordId}":
     get:
+      security:
+        - bearerAuth: []
       summary: Retrieve filtered e-service statistics
       description: "Retrieve filtered e-service statistics"
       tags:
@@ -290,3 +292,10 @@ components:
       required:
         - code
         - detail
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      description: "A bearer token in the format of a JWS and conformed to the specifications included in [RFC8725](https://tools.ietf.org/html/RFC8725)."
+      scheme: bearer
+      bearerFormat: JWT
