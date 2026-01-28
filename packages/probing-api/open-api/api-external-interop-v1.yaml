@@ -37,6 +37,8 @@ paths:
 
   "/eservices/{eserviceId}/versions/{versionId}/updateState":
     post:
+      security:
+        - bearerAuth: []
       summary: Updates the state of an e-service.
       description: >-
         Updates the state of the e-service identified by its id and version id.
@@ -105,6 +107,8 @@ paths:
 
   "/eservices/{eserviceId}/versions/{versionId}/probing/updateState":
     post:
+      security:
+        - bearerAuth: []
       summary: Activates or deactivates the probing polling process for an e-service.
       description: >-
         Activates or deactivates the probing polling process for the e-service identified by its id and version id
@@ -173,6 +177,8 @@ paths:
 
   "/eservices/{eserviceId}/versions/{versionId}/updateFrequency":
     post:
+      security:
+        - bearerAuth: []
       summary: Updates the frequency and the time interval of an e-service's polling process.
       description: >-
         Updates the frequency and the time interval of the polling process for the e-service identified by its id and version id
@@ -716,3 +722,10 @@ components:
       required:
         - code
         - detail
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      description: "A bearer token in the format of a JWS and conformed to the specifications included in [RFC8725](https://tools.ietf.org/html/RFC8725)."
+      scheme: bearer
+      bearerFormat: JWT
