@@ -16,20 +16,21 @@ tags:
   - name: Telemetry
     description: >-
       Operations on EServices telemetry data
-  - name: Status
+  - name: Health
     description: >-
-      Operations about micro-service status
+      Verify service status
 
 paths:
   "/status":
     get:
       tags:
-        - Status
-      operationId: getHealthStatus
-      description: Get the micro-service status
+        - Health
+      summary: Health status endpoint
+      description: Return ok
+      operationId: getStatus
       responses:
-        "204":
-          description: The micro-service is running
+        "200":
+          description: successful operation
 
   "/telemetryData/eservices/{eserviceRecordId}":
     get:
