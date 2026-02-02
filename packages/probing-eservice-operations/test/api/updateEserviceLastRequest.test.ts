@@ -4,12 +4,12 @@ import { v4 as uuidv4 } from "uuid";
 import { api, eServiceService } from "../vitest.api.setup.js";
 import { genericError } from "pagopa-interop-probing-models";
 import { eServiceByRecordIdNotFound } from "../../src/model/domain/errors.js";
-import { ApiUpdateLastRequestPayload } from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 
 describe("post /eservices/{eserviceRecordId}/updateLastRequest router test", () => {
   const mockEserviceRecordId = 12345;
 
-  const validBody: ApiUpdateLastRequestPayload = {
+  const validBody: probingEserviceOperationsApi.ApiUpdateLastRequestPayload = {
     lastRequest: "2025-11-11T09:00:00Z",
   };
 
@@ -17,7 +17,7 @@ describe("post /eservices/{eserviceRecordId}/updateLastRequest router test", () 
 
   const makeRequest = async (
     eserviceRecordId: number | string = mockEserviceRecordId,
-    body: ApiUpdateLastRequestPayload = validBody,
+    body: probingEserviceOperationsApi.ApiUpdateLastRequestPayload = validBody,
   ) =>
     request(api)
       .post(`/eservices/${eserviceRecordId}/updateLastRequest`)
@@ -68,7 +68,7 @@ describe("post /eservices/{eserviceRecordId}/updateLastRequest router test", () 
     async ({ eserviceRecordId, body }) => {
       const res = await makeRequest(
         eserviceRecordId,
-        body as ApiUpdateLastRequestPayload,
+        body as probingEserviceOperationsApi.ApiUpdateLastRequestPayload,
       );
       expect(res.status).toBe(400);
     },

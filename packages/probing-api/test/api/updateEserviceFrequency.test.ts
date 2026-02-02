@@ -3,14 +3,14 @@ import { describe, it, expect, vi } from "vitest";
 import { v4 as uuidv4 } from "uuid";
 import { api, operationsService } from "../vitest.api.setup.js";
 import { genericError } from "pagopa-interop-probing-models";
-import { ProbingApiUpdateEserviceFrequencyPayload } from "../../src/model/types.js";
 import { eServiceByVersionIdNotFound } from "../../src/model/domain/errors.js";
+import { probingApi } from "pagopa-interop-probing-api-clients";
 
 describe("post /eservices/{eserviceId}/versions/{versionId}/updateFrequency router test", () => {
   const mockEserviceId = uuidv4();
   const mockVersionId = uuidv4();
 
-  const validBody: ProbingApiUpdateEserviceFrequencyPayload = {
+  const validBody: probingApi.ApiUpdateEserviceFrequencyPayload = {
     frequency: 15,
     startTime: "09:00:00",
     endTime: "18:00:00",
@@ -21,7 +21,7 @@ describe("post /eservices/{eserviceId}/versions/{versionId}/updateFrequency rout
   const makeRequest = async (
     eServiceId: string,
     versionId: string,
-    body: ProbingApiUpdateEserviceFrequencyPayload = validBody,
+    body: probingApi.ApiUpdateEserviceFrequencyPayload = validBody,
   ) =>
     request(api)
       .post(`/eservices/${eServiceId}/versions/${versionId}/updateFrequency`)
@@ -85,7 +85,7 @@ describe("post /eservices/{eserviceId}/versions/{versionId}/updateFrequency rout
       const res = await makeRequest(
         eServiceId,
         versionId,
-        body as ProbingApiUpdateEserviceFrequencyPayload,
+        body as probingApi.ApiUpdateEserviceFrequencyPayload,
       );
       expect(res.status).toBe(400);
     },

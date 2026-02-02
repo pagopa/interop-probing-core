@@ -1,14 +1,5 @@
 import { ZodiosInstance } from "@zodios/core";
-import {
-  Api,
-  ApiGetEservicesReadyForPollingHeaders,
-  ApiGetEservicesReadyForPollingQuery,
-  ApiGetEservicesReadyForPollingResponse,
-  ApiUpdateLastRequestHeaders,
-  ApiUpdateLastRequestParams,
-  ApiUpdateLastRequestPayload,
-  ApiUpdateLastRequestResponse,
-} from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 import {
   apiGetEservicesReadyForPollingError,
   apiUpdateLastRequestError,
@@ -20,14 +11,14 @@ import {
 } from "pagopa-interop-probing-commons";
 
 export const operationsServiceBuilder = (
-  operationsApiClient: ZodiosInstance<Api>,
+  operationsApiClient: ZodiosInstance<probingEserviceOperationsApi.EServiceApi>,
 ) => {
   return {
     async getEservicesReadyForPolling(
-      headers: ApiGetEservicesReadyForPollingHeaders,
-      query: ApiGetEservicesReadyForPollingQuery,
+      headers: probingEserviceOperationsApi.ApiGetEservicesReadyForPollingHeaders,
+      query: probingEserviceOperationsApi.ApiGetEservicesReadyForPollingQuery,
       ctx: WithSQSMessageId<AppContext>,
-    ): Promise<ApiGetEservicesReadyForPollingResponse> {
+    ): Promise<probingEserviceOperationsApi.ApiGetEservicesReadyForPollingResponse> {
       try {
         logger(ctx).info(
           `Performing getEservicesReadyForPolling with query parameters limit ${query.limit} offset ${query.offset}`,
@@ -41,11 +32,11 @@ export const operationsServiceBuilder = (
       }
     },
     async updateLastRequest(
-      headers: ApiUpdateLastRequestHeaders,
-      params: ApiUpdateLastRequestParams,
-      payload: ApiUpdateLastRequestPayload,
+      headers: probingEserviceOperationsApi.ApiUpdateLastRequestHeaders,
+      params: probingEserviceOperationsApi.ApiUpdateLastRequestParams,
+      payload: probingEserviceOperationsApi.ApiUpdateLastRequestPayload,
       ctx: WithSQSMessageId<AppContext>,
-    ): Promise<ApiUpdateLastRequestResponse> {
+    ): Promise<probingEserviceOperationsApi.ApiUpdateLastRequestResponse> {
       try {
         logger(ctx).info(
           `Performing updateLastRequest with eserviceRecordId ${params.eserviceRecordId}. Payload: ${JSON.stringify(payload)}`,

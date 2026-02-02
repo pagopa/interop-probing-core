@@ -1,10 +1,7 @@
 import { ProducerService } from "./services/producerService.js";
 import { OperationsService } from "./services/operationsService.js";
 import { config } from "./utilities/config.js";
-import {
-  ApiUpdateLastRequestParams,
-  ApiUpdateLastRequestPayload,
-} from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 import { AppContext, logger } from "pagopa-interop-probing-commons";
 import { correlationIdToHeader } from "pagopa-interop-probing-models";
 import { v4 as uuidv4 } from "uuid";
@@ -49,12 +46,14 @@ export async function processTask(
           correlationId: uuidv4(),
         };
 
-        const params: ApiUpdateLastRequestParams = {
-          eserviceRecordId: eservice.eserviceRecordId,
-        };
-        const payload: ApiUpdateLastRequestPayload = {
-          lastRequest: new Date().toISOString(),
-        };
+        const params: probingEserviceOperationsApi.ApiUpdateLastRequestParams =
+          {
+            eserviceRecordId: eservice.eserviceRecordId,
+          };
+        const payload: probingEserviceOperationsApi.ApiUpdateLastRequestPayload =
+          {
+            lastRequest: new Date().toISOString(),
+          };
         await operationsService.updateLastRequest(
           {
             ...correlationIdToHeader(eserviceCtx.correlationId),

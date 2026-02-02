@@ -15,15 +15,16 @@ servers:
 tags:
   - name: EServices
     description: Operations on EServices registry
-  - name: Probing
-    description: Operations on probing settings
+  - name: Tenants
+    description: Operations on tenants registry
+
 paths:
   "/eservices/{eserviceId}/versions/{versionId}/updateState":
     post:
       summary: Updates the state of an e-service.
       description: Updates the state of the e-service identified by its id and version id.
       tags:
-        - Write
+        - EServices
       operationId: updateEserviceState
       parameters:
         - in: header
@@ -71,7 +72,7 @@ paths:
                 status: 404
                 title: Resource Not Found
                 detail: The requested resource could not be found on the server.
-                traceId: string
+                correlationId: string
                 errors:
                   - code: 000-1234
                     detail: The requested resource could not be found on the server.
@@ -86,7 +87,7 @@ paths:
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
-                traceId: string
+                correlationId: string
                 errors:
                   - code: 000-1234
                     detail: >-
@@ -99,7 +100,7 @@ paths:
         Activates or deactivates the probing polling process for the e-service
         identified by its id and version id
       tags:
-        - Write
+        - EServices
       operationId: updateEserviceProbingState
       parameters:
         - in: header
@@ -147,7 +148,7 @@ paths:
                 status: 404
                 title: Resource Not Found
                 detail: The requested resource could not be found on the server.
-                traceId: string
+                correlationId: string
                 errors:
                   - code: 000-1234
                     detail: The requested resource could not be found on the server.
@@ -162,7 +163,7 @@ paths:
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
-                traceId: string
+                correlationId: string
                 errors:
                   - code: 000-1234
                     detail: >-
@@ -177,7 +178,7 @@ paths:
         Updates the frequency and the time interval of the polling process for
         the e-service identified by its id and version id
       tags:
-        - Write
+        - EServices
       operationId: updateEserviceFrequency
       parameters:
         - in: header
@@ -225,7 +226,7 @@ paths:
                 status: 404
                 title: Resource Not Found
                 detail: The requested resource could not be found on the server.
-                traceId: string
+                correlationId: string
                 errors:
                   - code: 000-1234
                     detail: The requested resource could not be found on the server.
@@ -240,7 +241,7 @@ paths:
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
-                traceId: string
+                correlationId: string
                 errors:
                   - code: 000-1234
                     detail: >-
@@ -251,7 +252,7 @@ paths:
       summary: Retrieve e-services by filters
       description: Retrieve e-services by filters
       tags:
-        - Read
+        - EServices
       operationId: searchEservices
       parameters:
         - in: header
@@ -325,7 +326,7 @@ paths:
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
-                traceId: string
+                correlationId: string
                 errors:
                   - code: 000-1234
                     detail: >-
@@ -336,7 +337,7 @@ paths:
       summary: Retrieve e-service main data
       description: Retrieve e-service main data
       tags:
-        - Read
+        - EServices
       operationId: getEserviceMainData
       parameters:
         - in: header
@@ -376,7 +377,7 @@ paths:
                 status: 404
                 title: Resource Not Found
                 detail: The requested resource could not be found on the server.
-                traceId: string
+                correlationId: string
                 errors:
                   - code: 000-1234
                     detail: The requested resource could not be found on the server.
@@ -391,7 +392,7 @@ paths:
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
-                traceId: string
+                correlationId: string
                 errors:
                   - code: 000-1234
                     detail: >-
@@ -402,7 +403,7 @@ paths:
       summary: Retrieve e-service probing data
       description: Retrieve e-service probing data
       tags:
-        - Read
+        - EServices
       operationId: getEserviceProbingData
       parameters:
         - in: header
@@ -442,7 +443,7 @@ paths:
                 status: 404
                 title: Resource Not Found
                 detail: The requested resource could not be found on the server.
-                traceId: string
+                correlationId: string
                 errors:
                   - code: 000-1234
                     detail: The requested resource could not be found on the server.
@@ -457,7 +458,7 @@ paths:
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
-                traceId: string
+                correlationId: string
                 errors:
                   - code: 000-1234
                     detail: >-
@@ -468,7 +469,7 @@ paths:
       summary: Retrieve e-services producers
       description: Retrieve e-services producers
       tags:
-        - Read
+        - EServices
       operationId: getEservicesProducers
       parameters:
         - in: header
@@ -521,7 +522,7 @@ paths:
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
-                traceId: string
+                correlationId: string
                 errors:
                   - code: 000-1234
                     detail: >-
@@ -553,7 +554,7 @@ paths:
             type: string
             format: uuid
       tags:
-        - Write
+        - EServices
       requestBody:
         required: true
         content:
@@ -586,7 +587,7 @@ paths:
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
-                traceId: string
+                correlationId: string
                 errors:
                   - code: 000-1234
                     detail: >-
@@ -610,7 +611,7 @@ paths:
             type: string
             format: uuid
       tags:
-        - Write
+        - EServices
       responses:
         "204":
           description: No content
@@ -637,7 +638,7 @@ paths:
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
-                traceId: string
+                correlationId: string
                 errors:
                   - code: 000-1234
                     detail: >-
@@ -648,7 +649,7 @@ paths:
       summary: Retrieve e-services ready for polling
       description: Retrieve e-services ready for polling
       tags:
-        - Read
+        - EServices
       operationId: getEservicesReadyForPolling
       parameters:
         - in: header
@@ -697,7 +698,7 @@ paths:
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
-                traceId: string
+                correlationId: string
                 errors:
                   - code: 000-1234
                     detail: >-
@@ -708,7 +709,7 @@ paths:
       summary: Update last request of the eservice
       description: Update last request of the eservice
       tags:
-        - Write
+        - EServices
       operationId: updateEserviceLastRequest
       parameters:
         - in: header
@@ -755,7 +756,7 @@ paths:
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
-                traceId: string
+                correlationId: string
                 errors:
                   - code: 000-1234
                     detail: >-
@@ -766,7 +767,7 @@ paths:
       summary: Update response received of the eservice
       description: Update response received of the eservice
       tags:
-        - Write
+        - EServices
       operationId: updateEserviceResponseReceived
       parameters:
         - in: header
@@ -813,7 +814,7 @@ paths:
                 status: 500
                 title: Internal Server Error
                 detail: There is a problem processing the request on the server.
-                traceId: string
+                correlationId: string
                 errors:
                   - code: 000-1234
                     detail: >-
@@ -1254,7 +1255,6 @@ components:
         - type
         - status
         - title
-        - errors
     ProblemError:
       type: object
       properties:

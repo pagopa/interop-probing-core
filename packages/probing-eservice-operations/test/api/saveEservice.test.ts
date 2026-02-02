@@ -8,13 +8,13 @@ import {
   EserviceTechnology,
 } from "pagopa-interop-probing-models";
 import { eServiceByVersionIdNotFound } from "../../src/model/domain/errors.js";
-import { ApiSaveEservicePayload } from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 
 describe("post /eservices/{eServiceId}/versions/{versionId}/saveEservice router test", () => {
   const mockEserviceId = uuidv4();
   const mockVersionId = uuidv4();
 
-  const validBody: ApiSaveEservicePayload = {
+  const validBody: probingEserviceOperationsApi.ApiSaveEservicePayload = {
     name: "Test Eservice",
     producerId: uuidv4(),
     basePath: ["/api/v1/test"],
@@ -29,7 +29,7 @@ describe("post /eservices/{eServiceId}/versions/{versionId}/saveEservice router 
   const makeRequest = async (
     eServiceId: string = mockEserviceId,
     versionId: string = mockVersionId,
-    body: ApiSaveEservicePayload = validBody,
+    body: probingEserviceOperationsApi.ApiSaveEservicePayload = validBody,
   ) =>
     request(api)
       .post(`/eservices/${eServiceId}/versions/${versionId}/saveEservice`)
@@ -122,7 +122,7 @@ describe("post /eservices/{eServiceId}/versions/{versionId}/saveEservice router 
       const res = await makeRequest(
         eServiceId,
         versionId,
-        body as ApiSaveEservicePayload,
+        body as probingEserviceOperationsApi.ApiSaveEservicePayload,
       );
       expect(res.status).toBe(400);
     },

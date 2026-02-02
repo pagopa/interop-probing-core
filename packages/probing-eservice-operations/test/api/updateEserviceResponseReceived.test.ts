@@ -4,21 +4,22 @@ import { v4 as uuidv4 } from "uuid";
 import { api, eServiceService } from "../vitest.api.setup.js";
 import { genericError, EserviceStatus } from "pagopa-interop-probing-models";
 import { eServiceByRecordIdNotFound } from "../../src/model/domain/errors.js";
-import { ApiUpdateResponseReceivedPayload } from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 
 describe("post /eservices/{eserviceRecordId}/updateResponseReceived router test", () => {
   const mockEserviceRecordId = 7890;
 
-  const validBody: ApiUpdateResponseReceivedPayload = {
-    responseReceived: "2025-11-11T10:00:00Z",
-    status: EserviceStatus.Values.OK,
-  };
+  const validBody: probingEserviceOperationsApi.ApiUpdateResponseReceivedPayload =
+    {
+      responseReceived: "2025-11-11T10:00:00Z",
+      status: EserviceStatus.Values.OK,
+    };
 
   eServiceService.updateResponseReceived = vi.fn().mockResolvedValue({});
 
   const makeRequest = async (
     eserviceRecordId: number | string = mockEserviceRecordId,
-    body: ApiUpdateResponseReceivedPayload = validBody,
+    body: probingEserviceOperationsApi.ApiUpdateResponseReceivedPayload = validBody,
   ) =>
     request(api)
       .post(`/eservices/${eserviceRecordId}/updateResponseReceived`)
@@ -76,7 +77,7 @@ describe("post /eservices/{eserviceRecordId}/updateResponseReceived router test"
     async ({ eserviceRecordId, body }) => {
       const res = await makeRequest(
         eserviceRecordId,
-        body as ApiUpdateResponseReceivedPayload,
+        body as probingEserviceOperationsApi.ApiUpdateResponseReceivedPayload,
       );
       expect(res.status).toBe(400);
     },

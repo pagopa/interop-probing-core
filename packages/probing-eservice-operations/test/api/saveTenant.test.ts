@@ -4,12 +4,12 @@ import { v4 as uuidv4 } from "uuid";
 import { api, tenantService } from "../vitest.api.setup.js";
 import { genericError } from "pagopa-interop-probing-models";
 import { tenantNotFound } from "../../src/model/domain/errors.js";
-import { ApiSaveTenantPayload } from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 
 describe("post /tenants/{tenantId}/saveTenant router test", () => {
   const mockTenantId = uuidv4();
 
-  const validBody: ApiSaveTenantPayload = {
+  const validBody: probingEserviceOperationsApi.ApiSaveTenantPayload = {
     name: "PagoPA",
   };
 
@@ -17,7 +17,7 @@ describe("post /tenants/{tenantId}/saveTenant router test", () => {
 
   const makeRequest = async (
     tenantId: string = mockTenantId,
-    body: ApiSaveTenantPayload = validBody,
+    body: probingEserviceOperationsApi.ApiSaveTenantPayload = validBody,
   ) =>
     request(api)
       .post(`/tenants/${tenantId}/saveTenant`)
@@ -63,7 +63,10 @@ describe("post /tenants/{tenantId}/saveTenant router test", () => {
   ])(
     "should return 400 if invalid payload or params are provided: %s",
     async ({ tenantId, body }) => {
-      const res = await makeRequest(tenantId, body as ApiSaveTenantPayload);
+      const res = await makeRequest(
+        tenantId,
+        body as probingEserviceOperationsApi.ApiSaveTenantPayload,
+      );
       expect(res.status).toBe(400);
     },
   );

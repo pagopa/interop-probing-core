@@ -4,14 +4,15 @@ import cors, { CorsOptions } from "cors";
 import {
   contextMiddleware,
   errorsToApiProblemsMiddleware,
+  healthRouter,
   loggerMiddleware,
   queryParamsMiddleware,
   zodiosCtx,
 } from "pagopa-interop-probing-commons";
 import eServiceRouter from "./routers/eserviceRouter.js";
-import healthRouter from "./routers/healthRouter.js";
 import { config } from "./utilities/config.js";
 import { OperationsService } from "./services/operationsService.js";
+import { probingApi } from "pagopa-interop-probing-api-clients";
 
 export function createApp(operationsService: OperationsService) {
   const app = zodiosCtx.app();
@@ -55,9 +56,9 @@ export function createApp(operationsService: OperationsService) {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  app.use(healthRouter);
   app.use(queryParamsMiddleware);
   app.use(contextMiddleware(config.applicationName));
+  app.use(healthRouter(probingApi.HealthApi.api));
   app.use(loggerMiddleware(config.applicationName));
   app.use(eServiceRouter(zodiosCtx, operationsService));
 

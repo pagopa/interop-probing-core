@@ -17,23 +17,26 @@ tags:
   - name: EServices
     description: >-
       Operations on EServices registry
-  - name: Producers
+  - name: Health
     description: >-
-      Operations on probing settings
-  - name: Status
-    description: >-
-      Operations about micro-service status
+      Verify service status
 
 paths:
   "/status":
     get:
+      security: []
+      summary: Returns the application status
+      description: Returns the application status
+      operationId: getStatus
       tags:
-        - Status
-      operationId: getHealthStatus
-      description: Get the micro-service status
+        - Health
       responses:
-        "204":
-          description: The micro-service is running
+        "200":
+          description: The service is up and running
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
 
   "/eservices/{eserviceId}/versions/{versionId}/updateState":
     post:
@@ -96,7 +99,7 @@ paths:
                 status: 500
                 title: "Internal Server Error"
                 detail: "There is a problem processing the request on the server."
-                traceId: "string"
+                correlationId: "string"
                 errors:
                   [
                     {
@@ -166,7 +169,7 @@ paths:
                 status: 500
                 title: "Internal Server Error"
                 detail: "There is a problem processing the request on the server."
-                traceId: "string"
+                correlationId: "string"
                 errors:
                   [
                     {
@@ -236,7 +239,7 @@ paths:
                 status: 500
                 title: "Internal Server Error"
                 detail: "There is a problem processing the request on the server."
-                traceId: "string"
+                correlationId: "string"
                 errors:
                   [
                     {
@@ -322,7 +325,7 @@ paths:
                 status: 500
                 title: "Internal Server Error"
                 detail: "There is a problem processing the request on the server."
-                traceId: "string"
+                correlationId: "string"
                 errors:
                   [
                     {
@@ -336,7 +339,7 @@ paths:
       summary: Retrieve e-services producers
       description: Retrieve e-services producers
       tags:
-        - Producers
+        - EServices
       operationId: getEservicesProducers
       parameters:
         - name: limit
@@ -389,7 +392,7 @@ paths:
                 status: 500
                 title: "Internal Server Error"
                 detail: "There is a problem processing the request on the server."
-                traceId: "string"
+                correlationId: "string"
                 errors:
                   [
                     {
@@ -448,7 +451,7 @@ paths:
                 status: 500
                 title: "Internal Server Error"
                 detail: "There is a problem processing the request on the server."
-                traceId: "string"
+                correlationId: "string"
                 errors:
                   [
                     {
@@ -507,7 +510,7 @@ paths:
                 status: 500
                 title: "Internal Server Error"
                 detail: "There is a problem processing the request on the server."
-                traceId: "string"
+                correlationId: "string"
                 errors:
                   [
                     {
@@ -690,7 +693,7 @@ components:
           maxLength: 4096
           pattern: "^.{0,1024}$"
           type: string
-        traceId:
+        correlationId:
           type: string
           nullable: false
         errors:
@@ -700,9 +703,9 @@ components:
             $ref: "#/components/schemas/ProblemError"
       additionalProperties: false
       required:
+        - type
         - status
         - title
-        - errors
 
     ProblemError:
       properties:

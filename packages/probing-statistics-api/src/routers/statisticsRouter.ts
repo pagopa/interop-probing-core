@@ -8,14 +8,14 @@ import {
   zodiosValidationErrorToApiProblem,
 } from "pagopa-interop-probing-commons";
 import { StatisticsService } from "../services/statisticsService.js";
-import { api } from "../model/generated/api.js";
 import { errorMapper } from "../utilities/errorMapper.js";
+import { probingStatisticsApi } from "pagopa-interop-probing-api-clients";
 
 const statisticsRouter = (
   ctx: ZodiosContext,
   statisticsService: StatisticsService,
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
-  const router = ctx.router(api.api, {
+  const router = ctx.router(probingStatisticsApi.TelemetryApi.api, {
     validationErrorHandler: zodiosValidationErrorToApiProblem,
   });
 

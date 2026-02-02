@@ -4,19 +4,20 @@ import { api, eServiceService } from "../vitest.api.setup.js";
 import { v4 as uuidv4 } from "uuid";
 import { genericError } from "pagopa-interop-probing-models";
 import { eServiceByRecordIdNotFound } from "../../src/model/domain/errors.js";
-import { ApiGetEserviceMainDataResponse } from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 
 describe("get /eservices/mainData/{eserviceRecordId} router test", () => {
   const mockEserviceRecordId = 123;
 
-  const mockResponse: ApiGetEserviceMainDataResponse = {
-    eserviceName: "eService",
-    versionNumber: 2,
-    producerName: "PagoPA",
-    pollingFrequency: 15,
-    versionId: uuidv4(),
-    eserviceId: uuidv4(),
-  };
+  const mockResponse: probingEserviceOperationsApi.ApiGetEserviceMainDataResponse =
+    {
+      eserviceName: "eService",
+      versionNumber: 2,
+      producerName: "PagoPA",
+      pollingFrequency: 15,
+      versionId: uuidv4(),
+      eserviceId: uuidv4(),
+    };
 
   eServiceService.getEserviceMainData = vi.fn().mockResolvedValue(mockResponse);
 

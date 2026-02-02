@@ -35,7 +35,7 @@
     "dotenv-flow": "4.1.0",
     "node-cron": "3.0.3",
     "pagopa-interop-probing-commons": "workspace:*",
-    "pagopa-interop-probing-eservice-operations-client": "workspace:*",
+    "pagopa-interop-probing-api-clients": "workspace:*",
     "pagopa-interop-probing-models": "workspace:*",
     "ts-pattern": "5.1.2",
     "uuid": "13.0.0",

@@ -2,52 +2,48 @@ import request from "supertest";
 import { describe, it, expect, vi } from "vitest";
 import { v4 as uuidv4 } from "uuid";
 import { api, statisticsService } from "../vitest.api.setup.js";
-
 import { genericError } from "pagopa-interop-probing-models";
-import {
-  ApiFilteredStatisticsEservicesResponse,
-  ApiFilteredStatisticsEservicesParams,
-  ApiFilteredStatisticsEservicesQuery,
-} from "../../src/model/types.js";
+import { probingStatisticsApi } from "pagopa-interop-probing-api-clients";
 
 describe("get /telemetryData/eservices/filtered/:eserviceRecordId router test", () => {
-  const mockResponse: ApiFilteredStatisticsEservicesResponse = {
-    performances: [
-      {
-        responseTime: 120,
-        time: "2025-11-11T09:00:00Z",
-      },
-      {
-        responseTime: 0,
-        time: "2025-11-11T09:05:00Z",
-      },
-      {
-        responseTime: 0,
-        time: "2025-11-11T09:10:00Z",
-      },
-    ],
-    failures: [
-      {
-        status: "KO",
-        time: "2025-11-11T09:05:00Z",
-      },
-      {
-        status: "N_D",
-        time: "2025-11-11T09:10:00Z",
-      },
-    ],
-    percentages: [
-      { status: "OK", value: 33.33 },
-      { status: "KO", value: 33.33 },
-      { status: "N_D", value: 33.33 },
-    ],
-  };
+  const mockResponse: probingStatisticsApi.ApiFilteredStatisticsEservicesResponse =
+    {
+      performances: [
+        {
+          responseTime: 120,
+          time: "2025-11-11T09:00:00Z",
+        },
+        {
+          responseTime: 0,
+          time: "2025-11-11T09:05:00Z",
+        },
+        {
+          responseTime: 0,
+          time: "2025-11-11T09:10:00Z",
+        },
+      ],
+      failures: [
+        {
+          status: "KO",
+          time: "2025-11-11T09:05:00Z",
+        },
+        {
+          status: "N_D",
+          time: "2025-11-11T09:10:00Z",
+        },
+      ],
+      percentages: [
+        { status: "OK", value: 33.33 },
+        { status: "KO", value: 33.33 },
+        { status: "N_D", value: 33.33 },
+      ],
+    };
 
-  const params: ApiFilteredStatisticsEservicesParams = {
+  const params: probingStatisticsApi.ApiFilteredStatisticsEservicesParams = {
     eserviceRecordId: 1,
   };
 
-  const validQuery: ApiFilteredStatisticsEservicesQuery = {
+  const validQuery: probingStatisticsApi.ApiFilteredStatisticsEservicesQuery = {
     pollingFrequency: 5,
     startDate: "2025-11-11T09:00:00Z",
     endDate: "2025-11-11T10:00:00Z",
@@ -58,7 +54,7 @@ describe("get /telemetryData/eservices/filtered/:eserviceRecordId router test", 
     .mockResolvedValue(mockResponse);
 
   const makeRequest = async (
-    pathParams: ApiFilteredStatisticsEservicesParams = params,
+    pathParams: probingStatisticsApi.ApiFilteredStatisticsEservicesParams = params,
     query: Record<string, unknown> = validQuery,
   ) =>
     request(api)
@@ -111,8 +107,8 @@ describe("get /telemetryData/eservices/filtered/:eserviceRecordId router test", 
     "should return 400 if invalid request params or query params: %s",
     async ({ params: invalidParams, query }) => {
       const res = await makeRequest(
-        invalidParams as ApiFilteredStatisticsEservicesParams,
-        query as ApiFilteredStatisticsEservicesQuery,
+        invalidParams as probingStatisticsApi.ApiFilteredStatisticsEservicesParams,
+        query as probingStatisticsApi.ApiFilteredStatisticsEservicesQuery,
       );
 
       expect(res.status).toBe(400);

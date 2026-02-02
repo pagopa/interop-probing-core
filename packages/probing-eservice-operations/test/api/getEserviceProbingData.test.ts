@@ -8,19 +8,20 @@ import {
   genericError,
 } from "pagopa-interop-probing-models";
 import { eServiceByRecordIdNotFound } from "../../src/model/domain/errors.js";
-import { ApiGetEserviceProbingDataResponse } from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 
 describe("get /eservices/probingData/{eserviceRecordId} router test", () => {
   const mockEserviceRecordId = 123;
 
-  const mockResponse: ApiGetEserviceProbingDataResponse = {
-    probingEnabled: true,
-    state: EserviceInteropState.Values.ACTIVE,
-    responseReceived: "2025-11-11T09:00:00Z",
-    lastRequest: "2025-11-11T08:55:00Z",
-    responseStatus: EserviceStatus.Values.OK,
-    pollingFrequency: 10,
-  };
+  const mockResponse: probingEserviceOperationsApi.ApiGetEserviceProbingDataResponse =
+    {
+      probingEnabled: true,
+      state: EserviceInteropState.Values.ACTIVE,
+      responseReceived: "2025-11-11T09:00:00Z",
+      lastRequest: "2025-11-11T08:55:00Z",
+      responseStatus: EserviceStatus.Values.OK,
+      pollingFrequency: 10,
+    };
 
   eServiceService.getEserviceProbingData = vi
     .fn()

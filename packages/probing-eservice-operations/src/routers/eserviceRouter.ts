@@ -7,14 +7,16 @@ import {
   logger,
 } from "pagopa-interop-probing-commons";
 import { EserviceService } from "../services/eserviceService.js";
-import { api } from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 import { errorMapper } from "../utilities/errorMapper.js";
 
 const eServiceRouter = (
   ctx: ZodiosContext,
   eServiceService: EserviceService,
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
-  const eServiceRouter = ctx.router(api.api);
+  const eServiceRouter = ctx.router(
+    probingEserviceOperationsApi.EServicesApi.api,
+  );
 
   eServiceRouter
     .post(

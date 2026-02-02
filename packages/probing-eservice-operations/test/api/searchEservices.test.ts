@@ -7,34 +7,32 @@ import {
   EserviceMonitorState,
   genericError,
 } from "pagopa-interop-probing-models";
-import {
-  ApiSearchEservicesResponse,
-  ApiSearchEservicesQuery,
-} from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 
 describe("get /eservices router test", () => {
-  const mockResponse: ApiSearchEservicesResponse = {
-    content: [
-      {
-        eserviceRecordId: 1,
-        eserviceName: "eService",
-        producerName: "PagoPA",
-        responseReceived: "2025-11-11T09:00:00Z",
-        state: EserviceInteropState.Values.ACTIVE,
-        versionNumber: 2,
-        basePath: ["/api/services"],
-        technology: "REST",
-        pollingFrequency: 15,
-        probingEnabled: true,
-        audience: ["pagopa.it"],
-      },
-    ],
-    offset: 0,
-    limit: 10,
-    totalElements: 1,
-  };
+  const mockResponse: probingEserviceOperationsApi.ApiSearchEservicesResponse =
+    {
+      content: [
+        {
+          eserviceRecordId: 1,
+          eserviceName: "eService",
+          producerName: "PagoPA",
+          responseReceived: "2025-11-11T09:00:00Z",
+          state: EserviceInteropState.Values.ACTIVE,
+          versionNumber: 2,
+          basePath: ["/api/services"],
+          technology: "REST",
+          pollingFrequency: 15,
+          probingEnabled: true,
+          audience: ["pagopa.it"],
+        },
+      ],
+      offset: 0,
+      limit: 10,
+      totalElements: 1,
+    };
 
-  const validQuery: ApiSearchEservicesQuery = {
+  const validQuery: probingEserviceOperationsApi.ApiSearchEservicesQuery = {
     limit: 10,
     offset: 0,
     eserviceName: "eService",

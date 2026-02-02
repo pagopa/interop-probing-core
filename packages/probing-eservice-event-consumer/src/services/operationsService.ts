@@ -1,14 +1,5 @@
 import { ZodiosInstance } from "@zodios/core";
-import {
-  Api,
-  ApiSaveEserviceHeaders,
-  ApiSaveEservicePayload,
-  ApiSaveEserviceResponse,
-  ApiDeleteEserviceHeaders,
-  ApiDeleteEserviceParams,
-  ApiDeleteEserviceResponse,
-  ApiSaveEserviceParams,
-} from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 import {
   errorSaveEservice,
   errorDeleteEservice,
@@ -16,23 +7,22 @@ import {
 import { Logger } from "pagopa-interop-probing-commons";
 
 export const operationsServiceBuilder = (
-  operationsApiClient: ZodiosInstance<Api>,
+  operationsApiClient: ZodiosInstance<probingEserviceOperationsApi.EServiceApi>,
 ) => {
   return {
     async saveEservice(
-      headers: ApiSaveEserviceHeaders,
-      params: ApiSaveEserviceParams,
-      data: ApiSaveEservicePayload,
+      headers: probingEserviceOperationsApi.ApiSaveEserviceHeaders,
+      params: probingEserviceOperationsApi.ApiSaveEserviceParams,
+      data: probingEserviceOperationsApi.ApiSaveEservicePayload,
       logger: Logger,
-    ): Promise<ApiSaveEserviceResponse> {
+    ): Promise<probingEserviceOperationsApi.ApiSaveEserviceResponse> {
       try {
         logger.info(
-          `eService saved with eserviceId: ${data.eserviceId}, versionId: ${params.versionId}, tenantId: ${data.producerId}.`,
+          `eService saved with eserviceId: ${params.eserviceId}, versionId: ${params.versionId}, tenantId: ${data.producerId}.`,
         );
 
         await operationsApiClient.saveEservice(
           {
-            eserviceId: data.eserviceId,
             producerId: data.producerId,
             name: data.name,
             basePath: data.basePath,
@@ -51,10 +41,10 @@ export const operationsServiceBuilder = (
       }
     },
     async deleteEservice(
-      headers: ApiDeleteEserviceHeaders,
-      params: ApiDeleteEserviceParams,
+      headers: probingEserviceOperationsApi.ApiDeleteEserviceHeaders,
+      params: probingEserviceOperationsApi.ApiDeleteEserviceParams,
       logger: Logger,
-    ): Promise<ApiDeleteEserviceResponse> {
+    ): Promise<probingEserviceOperationsApi.ApiDeleteEserviceResponse> {
       try {
         logger.info(`eService deleted with eserviceId: ${params.eserviceId}.`);
 

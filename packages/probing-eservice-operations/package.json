@@ -42,7 +42,7 @@
     "drizzle-orm": "0.44.7",
     "express": "4.21.2",
     "pagopa-interop-probing-commons": "workspace:*",
-    "pagopa-interop-probing-eservice-operations-client": "workspace:*",
+    "pagopa-interop-probing-api-clients": "workspace:*",
     "pagopa-interop-probing-models": "workspace:*",
     "pg": "8.15.6",
     "ts-pattern": "5.1.2",

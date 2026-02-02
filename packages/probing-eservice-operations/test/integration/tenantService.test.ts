@@ -1,9 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { v4 as uuidv4 } from "uuid";
-import {
-  ApiSaveTenantParams,
-  ApiSaveTenantPayload,
-} from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 import { tenantsInProbing } from "../../src/db/drizzle/schema.js";
 import { eq } from "drizzle-orm";
 import { db, tenantService } from "../utils.js";
@@ -12,10 +9,10 @@ import { tenantNotFound } from "../../src/model/domain/errors.js";
 describe("Tenant service", async () => {
   describe("saveTenant", () => {
     it("should save an tenant successfully", async () => {
-      const tenantParams: ApiSaveTenantParams = {
+      const tenantParams: probingEserviceOperationsApi.ApiSaveTenantParams = {
         tenantId: uuidv4(),
       };
-      const tenantPayload: ApiSaveTenantPayload = {
+      const tenantPayload: probingEserviceOperationsApi.ApiSaveTenantPayload = {
         name: "tenant name",
       };
 
@@ -31,10 +28,10 @@ describe("Tenant service", async () => {
     });
 
     it("should update name of existing tenant successfully", async () => {
-      const tenantParams: ApiSaveTenantParams = {
+      const tenantParams: probingEserviceOperationsApi.ApiSaveTenantParams = {
         tenantId: uuidv4(),
       };
-      const tenantPayload: ApiSaveTenantPayload = {
+      const tenantPayload: probingEserviceOperationsApi.ApiSaveTenantPayload = {
         name: "tenant 001",
       };
 
@@ -66,14 +63,17 @@ describe("Tenant service", async () => {
       await expect(
         tenantService.saveTenant(
           invalidTenantParams,
-          {} as ApiSaveTenantPayload,
+          {} as probingEserviceOperationsApi.ApiSaveTenantPayload,
         ),
       ).rejects.toThrow();
     });
 
     it("should throw when saving tenant with missing name", async () => {
-      const tenantParams: ApiSaveTenantParams = { tenantId: uuidv4() };
-      const invalidPayload = {} as ApiSaveTenantPayload;
+      const tenantParams: probingEserviceOperationsApi.ApiSaveTenantParams = {
+        tenantId: uuidv4(),
+      };
+      const invalidPayload =
+        {} as probingEserviceOperationsApi.ApiSaveTenantPayload;
 
       await expect(
         tenantService.saveTenant(tenantParams, invalidPayload),
@@ -91,10 +91,10 @@ describe("Tenant service", async () => {
 
   describe("deleteTenant", () => {
     it("should delete an tenant successfully", async () => {
-      const tenantParams: ApiSaveTenantParams = {
+      const tenantParams: probingEserviceOperationsApi.ApiSaveTenantParams = {
         tenantId: uuidv4(),
       };
-      const tenantPayload: ApiSaveTenantPayload = {
+      const tenantPayload: probingEserviceOperationsApi.ApiSaveTenantPayload = {
         name: "tenant 001",
       };
 

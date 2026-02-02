@@ -1,35 +1,24 @@
 import { ZodiosInstance } from "@zodios/core";
-import {
-  Api,
-  ApiDeleteTenantResponse,
-  ApiDeleteTenantHeaders,
-  ApiDeleteTenantParams,
-  ApiSaveTenantPayload,
-  ApiSaveTenantHeaders,
-  ApiSaveTenantResponse,
-  ApiSaveTenantParams,
-} from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 import { errorDeleteTenant, errorSaveTenant } from "../models/domain/errors.js";
 import { Logger } from "pagopa-interop-probing-commons";
 
 export const operationsServiceBuilder = (
-  operationsApiClient: ZodiosInstance<Api>,
+  operationsApiClient: ZodiosInstance<probingEserviceOperationsApi.TenantApi>,
 ) => {
   return {
     async saveTenant(
-      headers: ApiSaveTenantHeaders,
-      params: ApiSaveTenantParams,
-      data: ApiSaveTenantPayload,
+      headers: probingEserviceOperationsApi.ApiSaveTenantHeaders,
+      params: probingEserviceOperationsApi.ApiSaveTenantParams,
+      data: probingEserviceOperationsApi.ApiSaveTenantPayload,
       logger: Logger,
-    ): Promise<ApiSaveTenantResponse> {
+    ): Promise<probingEserviceOperationsApi.ApiSaveTenantResponse> {
       try {
         logger.info(`Saving tenant with tenantId: ${params.tenantId}.`);
 
         await operationsApiClient.saveTenant(
           {
             name: data.name,
-            externalId: data.externalId,
-            origin: data.name,
           },
           {
             headers,
@@ -41,10 +30,10 @@ export const operationsServiceBuilder = (
       }
     },
     async deleteTenant(
-      headers: ApiDeleteTenantHeaders,
-      params: ApiDeleteTenantParams,
+      headers: probingEserviceOperationsApi.ApiDeleteTenantHeaders,
+      params: probingEserviceOperationsApi.ApiDeleteTenantParams,
       logger: Logger,
-    ): Promise<ApiDeleteTenantResponse> {
+    ): Promise<probingEserviceOperationsApi.ApiDeleteTenantResponse> {
       try {
         logger.info(`Deleting tenant with tenantId: ${params.tenantId}.`);
 

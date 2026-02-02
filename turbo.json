@@ -25,7 +25,6 @@
     "build": {
       "cache": false,
       "dependsOn": [
-        "generate-client",
         "generate-model",
         "^build"
       ],

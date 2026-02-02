@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, afterAll, beforeAll } from "vitest";
 import { processTask } from "../src/processTask.js";
-import { ApiGetEservicesReadyForPollingQuery } from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 import { config } from "../src/utilities/config.js";
 import {
   correlationIdToHeader,
@@ -49,10 +49,11 @@ describe("Process task test", async () => {
   it("should get e-services, update last request and push each item to the caller queue", async () => {
     config.schedulerLimit = 1;
 
-    const baseQuery: ApiGetEservicesReadyForPollingQuery = {
-      offset: 0,
-      limit: config.schedulerLimit,
-    };
+    const baseQuery: probingEserviceOperationsApi.ApiGetEservicesReadyForPollingQuery =
+      {
+        offset: 0,
+        limit: config.schedulerLimit,
+      };
 
     const ctx: AppContext = {
       serviceName: config.applicationName,

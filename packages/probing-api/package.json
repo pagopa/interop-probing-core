@@ -13,9 +13,7 @@
     "format:write": "prettier --write src",
     "start": "tsx -r 'dotenv-flow/config' --watch ./src/index.ts",
     "build": "tsc",
-    "check": "tsc --project tsconfig.check.json",
-    "generate-model": "mkdir -p ./src/model/generated && pnpm openapi-zod-client './open-api/api-external-interop-v1.yaml' -o './src/model/generated/api.ts'",
-    "clean-generated": "pnpm exec rm ./src/model/generated/api.ts"
+    "check": "tsc --project tsconfig.check.json"
   },
   "keywords": [],
   "author": "",
@@ -44,7 +42,7 @@
     "express": "4.21.2",
     "helmet": "7.1.0",
     "pagopa-interop-probing-commons": "workspace:*",
-    "pagopa-interop-probing-eservice-operations-client": "workspace:*",
+    "pagopa-interop-probing-api-clients": "workspace:*",
     "pagopa-interop-probing-models": "workspace:*",
     "ts-pattern": "5.1.2",
     "uuid": "13.0.0",

@@ -16,20 +16,26 @@ tags:
   - name: Telemetry
     description: >-
       Operations on EServices telemetry data
-  - name: Status
+  - name: Health
     description: >-
-      Operations about micro-service status
+      Verify service status
 
 paths:
   "/status":
     get:
+      security: []
+      summary: Returns the application status
+      description: Returns the application status
+      operationId: getStatus
       tags:
-        - Status
-      operationId: getHealthStatus
-      description: Get the micro-service status
+        - Health
       responses:
-        "204":
-          description: The micro-service is running
+        "200":
+          description: The service is up and running
+          content:
+            application/problem+json:
+              schema:
+                $ref: "#/components/schemas/Problem"
 
   "/telemetryData/eservices/{eserviceRecordId}":
     get:
@@ -78,7 +84,7 @@ paths:
                 status: 500
                 title: "Internal Server Error"
                 detail: "There is a problem processing the request on the server."
-                traceId: "string"
+                correlationId: "string"
                 errors:
                   [
                     {
@@ -150,7 +156,7 @@ paths:
                 status: 500
                 title: "Internal Server Error"
                 detail: "There is a problem processing the request on the server."
-                traceId: "string"
+                correlationId: "string"
                 errors:
                   [
                     {
@@ -260,7 +266,7 @@ components:
           maxLength: 4096
           pattern: ^.{0,1024}$
           type: string
-        traceId:
+        correlationId:
           type: string
           nullable: false
         errors:
@@ -270,9 +276,9 @@ components:
             $ref: "#/components/schemas/ProblemError"
       additionalProperties: false
       required:
+        - type
         - status
         - title
-        - errors
 
     ProblemError:
       properties:
