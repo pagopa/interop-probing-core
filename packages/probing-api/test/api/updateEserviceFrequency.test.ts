@@ -70,6 +70,15 @@ describe("post /eservices/{eserviceId}/versions/{versionId}/updateFrequency rout
       },
     },
     {
+      eServiceId: mockEserviceId,
+      versionId: mockVersionId,
+      body: {
+        frequency: 15,
+        startTime: "18:00:00",
+        endTime: "09:00:00",
+      },
+    },
+    {
       eServiceId: "invalid-uuid",
       versionId: mockVersionId,
       body: validBody,
