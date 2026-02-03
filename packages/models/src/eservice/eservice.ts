@@ -69,7 +69,7 @@ export const ChangeProbingFrequencyRequest = z
       ),
   })
   .refine((data) => data.startTime < data.endTime, {
-    message: "startTime must be less than or equal to endTime",
+    message: "startTime must be less than endTime",
     path: ["startTime"],
   });
 
