@@ -52,21 +52,27 @@ export type ChangeEserviceStateRequest = z.infer<
   typeof ChangeEserviceStateRequest
 >;
 
-export const ChangeProbingFrequencyRequest = z.object({
-  frequency: z.number().int().gte(1),
-  startTime: z
-    .string()
-    .regex(
-      /^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/,
-      "Invalid time format, expected HH:mm:ss",
-    ),
-  endTime: z
-    .string()
-    .regex(
-      /^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/,
-      "Invalid time format, expected HH:mm:ss",
-    ),
-});
+export const ChangeProbingFrequencyRequest = z
+  .object({
+    frequency: z.number().int().gte(1),
+    startTime: z
+      .string()
+      .regex(
+        /^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/,
+        "Invalid time format, expected HH:mm:ss",
+      ),
+    endTime: z
+      .string()
+      .regex(
+        /^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/,
+        "Invalid time format, expected HH:mm:ss",
+      ),
+  })
+  .refine((data) => data.startTime < data.endTime, {
+    message: "startTime must be less than endTime",
+    path: ["startTime"],
+  });
+
 export type ChangeProbingFrequencyRequest = z.infer<
   typeof ChangeProbingFrequencyRequest
 >;
