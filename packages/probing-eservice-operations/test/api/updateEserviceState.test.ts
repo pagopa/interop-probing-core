@@ -4,22 +4,23 @@ import { v4 as uuidv4 } from "uuid";
 import { api, eServiceService } from "../vitest.api.setup.js";
 import { genericError } from "pagopa-interop-probing-models";
 import { eServiceByVersionIdNotFound } from "../../src/model/domain/errors.js";
-import { ApiUpdateEserviceStatePayload } from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 
 describe("post /eservices/{eServiceId}/versions/{versionId}/updateState router test", () => {
   const mockEserviceId = uuidv4();
   const mockVersionId = uuidv4();
 
-  const validBody: ApiUpdateEserviceStatePayload = {
-    eServiceState: "ACTIVE",
-  };
+  const validBody: probingEserviceOperationsApi.ApiUpdateEserviceStatePayload =
+    {
+      eServiceState: "ACTIVE",
+    };
 
   eServiceService.updateEserviceState = vi.fn().mockResolvedValue({});
 
   const makeRequest = async (
     eServiceId: string = mockEserviceId,
     versionId: string = mockVersionId,
-    body: ApiUpdateEserviceStatePayload = validBody,
+    body: probingEserviceOperationsApi.ApiUpdateEserviceStatePayload = validBody,
   ) =>
     request(api)
       .post(`/eservices/${eServiceId}/versions/${versionId}/updateState`)
@@ -79,7 +80,7 @@ describe("post /eservices/{eServiceId}/versions/{versionId}/updateState router t
       const res = await makeRequest(
         eServiceId,
         versionId,
-        body as ApiUpdateEserviceStatePayload,
+        body as probingEserviceOperationsApi.ApiUpdateEserviceStatePayload,
       );
       expect(res.status).toBe(400);
     },

@@ -6,34 +6,33 @@ import {
   EserviceTechnology,
   genericError,
 } from "pagopa-interop-probing-models";
-import {
-  ApiGetEservicesReadyForPollingResponse,
-  ApiGetEservicesReadyForPollingQuery,
-} from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 
 describe("get /eservices/polling router test", () => {
-  const mockResponse: ApiGetEservicesReadyForPollingResponse = {
-    content: [
-      {
-        eserviceRecordId: 1,
-        basePath: ["/api/services/1"],
-        technology: EserviceTechnology.Values.REST,
-        audience: ["pagopa.it"],
-      },
-      {
-        eserviceRecordId: 2,
-        basePath: ["/api/services/2"],
-        technology: EserviceTechnology.Values.SOAP,
-        audience: ["pagopa.it"],
-      },
-    ],
-    totalElements: 2,
-  };
+  const mockResponse: probingEserviceOperationsApi.ApiGetEservicesReadyForPollingResponse =
+    {
+      content: [
+        {
+          eserviceRecordId: 1,
+          basePath: ["/api/services/1"],
+          technology: EserviceTechnology.Values.REST,
+          audience: ["pagopa.it"],
+        },
+        {
+          eserviceRecordId: 2,
+          basePath: ["/api/services/2"],
+          technology: EserviceTechnology.Values.SOAP,
+          audience: ["pagopa.it"],
+        },
+      ],
+      totalElements: 2,
+    };
 
-  const validQuery: ApiGetEservicesReadyForPollingQuery = {
-    limit: 10,
-    offset: 0,
-  };
+  const validQuery: probingEserviceOperationsApi.ApiGetEservicesReadyForPollingQuery =
+    {
+      limit: 10,
+      offset: 0,
+    };
 
   eServiceService.getEservicesReadyForPolling = vi
     .fn()

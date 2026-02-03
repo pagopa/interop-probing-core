@@ -3,9 +3,9 @@ import {
   ZodiosQueryParamsByPath,
   ZodiosResponseByPath,
 } from "@zodios/core";
-import { api } from "./generated/api.js";
+import * as probingStatisticsApi from "./generated/probingStatisticsApi.js";
 
-export type Api = typeof api.api;
+type Api = typeof probingStatisticsApi.TelemetryApi.api;
 
 export type ApiStatisticsEservicesQuery = ZodiosQueryParamsByPath<
   Api,
@@ -42,3 +42,5 @@ export type ApiFilteredStatisticsEservicesResponse = ZodiosResponseByPath<
   "get",
   "/telemetryData/eservices/filtered/:eserviceRecordId"
 >;
+
+export * from "./generated/probingStatisticsApi.js";

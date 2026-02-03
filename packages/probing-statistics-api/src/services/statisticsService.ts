@@ -1,11 +1,3 @@
-import {
-  ApiFilteredStatisticsEservicesQuery,
-  ApiStatisticsEservicesQuery,
-  ApiStatisticsEservicesParams,
-  ApiFilteredStatisticsEservicesParams,
-  ApiFilteredStatisticsEservicesResponse,
-  ApiStatisticsEservicesResponse,
-} from "../../src/model/types.js";
 import { TelemetryQueryService } from "./telemetryQueryService.js";
 import { config } from "../utilities/config.js";
 import {
@@ -27,15 +19,16 @@ import {
   truncatedTo,
 } from "../utilities/date.js";
 import { validateFilteredDateRange } from "../utilities/dateValidator.js";
+import { probingStatisticsApi } from "pagopa-interop-probing-api-clients";
 
 export const statisticsServiceBuilder = (
   telemetryQueryService: TelemetryQueryService,
 ) => {
   return {
     async getEserviceStatistics(
-      params: ApiStatisticsEservicesParams,
-      query: ApiStatisticsEservicesQuery,
-    ): Promise<ApiStatisticsEservicesResponse> {
+      params: probingStatisticsApi.ApiStatisticsEservicesParams,
+      query: probingStatisticsApi.ApiStatisticsEservicesQuery,
+    ): Promise<probingStatisticsApi.ApiStatisticsEservicesResponse> {
       const content = await telemetryQueryService.findStatistics({
         eserviceRecordId: params.eserviceRecordId,
         pollingFrequency: query.pollingFrequency,
@@ -44,9 +37,9 @@ export const statisticsServiceBuilder = (
       return calculatePerformances(content, null, null);
     },
     async getFilteredEserviceStatistics(
-      params: ApiFilteredStatisticsEservicesParams,
-      query: ApiFilteredStatisticsEservicesQuery,
-    ): Promise<ApiFilteredStatisticsEservicesResponse> {
+      params: probingStatisticsApi.ApiFilteredStatisticsEservicesParams,
+      query: probingStatisticsApi.ApiFilteredStatisticsEservicesQuery,
+    ): Promise<probingStatisticsApi.ApiFilteredStatisticsEservicesResponse> {
       validateFilteredDateRange(query.startDate, query.endDate);
 
       const content = await telemetryQueryService.findStatistics({
@@ -67,7 +60,7 @@ function calculatePerformances(
   values: TelemetryPoint[],
   startDate: string | null,
   endDate: string | null,
-): ApiStatisticsEservicesResponse {
+): probingStatisticsApi.ApiStatisticsEservicesResponse {
   const failures: FailureContent[] = [];
   const performances: PerformanceContent[] = [];
 

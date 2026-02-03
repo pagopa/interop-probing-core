@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 import {
   OperationsService,
   operationsServiceBuilder,
@@ -22,7 +22,9 @@ import {
 } from "@pagopa/interop-outbound-models";
 import { errorSaveEservice } from "../src/models/domain/errors.js";
 
-const apiClient = createApiClient(config.operationsBaseUrl);
+const apiClient = probingEserviceOperationsApi.createEServicesApiClient(
+  config.operationsBaseUrl,
+);
 
 describe("Message handler V2 - EService tests", () => {
   const operationsService: OperationsService =

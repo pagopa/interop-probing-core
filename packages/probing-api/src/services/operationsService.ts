@@ -5,17 +5,9 @@ import {
   genericError,
 } from "pagopa-interop-probing-models";
 import {
-  ProbingApiGetEserviceMainDataResponse,
-  ProbingApiGetEserviceProbingDataResponse,
-  ProbingApiGetProducersQuery,
-  ProbingApiGetProducersResponse,
-  ProbingApiSearchEservicesQuery,
-  ProbingApiSearchEservicesResponse,
-  ProbingApiUpdateEserviceFrequencyPayload,
-  ProbingApiUpdateEserviceProbingStatePayload,
-  ProbingApiUpdateEserviceStatePayload,
-} from "../model/types.js";
-import { Api } from "pagopa-interop-probing-eservice-operations-client";
+  probingApi,
+  probingEserviceOperationsApi,
+} from "pagopa-interop-probing-api-clients";
 import {
   fromECToMonitorState,
   fromEPDToMonitorState,
@@ -25,12 +17,12 @@ import { z } from "zod";
 import { ApiEServiceContent } from "../model/eservice.js";
 
 export const operationsServiceBuilder = (
-  operationsApiClient: ZodiosInstance<Api>,
+  operationsApiClient: ZodiosInstance<probingEserviceOperationsApi.EServiceApi>,
 ) => ({
   async updateEserviceState(
     eserviceId: string,
     versionId: string,
-    payload: ProbingApiUpdateEserviceStatePayload,
+    payload: probingApi.ApiUpdateEserviceStatePayload,
     ctx: AppContext,
   ): Promise<void> {
     await operationsApiClient.updateEserviceState(
@@ -45,7 +37,7 @@ export const operationsServiceBuilder = (
   async updateEserviceProbingState(
     eserviceId: string,
     versionId: string,
-    payload: ProbingApiUpdateEserviceProbingStatePayload,
+    payload: probingApi.ApiUpdateEserviceProbingStatePayload,
     ctx: AppContext,
   ): Promise<void> {
     await operationsApiClient.updateEserviceProbingState(
@@ -60,7 +52,7 @@ export const operationsServiceBuilder = (
   async updateEserviceFrequency(
     eserviceId: string,
     versionId: string,
-    payload: ProbingApiUpdateEserviceFrequencyPayload,
+    payload: probingApi.ApiUpdateEserviceFrequencyPayload,
     ctx: AppContext,
   ): Promise<void> {
     await operationsApiClient.updateEserviceFrequency(
@@ -77,9 +69,9 @@ export const operationsServiceBuilder = (
   },
 
   async getEservices(
-    filters: ProbingApiSearchEservicesQuery,
+    filters: probingEserviceOperationsApi.ApiSearchEservicesQuery,
     ctx: AppContext,
-  ): Promise<ProbingApiSearchEservicesResponse> {
+  ): Promise<probingApi.ApiSearchEservicesResponse> {
     const eservices = await operationsApiClient.searchEservices({
       queries: {
         ...filters,
@@ -114,7 +106,7 @@ export const operationsServiceBuilder = (
   async getEserviceMainData(
     eserviceRecordId: number,
     ctx: AppContext,
-  ): Promise<ProbingApiGetEserviceMainDataResponse> {
+  ): Promise<probingApi.ApiGetEserviceMainDataResponse> {
     return await operationsApiClient.getEserviceMainData({
       params: { eserviceRecordId },
       headers: correlationIdToHeader(ctx.correlationId),
@@ -124,7 +116,7 @@ export const operationsServiceBuilder = (
   async getEserviceProbingData(
     eserviceRecordId: number,
     ctx: AppContext,
-  ): Promise<ProbingApiGetEserviceProbingDataResponse> {
+  ): Promise<probingApi.ApiGetEserviceProbingDataResponse> {
     const eServiceProbingData =
       await operationsApiClient.getEserviceProbingData({
         params: { eserviceRecordId },
@@ -142,9 +134,9 @@ export const operationsServiceBuilder = (
   },
 
   async getEservicesProducers(
-    filters: ProbingApiGetProducersQuery,
+    filters: probingEserviceOperationsApi.ApiGetProducersQuery,
     ctx: AppContext,
-  ): Promise<ProbingApiGetProducersResponse> {
+  ): Promise<probingApi.ApiGetProducersResponse> {
     const producers = await operationsApiClient.getEservicesProducers({
       queries: filters,
       headers: correlationIdToHeader(ctx.correlationId),

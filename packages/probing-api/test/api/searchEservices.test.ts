@@ -6,13 +6,10 @@ import {
   EserviceMonitorState,
   genericError,
 } from "pagopa-interop-probing-models";
-import {
-  ProbingApiSearchEservicesQuery,
-  ProbingApiSearchEservicesResponse,
-} from "../../src/model/types.js";
+import { probingApi } from "pagopa-interop-probing-api-clients";
 
 describe("get /eservices router test", () => {
-  const mockResponse: ProbingApiSearchEservicesResponse = {
+  const mockResponse: probingApi.ApiSearchEservicesResponse = {
     content: [
       {
         eserviceRecordId: 1,
@@ -28,7 +25,7 @@ describe("get /eservices router test", () => {
     totalElements: 1,
   };
 
-  const validQuery: ProbingApiSearchEservicesQuery = {
+  const validQuery: probingApi.ApiSearchEservicesQuery = {
     limit: 10,
     offset: 0,
     eserviceName: "eService",

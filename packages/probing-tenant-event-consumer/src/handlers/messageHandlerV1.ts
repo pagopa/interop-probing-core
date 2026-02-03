@@ -30,8 +30,6 @@ export async function handleMessageV1(
           { ...correlationIdToHeader(ctx.correlationId) },
           { tenantId: tenant.id },
           {
-            externalId: tenant.externalId?.value,
-            origin: tenant.externalId?.origin,
             name: tenant.name || "N/A",
           },
           logger,

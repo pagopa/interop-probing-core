@@ -7,14 +7,14 @@ import {
 } from "pagopa-interop-probing-commons";
 import { resolveApiProblem } from "../model/domain/errors.js";
 import { OperationsService } from "../services/operationsService.js";
-import { api } from "../model/generated/api.js";
 import { ChangeProbingFrequencyRequest } from "pagopa-interop-probing-models";
+import { probingApi } from "pagopa-interop-probing-api-clients";
 
 const eServiceRouter = (
   ctx: ZodiosContext,
   operationsService: OperationsService,
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
-  const router = ctx.router(api.api, {
+  const router = ctx.router(probingApi.EServicesApi.api, {
     validationErrorHandler: zodiosValidationErrorToApiProblem,
   });
 

@@ -1,0 +1,76 @@
+import { makeApi, Zodios, type ZodiosOptions } from "@zodios/core";
+import { z } from "zod";
+
+{{#each schemas}}
+export const {{@key}} = {{{this}}};
+export type {{@key}} = z.infer<typeof {{@key}}>;
+
+{{/each}}
+
+{{#each endpointsGroups}}
+export const {{@key}}Endpoints = makeApi([
+{{#each this.endpoints}}
+	{
+		method: "{{method}}",
+		path: "{{path}}",
+		{{#if @root.options.withAlias}}
+		{{#if alias}}
+		alias: "{{alias}}",
+		{{/if}}
+		{{/if}}
+		{{#if description}}
+		description: `{{description}}`,
+		{{/if}}
+		{{#if requestFormat}}
+		requestFormat: "{{requestFormat}}",
+		{{/if}}
+		{{#if parameters}}
+		parameters: [
+			{{#each parameters}}
+			{
+				name: "{{name}}",
+				{{#if description}}
+				description: `{{description}}`,
+				{{/if}}
+				{{#if type}}
+				type: "{{type}}",
+				{{/if}}
+				schema: {{{schema}}},
+			},
+			{{/each}}
+		],
+		{{/if}}
+		response: {{{response}}},
+		{{#if errors.length}}
+		errors: [
+			{{#each errors}}
+			{
+				{{#if (eq status "default") }}
+				status: "default",
+				{{else}}
+				status: {{status}},
+				{{/if}}
+				{{#if description}}
+				description: `{{description}}`,
+				{{/if}}
+				schema: {{{schema}}}
+			},
+			{{/each}}
+		]
+		{{/if}}
+	},
+{{/each}}
+]);
+
+export const {{@key}}Api = new Zodios({{#if options.baseUrl}}"{{options.baseUrl}}", {{/if}}{{@key}}Endpoints);
+
+export function create{{pascalcase @key}}ApiClient(baseUrl: string, options?: ZodiosOptions) {
+		const zodiosClient = new Zodios(baseUrl, {{@key}}Endpoints, {
+			...options
+		});
+
+		return zodiosClient;
+}
+
+{{/each}}
+

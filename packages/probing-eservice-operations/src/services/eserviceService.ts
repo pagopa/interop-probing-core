@@ -8,29 +8,6 @@ import {
   PollingResource,
 } from "pagopa-interop-probing-models";
 import {
-  ApiGetEserviceMainDataResponse,
-  ApiGetEserviceProbingDataResponse,
-  ApiGetEservicesReadyForPollingQuery,
-  ApiGetEservicesReadyForPollingResponse,
-  ApiGetProducersQuery,
-  ApiGetProducersResponse,
-  ApiSaveEservicePayload,
-  ApiSaveEserviceResponse,
-  ApiSearchEservicesQuery,
-  ApiSearchEservicesResponse,
-  ApiUpdateEserviceFrequencyPayload,
-  ApiUpdateEserviceFrequencyResponse,
-  ApiUpdateEserviceProbingStatePayload,
-  ApiUpdateEserviceProbingStateResponse,
-  ApiUpdateEserviceStatePayload,
-  ApiUpdateEserviceStateResponse,
-  ApiUpdateLastRequestPayload,
-  ApiUpdateLastRequestResponse,
-  ApiUpdateResponseReceivedPayload,
-  ApiUpdateResponseReceivedResponse,
-  ApiDeleteEserviceResponse,
-} from "pagopa-interop-probing-eservice-operations-client";
-import {
   eServiceByRecordIdNotFound,
   eServiceByVersionIdNotFound,
   eServiceNotFound,
@@ -38,14 +15,15 @@ import {
 import { DBService } from "./dbService.js";
 import { z } from "zod";
 import { safeStringify } from "../utilities/utils.js";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 
 export function eServiceServiceBuilder(dbService: DBService) {
   return {
     async updateEserviceState(
       eserviceId: string,
       versionId: string,
-      payload: ApiUpdateEserviceStatePayload,
-    ): Promise<ApiUpdateEserviceStateResponse> {
+      payload: probingEserviceOperationsApi.ApiUpdateEserviceStatePayload,
+    ): Promise<probingEserviceOperationsApi.ApiUpdateEserviceStateResponse> {
       const eServiceToBeUpdated = await dbService.getEserviceByIdAndVersion(
         eserviceId,
         versionId,
@@ -63,8 +41,8 @@ export function eServiceServiceBuilder(dbService: DBService) {
     async updateEserviceProbingState(
       eserviceId: string,
       versionId: string,
-      payload: ApiUpdateEserviceProbingStatePayload,
-    ): Promise<ApiUpdateEserviceProbingStateResponse> {
+      payload: probingEserviceOperationsApi.ApiUpdateEserviceProbingStatePayload,
+    ): Promise<probingEserviceOperationsApi.ApiUpdateEserviceProbingStateResponse> {
       const eServiceToBeUpdated = await dbService.getEserviceByIdAndVersion(
         eserviceId,
         versionId,
@@ -82,8 +60,8 @@ export function eServiceServiceBuilder(dbService: DBService) {
     async updateEserviceFrequency(
       eserviceId: string,
       versionId: string,
-      payload: ApiUpdateEserviceFrequencyPayload,
-    ): Promise<ApiUpdateEserviceFrequencyResponse> {
+      payload: probingEserviceOperationsApi.ApiUpdateEserviceFrequencyPayload,
+    ): Promise<probingEserviceOperationsApi.ApiUpdateEserviceFrequencyResponse> {
       const eServiceToBeUpdated = await dbService.getEserviceByIdAndVersion(
         eserviceId,
         versionId,
@@ -103,8 +81,8 @@ export function eServiceServiceBuilder(dbService: DBService) {
     async saveEservice(
       eserviceId: string,
       versionId: string,
-      payload: ApiSaveEservicePayload,
-    ): Promise<ApiSaveEserviceResponse> {
+      payload: probingEserviceOperationsApi.ApiSaveEservicePayload,
+    ): Promise<probingEserviceOperationsApi.ApiSaveEserviceResponse> {
       const eServiceToBeUpdated: EserviceSaveRequest = {
         state: payload.state,
         eserviceName: payload.name,
@@ -120,7 +98,7 @@ export function eServiceServiceBuilder(dbService: DBService) {
 
     async deleteEservice(
       eserviceId: string,
-    ): Promise<ApiDeleteEserviceResponse> {
+    ): Promise<probingEserviceOperationsApi.ApiDeleteEserviceResponse> {
       const eServices = await dbService.getEservicesById(eserviceId);
       if (eServices.length === 0) {
         throw eServiceNotFound(eserviceId);
@@ -131,8 +109,8 @@ export function eServiceServiceBuilder(dbService: DBService) {
 
     async updateEserviceLastRequest(
       eserviceRecordId: number,
-      payload: ApiUpdateLastRequestPayload,
-    ): Promise<ApiUpdateLastRequestResponse> {
+      payload: probingEserviceOperationsApi.ApiUpdateLastRequestPayload,
+    ): Promise<probingEserviceOperationsApi.ApiUpdateLastRequestResponse> {
       const eService = await dbService.getEserviceByRecordId(eserviceRecordId);
 
       if (!eService) throw eServiceByRecordIdNotFound(eserviceRecordId);
@@ -144,8 +122,8 @@ export function eServiceServiceBuilder(dbService: DBService) {
 
     async updateResponseReceived(
       eserviceRecordId: number,
-      payload: ApiUpdateResponseReceivedPayload,
-    ): Promise<ApiUpdateResponseReceivedResponse> {
+      payload: probingEserviceOperationsApi.ApiUpdateResponseReceivedPayload,
+    ): Promise<probingEserviceOperationsApi.ApiUpdateResponseReceivedResponse> {
       const eService = await dbService.getEserviceByRecordId(eserviceRecordId);
 
       if (!eService) throw eServiceByRecordIdNotFound(eserviceRecordId);
@@ -157,9 +135,9 @@ export function eServiceServiceBuilder(dbService: DBService) {
     },
 
     async searchEservices(
-      filters: ApiSearchEservicesQuery,
+      filters: probingEserviceOperationsApi.ApiSearchEservicesQuery,
       logger: Logger,
-    ): Promise<ApiSearchEservicesResponse> {
+    ): Promise<probingEserviceOperationsApi.ApiSearchEservicesResponse> {
       const result = await dbService.searchEservices(filters);
 
       const mappedContent = result.content.map((el) => ({
@@ -188,7 +166,7 @@ export function eServiceServiceBuilder(dbService: DBService) {
     async getEserviceMainData(
       eserviceRecordId: number,
       logger: Logger,
-    ): Promise<ApiGetEserviceMainDataResponse> {
+    ): Promise<probingEserviceOperationsApi.ApiGetEserviceMainDataResponse> {
       const result = await dbService.getEserviceMainData(eserviceRecordId);
       if (!result) throw eServiceByRecordIdNotFound(eserviceRecordId);
 
@@ -208,7 +186,7 @@ export function eServiceServiceBuilder(dbService: DBService) {
     async getEserviceProbingData(
       eserviceRecordId: number,
       logger: Logger,
-    ): Promise<ApiGetEserviceProbingDataResponse> {
+    ): Promise<probingEserviceOperationsApi.ApiGetEserviceProbingDataResponse> {
       const result = await dbService.getEserviceProbingData(eserviceRecordId);
 
       if (!result) throw eServiceByRecordIdNotFound(eserviceRecordId);
@@ -230,9 +208,9 @@ export function eServiceServiceBuilder(dbService: DBService) {
     },
 
     async getEservicesReadyForPolling(
-      filters: ApiGetEservicesReadyForPollingQuery,
+      filters: probingEserviceOperationsApi.ApiGetEservicesReadyForPollingQuery,
       logger: Logger,
-    ): Promise<ApiGetEservicesReadyForPollingResponse> {
+    ): Promise<probingEserviceOperationsApi.ApiGetEservicesReadyForPollingResponse> {
       const result = await dbService.getEservicesReadyForPolling(filters);
 
       const mappedContent = result.content.map((el) => ({
@@ -256,8 +234,8 @@ export function eServiceServiceBuilder(dbService: DBService) {
     },
 
     async getEservicesProducers(
-      filters: ApiGetProducersQuery,
-    ): Promise<ApiGetProducersResponse> {
+      filters: probingEserviceOperationsApi.ApiGetProducersQuery,
+    ): Promise<probingEserviceOperationsApi.ApiGetProducersResponse> {
       const result = await dbService.getEservicesProducers(filters);
       return {
         content: result.content.map((el) => el.producerName),

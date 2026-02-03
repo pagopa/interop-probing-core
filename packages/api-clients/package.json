@@ -1,8 +1,8 @@
 {
-  "name": "pagopa-interop-probing-eservice-operations-client",
-  "private": true,
+  "name": "pagopa-interop-probing-api-clients",
   "version": "1.0.0",
-  "description": "PagoPA probing eservice operations client",
+  "private": true,
+  "description": "PagoPA Interop Probing Api Clients",
   "main": "dist",
   "type": "module",
   "exports": {
@@ -15,16 +15,21 @@
     "format:write": "prettier --write src",
     "build": "tsc",
     "check": "tsc --project tsconfig.check.json",
-    "generate-client": "mkdir -p ./src/model/generated && pnpm openapi-zod-client '../../probing-eservice-operations/open-api/api-eservice-operations-interop-v1.yaml' -o './src/model/generated/client.ts'",
-    "clean-generated": "pnpm exec rm ./src/model/generated/client.ts"
+    "generate-model": "tsx ./generate.ts",
+    "clean-generated": "pnpm exec rm ./src/generated/*.ts"
   },
   "keywords": [],
   "author": "",
   "license": "Apache-2.0",
   "devDependencies": {
+    "@apidevtools/swagger-parser": "10.1.1",
     "@probing/eslint-config": "workspace:*",
     "ts-node": "10.9.2",
-    "typescript": "5.7.3"
+    "typescript": "5.7.3",
+    "handlebars": "4.7.8",
+    "openapi3-ts": "3.1.0",
+    "openapi-zod-client": "1.18.3",
+    "tsx": "4.19.1"
   },
   "dependencies": {
     "@zodios/core": "10.9.6",

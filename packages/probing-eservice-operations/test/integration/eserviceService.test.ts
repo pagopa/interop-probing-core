@@ -28,16 +28,13 @@ import {
   tenantNotFound,
 } from "../../src/model/domain/errors.js";
 import { v4 as uuidv4 } from "uuid";
-import {
-  ApiGetProducersQuery,
-  ApiSearchEservicesQuery,
-} from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 import { genericLogger } from "pagopa-interop-probing-commons";
 
 describe("eService service", async () => {
   describe("searchEservices", () => {
     it("should return an empty result when filtering by non-existent e-service name and producer", async () => {
-      const filters: ApiSearchEservicesQuery = {
+      const filters: probingEserviceOperationsApi.ApiSearchEservicesQuery = {
         eserviceName: "eService 001",
         producerName: "eService producer 001",
         versionNumber: 1,
@@ -58,7 +55,7 @@ describe("eService service", async () => {
       const eService = mockEservice();
       await addEservice(eService);
 
-      const filters: ApiSearchEservicesQuery = {
+      const filters: probingEserviceOperationsApi.ApiSearchEservicesQuery = {
         eserviceName: eService.eserviceName,
         producerName: eService.producerName,
         versionNumber: 1,
@@ -87,7 +84,7 @@ describe("eService service", async () => {
         status: responseStatus.ok,
       });
 
-      const filters: ApiSearchEservicesQuery = {
+      const filters: probingEserviceOperationsApi.ApiSearchEservicesQuery = {
         eserviceName: eService.eserviceName,
         producerName: eService.producerName,
         versionNumber: 1,
@@ -120,7 +117,7 @@ describe("eService service", async () => {
 
       await addEservice(eService);
 
-      const filters: ApiSearchEservicesQuery = {
+      const filters: probingEserviceOperationsApi.ApiSearchEservicesQuery = {
         eserviceName: eService.eserviceName,
         producerName: eService.producerName,
         versionNumber: 1,
@@ -154,7 +151,7 @@ describe("eService service", async () => {
         status: responseStatus.ok,
       });
 
-      const filters: ApiSearchEservicesQuery = {
+      const filters: probingEserviceOperationsApi.ApiSearchEservicesQuery = {
         eserviceName: eService.eserviceName,
         producerName: eService.producerName,
         versionNumber: 1,
@@ -186,7 +183,7 @@ describe("eService service", async () => {
         lastRequest: new Date().toISOString(),
       });
 
-      const filters: ApiSearchEservicesQuery = {
+      const filters: probingEserviceOperationsApi.ApiSearchEservicesQuery = {
         eserviceName: eService.eserviceName,
         state: [eserviceMonitorState["n_d"]],
         limit: 5,
@@ -291,7 +288,7 @@ describe("eService service", async () => {
       const eService = mockEservice();
       await addEservice(eService);
 
-      const filters: ApiGetProducersQuery = {
+      const filters: probingEserviceOperationsApi.ApiGetProducersQuery = {
         producerName: "no matching records eService producer",
         limit: 1,
         offset: 0,
@@ -308,7 +305,10 @@ describe("eService service", async () => {
       await addEservice(eService1);
       await addEservice(eService2);
 
-      const filters: ApiGetProducersQuery = { limit: 10, offset: 0 };
+      const filters: probingEserviceOperationsApi.ApiGetProducersQuery = {
+        limit: 10,
+        offset: 0,
+      };
       const result = await eserviceService.getEservicesProducers(filters);
 
       expect(result).toBeDefined();
@@ -321,7 +321,7 @@ describe("eService service", async () => {
       const eService = mockEservice({ producerName: "eService producer 001" });
       await addEservice(eService);
 
-      const filters: ApiGetProducersQuery = {
+      const filters: probingEserviceOperationsApi.ApiGetProducersQuery = {
         producerName: eService.producerName,
         limit: 10,
         offset: 0,
@@ -339,7 +339,7 @@ describe("eService service", async () => {
       await addEservice(eService1);
       await addEservice(eService2);
 
-      const filters: ApiGetProducersQuery = {
+      const filters: probingEserviceOperationsApi.ApiGetProducersQuery = {
         producerName: "eService producer",
         limit: 2,
         offset: 0,
@@ -831,7 +831,7 @@ describe("eService service", async () => {
       const eService = mockEservice();
       await addEservice(eService);
 
-      const filters: ApiSearchEservicesQuery = {
+      const filters: probingEserviceOperationsApi.ApiSearchEservicesQuery = {
         eserviceName: eService.eserviceName,
         producerName: eService.producerName,
         versionNumber: 1,

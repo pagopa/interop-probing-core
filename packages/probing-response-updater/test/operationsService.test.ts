@@ -1,6 +1,6 @@
 import { afterAll, describe, expect, it, vi } from "vitest";
 import { responseStatus } from "pagopa-interop-probing-models";
-import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 import {
   OperationsService,
   operationsServiceBuilder,
@@ -10,7 +10,9 @@ import { mockApiClientError } from "pagopa-interop-probing-commons-test";
 import { v4 as uuidv4 } from "uuid";
 import { WithSQSMessageId, AppContext } from "pagopa-interop-probing-commons";
 
-const apiClient = createApiClient(config.operationsBaseUrl);
+const apiClient = probingEserviceOperationsApi.createEServicesApiClient(
+  config.operationsBaseUrl,
+);
 
 describe("eService service test", () => {
   const operationsService: OperationsService =

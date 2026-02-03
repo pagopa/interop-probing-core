@@ -1,16 +1,17 @@
 import {
   contextMiddleware,
   errorsToApiProblemsMiddleware,
+  healthRouter,
   loggerMiddleware,
   zodiosCtx,
 } from "pagopa-interop-probing-commons";
 import statisticsRouter from "./routers/statisticsRouter.js";
-import healthRouter from "./routers/healthRouter.js";
 import { StatisticsService } from "./services/statisticsService.js";
 import { config } from "./utilities/config.js";
 import helmet from "helmet";
 import express from "express";
 import cors, { CorsOptions } from "cors";
+import { probingStatisticsApi } from "pagopa-interop-probing-api-clients";
 
 export function createApp(statisticsService: StatisticsService) {
   const app = zodiosCtx.app();
@@ -54,9 +55,10 @@ export function createApp(statisticsService: StatisticsService) {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  app.use(healthRouter);
-  app.use(loggerMiddleware(config.applicationName));
   app.use(contextMiddleware(config.applicationName));
+  app.use(healthRouter(probingStatisticsApi.HealthApi.api));
+  app.use(loggerMiddleware(config.applicationName));
+
   app.use(statisticsRouter(zodiosCtx, statisticsService));
 
   app.use(errorsToApiProblemsMiddleware);

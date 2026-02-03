@@ -10,7 +10,7 @@ COPY pnpm-workspace.yaml /app/
 COPY ./packages/probing-eservice-operations/package.json /app/packages/probing-eservice-operations/package.json
 COPY ./packages/commons/package.json /app/packages/commons/package.json
 COPY ./packages/models/package.json /app/packages/models/package.json
-COPY ./packages/clients/eservice-operations/package.json /app/packages/clients/eservice-operations/package.json
+COPY ./packages/api-clients/package.json /app/packages/api-clients/package.json
 
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
@@ -19,7 +19,7 @@ COPY turbo.json /app/
 COPY ./packages/probing-eservice-operations /app/packages/probing-eservice-operations
 COPY ./packages/commons /app/packages/commons
 COPY ./packages/models /app/packages/models
-COPY ./packages/clients/eservice-operations /app/packages/clients/eservice-operations
+COPY ./packages/api-clients /app/packages/api-clients 
 
 RUN pnpm build
 RUN rm -rf /app/packages/probing-eservice-operations/dist/test

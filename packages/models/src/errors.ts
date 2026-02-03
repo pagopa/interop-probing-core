@@ -12,11 +12,11 @@ export const Problem = z.object({
   status: z.number(),
   title: z.string(),
   correlationId: z.string().optional(),
-  detail: z.string(),
-  errors: z.array(ProblemError),
+  detail: z.string().optional(),
+  errors: z.array(ProblemError).min(1).optional(),
 });
-
 export type Problem = z.infer<typeof Problem>;
+
 export class ApiError<T> extends Error {
   public code: T;
   public title: string;
@@ -71,7 +71,11 @@ export const makeProblemLogString = (
   problem: Problem,
   originalError: unknown,
 ): string => {
-  const errorsString = problem.errors.map((e) => e.detail).join(" - ");
+  const errorsString = problem.errors
+    ? ` - errors: ${problem.errors
+        .map((e) => `${e.code}, ${e.detail}`)
+        .join("; ")}`
+    : "";
   return `- title: ${problem.title} - detail: ${problem.detail} - errors: ${errorsString} - original error: ${JSON.stringify(originalError)}`;
 };
 

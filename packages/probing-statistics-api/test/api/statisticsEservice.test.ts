@@ -3,14 +3,10 @@ import { describe, it, expect, vi } from "vitest";
 import { v4 as uuidv4 } from "uuid";
 import { api, statisticsService } from "../vitest.api.setup.js";
 import { genericError } from "pagopa-interop-probing-models";
-import {
-  ApiStatisticsEservicesResponse,
-  ApiStatisticsEservicesParams,
-  ApiStatisticsEservicesQuery,
-} from "../../src/model/types.js";
+import { probingStatisticsApi } from "pagopa-interop-probing-api-clients";
 
 describe("get /telemetryData/eservices/:eserviceRecordId router test", () => {
-  const mockResponse: ApiStatisticsEservicesResponse = {
+  const mockResponse: probingStatisticsApi.ApiStatisticsEservicesResponse = {
     performances: [
       {
         responseTime: 120,
@@ -42,11 +38,11 @@ describe("get /telemetryData/eservices/:eserviceRecordId router test", () => {
     ],
   };
 
-  const params: ApiStatisticsEservicesParams = {
+  const params: probingStatisticsApi.ApiStatisticsEservicesParams = {
     eserviceRecordId: 1,
   };
 
-  const validQuery: ApiStatisticsEservicesQuery = {
+  const validQuery: probingStatisticsApi.ApiStatisticsEservicesQuery = {
     pollingFrequency: 5,
   };
 
@@ -55,7 +51,7 @@ describe("get /telemetryData/eservices/:eserviceRecordId router test", () => {
     .mockResolvedValue(mockResponse);
 
   const makeRequest = async (
-    pathParams: ApiStatisticsEservicesParams = params,
+    pathParams: probingStatisticsApi.ApiStatisticsEservicesParams = params,
     query: Record<string, unknown> = validQuery,
   ) =>
     request(api)
@@ -121,8 +117,8 @@ describe("get /telemetryData/eservices/:eserviceRecordId router test", () => {
     "should return 400 if invalid request params or query params: %s",
     async ({ params: invalidParams, query }) => {
       const res = await makeRequest(
-        invalidParams as ApiStatisticsEservicesParams,
-        query as ApiStatisticsEservicesQuery,
+        invalidParams as probingStatisticsApi.ApiStatisticsEservicesParams,
+        query as probingStatisticsApi.ApiStatisticsEservicesQuery,
       );
 
       expect(res.status).toBe(400);

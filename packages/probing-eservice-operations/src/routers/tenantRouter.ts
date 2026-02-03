@@ -6,7 +6,7 @@ import {
   ZodiosContext,
   logger,
 } from "pagopa-interop-probing-commons";
-import { api } from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 import { errorMapper } from "../utilities/errorMapper.js";
 import { TenantService } from "../services/tenantService.js";
 
@@ -14,7 +14,7 @@ const tenantRouter = (
   ctx: ZodiosContext,
   tenantService: TenantService,
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
-  const tenantRouter = ctx.router(api.api);
+  const tenantRouter = ctx.router(probingEserviceOperationsApi.TenantsApi.api);
 
   tenantRouter
     .post("/tenants/:tenantId/saveTenant", async (req, res) => {

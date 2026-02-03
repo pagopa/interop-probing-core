@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
-import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 import {
   OperationsService,
   operationsServiceBuilder,
@@ -18,7 +18,9 @@ import { handleMessageV2 } from "../src/handlers/messageHandlerV2.js";
 import { TenantEventV2, TenantV2 } from "@pagopa/interop-outbound-models";
 import { errorSaveTenant } from "../src/models/domain/errors.js";
 
-const apiClient = createApiClient(config.operationsBaseUrl);
+const apiClient = probingEserviceOperationsApi.createTenantsApiClient(
+  config.operationsBaseUrl,
+);
 
 describe("Message handler V2 - Tenant tests", () => {
   const operationsService: OperationsService =

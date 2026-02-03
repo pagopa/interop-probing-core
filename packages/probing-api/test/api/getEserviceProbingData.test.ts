@@ -6,13 +6,13 @@ import {
   EserviceMonitorState,
   genericError,
 } from "pagopa-interop-probing-models";
-import { ProbingApiGetEserviceProbingDataResponse } from "../../src/model/types.js";
 import { eServiceByRecordIdNotFound } from "../../src/model/domain/errors.js";
+import { probingApi } from "pagopa-interop-probing-api-clients";
 
 describe("get /eservices/probingData/{eserviceRecordId} router test", () => {
   const mockEserviceRecordId = 321;
 
-  const mockResponse: ProbingApiGetEserviceProbingDataResponse = {
+  const mockResponse: probingApi.ApiGetEserviceProbingDataResponse = {
     probingEnabled: true,
     eserviceActive: true,
     state: EserviceMonitorState.Values.ONLINE,

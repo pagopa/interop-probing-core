@@ -3,15 +3,15 @@ import { describe, it, expect, vi } from "vitest";
 import { v4 as uuidv4 } from "uuid";
 import { api, operationsService } from "../vitest.api.setup.js";
 import { genericError } from "pagopa-interop-probing-models";
-import { ProbingApiGetEserviceMainDataResponse } from "../../src/model/types.js";
 import { eServiceByRecordIdNotFound } from "../../src/model/domain/errors.js";
+import { probingApi } from "pagopa-interop-probing-api-clients";
 
 describe("get /eservices/mainData/{eserviceRecordId} router test", () => {
   const mockEserviceRecordId = 123;
   const mockEserviceId = uuidv4();
   const mockVersionId = uuidv4();
 
-  const mockResponse: ProbingApiGetEserviceMainDataResponse = {
+  const mockResponse: probingApi.ApiGetEserviceMainDataResponse = {
     eserviceName: "eService",
     versionNumber: 1,
     producerName: "PagoPA",

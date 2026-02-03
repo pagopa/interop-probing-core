@@ -4,7 +4,7 @@ import {
   OperationsService,
   operationsServiceBuilder,
 } from "./services/operationsService.js";
-import { createApiClient } from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 import { processTask } from "./processTask.js";
 import {
   ProducerService,
@@ -17,7 +17,10 @@ const sqsClient: SQS.SQSClient = await SQS.instantiateClient({
   region: config.awsRegion,
   logLevel: config.logLevel,
 });
-const operationsApiClient = createApiClient(config.operationsBaseUrl);
+const operationsApiClient =
+  probingEserviceOperationsApi.createEServicesApiClient(
+    config.operationsBaseUrl,
+  );
 const operationsService: OperationsService =
   operationsServiceBuilder(operationsApiClient);
 const producerService: ProducerService = producerServiceBuilder(sqsClient);

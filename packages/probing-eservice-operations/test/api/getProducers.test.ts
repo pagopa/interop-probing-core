@@ -3,17 +3,14 @@ import { describe, it, expect, vi } from "vitest";
 import { v4 as uuidv4 } from "uuid";
 import { api, eServiceService } from "../vitest.api.setup.js";
 import { genericError } from "pagopa-interop-probing-models";
-import {
-  ApiGetProducersResponse,
-  ApiGetProducersQuery,
-} from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 
 describe("get /producers router test", () => {
-  const mockResponse: ApiGetProducersResponse = {
+  const mockResponse: probingEserviceOperationsApi.ApiGetProducersResponse = {
     content: ["Alpha producer", "Beta producer", "Gamma producer"],
   };
 
-  const validQuery: ApiGetProducersQuery = {
+  const validQuery: probingEserviceOperationsApi.ApiGetProducersQuery = {
     limit: 10,
     offset: 0,
     producerName: "Alpha producer",

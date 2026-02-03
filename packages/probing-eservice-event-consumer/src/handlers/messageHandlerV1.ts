@@ -51,7 +51,6 @@ export async function handleMessageV1(
             { ...correlationIdToHeader(ctx.correlationId) },
             { eserviceId: eservice.id, versionId: descriptor.id },
             {
-              eserviceId: eservice.id,
               producerId: eservice.producerId,
               name: eservice.name,
               basePath: parsedBasePath,

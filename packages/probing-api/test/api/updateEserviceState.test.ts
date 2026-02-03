@@ -6,14 +6,14 @@ import {
   EserviceInteropState,
   genericError,
 } from "pagopa-interop-probing-models";
-import { ProbingApiUpdateEserviceStatePayload } from "../../src/model/types.js";
 import { eServiceByVersionIdNotFound } from "../../src/model/domain/errors.js";
+import { probingApi } from "pagopa-interop-probing-api-clients";
 
 describe("post /eservices/{eserviceId}/versions/{versionId}/updateState router test", () => {
   const mockEserviceId = uuidv4();
   const mockVersionId = uuidv4();
 
-  const validBody: ProbingApiUpdateEserviceStatePayload = {
+  const validBody: probingApi.ApiUpdateEserviceStatePayload = {
     eServiceState: EserviceInteropState.Values.ACTIVE,
   };
 
@@ -22,7 +22,7 @@ describe("post /eservices/{eserviceId}/versions/{versionId}/updateState router t
   const makeRequest = async (
     eServiceId: string,
     versionId: string,
-    body: ProbingApiUpdateEserviceStatePayload = validBody,
+    body: probingApi.ApiUpdateEserviceStatePayload = validBody,
   ) =>
     request(api)
       .post(`/eservices/${eServiceId}/versions/${versionId}/updateState`)
@@ -82,7 +82,7 @@ describe("post /eservices/{eserviceId}/versions/{versionId}/updateState router t
       const res = await makeRequest(
         eServiceId,
         versionId,
-        body as ProbingApiUpdateEserviceStatePayload,
+        body as probingApi.ApiUpdateEserviceStatePayload,
       );
       expect(res.status).toBe(400);
     },

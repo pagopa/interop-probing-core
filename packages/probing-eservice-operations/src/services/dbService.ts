@@ -6,11 +6,7 @@ import {
   eserviceProbingResponsesInProbing,
   eserviceViewInProbing,
 } from "../db/index.js";
-import {
-  ApiGetEservicesReadyForPollingQuery,
-  ApiGetProducersQuery,
-  ApiSearchEservicesQuery,
-} from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 import { tenantNotFound } from "../model/domain/errors.js";
 import {
   ChangeEserviceStateRequest,
@@ -251,7 +247,9 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
       return eservice;
     },
 
-    async searchEservices(filters: ApiSearchEservicesQuery): Promise<{
+    async searchEservices(
+      filters: probingEserviceOperationsApi.ApiSearchEservicesQuery,
+    ): Promise<{
       content: EserviceViewSQL[];
       offset: number;
       limit: number;
@@ -346,7 +344,7 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
     },
 
     async getEservicesReadyForPolling(
-      filters: ApiGetEservicesReadyForPollingQuery,
+      filters: probingEserviceOperationsApi.ApiGetEservicesReadyForPollingQuery,
     ): Promise<{
       content: Pick<
         EserviceViewSQL,
@@ -385,7 +383,7 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
     },
 
     async getEservicesProducers(
-      filters: ApiGetProducersQuery,
+      filters: probingEserviceOperationsApi.ApiGetProducersQuery,
     ): Promise<{ content: Pick<EServiceSQL, "producerName">[] }> {
       const { producerName, offset, limit } = filters;
 
@@ -411,7 +409,9 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
 
 export type DBService = ReturnType<typeof dbServiceBuilder>;
 
-export function addPredicateEservices(filters: ApiSearchEservicesQuery): {
+export function addPredicateEservices(
+  filters: probingEserviceOperationsApi.ApiSearchEservicesQuery,
+): {
   where: SQL;
   orderBy: SQL;
   distinct: boolean;
