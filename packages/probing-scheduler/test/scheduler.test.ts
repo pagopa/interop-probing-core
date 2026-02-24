@@ -24,11 +24,26 @@ describe("Process task test", async () => {
     },
   ];
 
+  const mockGetEservicesReadyForPolling = vi
+    .fn()
+    .mockImplementation(async () => {
+      const invocation = mockGetEservicesReadyForPolling.mock.calls.length;
+
+      if (invocation <= totalElements) {
+        return {
+          content: mockEservicesActive,
+          totalElements,
+        };
+      }
+
+      return {
+        content: [],
+        totalElements: 0,
+      };
+    });
+
   const mockOperationsService = {
-    getEservicesReadyForPolling: vi.fn().mockResolvedValue({
-      content: mockEservicesActive,
-      totalElements,
-    }),
+    getEservicesReadyForPolling: mockGetEservicesReadyForPolling,
     updateLastRequest: vi.fn().mockResolvedValue(undefined),
   };
 
@@ -62,17 +77,17 @@ describe("Process task test", async () => {
 
     await processTask(mockOperationsService, mockProducerService);
 
-    for (let polling = 0; polling < totalElements; polling++) {
+    for (let polling = 0; polling < totalElements + 1; polling++) {
       const headers = { ...correlationIdToHeader(ctx.correlationId) };
 
       expect(
         mockOperationsService.getEservicesReadyForPolling,
-      ).toHaveBeenCalledWith(headers, { ...baseQuery, offset: polling }, ctx);
+      ).toHaveBeenCalledWith(headers, { ...baseQuery, offset: 0 }, ctx);
     }
 
     expect(
       mockOperationsService.getEservicesReadyForPolling,
-    ).toHaveBeenCalledTimes(totalElements);
+    ).toHaveBeenCalledTimes(totalElements + 1);
 
     expect(mockOperationsService.updateLastRequest).toHaveBeenCalledTimes(
       totalElements,
