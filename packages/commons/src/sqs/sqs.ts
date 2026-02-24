@@ -1,3 +1,5 @@
+/* eslint-disable no-constant-condition */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import {
   SQSClient,
   ReceiveMessageCommand,
@@ -294,7 +296,6 @@ export const deleteBatchMessages = async (
     return;
   }
 
-  // eslint-disable-next-line functional/no-let
   let index = 0;
 
   do {

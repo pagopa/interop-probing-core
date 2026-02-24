@@ -102,42 +102,30 @@ export const logger = (loggerMetadata: LoggerMetadata) => {
       msg: (typeof internalLoggerInstance.debug.arguments)[0],
       startTime?: number,
     ) =>
-      internalLoggerInstance.debug(
-        appendElapsedTime(`${msg}`, startTime),
-        {
-          loggerMetadata,
-        },
-      ),
+      internalLoggerInstance.debug(appendElapsedTime(`${msg}`, startTime), {
+        loggerMetadata,
+      }),
     info: (
       msg: (typeof internalLoggerInstance.info.arguments)[0],
       startTime?: number,
     ) =>
-      internalLoggerInstance.info(
-        appendElapsedTime(`${msg}`, startTime),
-        {
-          loggerMetadata,
-        },
-      ),
+      internalLoggerInstance.info(appendElapsedTime(`${msg}`, startTime), {
+        loggerMetadata,
+      }),
     warn: (
       msg: (typeof internalLoggerInstance.warn.arguments)[0],
       startTime?: number,
     ) =>
-      internalLoggerInstance.warn(
-        appendElapsedTime(`${msg}`, startTime),
-        {
-          loggerMetadata,
-        },
-      ),
+      internalLoggerInstance.warn(appendElapsedTime(`${msg}`, startTime), {
+        loggerMetadata,
+      }),
     error: (
       msg: (typeof internalLoggerInstance.error.arguments)[0],
       startTime?: number,
     ) =>
-      internalLoggerInstance.error(
-        appendElapsedTime(`${msg}`, startTime),
-        {
-          loggerMetadata,
-        },
-      ),
+      internalLoggerInstance.error(appendElapsedTime(`${msg}`, startTime), {
+        loggerMetadata,
+      }),
   };
 };
 
