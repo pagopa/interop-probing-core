@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
-import { processMessage } from "../src/messagesHandler.js";
+import { processBatch } from "../src/messagesHandler.js";
 import { SQS } from "pagopa-interop-probing-commons";
 import { TelemetryKoDto, responseStatus } from "pagopa-interop-probing-models";
 import { v4 as uuidv4 } from "uuid";
@@ -35,7 +35,7 @@ describe("Consumer queue test", () => {
     };
 
     await expect(
-      processMessage(mockTelemetryService)(validMessage),
+      processBatch(mockTelemetryService)([validMessage]),
     ).resolves.not.toThrow();
   });
 
@@ -43,7 +43,7 @@ describe("Consumer queue test", () => {
     const invalidMessage = {};
 
     await expect(
-      processMessage(mockTelemetryService)(invalidMessage),
+      processBatch(mockTelemetryService)([invalidMessage as SQS.Message]),
     ).rejects.toMatchObject({
       code: "decodeSQSMessageError",
       detail: expect.any(String),
