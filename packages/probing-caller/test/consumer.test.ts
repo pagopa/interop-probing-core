@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, afterAll, afterEach } from "vitest";
-import { processMessage } from "../src/messagesHandler.js";
+import { processBatch } from "../src/messagesHandler.js";
 import {
   AppContext,
   decodeSQSMessage,
@@ -65,10 +65,10 @@ describe("Consumer queue test", async () => {
     };
 
     await expect(
-      processMessage(
+      processBatch(
         mockProbingCallerService,
         mockProducerService,
-      )(validMessage),
+      )([validMessage]),
     ).resolves.not.toThrow();
 
     expect(mockProbingCallerService.performRequest).toHaveBeenCalledWith(
@@ -88,10 +88,10 @@ describe("Consumer queue test", async () => {
     const invalidMessage = {};
 
     await expect(
-      processMessage(
+      processBatch(
         mockProbingCallerService,
         mockProducerService,
-      )(invalidMessage),
+      )([invalidMessage as SQS.Message]),
     ).rejects.toMatchObject({
       code: "decodeSQSMessageError",
     });
