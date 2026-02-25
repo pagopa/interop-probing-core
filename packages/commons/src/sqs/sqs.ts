@@ -218,9 +218,9 @@ const processBatchQueue = async (
       { length: config.receiveMsgsCalls },
       () => concurrencyLimit(() => sqsClient.send(command)),
     );
-    const receiveMessagesresults = await Promise.all(receiveMessagesPromises);
+    const receiveMessagesResults = await Promise.all(receiveMessagesPromises);
 
-    const Messages = receiveMessagesresults.flatMap((r) => r.Messages ?? []);
+    const Messages = receiveMessagesResults.flatMap((r) => r.Messages ?? []);
     if (Messages?.length) {
       const processMessageStartTime = Date.now();
       loggerInstance.debug(
