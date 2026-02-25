@@ -232,7 +232,7 @@ const processBatchQueue = async (
       const invalidMessages: Message[] = [];
       for (const message of Messages) {
         const result = validateSqsMessage(message, loggerInstance);
-        await match(result)
+        match(result)
           .with("InvalidEvent", async () => {
             invalidMessages.push(message);
           })
