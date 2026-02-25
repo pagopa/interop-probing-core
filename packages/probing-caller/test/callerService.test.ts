@@ -201,6 +201,56 @@ describe("caller service test", () => {
     );
   });
 
+  it("should mark REST probing as KO when axios aborts due to timeout", async () => {
+    const validMessage: SQS.Message = {
+      MessageId: "12345",
+      ReceiptHandle: "receipt_handle_id",
+      Body: JSON.stringify({
+        eserviceRecordId: 1,
+        technology: "REST",
+        basePath: ["path1", "path2"],
+        audience: ["aud1", "path2"],
+      }),
+      MessageAttributes: correlationIdMessageAttribute,
+    };
+
+    const { correlationId } = decodeSQSMessageCorrelationId(validMessage);
+    const ctx: WithSQSMessageId<AppContext> = {
+      serviceName: config.applicationName,
+      messageId: validMessage.MessageId,
+      correlationId,
+    };
+
+    const apiClientError = mockApiClientError(
+      500,
+      "timeout of 5000ms exceeded",
+      "ECONNABORTED",
+    );
+
+    vi.spyOn(apiClientHandler, "sendREST").mockRejectedValue(apiClientError);
+    vi.spyOn(kmsClientHandler, "buildJWT").mockResolvedValue(mockJWT);
+
+    const eservice = decodeSQSMessage<EserviceContentDto>(
+      validMessage,
+      EserviceContentDto,
+    );
+    const baseUrl = `${eservice.basePath[0]}${callerConstants.PROBING_ENDPOINT_SUFFIX}`;
+
+    const telemetryResult = await callerService.performRequest(eservice, ctx);
+
+    expect(telemetryResult.status).toBe("KO");
+    expect((telemetryResult as TelemetryKoDto).koReason).toBe(
+      callerConstants.CONNECTION_TIMEOUT_KO_REASON,
+    );
+    expect(telemetryResult.eserviceRecordId).toBe(eservice.eserviceRecordId);
+
+    expect(apiClientHandler.sendREST).toHaveBeenCalledWith(
+      baseUrl,
+      mockJWT,
+      ctx,
+    );
+  });
+
   it("should mark SOAP probing as OK when the service responds successfully", async () => {
     const validMessage: SQS.Message = {
       MessageId: "12345",
