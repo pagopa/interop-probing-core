@@ -686,7 +686,7 @@ describe("eService service", async () => {
 
       await expect(
         eserviceService.deleteEservice(nonExistentId, genericLogger),
-      ).resolves.not.toThrow();
+      ).resolves.toBeUndefined();
     });
 
     it("should throw an error if the eserviceId param is invalid", async () => {
