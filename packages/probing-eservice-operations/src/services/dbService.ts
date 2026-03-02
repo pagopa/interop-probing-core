@@ -134,10 +134,15 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
         });
     },
 
-    async deleteEservice(eserviceId: string): Promise<void> {
-      await db
+    async deleteEservice(
+      eserviceId: string,
+    ): Promise<{ id: number } | undefined> {
+      const [deletedEservice] = await db
         .delete(eservicesInProbing)
-        .where(eq(eservicesInProbing.eserviceId, eserviceId));
+        .where(eq(eservicesInProbing.eserviceId, eserviceId))
+        .returning({ id: eservicesInProbing.id });
+
+      return deletedEservice;
     },
 
     async saveTenant(tenantData: TenantSaveRequest): Promise<void> {
@@ -224,18 +229,6 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
         .limit(1);
 
       return data;
-    },
-
-    async getEserviceById(
-      eserviceId: string,
-    ): Promise<EServiceSQL | undefined> {
-      const [eservice] = await db
-        .select()
-        .from(eservicesInProbing)
-        .where(and(eq(eservicesInProbing.eserviceId, eserviceId)))
-        .limit(1);
-
-      return eservice;
     },
 
     async getEserviceByRecordId(

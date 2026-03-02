@@ -99,15 +99,12 @@ export function eServiceServiceBuilder(dbService: DBService) {
       eserviceId: string,
       logger: Logger,
     ): Promise<probingEserviceOperationsApi.ApiDeleteEserviceResponse> {
-      const eService = await dbService.getEserviceById(eserviceId);
-      if (!eService) {
+      const deletedEservice = await dbService.deleteEservice(eserviceId);
+      if (!deletedEservice) {
         logger.error(
-          `EService with eserviceId ${eserviceId} not found while performing the delete operation. Operation skipped.`,
+          `EService with eserviceId ${eserviceId} not found during delete operation`,
         );
-        return;
       }
-
-      await dbService.deleteEservice(eserviceId);
     },
 
     async updateEserviceLastRequest(
