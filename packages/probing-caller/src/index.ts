@@ -1,6 +1,6 @@
 import { genericLogger, logger, SQS } from "pagopa-interop-probing-commons";
 import { config } from "./utilities/config.js";
-import { processMessage } from "./messagesHandler.js";
+import { processBatch } from "./messagesHandler.js";
 import {
   CallerService,
   callerServiceBuilder,
@@ -30,14 +30,17 @@ const callerService: CallerService = callerServiceBuilder(
 );
 const producerService: ProducerService = producerServiceBuilder(sqsClient);
 
-await SQS.runConsumer(
+await SQS.runBatchConsumer(
   sqsClient,
   {
     queueUrl: config.sqsEndpointPollQueue,
     maxNumberOfMessages: config.maxNumberOfMessages,
     waitTimeSeconds: config.waitTimeSeconds,
     visibilityTimeout: config.visibilityTimeout,
+    receiveMsgsCalls: config.receiveMsgsCalls,
+    receiveMsgsConcurrency: config.receiveMsgsConcurrency,
+    serviceName: config.applicationName,
   },
-  processMessage(callerService, producerService),
+  processBatch(callerService, producerService),
   logger({ serviceName: config.applicationName }),
 ).catch(genericLogger.error);

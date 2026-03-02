@@ -48,7 +48,7 @@ export function createApp(statisticsService: StatisticsService) {
   const corsOptions: CorsOptions = {
     origin: config.corsOriginAllowed,
     methods: ["POST", "PUT", "GET", "OPTIONS", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Correlation-Id"],
   };
   app.use(cors(corsOptions));
 

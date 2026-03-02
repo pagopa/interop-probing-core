@@ -1,12 +1,12 @@
 import {
   AppContext,
   decodeSQSMessageCorrelationId,
-  logger,
+  decodeSQSMessage,
   SQS,
   WithSQSMessageId,
+  logger,
 } from "pagopa-interop-probing-commons";
 import { CallerService } from "./services/callerService.js";
-import { decodeSQSMessage } from "pagopa-interop-probing-commons";
 import { ProducerService } from "./services/producerService.js";
 import {
   UpdateResponseReceivedDto,
@@ -16,33 +16,47 @@ import {
 import { config } from "./utilities/config.js";
 import { errorMapper } from "./utilities/errorMapper.js";
 
-export function processMessage(
+const processMessage = async (
+  message: SQS.Message,
   callerService: CallerService,
   producerService: ProducerService,
-): (message: SQS.Message) => Promise<void> {
-  return async (message: SQS.Message): Promise<void> => {
-    const { correlationId } = decodeSQSMessageCorrelationId(message);
-    const ctx: WithSQSMessageId<AppContext> = {
-      serviceName: config.applicationName,
-      messageId: message.MessageId,
-      correlationId,
+): Promise<void> => {
+  const { correlationId } = decodeSQSMessageCorrelationId(message);
+  const ctx: WithSQSMessageId<AppContext> = {
+    serviceName: config.applicationName,
+    messageId: message.MessageId,
+    correlationId,
+  };
+
+  try {
+    const telemetryResult: TelemetryDto = await callerService.performRequest(
+      decodeSQSMessage<EserviceContentDto>(message, EserviceContentDto),
+      ctx,
+    );
+    const pollingResult: UpdateResponseReceivedDto = {
+      eserviceRecordId: telemetryResult.eserviceRecordId,
+      status: telemetryResult.status,
+      responseReceived: new Date().toISOString(),
     };
 
-    try {
-      const telemetryResult: TelemetryDto = await callerService.performRequest(
-        decodeSQSMessage<EserviceContentDto>(message, EserviceContentDto),
-        ctx,
-      );
-      const pollingResult: UpdateResponseReceivedDto = {
-        eserviceRecordId: telemetryResult.eserviceRecordId,
-        status: telemetryResult.status,
-        responseReceived: new Date().toISOString(),
-      };
+    await Promise.all([
+      producerService.sendToTelemetryWriterQueue(telemetryResult, ctx),
+      producerService.sendToResponseUpdaterQueue(pollingResult, ctx),
+    ]);
+  } catch (error: unknown) {
+    throw errorMapper(error, logger(ctx));
+  }
+};
 
-      await producerService.sendToTelemetryWriterQueue(telemetryResult, ctx);
-      await producerService.sendToResponseUpdaterQueue(pollingResult, ctx);
-    } catch (error: unknown) {
-      throw errorMapper(error, logger(ctx));
-    }
+export function processBatch(
+  callerService: CallerService,
+  producerService: ProducerService,
+): (messages: SQS.Message[]) => Promise<void> {
+  return async (messages: SQS.Message[]): Promise<void> => {
+    await Promise.all(
+      messages.map((message) =>
+        processMessage(message, callerService, producerService),
+      ),
+    );
   };
 }

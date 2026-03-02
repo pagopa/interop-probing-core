@@ -25,6 +25,7 @@ export const errorMapper = (error: unknown, logger: Logger) =>
 export function getKoReason(error: unknown): string {
   return match((error as AxiosError).code)
     .with("ECONNREFUSED", () => callerConstants.CONNECTION_REFUSED_KO_REASON)
+    .with("ECONNABORTED", () => callerConstants.CONNECTION_TIMEOUT_KO_REASON)
     .with("ETIMEDOUT", () => callerConstants.CONNECTION_TIMEOUT_KO_REASON)
     .otherwise(() => {
       const status = (error as AxiosError).response?.status;
