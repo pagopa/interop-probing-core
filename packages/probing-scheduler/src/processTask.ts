@@ -20,55 +20,58 @@ export async function processTask(
     logger(mainCtx).info(`Start processing eservices ready for polling.`);
 
     const limit: number = config.schedulerLimit;
-    let offset: number = 0;
-    let totalElements: number = 0;
 
-    do {
+    while (true) {
       const pollingCtx: AppContext = {
         ...mainCtx,
         correlationId: uuidv4(),
       };
+
       const data = await operationsService.getEservicesReadyForPolling(
         {
           ...correlationIdToHeader(pollingCtx.correlationId),
         },
         {
-          offset,
+          offset: 0,
           limit,
         },
         pollingCtx,
       );
-      totalElements = data.totalElements;
 
-      const promises = data.content.map(async (eservice) => {
-        const eserviceCtx: AppContext = {
-          serviceName: config.applicationName,
-          correlationId: uuidv4(),
-        };
+      if (!data.content.length) {
+        break;
+      }
 
-        const params: probingEserviceOperationsApi.ApiUpdateLastRequestParams =
-          {
-            eserviceRecordId: eservice.eserviceRecordId,
+      await Promise.all(
+        data.content.map(async (eservice) => {
+          const eserviceCtx: AppContext = {
+            serviceName: config.applicationName,
+            correlationId: uuidv4(),
           };
-        const payload: probingEserviceOperationsApi.ApiUpdateLastRequestPayload =
-          {
-            lastRequest: new Date().toISOString(),
-          };
-        await operationsService.updateLastRequest(
-          {
-            ...correlationIdToHeader(eserviceCtx.correlationId),
-          },
-          params,
-          payload,
-          eserviceCtx,
-        );
 
-        await producerService.sendToCallerQueue(eservice, eserviceCtx);
-      });
-      await Promise.all(promises);
+          const params: probingEserviceOperationsApi.ApiUpdateLastRequestParams =
+            {
+              eserviceRecordId: eservice.eserviceRecordId,
+            };
 
-      offset += limit;
-    } while (offset < totalElements);
+          const payload: probingEserviceOperationsApi.ApiUpdateLastRequestPayload =
+            {
+              lastRequest: new Date().toISOString(),
+            };
+
+          await operationsService.updateLastRequest(
+            {
+              ...correlationIdToHeader(eserviceCtx.correlationId),
+            },
+            params,
+            payload,
+            eserviceCtx,
+          );
+
+          await producerService.sendToCallerQueue(eservice, eserviceCtx);
+        }),
+      );
+    }
 
     logger(mainCtx).info(`End processing eservices ready for polling.`);
   } catch (error: unknown) {

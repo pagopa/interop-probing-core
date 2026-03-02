@@ -85,17 +85,49 @@ const getLogger = () =>
 
 const internalLoggerInstance = getLogger();
 
-export const logger = (loggerMetadata: LoggerMetadata) => ({
-  isDebugEnabled: () => internalLoggerInstance.isDebugEnabled(),
-  debug: (msg: (typeof internalLoggerInstance.debug.arguments)[0]) =>
-    internalLoggerInstance.debug(msg, { loggerMetadata }),
-  info: (msg: (typeof internalLoggerInstance.info.arguments)[0]) =>
-    internalLoggerInstance.info(msg, { loggerMetadata }),
-  warn: (msg: (typeof internalLoggerInstance.warn.arguments)[0]) =>
-    internalLoggerInstance.warn(msg, { loggerMetadata }),
-  error: (msg: (typeof internalLoggerInstance.error.arguments)[0]) =>
-    internalLoggerInstance.error(msg, { loggerMetadata }),
-});
+const elapsedTime = (startTime: number): string =>
+  `[${Date.now() - startTime}ms]`;
+
+export const logger = (loggerMetadata: LoggerMetadata) => {
+  const appendElapsedTime = (msg: string, startTime?: number): string => {
+    if (startTime !== undefined && internalLoggerInstance.isDebugEnabled()) {
+      return `${elapsedTime(startTime)} ${msg}`;
+    }
+    return msg;
+  };
+
+  return {
+    isDebugEnabled: () => internalLoggerInstance.isDebugEnabled(),
+    debug: (
+      msg: (typeof internalLoggerInstance.debug.arguments)[0],
+      startTime?: number,
+    ) =>
+      internalLoggerInstance.debug(appendElapsedTime(`${msg}`, startTime), {
+        loggerMetadata,
+      }),
+    info: (
+      msg: (typeof internalLoggerInstance.info.arguments)[0],
+      startTime?: number,
+    ) =>
+      internalLoggerInstance.info(appendElapsedTime(`${msg}`, startTime), {
+        loggerMetadata,
+      }),
+    warn: (
+      msg: (typeof internalLoggerInstance.warn.arguments)[0],
+      startTime?: number,
+    ) =>
+      internalLoggerInstance.warn(appendElapsedTime(`${msg}`, startTime), {
+        loggerMetadata,
+      }),
+    error: (
+      msg: (typeof internalLoggerInstance.error.arguments)[0],
+      startTime?: number,
+    ) =>
+      internalLoggerInstance.error(appendElapsedTime(`${msg}`, startTime), {
+        loggerMetadata,
+      }),
+  };
+};
 
 export type Logger = ReturnType<typeof logger>;
 

@@ -1,6 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { createProbingRequestEnvelope } from "./soapEnvelope.js";
 import { AppContext, WithSQSMessageId } from "pagopa-interop-probing-commons";
+import { config } from "./config.js";
 
 export const apiClientBuilder = () => {
   return {
@@ -12,6 +13,7 @@ export const apiClientBuilder = () => {
       return await axios({
         method: "GET",
         url: baseUrl,
+        timeout: config.httpRequestTimeoutMs,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
@@ -27,6 +29,7 @@ export const apiClientBuilder = () => {
       return await axios({
         method: "POST",
         url: baseUrl,
+        timeout: config.httpRequestTimeoutMs,
         headers: {
           "Content-Type": "text/xml;charset=UTF-8",
           Authorization: `Bearer ${token}`,
