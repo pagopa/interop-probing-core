@@ -226,13 +226,16 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
       return data;
     },
 
-    async getEservicesById(eserviceId: string): Promise<EServiceSQL[]> {
-      const eservices = await db
+    async getEserviceById(
+      eserviceId: string,
+    ): Promise<EServiceSQL | undefined> {
+      const [eservice] = await db
         .select()
         .from(eservicesInProbing)
-        .where(and(eq(eservicesInProbing.eserviceId, eserviceId)));
+        .where(and(eq(eservicesInProbing.eserviceId, eserviceId)))
+        .limit(1);
 
-      return eservices;
+      return eservice;
     },
 
     async getEserviceByRecordId(

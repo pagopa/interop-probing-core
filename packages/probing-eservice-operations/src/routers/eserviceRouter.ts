@@ -105,7 +105,10 @@ const eServiceRouter = (
     )
     .delete("/eservices/:eserviceId/deleteEservice", async (req, res) => {
       try {
-        await eServiceService.deleteEservice(req.params.eserviceId);
+        await eServiceService.deleteEservice(
+          req.params.eserviceId,
+          logger(req.ctx),
+        );
 
         return res.status(204).end();
       } catch (error) {
