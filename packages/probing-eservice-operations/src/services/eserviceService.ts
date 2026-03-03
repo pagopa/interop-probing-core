@@ -10,7 +10,6 @@ import {
 import {
   eServiceByRecordIdNotFound,
   eServiceByVersionIdNotFound,
-  eServiceNotFound,
 } from "../model/domain/errors.js";
 import { DBService } from "./dbService.js";
 import { z } from "zod";
@@ -98,13 +97,14 @@ export function eServiceServiceBuilder(dbService: DBService) {
 
     async deleteEservice(
       eserviceId: string,
+      logger: Logger,
     ): Promise<probingEserviceOperationsApi.ApiDeleteEserviceResponse> {
-      const eServices = await dbService.getEservicesById(eserviceId);
-      if (eServices.length === 0) {
-        throw eServiceNotFound(eserviceId);
+      const deletedEservice = await dbService.deleteEservice(eserviceId);
+      if (!deletedEservice) {
+        logger.error(
+          `EService with eserviceId ${eserviceId} not found during delete operation`,
+        );
       }
-
-      await dbService.deleteEservice(eserviceId);
     },
 
     async updateEserviceLastRequest(

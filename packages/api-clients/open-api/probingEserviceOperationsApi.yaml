@@ -621,12 +621,6 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Problem"
-        "404":
-          description: The requested resource could not be found on the server
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Problem"
         "500":
           description: A managed error has occurred during the request elaboration
           content:
