@@ -24,7 +24,6 @@ import { eq, and } from "drizzle-orm";
 import {
   eServiceByRecordIdNotFound,
   eServiceByVersionIdNotFound,
-  eServiceNotFound,
   tenantNotFound,
 } from "../../src/model/domain/errors.js";
 import { v4 as uuidv4 } from "uuid";
@@ -584,7 +583,7 @@ describe("eService service", async () => {
       const eServiceRecordId = await addEservice(eService);
       const { eserviceId } = await getEservice(eServiceRecordId);
 
-      await eserviceService.deleteEservice(eserviceId);
+      await eserviceService.deleteEservice(eserviceId, genericLogger);
 
       const [result] = await db
         .select()
@@ -625,7 +624,7 @@ describe("eService service", async () => {
         .where(eq(eservicesInProbing.eserviceId, eServiceId));
       expect(beforeDelete.length).toBe(3);
 
-      await eserviceService.deleteEservice(eServiceId);
+      await eserviceService.deleteEservice(eServiceId, genericLogger);
 
       const afterDelete = await db
         .select()
@@ -644,7 +643,7 @@ describe("eService service", async () => {
         lastRequest: new Date().toISOString(),
       });
 
-      await eserviceService.deleteEservice(eserviceId);
+      await eserviceService.deleteEservice(eserviceId, genericLogger);
 
       const [result] = await db
         .select()
@@ -671,7 +670,7 @@ describe("eService service", async () => {
         status: "ok",
       });
 
-      await eserviceService.deleteEservice(eserviceId);
+      await eserviceService.deleteEservice(eserviceId, genericLogger);
 
       const [result] = await db
         .select()
@@ -682,12 +681,12 @@ describe("eService service", async () => {
       expect(result).toBeUndefined();
     });
 
-    it("should throw eServiceNotFound when attempting to delete a non-existent eService", async () => {
+    it("should not throw when attempting to delete a non-existent eService", async () => {
       const nonExistentId = uuidv4();
 
       await expect(
-        eserviceService.deleteEservice(nonExistentId),
-      ).rejects.toThrowError(eServiceNotFound(nonExistentId));
+        eserviceService.deleteEservice(nonExistentId, genericLogger),
+      ).resolves.toBeUndefined();
     });
 
     it("should throw an error if the eserviceId param is invalid", async () => {
@@ -696,7 +695,10 @@ describe("eService service", async () => {
       };
 
       await expect(
-        eserviceService.deleteEservice(invalidEserviceParams.eserviceId),
+        eserviceService.deleteEservice(
+          invalidEserviceParams.eserviceId,
+          genericLogger,
+        ),
       ).rejects.toThrowError();
     });
   });
