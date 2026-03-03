@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@probing/eslint-config": "workspace:*",
-    "@pagopa/interop-outbound-models": "1.8.6",
+    "@pagopa/interop-outbound-models": "1.8.10",
     "@types/dotenv-flow": "3.3.3",
     "@types/express": "4.17.21",
     "@types/node": "20.10.4",
