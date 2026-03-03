@@ -227,6 +227,7 @@ describe("Message handler V2 - EService tests", () => {
         { type: "EServiceSignalHubDisabled" },
         { type: "EServicePersonalDataFlagUpdatedAfterPublication" },
         { type: "EServicePersonalDataFlagUpdatedByTemplateUpdate" },
+        { type: "EServiceInstanceLabelUpdated" },
       ];
 
       for (const event of events) {
