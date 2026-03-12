@@ -18,7 +18,7 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "aws-msk-iam-sasl-signer-js": "1.0.0",
+    "aws-msk-iam-sasl-signer-js": "1.0.1",
     "kafkajs": "2.2.4",
     "pagopa-interop-probing-commons": "workspace:*",
     "pagopa-interop-probing-models": "workspace:*",
