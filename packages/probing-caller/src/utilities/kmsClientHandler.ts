@@ -12,8 +12,6 @@ import { buildJWTError } from "../model/domain/errors.js";
 
 interface Claims {
   aud: string[];
-  sub: string;
-  nbf: number;
   iss: string;
   exp: number;
   iat: number;
@@ -74,8 +72,6 @@ function createPayload(audience: string[]): string {
 
   const claims: Claims = {
     aud: audience,
-    sub: config.jwtPayloadSubject,
-    nbf: currentTimeInSeconds,
     iss: config.jwtPayloadIssuer,
     exp: currentTimeInSeconds + config.jwtPayloadExpireTimeInSec,
     iat: currentTimeInSeconds,
