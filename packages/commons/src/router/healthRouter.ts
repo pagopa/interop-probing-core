@@ -1,6 +1,7 @@
 import { constants } from "http2";
 import { ZodiosEndpointDefinitions } from "@zodios/core";
 import { ZodiosRouter } from "@zodios/express";
+import { ZodType } from "zod";
 import {
   CorrelationId,
   generateId,
@@ -12,7 +13,7 @@ type RequiresHealthStatus = [
   {
     method: "get";
     path: "/status";
-    response: typeof Problem;
+    response: ZodType<Problem>;
   },
 ];
 
