@@ -10,4 +10,13 @@ export default defineConfig({
       '@/': `${path.resolve(__dirname, 'src')}/`,
     },
   },
+  server: {
+    proxy: {
+      '/eservices': {
+        target: 'https://dev.stato-eservice.interop.pagopa.it',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+  },
 })
