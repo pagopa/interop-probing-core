@@ -11,7 +11,7 @@ import { useTranslation } from 'react-i18next'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import { MonitoringTableRow } from './MonitoringTableRow'
 import { MonitoringQueries } from '@/api/monitoring/monitoring.hooks'
-import { Skeleton } from '@mui/material'
+import { Box, Skeleton } from '@mui/material'
 import type { TFunction } from 'i18next'
 import React from 'react'
 import type { EService } from '@/api/monitoring/monitoring.models'
@@ -78,6 +78,7 @@ export const MonitoringTable: React.FC = () => {
   }
 
   const { data: eservices, refetch, isLoading } = MonitoringQueries.useGetList(params)
+  const scrollRef = React.useRef<HTMLDivElement | null>(null)
 
   React.useEffect(() => {
     if (eservices?.totalElements !== undefined) {
@@ -85,10 +86,14 @@ export const MonitoringTable: React.FC = () => {
     }
   }, [eservices?.totalElements])
 
+  React.useEffect(() => {
+    scrollRef?.current?.scrollIntoView({ behavior: 'auto' })
+  }, [paginationParams.offset])
+
   const handleRefetch = useHandleRefetch<EService>(refetch)
 
   return (
-    <>
+    <Box ref={scrollRef}>
       <Filters
         {...handlers}
         rightContent={
@@ -117,8 +122,8 @@ export const MonitoringTable: React.FC = () => {
         </Table>
       )}
 
-  <Pagination {...paginationProps} totalPages={getTotalPageCount(totalEServices)} />
-    </>
+      <Pagination {...paginationProps} totalPages={getTotalPageCount(totalEServices)} />
+    </Box>
   )
 }
 
