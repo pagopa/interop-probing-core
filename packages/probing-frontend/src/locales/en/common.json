@@ -138,6 +138,8 @@
     "loading": "Loading...",
     "startDateTime": "Period start date and time",
     "endDateTime": "Period end date and time",
+    "eserviceID": "E-SERVICE ID",
+    "copySuccessFeedbackText": "ID successfully copied",
     "alerts": {
       "monitoringSuspended": "Monitoring suspended",
       "versionSuspendedMessage": "The e-service is offline because this version is currently suspended",
