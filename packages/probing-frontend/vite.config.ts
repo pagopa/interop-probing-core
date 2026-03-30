@@ -12,12 +12,7 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      '/eservices': {
-        target: 'https://dev.stato-eservice.interop.pagopa.it',
-        changeOrigin: true,
-        secure: false,
-      },
-      '/producers': {
+      '^/(eservices|producers)': {
         target: 'https://dev.stato-eservice.interop.pagopa.it',
         changeOrigin: true,
         secure: false,
