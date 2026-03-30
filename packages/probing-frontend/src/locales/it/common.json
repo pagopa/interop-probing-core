@@ -151,6 +151,8 @@
     "loading": "Operazione in corso...",
     "startDateTime": "Data e ora inizio periodo",
     "endDateTime": "Data e ora fine periodo",
+    "eserviceID": "ID E-SERVICE",
+    "copySuccessFeedbackText": "ID copiato correttamente",
     "alerts": {
       "monitoringSuspended": "Monitoraggio sospeso",
       "versionSuspendedMessage": "L'e-service è offline perché questa versione è attualmente sospesa",
