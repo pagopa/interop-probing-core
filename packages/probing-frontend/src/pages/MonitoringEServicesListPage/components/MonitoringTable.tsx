@@ -16,6 +16,7 @@ import type { TFunction } from 'i18next'
 import React from 'react'
 import type { EService } from '@/api/monitoring/monitoring.models'
 import { useHandleRefetch } from '@/hooks/useRefetch'
+import { eserviceStateConfig } from '@/types/eservice-state.types'
 
 const headLabels = (t: TFunction<'common', 'table'>): Array<string> => {
   return [
@@ -30,6 +31,7 @@ const headLabels = (t: TFunction<'common', 'table'>): Array<string> => {
 
 export const MonitoringTable: React.FC = () => {
   const { t } = useTranslation('common', { keyPrefix: 'table' })
+  const { t: tCommon } = useTranslation('common')
   const [totalEServices, setTotalEServices] = React.useState<number | undefined>()
   const { paginationParams, paginationProps, getTotalPageCount } = usePagination({ limit: 10 })
   const [producersAutocompleteTextInput, setProducersAutocompleteTextInput] =
@@ -65,9 +67,9 @@ export const MonitoringTable: React.FC = () => {
       type: 'autocomplete-multiple',
       label: t('serviceStateFilter'),
       options: [
-        { value: 'ONLINE', label: 'online' },
-        { value: 'OFFLINE', label: 'offline' },
-        { value: 'N_D', label: 'n/d' },
+        { value: 'ONLINE', label: tCommon(eserviceStateConfig.ONLINE.labelKey) },
+        { value: 'OFFLINE', label: tCommon(eserviceStateConfig.OFFLINE.labelKey) },
+        { value: 'N_D', label: tCommon(eserviceStateConfig.N_D.labelKey) },
       ],
     },
   ])
@@ -117,7 +119,7 @@ export const MonitoringTable: React.FC = () => {
         </Table>
       )}
 
-  <Pagination {...paginationProps} totalPages={getTotalPageCount(totalEServices)} />
+      <Pagination {...paginationProps} totalPages={getTotalPageCount(totalEServices)} />
     </>
   )
 }

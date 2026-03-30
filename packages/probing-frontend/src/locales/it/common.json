@@ -112,6 +112,20 @@
     "noDataLabel": "La ricerca non ha prodotto risultati",
     "loading": "Operazione in corso..."
   },
+  "state": {
+    "available": {
+      "label": "Disponibile",
+      "tooltip": "L'API di questo e-service risponde correttamente"
+    },
+    "unavailable": {
+      "label": "Non risponde",
+      "tooltip": "L'API di questo e-service non è raggiungibile al momento"
+    },
+    "unverified": {
+      "label": "Verifica non riuscita",
+      "tooltip": "Non siamo mai riusciti a contattare l'API di questo e-service"
+    }
+  },
   "detailsPage": {
     "titleOperativita": "Operatività",
     "historyTitle": "Storico del monitoraggio",
