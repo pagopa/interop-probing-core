@@ -58,10 +58,10 @@ export const ChartWrapper: React.FC<ChartWrapperProps> = ({ eserviceId, pollingF
     const endMissing = !endDate || endDate === ''
 
     if (startMissing || endMissing) {
-      setSearchParams({
+      setSearchParams({ 
         startDate: last24h.toISOString(),
-        endDate: now.toISOString(),
-      })
+        endDate: now.toISOString()
+      }, { replace: true })
       return
     }
 
@@ -79,7 +79,7 @@ export const ChartWrapper: React.FC<ChartWrapperProps> = ({ eserviceId, pollingF
       setSearchParams({
         startDate: last24h.toISOString(),
         endDate: now.toISOString(),
-      })
+      }, { replace: true })
     }
   }, [startDate, endDate, setSearchParams])
 
