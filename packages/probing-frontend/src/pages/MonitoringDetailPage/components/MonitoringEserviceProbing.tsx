@@ -1,13 +1,11 @@
-import type {
-  ProbingEServiceMonitorState,
-  ProbingEservice,
-} from '@/api/monitoring/monitoring.models'
-import { Alert, Box, Chip, Grid, Skeleton, Stack, Typography } from '@mui/material'
+import type { ProbingEservice } from '@/api/monitoring/monitoring.models'
+import { Alert, Box, Chip, Grid, Skeleton, Stack, Tooltip, Typography } from '@mui/material'
 import { ButtonNaked } from '@pagopa/mui-italia'
 import { useTranslation } from 'react-i18next'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import { formatDateString } from '@/utils/date.utils'
 import { InformationContainer } from '@pagopa/interop-fe-commons'
+import { EserviceState, eserviceStateConfig } from '@/types/eservice-state.types'
 
 type MonitoringEserviceProbingProps = {
   eservicesProbingDetail: ProbingEservice
@@ -24,17 +22,9 @@ export const MonitoringEserviceProbing: React.FC<MonitoringEserviceProbingProps>
   const { t } = useTranslation('common', {
     keyPrefix: 'detailsPage',
   })
+  const { t: tCommon } = useTranslation('common')
 
-  const getProbingStateChipColor = (value: ProbingEServiceMonitorState) => {
-    switch (value) {
-      case 'ONLINE':
-        return 'success'
-      case 'OFFLINE':
-        return 'error'
-      case 'N_D':
-        return 'warning'
-    }
-  }
+  const config = eserviceStateConfig[eservicesProbingDetail.state as EserviceState] ?? eserviceStateConfig.N_D
 
   return (
     <Box sx={{ mt: '40px', width: '100%', minWidth: '400px', maxWidth: '600px' }}>
@@ -60,15 +50,13 @@ export const MonitoringEserviceProbing: React.FC<MonitoringEserviceProbingProps>
         <InformationContainer
           label={t('eserviceState')}
           content={
-            <Chip
-              size={'small'}
-              label={
-                eservicesProbingDetail.state === 'N_D'
-                  ? 'n/d'
-                  : eservicesProbingDetail.state.toLowerCase()
-              }
-              color={getProbingStateChipColor(eservicesProbingDetail.state)}
-            />
+            <Tooltip title={tCommon(config.tooltipKey)}>
+              <Chip
+                size={'small'}
+                label={tCommon(config.labelKey)}
+                color={config.color}
+              />
+            </Tooltip>
           }
         />
         <InformationContainer
