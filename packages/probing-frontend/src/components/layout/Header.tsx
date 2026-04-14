@@ -25,6 +25,7 @@ export const Header: React.FC = () => {
         loggedUser={jwt ? { id: jwt.email } : false}
         onLogin={() => handleLogin()}
         onLogout={() => handleLogout()}
+        enableLogin={false}
         onAssistanceClick={() => {
           window.open(assistanceLink, '_blank')
         }}
