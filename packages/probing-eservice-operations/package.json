@@ -39,7 +39,7 @@
     "@zodios/core": "10.9.6",
     "@zodios/express": "10.6.1",
     "dotenv-flow": "4.1.0",
-    "drizzle-orm": "0.44.7",
+    "drizzle-orm": "0.45.2",
     "express": "4.21.2",
     "pagopa-interop-probing-commons": "workspace:*",
     "pagopa-interop-probing-api-clients": "workspace:*",
