@@ -5,18 +5,18 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
 -- Tables
 CREATE TABLE IF NOT EXISTS probing.tenants (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    tenant_id VARCHAR(36) NOT NULL UNIQUE,
+    tenant_id UUID NOT NULL UNIQUE,
     tenant_name VARCHAR(2048)
 );
 
-CREATE TABLE IF NOT EXISTS probing.tenants_allow_list (tenant_id VARCHAR(36) PRIMARY KEY);
+CREATE TABLE IF NOT EXISTS probing.tenants_allow_list (tenant_id UUID PRIMARY KEY);
 
 CREATE TABLE IF NOT EXISTS probing.eservices (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    eservice_id VARCHAR(36) NOT NULL,
-    version_id VARCHAR(36) NOT NULL,
+    eservice_id UUID NOT NULL,
+    version_id UUID NOT NULL,
     eservice_name VARCHAR(255) NOT NULL,
-    producer_id VARCHAR(36),
+    producer_id UUID,
     producer_name VARCHAR(2048) NOT NULL,
     eservice_technology VARCHAR(255) NOT NULL,
     base_path VARCHAR(2048) [] NOT NULL,

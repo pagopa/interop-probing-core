@@ -1,6 +1,7 @@
 import {
   pgSchema,
   unique,
+  uuid,
   varchar,
   integer,
   boolean,
@@ -18,24 +19,24 @@ export const tenantsInProbing = probing.table(
   "tenants",
   {
     id: bigint({ mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
-    tenantId: varchar("tenant_id", { length: 36 }).notNull(),
+    tenantId: uuid("tenant_id").notNull(),
     tenantName: varchar("tenant_name", { length: 2048 }),
   },
   (table) => [unique("tenants_tenant_id_key").on(table.tenantId)],
 );
 
 export const tenantsAllowListInProbing = probing.table("tenants_allow_list", {
-  tenantId: varchar("tenant_id", { length: 36 }).primaryKey(),
+  tenantId: uuid("tenant_id").primaryKey(),
 });
 
 export const eservicesInProbing = probing.table(
   "eservices",
   {
     id: bigint({ mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
-    eserviceId: varchar("eservice_id", { length: 36 }).notNull(),
-    versionId: varchar("version_id", { length: 36 }).notNull(),
+    eserviceId: uuid("eservice_id").notNull(),
+    versionId: uuid("version_id").notNull(),
     eserviceName: varchar("eservice_name", { length: 255 }).notNull(),
-    producerId: varchar("producer_id", { length: 36 }),
+    producerId: uuid("producer_id"),
     producerName: varchar("producer_name", { length: 2048 }).notNull(),
     eserviceTechnology: varchar("eservice_technology", {
       length: 255,
@@ -103,11 +104,11 @@ export const eserviceProbingResponsesInProbing = probing.table(
 export const eserviceViewInProbing = probing
   .view("eservice_view", {
     id: bigint({ mode: "number" }),
-    eserviceId: varchar("eservice_id", { length: 36 }),
+    eserviceId: uuid("eservice_id"),
     eserviceName: varchar("eservice_name", { length: 255 }),
-    producerId: varchar("producer_id", { length: 36 }),
+    producerId: uuid("producer_id"),
     producerName: varchar("producer_name", { length: 2048 }),
-    versionId: varchar("version_id", { length: 36 }),
+    versionId: uuid("version_id"),
     state: varchar({ length: 255 }),
     status: varchar({ length: 2 }),
     probingEnabled: boolean("probing_enabled"),
