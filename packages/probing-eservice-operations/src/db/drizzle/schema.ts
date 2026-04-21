@@ -25,9 +25,19 @@ export const tenantsInProbing = probing.table(
   (table) => [unique("tenants_tenant_id_key").on(table.tenantId)],
 );
 
-export const tenantsAllowListInProbing = probing.table("tenants_allow_list", {
-  tenantId: uuid("tenant_id").primaryKey(),
-});
+export const tenantsAllowListInProbing = probing.table(
+  "tenants_allow_list",
+  {
+    tenantId: uuid("tenant_id").primaryKey(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.tenantId],
+      foreignColumns: [tenantsInProbing.tenantId],
+      name: "tenants_allow_list_tenant_id_fkey",
+    }).onDelete("restrict"),
+  ],
+);
 
 export const eservicesInProbing = probing.table(
   "eservices",

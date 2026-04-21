@@ -9,7 +9,9 @@ CREATE TABLE IF NOT EXISTS probing.tenants (
     tenant_name VARCHAR(2048)
 );
 
-CREATE TABLE IF NOT EXISTS probing.tenants_allow_list (tenant_id UUID PRIMARY KEY);
+CREATE TABLE IF NOT EXISTS probing.tenants_allow_list (
+    tenant_id UUID PRIMARY KEY REFERENCES probing.tenants(tenant_id) ON DELETE RESTRICT
+);
 
 CREATE TABLE IF NOT EXISTS probing.eservices (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,

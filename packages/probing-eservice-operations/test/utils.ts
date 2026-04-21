@@ -118,10 +118,16 @@ export const addTenant = async (
 };
 
 export const addTenantToAllowList = async (tenantId: string | null) => {
+  if (!tenantId) {
+    throw new Error("tenantId is required to add to allow-list");
+  }
+  await db
+    .insert(tenantsInProbing)
+    .values({ tenantId, tenantName: "Allow-listed tenant" })
+    .onConflictDoNothing();
   await db
     .insert(tenantsAllowListInProbing)
-    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-    .values({ tenantId: tenantId! })
+    .values({ tenantId })
     .onConflictDoNothing();
 };
 
