@@ -12,6 +12,7 @@ import {
   addEserviceProbingRequest,
   addEserviceProbingResponse,
   addTenant,
+  addTenantToAllowList,
   db,
   eserviceService,
 } from "../utils.js";
@@ -53,6 +54,7 @@ describe("eService service", async () => {
     it("should return all e-services when no state filter is provided", async () => {
       const eService = mockEservice();
       await addEservice(eService);
+      await addTenantToAllowList(eService.producerId);
 
       const filters: probingEserviceOperationsApi.ApiSearchEservicesQuery = {
         eserviceName: eService.eserviceName,
@@ -72,6 +74,7 @@ describe("eService service", async () => {
     it("should return all e-services when filtering by all state values (N_D, OFFLINE, ONLINE)", async () => {
       const eService = mockEservice({ state: eserviceInteropState.inactive });
       const eserviceRecordId = await addEservice(eService);
+      await addTenantToAllowList(eService.producerId);
 
       await addEserviceProbingRequest({
         eservicesRecordId: eserviceRecordId,
@@ -115,6 +118,7 @@ describe("eService service", async () => {
       });
 
       await addEservice(eService);
+      await addTenantToAllowList(eService.producerId);
 
       const filters: probingEserviceOperationsApi.ApiSearchEservicesQuery = {
         eserviceName: eService.eserviceName,
@@ -140,6 +144,7 @@ describe("eService service", async () => {
     it("should return e-services when state is INACTIVE and filtering by OFFLINE", async () => {
       const eService = mockEservice();
       const eserviceRecordId = await addEservice(eService);
+      await addTenantToAllowList(eService.producerId);
       await addEserviceProbingRequest({
         eservicesRecordId: eserviceRecordId,
         lastRequest: new Date().toISOString(),
@@ -176,6 +181,7 @@ describe("eService service", async () => {
       });
 
       const recordId = await addEservice(eService);
+      await addTenantToAllowList(eService.producerId);
 
       await addEserviceProbingRequest({
         eservicesRecordId: recordId,
@@ -201,6 +207,7 @@ describe("eService service", async () => {
     it("should successfully retrieve e-service main data and return a valid MainDataEserviceResponse", async () => {
       const eService = mockEservice();
       const eserviceRecordId = await addEservice(eService);
+      await addTenantToAllowList(eService.producerId);
       const result = await eserviceService.getEserviceMainData(
         eserviceRecordId,
         genericLogger,
@@ -221,6 +228,7 @@ describe("eService service", async () => {
     it("should successfully retrieve e-service probing data and return a valid ProbingDataEserviceResponse", async () => {
       const eService = mockEservice();
       const eserviceRecordId = await addEservice(eService);
+      await addTenantToAllowList(eService.producerId);
       await addEserviceProbingRequest({
         eservicesRecordId: eserviceRecordId,
         lastRequest: new Date().toISOString(),
@@ -271,6 +279,7 @@ describe("eService service", async () => {
 
       await addEservice(eService1);
       await addEservice(eService2);
+      await addTenantToAllowList(eService2.producerId);
 
       const result = await eserviceService.getEservicesReadyForPolling(
         { offset: 0, limit: 2 },
@@ -303,6 +312,8 @@ describe("eService service", async () => {
 
       await addEservice(eService1);
       await addEservice(eService2);
+      await addTenantToAllowList(eService1.producerId);
+      await addTenantToAllowList(eService2.producerId);
 
       const filters: probingEserviceOperationsApi.ApiGetProducersQuery = {
         limit: 10,
@@ -319,6 +330,7 @@ describe("eService service", async () => {
     it("should return a non-empty list when given a specific valid producer name", async () => {
       const eService = mockEservice({ producerName: "eService producer 001" });
       await addEservice(eService);
+      await addTenantToAllowList(eService.producerId);
 
       const filters: probingEserviceOperationsApi.ApiGetProducersQuery = {
         producerName: eService.producerName,
@@ -337,6 +349,8 @@ describe("eService service", async () => {
 
       await addEservice(eService1);
       await addEservice(eService2);
+      await addTenantToAllowList(eService1.producerId);
+      await addTenantToAllowList(eService2.producerId);
 
       const filters: probingEserviceOperationsApi.ApiGetProducersQuery = {
         producerName: "eService producer",

@@ -9,6 +9,7 @@ import {
   eserviceProbingRequestsInProbing,
   eserviceProbingResponsesInProbing,
   tenantsInProbing,
+  tenantsAllowListInProbing,
 } from "../src/db/drizzle/schema.js";
 import { eq } from "drizzle-orm";
 import { DBService, dbServiceBuilder } from "../src/services/dbService.js";
@@ -55,6 +56,7 @@ export const mockEservice = (
   partialEserviceData: Partial<EserviceInsert> = {},
 ) => ({
   eserviceName: "eService 001",
+  producerId: uuidv4(),
   producerName: "eService producer 001",
   versionNumber: 1,
   state: eserviceInteropState.inactive,
@@ -113,6 +115,14 @@ export const addTenant = async (
     })
     .returning();
   return tenant;
+};
+
+export const addTenantToAllowList = async (tenantId: string | null) => {
+  await db
+    .insert(tenantsAllowListInProbing)
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    .values({ tenantId: tenantId! })
+    .onConflictDoNothing();
 };
 
 export const getEservice = async (
