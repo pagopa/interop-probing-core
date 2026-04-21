@@ -248,6 +248,15 @@ describe("eService service", async () => {
       expect(result).toHaveProperty("pollingFrequency");
     });
 
+    it("should throw an `eServiceByRecordIdNotFound` error when e-service producer is not in allow-list", async () => {
+      const eService = mockEservice();
+      const eserviceRecordId = await addEservice(eService);
+
+      await expect(
+        eserviceService.getEserviceMainData(eserviceRecordId, genericLogger),
+      ).rejects.toThrowError(eServiceByRecordIdNotFound(eserviceRecordId));
+    });
+
     it("should throw an `eServiceByRecordIdNotFound` error when the e-service is not found", async () => {
       await expect(
         eserviceService.getEserviceMainData(99, genericLogger),
@@ -283,6 +292,24 @@ describe("eService service", async () => {
       expect(result).toHaveProperty("responseReceived");
       expect(result).toHaveProperty("lastRequest");
       expect(result).toHaveProperty("responseStatus", responseStatus.ok);
+    });
+
+    it("should throw an `eServiceByRecordIdNotFound` error when e-service producer is not in allow-list", async () => {
+      const eService = mockEservice();
+      const eserviceRecordId = await addEservice(eService);
+      await addEserviceProbingRequest({
+        eservicesRecordId: eserviceRecordId,
+        lastRequest: new Date().toISOString(),
+      });
+      await addEserviceProbingResponse({
+        eservicesRecordId: eserviceRecordId,
+        responseReceived: new Date().toISOString(),
+        status: responseStatus.ok,
+      });
+
+      await expect(
+        eserviceService.getEserviceProbingData(eserviceRecordId, genericLogger),
+      ).rejects.toThrowError(eServiceByRecordIdNotFound(eserviceRecordId));
     });
 
     it("should throw an `eServiceByRecordIdNotFound` error when the e-service is not found", async () => {
@@ -335,6 +362,36 @@ describe("eService service", async () => {
 
       const producers = await eserviceService.getEservicesProducers(filters);
       expect(producers.content.length).toBe(0);
+    });
+
+    it("should return only producers in allow-list", async () => {
+      const allowed = mockEservice({ producerName: "Allowed Producer" });
+      const notAllowed = mockEservice({ producerName: "Not Allowed Producer" });
+
+      await addEservice(allowed);
+      await addEservice(notAllowed);
+      await addTenantToAllowList(allowed.producerId);
+
+      const result = await eserviceService.getEservicesProducers({
+        limit: 10,
+        offset: 0,
+      });
+
+      expect(result.content).toContain("Allowed Producer");
+      expect(result.content).not.toContain("Not Allowed Producer");
+    });
+
+    it("should return empty list when filtering by a producer not in allow-list", async () => {
+      const notAllowed = mockEservice({ producerName: "Not Allowed Producer" });
+      await addEservice(notAllowed);
+
+      const result = await eserviceService.getEservicesProducers({
+        producerName: notAllowed.producerName,
+        limit: 10,
+        offset: 0,
+      });
+
+      expect(result.content).toHaveLength(0);
     });
 
     it("should return all producers when no producer name is provided", async () => {
