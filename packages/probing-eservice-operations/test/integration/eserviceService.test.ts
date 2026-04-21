@@ -846,6 +846,7 @@ describe("eService service", async () => {
     it("should return eService in searchEservices even without probing data", async () => {
       const eService = mockEservice();
       await addEservice(eService);
+      await addTenantToAllowList(eService.producerId);
 
       const filters: probingEserviceOperationsApi.ApiSearchEservicesQuery = {
         eserviceName: eService.eserviceName,
