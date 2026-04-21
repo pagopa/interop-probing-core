@@ -51,6 +51,37 @@ describe("eService service", async () => {
       expect(result.totalElements).toBe(0);
     });
 
+    it("should return only e-services whose producer is in the allow-list", async () => {
+      const allowedEservice = mockEservice({
+        eserviceName: "Allowed eService",
+        producerName: "Allowed producer",
+      });
+      const notAllowedEservice = mockEservice({
+        eserviceName: "Not allowed eService",
+        producerName: "Not allowed producer",
+      });
+
+      await addEservice(allowedEservice);
+      await addEservice(notAllowedEservice);
+      await addTenantToAllowList(allowedEservice.producerId);
+
+      const filters: probingEserviceOperationsApi.ApiSearchEservicesQuery = {
+        limit: 10,
+        offset: 0,
+      };
+
+      const result = await eserviceService.searchEservices(
+        filters,
+        genericLogger,
+      );
+
+      expect(result.totalElements).toBe(1);
+      expect(result.content[0]).toMatchObject({
+        eserviceName: allowedEservice.eserviceName,
+        producerName: allowedEservice.producerName,
+      });
+    });
+
     it("should return all e-services when no state filter is provided", async () => {
       const eService = mockEservice();
       await addEservice(eService);
