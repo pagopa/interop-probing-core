@@ -5,15 +5,18 @@ CREATE EXTENSION IF NOT EXISTS pg_trgm;
 -- Tables
 CREATE TABLE IF NOT EXISTS probing.tenants (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    tenant_id UUID NOT NULL UNIQUE,
+    tenant_id VARCHAR(36) NOT NULL UNIQUE,
     tenant_name VARCHAR(2048)
 );
 
+CREATE TABLE IF NOT EXISTS probing.tenants_allow_list (tenant_id VARCHAR(36) PRIMARY KEY);
+
 CREATE TABLE IF NOT EXISTS probing.eservices (
     id BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    eservice_id UUID NOT NULL,
-    version_id UUID NOT NULL,
+    eservice_id VARCHAR(36) NOT NULL,
+    version_id VARCHAR(36) NOT NULL,
     eservice_name VARCHAR(255) NOT NULL,
+    producer_id VARCHAR(36),
     producer_name VARCHAR(2048) NOT NULL,
     eservice_technology VARCHAR(255) NOT NULL,
     base_path VARCHAR(2048) [] NOT NULL,
@@ -46,6 +49,7 @@ SELECT
     e.id,
     e.eservice_id,
     e.eservice_name,
+    e.producer_id,
     e.producer_name,
     e.version_id,
     e.state,
@@ -71,6 +75,8 @@ CREATE INDEX IF NOT EXISTS eservices_producer_upper_trgm_idx ON probing.eservice
 CREATE INDEX IF NOT EXISTS eservices_name_upper_trgm_idx ON probing.eservices USING GIN ((UPPER(eservice_name)) gin_trgm_ops);
 
 CREATE INDEX IF NOT EXISTS eservices_state_idx ON probing.eservices (state);
+
+CREATE INDEX IF NOT EXISTS eservices_producer_id_idx ON probing.eservices (producer_id);
 
 CREATE INDEX IF NOT EXISTS eservices_polling_ready_idx ON probing.eservices (
     state,
