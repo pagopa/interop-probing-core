@@ -2,6 +2,7 @@ import { and, eq, sql, like, asc, SQL } from "drizzle-orm";
 import {
   eservicesInProbing,
   tenantsInProbing,
+  tenantsAllowListInProbing,
   eserviceProbingRequestsInProbing,
   eserviceProbingResponsesInProbing,
   eserviceViewInProbing,
@@ -104,6 +105,7 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
         eserviceId,
         versionId,
         eserviceName: eServiceUpdated.eserviceName,
+        producerId: eServiceUpdated.producerId,
         producerName: tenant.tenantName || "N/D",
         basePath: eServiceUpdated.basePath,
         eserviceTechnology: eServiceUpdated.technology,
@@ -124,6 +126,7 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
           target: [eservicesInProbing.eserviceId, eservicesInProbing.versionId],
           set: {
             eserviceName: eserviceData.eserviceName,
+            producerId: eserviceData.producerId,
             producerName: eserviceData.producerName,
             basePath: eserviceData.basePath,
             eserviceTechnology: eserviceData.eserviceTechnology,
@@ -256,8 +259,34 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
       const predicate = addPredicateEservices(filters);
 
       const baseQuery = db
-        .select()
+        .select({
+          id: eserviceViewInProbing.id,
+          eserviceId: eserviceViewInProbing.eserviceId,
+          eserviceName: eserviceViewInProbing.eserviceName,
+          producerId: eserviceViewInProbing.producerId,
+          producerName: eserviceViewInProbing.producerName,
+          versionId: eserviceViewInProbing.versionId,
+          state: eserviceViewInProbing.state,
+          status: eserviceViewInProbing.status,
+          probingEnabled: eserviceViewInProbing.probingEnabled,
+          versionNumber: eserviceViewInProbing.versionNumber,
+          responseReceived: eserviceViewInProbing.responseReceived,
+          lastRequest: eserviceViewInProbing.lastRequest,
+          pollingFrequency: eserviceViewInProbing.pollingFrequency,
+          pollingStartTime: eserviceViewInProbing.pollingStartTime,
+          pollingEndTime: eserviceViewInProbing.pollingEndTime,
+          basePath: eserviceViewInProbing.basePath,
+          eserviceTechnology: eserviceViewInProbing.eserviceTechnology,
+          audience: eserviceViewInProbing.audience,
+        })
         .from(eserviceViewInProbing)
+        .innerJoin(
+          tenantsAllowListInProbing,
+          eq(
+            eserviceViewInProbing.producerId,
+            tenantsAllowListInProbing.tenantId,
+          ),
+        )
         .where(predicate.where);
 
       const content = await baseQuery
@@ -268,6 +297,13 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
       const countRes = await db
         .select({ count: sql<number>`count(*)` })
         .from(eserviceViewInProbing)
+        .innerJoin(
+          tenantsAllowListInProbing,
+          eq(
+            eserviceViewInProbing.producerId,
+            tenantsAllowListInProbing.tenantId,
+          ),
+        )
         .where(predicate.where);
 
       return {
@@ -302,6 +338,10 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
           pollingFrequency: eservicesInProbing.pollingFrequency,
         })
         .from(eservicesInProbing)
+        .innerJoin(
+          tenantsAllowListInProbing,
+          eq(eservicesInProbing.producerId, tenantsAllowListInProbing.tenantId),
+        )
         .where(eq(eservicesInProbing.id, eserviceRecordId))
         .limit(1);
 
@@ -332,6 +372,13 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
           pollingFrequency: eserviceViewInProbing.pollingFrequency,
         })
         .from(eserviceViewInProbing)
+        .innerJoin(
+          tenantsAllowListInProbing,
+          eq(
+            eserviceViewInProbing.producerId,
+            tenantsAllowListInProbing.tenantId,
+          ),
+        )
         .where(eq(eserviceViewInProbing.id, eserviceRecordId))
         .orderBy(asc(eserviceViewInProbing.id))
         .limit(1);
@@ -357,7 +404,14 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
           basePath: eserviceViewInProbing.basePath,
           audience: eserviceViewInProbing.audience,
         })
-        .from(eserviceViewInProbing);
+        .from(eserviceViewInProbing)
+        .innerJoin(
+          tenantsAllowListInProbing,
+          eq(
+            eserviceViewInProbing.producerId,
+            tenantsAllowListInProbing.tenantId,
+          ),
+        );
 
       const readyPredicate = addPredicateEservicesReadyForPolling();
 
@@ -370,6 +424,13 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
       const countRes = await db
         .select({ count: sql<number>`count(*)` })
         .from(eserviceViewInProbing)
+        .innerJoin(
+          tenantsAllowListInProbing,
+          eq(
+            eserviceViewInProbing.producerId,
+            tenantsAllowListInProbing.tenantId,
+          ),
+        )
         .where(readyPredicate);
 
       return {
@@ -393,6 +454,10 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
       const content = await db
         .selectDistinct({ producerName: eservicesInProbing.producerName })
         .from(eservicesInProbing)
+        .innerJoin(
+          tenantsAllowListInProbing,
+          eq(eservicesInProbing.producerId, tenantsAllowListInProbing.tenantId),
+        )
         .where(whereClause)
         .orderBy(asc(eservicesInProbing.producerName))
         .limit(limit)

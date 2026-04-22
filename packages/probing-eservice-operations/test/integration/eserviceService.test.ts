@@ -12,6 +12,7 @@ import {
   addEserviceProbingRequest,
   addEserviceProbingResponse,
   addTenant,
+  addTenantToAllowList,
   db,
   eserviceService,
 } from "../utils.js";
@@ -50,9 +51,41 @@ describe("eService service", async () => {
       expect(result.totalElements).toBe(0);
     });
 
+    it("should return only e-services whose producer is in the allow-list", async () => {
+      const allowedEservice = mockEservice({
+        eserviceName: "Allowed eService",
+        producerName: "Allowed producer",
+      });
+      const notAllowedEservice = mockEservice({
+        eserviceName: "Not allowed eService",
+        producerName: "Not allowed producer",
+      });
+
+      await addEservice(allowedEservice);
+      await addEservice(notAllowedEservice);
+      await addTenantToAllowList(allowedEservice.producerId);
+
+      const filters: probingEserviceOperationsApi.ApiSearchEservicesQuery = {
+        limit: 10,
+        offset: 0,
+      };
+
+      const result = await eserviceService.searchEservices(
+        filters,
+        genericLogger,
+      );
+
+      expect(result.totalElements).toBe(1);
+      expect(result.content[0]).toMatchObject({
+        eserviceName: allowedEservice.eserviceName,
+        producerName: allowedEservice.producerName,
+      });
+    });
+
     it("should return all e-services when no state filter is provided", async () => {
       const eService = mockEservice();
       await addEservice(eService);
+      await addTenantToAllowList(eService.producerId);
 
       const filters: probingEserviceOperationsApi.ApiSearchEservicesQuery = {
         eserviceName: eService.eserviceName,
@@ -72,6 +105,7 @@ describe("eService service", async () => {
     it("should return all e-services when filtering by all state values (N_D, OFFLINE, ONLINE)", async () => {
       const eService = mockEservice({ state: eserviceInteropState.inactive });
       const eserviceRecordId = await addEservice(eService);
+      await addTenantToAllowList(eService.producerId);
 
       await addEserviceProbingRequest({
         eservicesRecordId: eserviceRecordId,
@@ -115,6 +149,7 @@ describe("eService service", async () => {
       });
 
       await addEservice(eService);
+      await addTenantToAllowList(eService.producerId);
 
       const filters: probingEserviceOperationsApi.ApiSearchEservicesQuery = {
         eserviceName: eService.eserviceName,
@@ -140,6 +175,7 @@ describe("eService service", async () => {
     it("should return e-services when state is INACTIVE and filtering by OFFLINE", async () => {
       const eService = mockEservice();
       const eserviceRecordId = await addEservice(eService);
+      await addTenantToAllowList(eService.producerId);
       await addEserviceProbingRequest({
         eservicesRecordId: eserviceRecordId,
         lastRequest: new Date().toISOString(),
@@ -176,6 +212,7 @@ describe("eService service", async () => {
       });
 
       const recordId = await addEservice(eService);
+      await addTenantToAllowList(eService.producerId);
 
       await addEserviceProbingRequest({
         eservicesRecordId: recordId,
@@ -201,6 +238,7 @@ describe("eService service", async () => {
     it("should successfully retrieve e-service main data and return a valid MainDataEserviceResponse", async () => {
       const eService = mockEservice();
       const eserviceRecordId = await addEservice(eService);
+      await addTenantToAllowList(eService.producerId);
       const result = await eserviceService.getEserviceMainData(
         eserviceRecordId,
         genericLogger,
@@ -208,6 +246,15 @@ describe("eService service", async () => {
       expect(result).toBeTruthy();
       expect(result).toHaveProperty("eserviceName", eService.eserviceName);
       expect(result).toHaveProperty("pollingFrequency");
+    });
+
+    it("should throw an `eServiceByRecordIdNotFound` error when e-service producer is not in allow-list", async () => {
+      const eService = mockEservice();
+      const eserviceRecordId = await addEservice(eService);
+
+      await expect(
+        eserviceService.getEserviceMainData(eserviceRecordId, genericLogger),
+      ).rejects.toThrowError(eServiceByRecordIdNotFound(eserviceRecordId));
     });
 
     it("should throw an `eServiceByRecordIdNotFound` error when the e-service is not found", async () => {
@@ -221,6 +268,7 @@ describe("eService service", async () => {
     it("should successfully retrieve e-service probing data and return a valid ProbingDataEserviceResponse", async () => {
       const eService = mockEservice();
       const eserviceRecordId = await addEservice(eService);
+      await addTenantToAllowList(eService.producerId);
       await addEserviceProbingRequest({
         eservicesRecordId: eserviceRecordId,
         lastRequest: new Date().toISOString(),
@@ -244,6 +292,24 @@ describe("eService service", async () => {
       expect(result).toHaveProperty("responseReceived");
       expect(result).toHaveProperty("lastRequest");
       expect(result).toHaveProperty("responseStatus", responseStatus.ok);
+    });
+
+    it("should throw an `eServiceByRecordIdNotFound` error when e-service producer is not in allow-list", async () => {
+      const eService = mockEservice();
+      const eserviceRecordId = await addEservice(eService);
+      await addEserviceProbingRequest({
+        eservicesRecordId: eserviceRecordId,
+        lastRequest: new Date().toISOString(),
+      });
+      await addEserviceProbingResponse({
+        eservicesRecordId: eserviceRecordId,
+        responseReceived: new Date().toISOString(),
+        status: responseStatus.ok,
+      });
+
+      await expect(
+        eserviceService.getEserviceProbingData(eserviceRecordId, genericLogger),
+      ).rejects.toThrowError(eServiceByRecordIdNotFound(eserviceRecordId));
     });
 
     it("should throw an `eServiceByRecordIdNotFound` error when the e-service is not found", async () => {
@@ -271,6 +337,7 @@ describe("eService service", async () => {
 
       await addEservice(eService1);
       await addEservice(eService2);
+      await addTenantToAllowList(eService2.producerId);
 
       const result = await eserviceService.getEservicesReadyForPolling(
         { offset: 0, limit: 2 },
@@ -297,12 +364,44 @@ describe("eService service", async () => {
       expect(producers.content.length).toBe(0);
     });
 
+    it("should return only producers in allow-list", async () => {
+      const allowed = mockEservice({ producerName: "Allowed Producer" });
+      const notAllowed = mockEservice({ producerName: "Not Allowed Producer" });
+
+      await addEservice(allowed);
+      await addEservice(notAllowed);
+      await addTenantToAllowList(allowed.producerId);
+
+      const result = await eserviceService.getEservicesProducers({
+        limit: 10,
+        offset: 0,
+      });
+
+      expect(result.content).toContain("Allowed Producer");
+      expect(result.content).not.toContain("Not Allowed Producer");
+    });
+
+    it("should return empty list when filtering by a producer not in allow-list", async () => {
+      const notAllowed = mockEservice({ producerName: "Not Allowed Producer" });
+      await addEservice(notAllowed);
+
+      const result = await eserviceService.getEservicesProducers({
+        producerName: notAllowed.producerName,
+        limit: 10,
+        offset: 0,
+      });
+
+      expect(result.content).toHaveLength(0);
+    });
+
     it("should return all producers when no producer name is provided", async () => {
       const eService1 = mockEservice({ producerName: "Producer 1" });
       const eService2 = mockEservice({ producerName: "Producer 2" });
 
       await addEservice(eService1);
       await addEservice(eService2);
+      await addTenantToAllowList(eService1.producerId);
+      await addTenantToAllowList(eService2.producerId);
 
       const filters: probingEserviceOperationsApi.ApiGetProducersQuery = {
         limit: 10,
@@ -319,6 +418,7 @@ describe("eService service", async () => {
     it("should return a non-empty list when given a specific valid producer name", async () => {
       const eService = mockEservice({ producerName: "eService producer 001" });
       await addEservice(eService);
+      await addTenantToAllowList(eService.producerId);
 
       const filters: probingEserviceOperationsApi.ApiGetProducersQuery = {
         producerName: eService.producerName,
@@ -337,6 +437,8 @@ describe("eService service", async () => {
 
       await addEservice(eService1);
       await addEservice(eService2);
+      await addTenantToAllowList(eService1.producerId);
+      await addTenantToAllowList(eService2.producerId);
 
       const filters: probingEserviceOperationsApi.ApiGetProducersQuery = {
         producerName: "eService producer",
@@ -832,6 +934,7 @@ describe("eService service", async () => {
     it("should return eService in searchEservices even without probing data", async () => {
       const eService = mockEservice();
       await addEservice(eService);
+      await addTenantToAllowList(eService.producerId);
 
       const filters: probingEserviceOperationsApi.ApiSearchEservicesQuery = {
         eserviceName: eService.eserviceName,

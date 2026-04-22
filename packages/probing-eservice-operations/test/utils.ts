@@ -9,6 +9,7 @@ import {
   eserviceProbingRequestsInProbing,
   eserviceProbingResponsesInProbing,
   tenantsInProbing,
+  tenantsAllowListInProbing,
 } from "../src/db/drizzle/schema.js";
 import { eq } from "drizzle-orm";
 import { DBService, dbServiceBuilder } from "../src/services/dbService.js";
@@ -55,6 +56,7 @@ export const mockEservice = (
   partialEserviceData: Partial<EserviceInsert> = {},
 ) => ({
   eserviceName: "eService 001",
+  producerId: uuidv4(),
   producerName: "eService producer 001",
   versionNumber: 1,
   state: eserviceInteropState.inactive,
@@ -113,6 +115,20 @@ export const addTenant = async (
     })
     .returning();
   return tenant;
+};
+
+export const addTenantToAllowList = async (tenantId: string | null) => {
+  if (!tenantId) {
+    throw new Error("tenantId is required to add to allow-list");
+  }
+  await db
+    .insert(tenantsInProbing)
+    .values({ tenantId, tenantName: "Allow-listed tenant" })
+    .onConflictDoNothing();
+  await db
+    .insert(tenantsAllowListInProbing)
+    .values({ tenantId })
+    .onConflictDoNothing();
 };
 
 export const getEservice = async (

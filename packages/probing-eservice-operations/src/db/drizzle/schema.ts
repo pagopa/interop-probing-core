@@ -25,6 +25,20 @@ export const tenantsInProbing = probing.table(
   (table) => [unique("tenants_tenant_id_key").on(table.tenantId)],
 );
 
+export const tenantsAllowListInProbing = probing.table(
+  "tenants_allow_list",
+  {
+    tenantId: uuid("tenant_id").primaryKey(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.tenantId],
+      foreignColumns: [tenantsInProbing.tenantId],
+      name: "tenants_allow_list_tenant_id_fkey",
+    }).onDelete("restrict"),
+  ],
+);
+
 export const eservicesInProbing = probing.table(
   "eservices",
   {
@@ -32,6 +46,7 @@ export const eservicesInProbing = probing.table(
     eserviceId: uuid("eservice_id").notNull(),
     versionId: uuid("version_id").notNull(),
     eserviceName: varchar("eservice_name", { length: 255 }).notNull(),
+    producerId: uuid("producer_id"),
     producerName: varchar("producer_name", { length: 2048 }).notNull(),
     eserviceTechnology: varchar("eservice_technology", {
       length: 255,
@@ -101,6 +116,7 @@ export const eserviceViewInProbing = probing
     id: bigint({ mode: "number" }),
     eserviceId: uuid("eservice_id"),
     eserviceName: varchar("eservice_name", { length: 255 }),
+    producerId: uuid("producer_id"),
     producerName: varchar("producer_name", { length: 2048 }),
     versionId: uuid("version_id"),
     state: varchar({ length: 255 }),
@@ -123,7 +139,7 @@ export const eserviceViewInProbing = probing
     audience: varchar({ length: 2048 }),
   })
   .as(
-    sql`SELECT e.id, e.eservice_id, e.eservice_name, e.producer_name, e.version_id, e.state, epr.status, e.probing_enabled, e.version_number, epr.response_received, epreq.last_request, e.polling_frequency, e.polling_start_time, e.polling_end_time, e.base_path, e.eservice_technology, e.audience
+    sql`SELECT e.id, e.eservice_id, e.eservice_name, e.producer_id, e.producer_name, e.version_id, e.state, epr.status, e.probing_enabled, e.version_number, epr.response_received, epreq.last_request, e.polling_frequency, e.polling_start_time, e.polling_end_time, e.base_path, e.eservice_technology, e.audience
       FROM ${config.dbSchema}.eservices e
       LEFT JOIN ${config.dbSchema}.eservice_probing_responses epr ON epr.eservices_record_id = e.id
       LEFT JOIN ${config.dbSchema}.eservice_probing_requests epreq ON epreq.eservices_record_id = e.id`,
