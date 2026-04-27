@@ -48,7 +48,7 @@
     "pagopa-interop-probing-models": "workspace:*",
     "pagopa-interop-probing-api-clients": "workspace:*",
     "ts-pattern": "5.1.2",
-    "uuid": "13.0.0",
+    "uuid": "14.0.0",
     "zod": "3.23.8"
   }
 }
