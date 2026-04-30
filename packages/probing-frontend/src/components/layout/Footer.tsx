@@ -5,7 +5,7 @@ import type { FooterLinksType } from '@pagopa/mui-italia'
 import { Typography } from '@mui/material'
 import { Footer as MUIItaliaFooter } from '@pagopa/mui-italia'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from '@/router'
 import React from 'react'
 
 type FooterLinksTypeMulti = Omit<FooterLinksType, 'label' | 'ariaLabel'> & { labelKey?: string }
@@ -40,6 +40,7 @@ export const Footer: React.FC = () => {
     {
       labelKey: 'terms',
       onClick: () => {
+        console.log('click')
         navigate('LEGAL_NOTES')
       },
       linkType: 'internal',
