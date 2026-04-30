@@ -1,7 +1,8 @@
 import type { ProductSwitchItem } from '@pagopa/mui-italia'
 
-export const documentationLink = 'https://docs.pagopa.it/interoperabilita-1'
-export const assistanceLink = 'https://selfcare.pagopa.it/assistenza'
+export const documentationLink =
+  'https://developer.pagopa.it/pdnd-interoperabilita/guides/manuale-operativo-pdnd-interoperabilita/probing'
+export const assistanceLink = 'https://selfcare.pagopa.it/assistenza?productId=prod-interop'
 export const productSwitchItem: ProductSwitchItem = {
   id: 'prod-interop',
   title: `Interoperabilità`,
