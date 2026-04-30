@@ -38,6 +38,13 @@ export const Footer: React.FC = () => {
 
   const links: Array<FooterLinksTypeMulti> = [
     {
+      labelKey: 'terms',
+      onClick: () => {
+        navigate('LEGAL_NOTES')
+      },
+      linkType: 'internal',
+    },
+    {
       labelKey: 'privacy',
       onClick: () => {
         navigate('PRIVACY_POLICY')
@@ -48,13 +55,6 @@ export const Footer: React.FC = () => {
       labelKey: 'dataProtection',
       href: 'https://privacyportal-de.onetrust.com/webform/77f17844-04c3-4969-a11d-462ee77acbe1/9ab6533d-be4a-482e-929a-0d8d2ab29df8',
       linkType: 'external',
-    },
-    {
-      labelKey: 'terms',
-      onClick: () => {
-        navigate('TOS')
-      },
-      linkType: 'internal',
     },
     {
       labelKey: 'a11y',
