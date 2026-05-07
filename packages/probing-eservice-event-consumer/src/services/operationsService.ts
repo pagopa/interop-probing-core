@@ -3,6 +3,7 @@ import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients
 import {
   errorSaveEservice,
   errorDeleteEservice,
+  errorDeleteEserviceVersion,
 } from "../models/domain/errors.js";
 import { Logger } from "pagopa-interop-probing-commons";
 
@@ -54,6 +55,29 @@ export const operationsServiceBuilder = (
         });
       } catch (error: unknown) {
         throw errorDeleteEservice(params.eserviceId, error);
+      }
+    },
+
+    async deleteEserviceVersion(
+      headers: probingEserviceOperationsApi.ApiDeleteEserviceVersionHeaders,
+      params: probingEserviceOperationsApi.ApiDeleteEserviceVersionParams,
+      logger: Logger,
+    ): Promise<probingEserviceOperationsApi.ApiDeleteEserviceVersionResponse> {
+      try {
+        logger.info(
+          `eService version deleted with eserviceId: ${params.eserviceId}, versionId: ${params.versionId}.`,
+        );
+
+        await operationsApiClient.deleteEserviceVersion(undefined, {
+          headers,
+          params,
+        });
+      } catch (error: unknown) {
+        throw errorDeleteEserviceVersion(
+          params.eserviceId,
+          params.versionId,
+          error,
+        );
       }
     },
   };

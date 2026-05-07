@@ -20,7 +20,10 @@ import {
   EServiceDescriptorStateV2,
   EServiceEventV2,
 } from "@pagopa/interop-outbound-models";
-import { errorSaveEservice } from "../src/models/domain/errors.js";
+import {
+  errorDeleteEserviceVersion,
+  errorSaveEservice,
+} from "../src/models/domain/errors.js";
 
 const apiClient = probingEserviceOperationsApi.createEServicesApiClient(
   config.operationsBaseUrl,
@@ -61,6 +64,29 @@ describe("Message handler V2 - EService tests", () => {
       ).resolves.not.toThrow();
 
       expect(apiClient.saveEservice).toHaveBeenCalledTimes(1);
+    });
+
+    it("should skip archived descriptors on EServiceAdded", async () => {
+      const eServiceId = uuidv4();
+      const descriptorId = uuidv4();
+      const producerId = "producer-test-idV2";
+
+      const eServiceV2 = createV2Event(
+        eServiceId,
+        descriptorId,
+        producerId,
+        EServiceDescriptorStateV2.ARCHIVED,
+      );
+
+      const eServiceV2Event = createEserviceAddedEventV2(eServiceV2);
+
+      vi.spyOn(apiClient, "saveEservice").mockResolvedValueOnce(undefined);
+
+      await expect(
+        handleMessageV2(eServiceV2Event, operationsService, ctx, genericLogger),
+      ).resolves.not.toThrow();
+
+      expect(apiClient.saveEservice).toHaveBeenCalledTimes(0);
     });
 
     it("save a new Eservice for EServiceAdded event should return an exception kafkaMessageMissingData", async () => {
@@ -175,6 +201,73 @@ describe("Message handler V2 - EService tests", () => {
     });
   });
 
+  describe("EServiceDescriptorArchived Event", () => {
+    it("should delete a version for EServiceDescriptorArchived event", async () => {
+      const eServiceId = uuidv4();
+      const descriptorId = uuidv4();
+      const producerId = "producer-test-idV2";
+
+      const eservice = createV2Event(
+        eServiceId,
+        descriptorId,
+        producerId,
+        EServiceDescriptorStateV2.PUBLISHED,
+      );
+
+      const archivedEvent = {
+        event_version: 2,
+        version: 1,
+        type: "EServiceDescriptorArchived",
+        timestamp: new Date(),
+        stream_id: "1",
+        data: { descriptorId, eservice },
+      } as EServiceEventV2;
+
+      vi.spyOn(apiClient, "deleteEserviceVersion").mockResolvedValueOnce(
+        undefined,
+      );
+
+      await expect(
+        handleMessageV2(archivedEvent, operationsService, ctx, genericLogger),
+      ).resolves.not.toThrow();
+
+      expect(apiClient.deleteEserviceVersion).toHaveBeenCalledTimes(1);
+    });
+
+    it("should wrap errors in errorDeleteEserviceVersion", async () => {
+      const eServiceId = uuidv4();
+      const descriptorId = uuidv4();
+      const producerId = "producer-test-idV2";
+
+      const eservice = createV2Event(
+        eServiceId,
+        descriptorId,
+        producerId,
+        EServiceDescriptorStateV2.PUBLISHED,
+      );
+
+      const archivedEvent = {
+        event_version: 2,
+        version: 1,
+        type: "EServiceDescriptorArchived",
+        timestamp: new Date(),
+        stream_id: "1",
+        data: { descriptorId, eservice },
+      } as EServiceEventV2;
+
+      const apiClientError = mockApiClientError(500, "Internal server error");
+      vi.spyOn(apiClient, "deleteEserviceVersion").mockRejectedValueOnce(
+        apiClientError,
+      );
+
+      await expect(
+        handleMessageV2(archivedEvent, operationsService, ctx, genericLogger),
+      ).rejects.toThrow(
+        errorDeleteEserviceVersion(eServiceId, descriptorId, apiClientError),
+      );
+    });
+  });
+
   describe("EserviceClone Event", () => {
     it("clone an Eservice for EserviceClone event should return a successfully response", async () => {
       vi.spyOn(apiClient, "saveEservice").mockResolvedValue(undefined);
@@ -206,7 +299,6 @@ describe("Message handler V2 - EService tests", () => {
         { type: "EServiceDraftDescriptorDeleted" },
         { type: "EServiceDescriptorAdded" },
         { type: "EServiceDescriptorActivated" },
-        { type: "EServiceDescriptorArchived" },
         { type: "EServiceDescriptorSuspended" },
         { type: "EServiceDraftDescriptorUpdated" },
         { type: "EServiceDescriptorAttributesUpdated" },

@@ -121,6 +121,28 @@ const eServiceRouter = (
         return res.status(errorRes.status).json(errorRes).end();
       }
     })
+    .delete(
+      "/eservices/:eserviceId/versions/:versionId/deleteEserviceVersion",
+      async (req, res) => {
+        try {
+          await eServiceService.deleteEserviceVersion(
+            req.params.eserviceId,
+            req.params.versionId,
+            logger(req.ctx),
+          );
+
+          return res.status(204).end();
+        } catch (error) {
+          const errorRes = makeApiProblem(
+            error,
+            errorMapper,
+            logger(req.ctx),
+            req.ctx.correlationId,
+          );
+          return res.status(errorRes.status).json(errorRes).end();
+        }
+      },
+    )
     .post(
       "/eservices/:eserviceRecordId/updateLastRequest",
       async (req, res) => {
