@@ -59,7 +59,7 @@ export const Footer: React.FC = () => {
     },
     {
       labelKey: 'a11y',
-      href: 'https://form.agid.gov.it/view/d96e090e-9d56-4d27-a70c-9a72186305b0/',
+      href: 'https://form.agid.gov.it/5N2TR557/PDND_Interoperabilit%C3%A0_%E2%80%94_Probing/dichiarazione',
       linkType: 'external',
     },
   ]
