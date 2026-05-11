@@ -20,7 +20,7 @@
   "dependencies": {
     "@pagopa/interop-outbound-models": "1.8.10",
     "@zodios/core": "10.9.6",
-    "axios": "1.15.0",
+    "axios": "1.15.2",
     "dotenv-flow": "4.1.0",
     "kafka-connector": "workspace:*",
     "kafkajs": "2.2.4",
