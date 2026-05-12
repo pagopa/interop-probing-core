@@ -2,6 +2,7 @@ import { InternalError } from "pagopa-interop-probing-models";
 
 export const errorCodes = {
   errorDeleteEservice: "ERROR_DELETE_ESERVICE",
+  errorDeleteEserviceVersion: "ERROR_DELETE_ESERVICE_VERSION",
   errorSaveEservice: "ERROR_SAVE_ESERVICE",
 } as const;
 
@@ -14,6 +15,17 @@ export function errorDeleteEservice(
   return new InternalError({
     detail: `Error deleting eService: ${eserviceId}. Details: ${error}`,
     code: "errorDeleteEservice",
+  });
+}
+
+export function errorDeleteEserviceVersion(
+  eserviceId: string,
+  versionId: string,
+  error: unknown,
+): InternalError<ErrorCodes> {
+  return new InternalError({
+    detail: `Error deleting eService version: ${eserviceId}, versionId: ${versionId}. Details: ${error}`,
+    code: "errorDeleteEserviceVersion",
   });
 }
 
