@@ -145,6 +145,13 @@ export async function handleMessageV2(
           "EServicePersonalDataFlagUpdatedAfterPublication",
           "EServicePersonalDataFlagUpdatedByTemplateUpdate",
           "EServiceInstanceLabelUpdated",
+          "MaintenanceEServicePersonalDataFlagReset",
+          "EServiceDescriptorArchivingScheduled",
+          "EServiceDescriptorArchivingCanceled",
+          "EServiceDescriptorArchivingCompleted",
+          "EServiceArchivingScheduled",
+          "EServiceArchivingCanceled",
+          "EServiceArchivingCompleted",
         ),
       },
       async (evt) => {
