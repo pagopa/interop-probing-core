@@ -18,10 +18,6 @@ export const operationsServiceBuilder = (
       logger: Logger,
     ): Promise<probingEserviceOperationsApi.ApiSaveEserviceResponse> {
       try {
-        logger.info(
-          `eService saved with eserviceId: ${params.eserviceId}, versionId: ${params.versionId}, tenantId: ${data.producerId}.`,
-        );
-
         await operationsApiClient.saveEservice(
           {
             producerId: data.producerId,
@@ -37,6 +33,10 @@ export const operationsServiceBuilder = (
             params,
           },
         );
+
+        logger.info(
+          `eService saved with eserviceId: ${params.eserviceId}, versionId: ${params.versionId}, tenantId: ${data.producerId}.`,
+        );
       } catch (error: unknown) {
         throw errorSaveEservice(params.eserviceId, data.producerId, error);
       }
@@ -47,12 +47,12 @@ export const operationsServiceBuilder = (
       logger: Logger,
     ): Promise<probingEserviceOperationsApi.ApiDeleteEserviceResponse> {
       try {
-        logger.info(`eService deleted with eserviceId: ${params.eserviceId}.`);
-
         await operationsApiClient.deleteEservice(undefined, {
           headers,
           params,
         });
+
+        logger.info(`eService deleted with eserviceId: ${params.eserviceId}.`);
       } catch (error: unknown) {
         throw errorDeleteEservice(params.eserviceId, error);
       }
@@ -64,14 +64,14 @@ export const operationsServiceBuilder = (
       logger: Logger,
     ): Promise<probingEserviceOperationsApi.ApiDeleteEserviceVersionResponse> {
       try {
-        logger.info(
-          `eService version deleted with eserviceId: ${params.eserviceId}, versionId: ${params.versionId}.`,
-        );
-
         await operationsApiClient.deleteEserviceVersion(undefined, {
           headers,
           params,
         });
+
+        logger.info(
+          `eService version deleted with eserviceId: ${params.eserviceId}, versionId: ${params.versionId}.`,
+        );
       } catch (error: unknown) {
         throw errorDeleteEserviceVersion(
           params.eserviceId,
