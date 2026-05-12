@@ -42,6 +42,10 @@ export async function handleMessageV2(
         }
 
         for (const descriptor of eservice.descriptors) {
+          if (descriptor.state === EServiceDescriptorStateV2.ARCHIVED) {
+            continue;
+          }
+
           const parsedBasePath = z
             .array(z.string().transform(sanitizeData))
             .parse(descriptor.serverUrls);
@@ -75,6 +79,23 @@ export async function handleMessageV2(
     )
     .with(
       {
+        type: "EServiceDescriptorArchived",
+      },
+      async (evt) => {
+        const { eservice, descriptorId } = evt.data;
+        if (!eservice || !descriptorId) {
+          throw kafkaMessageMissingData(config.kafkaTopic, event.type);
+        }
+
+        await operationsService.deleteEserviceVersion(
+          { ...correlationIdToHeader(ctx.correlationId) },
+          { eserviceId: eservice.id, versionId: descriptorId },
+          logger,
+        );
+      },
+    )
+    .with(
+      {
         type: "EServiceDeleted",
       },
       async (evt) => {
@@ -103,7 +124,6 @@ export async function handleMessageV2(
           "EServiceDraftDescriptorDeleted",
           "EServiceDescriptorAdded",
           "EServiceDescriptorActivated",
-          "EServiceDescriptorArchived",
           "EServiceDescriptorSuspended",
           "EServiceDraftDescriptorUpdated",
           "EServiceDescriptorAttributesUpdated",
