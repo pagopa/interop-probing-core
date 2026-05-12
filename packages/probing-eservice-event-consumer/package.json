@@ -18,7 +18,7 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@pagopa/interop-outbound-models": "1.8.10",
+    "@pagopa/interop-outbound-models": "1.8.16",
     "@zodios/core": "10.9.6",
     "axios": "1.15.0",
     "dotenv-flow": "4.1.0",
