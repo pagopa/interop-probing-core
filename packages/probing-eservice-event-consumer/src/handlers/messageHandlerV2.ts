@@ -66,15 +66,159 @@ export async function handleMessageV2(
                 eservice.technology === EServiceTechnologyV2.SOAP
                   ? technology.soap
                   : technology.rest,
-              state:
-                descriptor.state === EServiceDescriptorStateV2.PUBLISHED
-                  ? eserviceInteropState.active
-                  : eserviceInteropState.inactive,
+              state: isDescriptorActive(descriptor.state)
+                ? eserviceInteropState.active
+                : eserviceInteropState.inactive,
               audience: parsedAudience,
             },
             logger,
           );
         }
+      },
+    )
+    .with(
+      {
+        type: P.union(
+          "EServiceDescriptorArchivingScheduled",
+          "EServiceDescriptorArchivingCanceled",
+        ),
+      },
+      async (evt) => {
+        const { eservice, descriptorId } = evt.data;
+        if (!eservice || !descriptorId) {
+          throw kafkaMessageMissingData(config.kafkaTopic, event.type);
+        }
+
+        const descriptor = eservice.descriptors.find(
+          (d) => d.id === descriptorId,
+        );
+        if (!descriptor) {
+          throw kafkaMessageMissingData(config.kafkaTopic, event.type);
+        }
+
+        if (descriptor.state === EServiceDescriptorStateV2.ARCHIVED) {
+          await operationsService.deleteEserviceVersion(
+            { ...correlationIdToHeader(ctx.correlationId) },
+            { eserviceId: eservice.id, versionId: descriptorId },
+            logger,
+          );
+          return;
+        }
+
+        const parsedBasePath = z
+          .array(z.string().transform(sanitizeData))
+          .parse(descriptor.serverUrls);
+
+        const parsedAudience = z
+          .array(z.string().transform(sanitizeData))
+          .parse(descriptor.audience);
+
+        await operationsService.saveEservice(
+          { ...correlationIdToHeader(ctx.correlationId) },
+          { eserviceId: eservice.id, versionId: descriptor.id },
+          {
+            producerId: eservice.producerId,
+            name: eservice.name,
+            basePath: parsedBasePath,
+            versionNumber: Number(descriptor.version),
+            technology:
+              eservice.technology === EServiceTechnologyV2.SOAP
+                ? technology.soap
+                : technology.rest,
+            state: isDescriptorActive(descriptor.state)
+              ? eserviceInteropState.active
+              : eserviceInteropState.inactive,
+            audience: parsedAudience,
+          },
+          logger,
+        );
+      },
+    )
+    .with(
+      {
+        type: "EServiceDescriptorArchivingCompleted",
+      },
+      async (evt) => {
+        const { eservice, descriptorId } = evt.data;
+        if (!eservice || !descriptorId) {
+          throw kafkaMessageMissingData(config.kafkaTopic, event.type);
+        }
+
+        await operationsService.deleteEserviceVersion(
+          { ...correlationIdToHeader(ctx.correlationId) },
+          { eserviceId: eservice.id, versionId: descriptorId },
+          logger,
+        );
+      },
+    )
+    .with(
+      {
+        type: P.union(
+          "EServiceArchivingScheduled",
+          "EServiceArchivingCanceled",
+        ),
+      },
+      async (evt) => {
+        const { eservice } = evt.data;
+        if (!eservice) {
+          throw kafkaMessageMissingData(config.kafkaTopic, event.type);
+        }
+
+        for (const descriptor of eservice.descriptors) {
+          if (descriptor.state === EServiceDescriptorStateV2.ARCHIVED) {
+            await operationsService.deleteEserviceVersion(
+              { ...correlationIdToHeader(ctx.correlationId) },
+              { eserviceId: eservice.id, versionId: descriptor.id },
+              logger,
+            );
+            continue;
+          }
+
+          const parsedBasePath = z
+            .array(z.string().transform(sanitizeData))
+            .parse(descriptor.serverUrls);
+
+          const parsedAudience = z
+            .array(z.string().transform(sanitizeData))
+            .parse(descriptor.audience);
+
+          await operationsService.saveEservice(
+            { ...correlationIdToHeader(ctx.correlationId) },
+            { eserviceId: eservice.id, versionId: descriptor.id },
+            {
+              producerId: eservice.producerId,
+              name: eservice.name,
+              basePath: parsedBasePath,
+              versionNumber: Number(descriptor.version),
+              technology:
+                eservice.technology === EServiceTechnologyV2.SOAP
+                  ? technology.soap
+                  : technology.rest,
+              state: isDescriptorActive(descriptor.state)
+                ? eserviceInteropState.active
+                : eserviceInteropState.inactive,
+              audience: parsedAudience,
+            },
+            logger,
+          );
+        }
+      },
+    )
+    .with(
+      {
+        type: "EServiceArchivingCompleted",
+      },
+      async (evt) => {
+        const { eservice } = evt.data;
+        if (!eservice) {
+          throw kafkaMessageMissingData(config.kafkaTopic, event.type);
+        }
+
+        await operationsService.deleteEservice(
+          { ...correlationIdToHeader(ctx.correlationId) },
+          { eserviceId: eservice.id },
+          logger,
+        );
       },
     )
     .with(
@@ -146,12 +290,6 @@ export async function handleMessageV2(
           "EServicePersonalDataFlagUpdatedByTemplateUpdate",
           "EServiceInstanceLabelUpdated",
           "MaintenanceEServicePersonalDataFlagReset",
-          "EServiceDescriptorArchivingScheduled",
-          "EServiceDescriptorArchivingCanceled",
-          "EServiceDescriptorArchivingCompleted",
-          "EServiceArchivingScheduled",
-          "EServiceArchivingCanceled",
-          "EServiceArchivingCompleted",
         ),
       },
       async (evt) => {
@@ -159,4 +297,12 @@ export async function handleMessageV2(
       },
     )
     .exhaustive();
+}
+
+function isDescriptorActive(state: EServiceDescriptorStateV2): boolean {
+  return (
+    state === EServiceDescriptorStateV2.PUBLISHED ||
+    state === EServiceDescriptorStateV2.DEPRECATED ||
+    state === EServiceDescriptorStateV2.ARCHIVING
+  );
 }
