@@ -268,6 +268,110 @@ describe("Message handler V2 - EService tests", () => {
     });
   });
 
+  describe("EServiceDescriptorArchivingScheduled Event", () => {
+    it("should upsert an ACTIVE version when descriptor is ARCHIVING", async () => {
+      const eServiceId = uuidv4();
+      const descriptorId = uuidv4();
+      const producerId = "producer-test-idV2";
+
+      const eservice = createV2Event(
+        eServiceId,
+        descriptorId,
+        producerId,
+        EServiceDescriptorStateV2.ARCHIVING,
+      );
+
+      const evt = {
+        event_version: 2,
+        version: 1,
+        type: "EServiceDescriptorArchivingScheduled",
+        timestamp: new Date(),
+        stream_id: "1",
+        data: { descriptorId, eservice },
+      } as EServiceEventV2;
+
+      vi.spyOn(apiClient, "saveEservice").mockResolvedValueOnce(undefined);
+
+      await expect(
+        handleMessageV2(evt, operationsService, ctx, genericLogger),
+      ).resolves.not.toThrow();
+
+      expect(apiClient.saveEservice).toHaveBeenCalledTimes(1);
+      expect(apiClient.saveEservice).toHaveBeenCalledWith(
+        expect.objectContaining({
+          state: "ACTIVE",
+        }),
+        expect.anything(),
+      );
+    });
+  });
+
+  describe("EServiceDescriptorArchivingCompleted Event", () => {
+    it("should delete a version", async () => {
+      const eServiceId = uuidv4();
+      const descriptorId = uuidv4();
+      const producerId = "producer-test-idV2";
+
+      const eservice = createV2Event(
+        eServiceId,
+        descriptorId,
+        producerId,
+        EServiceDescriptorStateV2.ARCHIVED,
+      );
+
+      const evt = {
+        event_version: 2,
+        version: 1,
+        type: "EServiceDescriptorArchivingCompleted",
+        timestamp: new Date(),
+        stream_id: "1",
+        data: { descriptorId, eservice },
+      } as EServiceEventV2;
+
+      vi.spyOn(apiClient, "deleteEserviceVersion").mockResolvedValueOnce(
+        undefined,
+      );
+
+      await expect(
+        handleMessageV2(evt, operationsService, ctx, genericLogger),
+      ).resolves.not.toThrow();
+
+      expect(apiClient.deleteEserviceVersion).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe("EServiceArchivingCompleted Event", () => {
+    it("should delete the whole eservice", async () => {
+      const eServiceId = uuidv4();
+      const descriptorId = uuidv4();
+      const producerId = "producer-test-idV2";
+
+      const eservice = createV2Event(
+        eServiceId,
+        descriptorId,
+        producerId,
+        EServiceDescriptorStateV2.ARCHIVED,
+      );
+
+      const evt = {
+        event_version: 2,
+        version: 1,
+        type: "EServiceArchivingCompleted",
+        timestamp: new Date(),
+        stream_id: "1",
+        data: { eservice },
+      } as EServiceEventV2;
+
+      vi.spyOn(apiClient, "deleteEservice").mockResolvedValueOnce(undefined);
+
+      await expect(
+        handleMessageV2(evt, operationsService, ctx, genericLogger),
+      ).resolves.not.toThrow();
+
+      expect(apiClient.deleteEservice).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe("EserviceClone Event", () => {
     it("clone an Eservice for EserviceClone event should return a successfully response", async () => {
       vi.spyOn(apiClient, "saveEservice").mockResolvedValue(undefined);
