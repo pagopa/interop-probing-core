@@ -39,6 +39,10 @@ export async function handleMessageV1(
         const { eservice } = evt.data;
 
         for (const descriptor of eservice.descriptors) {
+          if (descriptor.state === EServiceDescriptorStateV1.ARCHIVED) {
+            continue;
+          }
+
           const parsedBasePath = z
             .array(z.string().transform(sanitizeData))
             .parse(descriptor.serverUrls);

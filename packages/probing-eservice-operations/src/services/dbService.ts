@@ -148,6 +148,23 @@ export function dbServiceBuilder(db: DrizzleReturnType) {
       return deletedEservice;
     },
 
+    async deleteEserviceVersion(
+      eserviceId: string,
+      versionId: string,
+    ): Promise<{ id: number } | undefined> {
+      const [deletedEserviceVersion] = await db
+        .delete(eservicesInProbing)
+        .where(
+          and(
+            eq(eservicesInProbing.eserviceId, eserviceId),
+            eq(eservicesInProbing.versionId, versionId),
+          ),
+        )
+        .returning({ id: eservicesInProbing.id });
+
+      return deletedEserviceVersion;
+    },
+
     async saveTenant(tenantData: TenantSaveRequest): Promise<void> {
       await db
         .insert(tenantsInProbing)

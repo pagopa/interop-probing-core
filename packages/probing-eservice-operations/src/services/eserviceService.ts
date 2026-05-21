@@ -107,6 +107,22 @@ export function eServiceServiceBuilder(dbService: DBService) {
       }
     },
 
+    async deleteEserviceVersion(
+      eserviceId: string,
+      versionId: string,
+      logger: Logger,
+    ): Promise<probingEserviceOperationsApi.ApiDeleteEserviceVersionResponse> {
+      const deletedEserviceVersion = await dbService.deleteEserviceVersion(
+        eserviceId,
+        versionId,
+      );
+      if (!deletedEserviceVersion) {
+        logger.error(
+          `EService with eserviceId ${eserviceId} and versionId ${versionId} not found during delete version operation`,
+        );
+      }
+    },
+
     async updateEserviceLastRequest(
       eserviceRecordId: number,
       payload: probingEserviceOperationsApi.ApiUpdateLastRequestPayload,

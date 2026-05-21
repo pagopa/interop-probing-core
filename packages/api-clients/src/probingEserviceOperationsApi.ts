@@ -125,6 +125,23 @@ export type ApiDeleteEserviceResponse = ZodiosResponseByPath<
   "/eservices/:eserviceId/deleteEservice"
 >;
 
+// ---------- Delete eService Version ----------
+export type ApiDeleteEserviceVersionParams = ZodiosPathParamsByPath<
+  EServiceApi,
+  "delete",
+  "/eservices/:eserviceId/versions/:versionId/deleteEserviceVersion"
+>;
+export type ApiDeleteEserviceVersionHeaders = ZodiosHeaderParamsByPath<
+  EServiceApi,
+  "delete",
+  "/eservices/:eserviceId/versions/:versionId/deleteEserviceVersion"
+>;
+export type ApiDeleteEserviceVersionResponse = ZodiosResponseByPath<
+  EServiceApi,
+  "delete",
+  "/eservices/:eserviceId/versions/:versionId/deleteEserviceVersion"
+>;
+
 // ---------- Search / List eServices ----------
 export type ApiSearchEservicesQuery = ZodiosQueryParamsByPath<
   EServiceApi,
