@@ -42,7 +42,6 @@ const axiosInstance = axios.create({
 
 const acceptLanguageHeader: Record<LangCode, string> = {
   it: 'it-IT',
-  en: 'en-EN',
 }
 
 axiosInstance.interceptors.request.use(

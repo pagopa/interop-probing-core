@@ -10,12 +10,14 @@ import { RecoverPasswordPage } from '@/pages/RecoverPasswordPage/RecoverPassword
 import { SuccessPage } from '@/pages/SuccessPage/Success.Page'
 import { NotFoundPage } from '@/pages/NotFoundPage'
 import { MonitoringDetailPage } from '@/pages/MonitoringDetailPage/MonitoringDetail.page'
+import { LegalNotesPage } from '@/pages/LegalNotesPage/LegalNotes.Page'
+import { PrivacyPolicyPage } from '@/pages/PrivacyPolicyPage/PrivacyPolicy.Page'
 
 export const { routes, reactRouterDOMRoutes, hooks, components, utils } = new InteropRouterBuilder<
   LangCode,
   'admin'
 >({
-  languages: ['it', 'en'],
+  languages: ['it'],
 })
   .addRoute({
     key: 'MONITORING_E_SERVICE_LIST',
@@ -77,6 +79,20 @@ export const { routes, reactRouterDOMRoutes, hooks, components, utils } = new In
     key: 'NOT_FOUND',
     path: '/not-found',
     element: <NotFoundPage />,
+    public: true,
+    authLevels: ['admin'],
+  })
+  .addRoute({
+    key: 'LEGAL_NOTES',
+    path: '/note-legali',
+    element: <LegalNotesPage />,
+    public: true,
+    authLevels: ['admin'],
+  })
+  .addRoute({
+    key: 'PRIVACY_POLICY',
+    path: '/informativa-privacy',
+    element: <PrivacyPolicyPage />,
     public: true,
     authLevels: ['admin'],
   })
