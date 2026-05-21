@@ -40,7 +40,6 @@ export const Footer: React.FC = () => {
     {
       labelKey: 'terms',
       onClick: () => {
-        console.log('click')
         navigate('LEGAL_NOTES')
       },
       linkType: 'internal',
