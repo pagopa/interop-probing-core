@@ -1,6 +1,6 @@
-/* eslint-disable max-classes-per-file */
 import { P, match } from "ts-pattern";
-import { z } from "zod";
+import { fromZodError } from "zod-validation-error";
+import { z, ZodError } from "zod";
 
 export const ProblemError = z.object({
   code: z.string(),
@@ -12,11 +12,11 @@ export const Problem = z.object({
   status: z.number(),
   title: z.string(),
   correlationId: z.string().optional(),
-  detail: z.string(),
-  errors: z.array(ProblemError),
+  detail: z.string().optional(),
+  errors: z.array(ProblemError).min(1).optional(),
 });
-
 export type Problem = z.infer<typeof Problem>;
+
 export class ApiError<T> extends Error {
   public code: T;
   public title: string;
@@ -49,28 +49,44 @@ export class ApiError<T> extends Error {
   }
 }
 
-export type MakeApiProblemFn<T extends string> = (
+export class InternalError<T> extends Error {
+  public code: T;
+  public detail: string;
+
+  constructor({ code, detail }: { code: T; detail: string }) {
+    super(detail);
+    this.code = code;
+    this.detail = detail;
+  }
+}
+
+type MakeApiProblemFn<T extends string> = (
   error: unknown,
   httpMapper: (apiError: ApiError<T | CommonErrorCodes>) => number,
   logger: { error: (message: string) => void; warn: (message: string) => void },
+  correlationId: string,
 ) => Problem;
 
 export const makeProblemLogString = (
   problem: Problem,
   originalError: unknown,
 ): string => {
-  const errorsString = problem.errors.map((e) => e.detail).join(" - ");
-  return `- title: ${problem.title} - detail: ${problem.detail} - errors: ${errorsString} - original error: ${originalError}`;
+  const errorsString = problem.errors
+    ? ` - errors: ${problem.errors
+        .map((e) => `${e.code}, ${e.detail}`)
+        .join("; ")}`
+    : "";
+  return `- title: ${problem.title} - detail: ${problem.detail} - errors: ${errorsString} - original error: ${JSON.stringify(originalError)}`;
 };
 
 export function makeApiProblemBuilder<T extends string>(errors: {
   [K in T]: string;
 }): MakeApiProblemFn<T> {
   const allErrors = { ...errorCodes, ...errors };
-  return (error, httpMapper, logger) => {
+  return (error, httpMapper, logger, correlationId) => {
     const makeProblem = (
       httpStatus: number,
-      { title, detail, correlationId, errors }: ApiError<T | CommonErrorCodes>,
+      { title, detail, errors }: ApiError<T | CommonErrorCodes>,
     ): Problem => ({
       type: "about:blank",
       title,
@@ -98,11 +114,33 @@ export function makeApiProblemBuilder<T extends string>(errors: {
 }
 
 const errorCodes = {
-  genericError: "9991",
-  badRequestError: "9992",
+  genericError: "GENERIC_ERROR",
+  badRequestError: "BAD_REQUEST_ERROR",
+  kafkaMessageProcessError: "KAFKA_MESSAGE_PROCESS_ERROR",
+  kafkaMessageMissingData: "KAFKA_MESSAGE_MISSING_DATA",
+  kafkaMessageValueError: "KAFKA_MESSAGE_VALUE_ERROR",
+  invalidSqsMessage: "INVALID_SQS_MESSAGE",
+  decodeSQSMessageError: "DECODE_SQS_MESSAGE_ERROR",
+  decodeSQSCorrelationIdMessageError: "DECODE_SQS_CORRELATION_ID_MESSAGE_ERROR",
 } as const;
 
 export type CommonErrorCodes = keyof typeof errorCodes;
+
+export function parseErrorMessage(error: unknown): string {
+  if (error instanceof ZodError) {
+    return fromZodError(error).message;
+  }
+
+  if (error instanceof Error) {
+    return error.message;
+  }
+
+  if (typeof error === "string") {
+    return error;
+  }
+
+  return `${JSON.stringify(error)}`;
+}
 
 export function genericError(details: string): ApiError<CommonErrorCodes> {
   return new ApiError({
@@ -121,5 +159,83 @@ export function badRequestError(
     code: "badRequestError",
     title: "Bad request",
     errors,
+  });
+}
+
+/* ===== Internal Error ===== */
+
+export function genericInternalError(
+  details: string,
+): InternalError<CommonErrorCodes> {
+  return new InternalError({
+    code: "genericError",
+    detail: details,
+  });
+}
+
+export function kafkaMessageProcessError(
+  topic: string,
+  partition: number,
+  offset: string,
+  error?: unknown,
+): InternalError<CommonErrorCodes> {
+  return new InternalError({
+    code: "kafkaMessageProcessError",
+    detail: `Error while handling kafka message from topic : ${topic} - partition ${partition} - offset ${offset}. ${error}`,
+  });
+}
+
+export function kafkaMessageMissingData(
+  topic: string,
+  eventType: string,
+): InternalError<CommonErrorCodes> {
+  return new InternalError({
+    code: "kafkaMessageMissingData",
+    detail: `Missing data in kafka message from topic: ${topic} and event type: ${eventType}`,
+  });
+}
+
+export function kafkaMissingMessageValue(
+  topic: string,
+): InternalError<CommonErrorCodes> {
+  return new InternalError({
+    code: "kafkaMessageValueError",
+    detail: `Missing value message in kafka message from topic: ${topic}`,
+  });
+}
+
+export function invalidSqsMessage(
+  messageId: string | undefined,
+  error: unknown,
+): InternalError<CommonErrorCodes> {
+  return new InternalError({
+    code: "invalidSqsMessage",
+    detail: `Error while validating SQS message for id ${messageId}: ${parseErrorMessage(
+      error,
+    )}`,
+  });
+}
+
+export function decodeSQSMessageError(
+  messageId: string | undefined,
+  error: unknown,
+): InternalError<CommonErrorCodes> {
+  return new InternalError({
+    detail: `Failed to decode SQS ApplicationAuditEvent message with MessageId: ${messageId}. Error details: ${JSON.stringify(
+      error,
+    )}`,
+    code: "decodeSQSMessageError",
+  });
+}
+
+export function decodeSQSCorrelationIdMessageError(
+  messageId: string | undefined,
+  error: unknown,
+): InternalError<CommonErrorCodes> {
+  return new InternalError({
+    detail: `Failed to decode SQS correlationId attribute message with MessageId: ${messageId}. Error details: ${JSON.stringify(
+      error,
+    )}`,
+    code: "decodeSQSCorrelationIdMessageError",
   });
 }

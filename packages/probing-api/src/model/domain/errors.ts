@@ -1,63 +1,60 @@
 import {
   ApiError,
+  generateId,
   makeApiProblemBuilder,
-  makeProblemLogString,
   Problem,
 } from "pagopa-interop-probing-models";
 import { AxiosError } from "axios";
-import { Logger } from "pagopa-interop-probing-commons";
+import {
+  AppContext,
+  genericLogger,
+  logger,
+} from "pagopa-interop-probing-commons";
 import { errorMapper } from "../../utilities/errorMapper.js";
 
 export const errorCodes = {
-  eServiceNotFound: "0001",
-  eServiceMainDataByRecordIdNotFound: "0002",
-  eServiceProbingDataByRecordIdNotFound: "0003",
+  eServiceNotFound: "ESERVICE_NOT_FOUND",
+  eServiceByRecordIdNotFound: "ESERVICE_BY_RECORD_ID_NOT_FOUND",
 };
 
 export type ErrorCodes = keyof typeof errorCodes;
 
 export const makeApiProblem = makeApiProblemBuilder(errorCodes);
 
-export const resolveApiProblem = (error: unknown, logger: Logger): Problem => {
-  const axiosApiProblem = Problem.safeParse(
-    (error as AxiosError).response?.data,
-  );
+export const resolveApiProblem = (error: unknown, ctx: AppContext): Problem => {
+  try {
+    const axiosApiProblem = Problem.safeParse(
+      (error as AxiosError).response?.data,
+    );
 
-  if (axiosApiProblem.success) {
-    logger.warn(makeProblemLogString(axiosApiProblem.data, error));
-    return axiosApiProblem.data;
-  } else {
-    return makeApiProblem(error, errorMapper, logger);
+    if (axiosApiProblem.success) {
+      return axiosApiProblem.data;
+    } else {
+      return makeApiProblem(error, errorMapper, logger(ctx), ctx.correlationId);
+    }
+  } catch (error) {
+    genericLogger.info(`Error on resolveApiProblem: - ${error}`);
+    return makeApiProblem(error, errorMapper, logger({ ...ctx }), generateId());
   }
 };
 
-export function eServiceNotFound(
+export function eServiceByVersionIdNotFound(
   eserviceId: string,
   versionId: string,
 ): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: `EService by ${eserviceId} version ${versionId} not found`,
+    detail: `EService with eserviceId ${eserviceId} and versionId ${versionId} not found`,
     code: "eServiceNotFound",
     title: "EService not found",
   });
 }
 
-export function eServiceMainDataByRecordIdNotFound(
+export function eServiceByRecordIdNotFound(
   eserviceRecordId: number,
 ): ApiError<ErrorCodes> {
   return new ApiError({
-    detail: `EService main data by eserviceRecordId ${eserviceRecordId} not found`,
-    code: "eServiceMainDataByRecordIdNotFound",
-    title: "EService not found",
-  });
-}
-
-export function eServiceProbingDataByRecordIdNotFound(
-  eserviceRecordId: number,
-): ApiError<ErrorCodes> {
-  return new ApiError({
-    detail: `EService probing data by eserviceRecordId ${eserviceRecordId} not found`,
-    code: "eServiceProbingDataByRecordIdNotFound",
+    detail: `EService with eserviceRecordId ${eserviceRecordId} not found`,
+    code: "eServiceByRecordIdNotFound",
     title: "EService not found",
   });
 }

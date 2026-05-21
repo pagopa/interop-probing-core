@@ -18,8 +18,8 @@ const probingCallerConfig = AWSConfig.and(ConsumerConfig)
         LOG_LEVEL: z.string(),
         JWT_PAYLOAD_EXPIRE_TIME_IN_SEC: z.coerce.number().min(1),
         JWT_PAYLOAD_ISSUER: z.string(),
-        JWT_PAYLOAD_SUBJECT: z.string(),
         JWT_PAYLOAD_KID_KMS: z.string(),
+        HTTP_REQUEST_TIMEOUT_MS: z.coerce.number().min(1).default(5000),
       })
       .transform((c) => ({
         applicationName: c.INTEROP_PROBING_CALLER_NAME,
@@ -30,8 +30,8 @@ const probingCallerConfig = AWSConfig.and(ConsumerConfig)
         logLevel: c.LOG_LEVEL,
         jwtPayloadExpireTimeInSec: c.JWT_PAYLOAD_EXPIRE_TIME_IN_SEC,
         jwtPayloadIssuer: c.JWT_PAYLOAD_ISSUER,
-        jwtPayloadSubject: c.JWT_PAYLOAD_SUBJECT,
         jwtPayloadKidKms: c.JWT_PAYLOAD_KID_KMS,
+        httpRequestTimeoutMs: c.HTTP_REQUEST_TIMEOUT_MS,
       })),
   );
 

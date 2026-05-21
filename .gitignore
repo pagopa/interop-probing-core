@@ -43,4 +43,10 @@ node_modules/
 **/dist
 packages/models/src/gen
 packages/*/src/model/generated
-packages/clients/*/src/model/generated
+packages/api-clients/src/generated
+
+# Test environment
+.env.packages
+
+# Docker volumes
+influxdb-data

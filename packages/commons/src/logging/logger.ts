@@ -1,10 +1,16 @@
-/* eslint-disable @typescript-eslint/explicit-function-return-type */
 import winston from "winston";
 import { LoggerConfig } from "../config/loggerConfig.js";
 
 export type LoggerMetadata = {
   serviceName?: string;
   correlationId?: string | null;
+  messageId?: string | null;
+  eventType?: string;
+  eventVersion?: number;
+  streamId?: string;
+  version?: number;
+  eserviceId?: string;
+  purposeId?: string;
 };
 
 const parsedLoggerConfig = LoggerConfig.safeParse(process.env);
@@ -23,20 +29,22 @@ if (!parsedLoggerConfig.success) {
 
 const logFormat = (
   msg: string,
-  timestamp: string,
+  timestamp: unknown,
   level: string,
-  { serviceName, correlationId }: LoggerMetadata,
+  { serviceName, correlationId, messageId }: LoggerMetadata,
 ) => {
   const serviceLogPart = serviceName ? `[${serviceName}]` : undefined;
   const correlationLogPart = correlationId
     ? `[CID=${correlationId}]`
     : undefined;
 
+  const sqsMessageIdLogPart = messageId ? `[SQS MID=${messageId}]` : undefined;
+
   const firstPart = [timestamp, level.toUpperCase(), serviceLogPart]
     .filter((e) => e !== undefined)
     .join(" ");
 
-  const secondPart = [correlationLogPart]
+  const secondPart = [correlationLogPart, sqsMessageIdLogPart]
     .filter((e) => e !== undefined)
     .join(" ");
 
@@ -45,11 +53,15 @@ const logFormat = (
 
 export const customFormat = () =>
   winston.format.printf(({ level, message, timestamp, ...meta }) => {
-    const lines = message
+    if (!meta.loggerMetadata) {
+      // eslint-disable-next-line no-console
+      console.warn(`[WARN] loggerMetadata not found for message: ${message}`);
+    }
+    const lines = `${message}`
       .toString()
       .split("\n")
       .map((line: string) =>
-        logFormat(line, timestamp, level, meta.loggerMetadata),
+        logFormat(line, timestamp, level, meta.loggerMetadata || {}),
       );
     return lines.join("\n");
   });
@@ -73,17 +85,49 @@ const getLogger = () =>
 
 const internalLoggerInstance = getLogger();
 
-export const logger = (loggerMetadata: LoggerMetadata) => ({
-  isDebugEnabled: () => internalLoggerInstance.isDebugEnabled(),
-  debug: (msg: (typeof internalLoggerInstance.debug.arguments)[0]) =>
-    internalLoggerInstance.debug(msg, { loggerMetadata }),
-  info: (msg: (typeof internalLoggerInstance.info.arguments)[0]) =>
-    internalLoggerInstance.info(msg, { loggerMetadata }),
-  warn: (msg: (typeof internalLoggerInstance.warn.arguments)[0]) =>
-    internalLoggerInstance.warn(msg, { loggerMetadata }),
-  error: (msg: (typeof internalLoggerInstance.error.arguments)[0]) =>
-    internalLoggerInstance.error(msg, { loggerMetadata }),
-});
+const elapsedTime = (startTime: number): string =>
+  `[${Date.now() - startTime}ms]`;
+
+export const logger = (loggerMetadata: LoggerMetadata) => {
+  const appendElapsedTime = (msg: string, startTime?: number): string => {
+    if (startTime !== undefined && internalLoggerInstance.isDebugEnabled()) {
+      return `${elapsedTime(startTime)} ${msg}`;
+    }
+    return msg;
+  };
+
+  return {
+    isDebugEnabled: () => internalLoggerInstance.isDebugEnabled(),
+    debug: (
+      msg: (typeof internalLoggerInstance.debug.arguments)[0],
+      startTime?: number,
+    ) =>
+      internalLoggerInstance.debug(appendElapsedTime(`${msg}`, startTime), {
+        loggerMetadata,
+      }),
+    info: (
+      msg: (typeof internalLoggerInstance.info.arguments)[0],
+      startTime?: number,
+    ) =>
+      internalLoggerInstance.info(appendElapsedTime(`${msg}`, startTime), {
+        loggerMetadata,
+      }),
+    warn: (
+      msg: (typeof internalLoggerInstance.warn.arguments)[0],
+      startTime?: number,
+    ) =>
+      internalLoggerInstance.warn(appendElapsedTime(`${msg}`, startTime), {
+        loggerMetadata,
+      }),
+    error: (
+      msg: (typeof internalLoggerInstance.error.arguments)[0],
+      startTime?: number,
+    ) =>
+      internalLoggerInstance.error(appendElapsedTime(`${msg}`, startTime), {
+        loggerMetadata,
+      }),
+  };
+};
 
 export type Logger = ReturnType<typeof logger>;
 

@@ -1,60 +1,143 @@
 import {
-  EserviceEntities,
-  EserviceProbingRequestEntities,
-  EserviceProbingResponseEntities,
-  EserviceViewEntities,
-} from "../src/repositories/modelRepository.js";
-import { InsertResult, ObjectLiteral } from "typeorm";
-import { EserviceSchema } from "../src/repositories/entity/eservice.entity.js";
-import { EserviceProbingRequestSchema } from "../src/repositories/entity/eservice_probing_request.entity.js";
-import { EserviceProbingResponseSchema } from "../src/repositories/entity/eservice_probing_response.entity.js";
-import { config } from "../src/utilities/config.js";
-import { EserviceViewSchema } from "../src/repositories/entity/view/eservice.entity.js";
+  EServiceSQL,
+  TenantSQL,
+  EserviceProbingRequestSQL,
+  EserviceProbingResponseSQL,
+} from "../src/db/types.js";
+import {
+  eservicesInProbing,
+  eserviceProbingRequestsInProbing,
+  eserviceProbingResponsesInProbing,
+  tenantsInProbing,
+  tenantsAllowListInProbing,
+} from "../src/db/drizzle/schema.js";
+import { eq } from "drizzle-orm";
+import { DBService, dbServiceBuilder } from "../src/services/dbService.js";
+import {
+  TenantService,
+  tenantServiceBuilder,
+} from "../src/services/tenantService.js";
+import {
+  EserviceService,
+  eServiceServiceBuilder,
+} from "../src/services/eserviceService.js";
+import { afterEach, inject } from "vitest";
+import { setupTestContainersVitest } from "./utilsSetupTestContainers.js";
+import { v4 as uuidv4 } from "uuid";
+import { eServiceDefaultValues } from "../src/db/constants/eServices.js";
+import {
+  eserviceInteropState,
+  technology,
+} from "pagopa-interop-probing-models";
+
+export const { cleanup, postgresDB: db } = await setupTestContainersVitest(
+  inject("dbConfig"),
+);
+
+afterEach(cleanup);
+
+export const dbService: DBService = dbServiceBuilder(db);
+export const tenantService: TenantService = tenantServiceBuilder(dbService);
+export const eserviceService: EserviceService =
+  eServiceServiceBuilder(dbService);
+
+type EserviceInsert = Omit<EServiceSQL, "id">;
+type TenantInsert = Omit<TenantSQL, "id">;
+type EserviceProbingRequestInsert = Pick<
+  EserviceProbingRequestSQL,
+  "eservicesRecordId" | "lastRequest"
+>;
+type EserviceProbingResponseInsert = Pick<
+  EserviceProbingResponseSQL,
+  "eservicesRecordId" | "responseReceived" | "status"
+>;
+
+export const mockEservice = (
+  partialEserviceData: Partial<EserviceInsert> = {},
+) => ({
+  eserviceName: "eService 001",
+  producerId: uuidv4(),
+  producerName: "eService producer 001",
+  versionNumber: 1,
+  state: eserviceInteropState.inactive,
+  basePath: ["path-1"],
+  eserviceTechnology: technology.rest,
+  audience: ["audience"],
+  eserviceId: uuidv4(),
+  versionId: uuidv4(),
+  ...eServiceDefaultValues,
+  ...partialEserviceData,
+});
+
+export const addEservice = async (data: EserviceInsert): Promise<number> => {
+  const [eservice] = await db
+    .insert(eservicesInProbing)
+    .values(data)
+    .returning({ id: eservicesInProbing.id });
+  return Number(eservice.id);
+};
 
 export const addEserviceProbingRequest = async (
-  data: EserviceProbingRequestSchema,
-  repository: EserviceProbingRequestEntities,
-): Promise<ObjectLiteral[]> => {
-  const result = await repository.upsert(data, {
-    skipUpdateIfNoValuesChanged: true,
-    conflictPaths: ["eserviceRecordId"],
-  });
-  return result.identifiers;
+  data: EserviceProbingRequestInsert,
+) => {
+  await db
+    .insert(eserviceProbingRequestsInProbing)
+    .values(data)
+    .onConflictDoUpdate({
+      target: eserviceProbingRequestsInProbing.eservicesRecordId,
+      set: { lastRequest: data.lastRequest },
+    });
 };
 
 export const addEserviceProbingResponse = async (
-  data: EserviceProbingResponseSchema,
-  repository: EserviceProbingResponseEntities,
-): Promise<ObjectLiteral[]> => {
-  const result = await repository.upsert(data, {
-    skipUpdateIfNoValuesChanged: true,
-    conflictPaths: ["eserviceRecordId"],
-  });
-  return result.identifiers;
+  data: EserviceProbingResponseInsert,
+) => {
+  await db
+    .insert(eserviceProbingResponsesInProbing)
+    .values(data)
+    .onConflictDoUpdate({
+      target: eserviceProbingResponsesInProbing.eservicesRecordId,
+      set: {
+        responseReceived: data.responseReceived,
+        status: data.status,
+      },
+    });
 };
 
-export const addEservice = async (
-  data: EserviceSchema,
-  repository: EserviceEntities,
-): Promise<number> => {
-  const result: InsertResult = await repository
-    .createQueryBuilder()
-    .insert()
+export const addTenant = async (
+  data: TenantInsert,
+): Promise<TenantInsert & { id?: number | bigint }> => {
+  const [tenant] = await db
+    .insert(tenantsInProbing)
     .values({
-      eserviceRecordId: () =>
-        `nextval('"${config.schemaName}"."eservice_sequence"'::regclass)`,
-      ...data,
+      tenantId: data.tenantId,
+      tenantName: data.tenantName,
     })
-    .returning("id")
-    .execute();
+    .returning();
+  return tenant;
+};
 
-  const [eservice]: { id: string }[] = result.raw;
-  return Number(eservice.id);
+export const addTenantToAllowList = async (tenantId: string | null) => {
+  if (!tenantId) {
+    throw new Error("tenantId is required to add to allow-list");
+  }
+  await db
+    .insert(tenantsInProbing)
+    .values({ tenantId, tenantName: "Allow-listed tenant" })
+    .onConflictDoNothing();
+  await db
+    .insert(tenantsAllowListInProbing)
+    .values({ tenantId })
+    .onConflictDoNothing();
 };
 
 export const getEservice = async (
   eserviceRecordId: number,
-  repository: EserviceViewEntities,
-): Promise<EserviceViewSchema | { [key: string]: string }> => {
-  return (await repository.findOneBy({ eserviceRecordId })) || {};
+): Promise<EServiceSQL> => {
+  const [eservice] = await db
+    .select()
+    .from(eservicesInProbing)
+    .where(eq(eservicesInProbing.id, eserviceRecordId))
+    .limit(1);
+  return eservice;
 };

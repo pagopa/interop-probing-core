@@ -34,19 +34,19 @@
     "links": {
       "privacy": {
         "label": "Privacy Policy",
-        "ariaLabel": "Vai al link: privacy policy"
+        "ariaLabel": "Go to link: privacy policy"
       },
       "dataProtection": {
         "label": "Personal data protection rights",
-        "ariaLabel": "Vai al link: personal data protection rights"
+        "ariaLabel": "Go to link: personal data protection rights"
       },
       "terms": {
         "label": "Terms and conditions",
-        "ariaLabel": "Vai al link: terms and conditions"
+        "ariaLabel": "Go to link: terms and conditions"
       },
       "a11y": {
         "label": "Accessibility",
-        "ariaLabel": "Vai al link: accessibility"
+        "ariaLabel": "Go to link: accessibility"
       }
     }
   },
@@ -113,6 +113,20 @@
     "noDataLabel": "No results",
     "loading": "Loading..."
   },
+  "state": {
+    "available": {
+      "label": "Available",
+      "tooltip": "The API for this e-service is responding correctly."
+    },
+    "unavailable": {
+      "label": "Not responding",
+      "tooltip": "The API for this e-service is currently unavailable."
+    },
+    "unverified": {
+      "label": "Verification failed",
+      "tooltip": "We were never able to contact the API for this e-service."
+    }
+  },
   "detailsPage": {
     "titleOperativita": "Operativity",
     "historyTitle": "History monitoring",
@@ -138,6 +152,8 @@
     "loading": "Loading...",
     "startDateTime": "Period start date and time",
     "endDateTime": "Period end date and time",
+    "eserviceID": "E-SERVICE ID",
+    "copySuccessFeedbackText": "ID successfully copied",
     "alerts": {
       "monitoringSuspended": "Monitoring suspended",
       "versionSuspendedMessage": "The e-service is offline because this version is currently suspended",

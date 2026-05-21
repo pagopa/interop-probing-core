@@ -1,0 +1,45 @@
+{
+  "name": "pagopa-interop-probing-eservice-event-consumer",
+  "version": "1.0.0",
+  "description": "PagoPA probing eservice event consumer",
+  "main": "dist",
+  "type": "module",
+  "scripts": {
+    "test": "vitest --config ./test/vitest.config.ts",
+    "lint": "eslint .",
+    "lint:autofix": "eslint . --fix",
+    "format:check": "prettier --check src",
+    "format:write": "prettier --write src",
+    "start": "tsx -r 'dotenv-flow/config' --watch ./src/index.ts",
+    "build": "tsc",
+    "check": "tsc --project tsconfig.check.json"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@pagopa/interop-outbound-models": "1.8.16",
+    "@zodios/core": "10.9.6",
+    "axios": "1.15.2",
+    "dotenv-flow": "4.1.0",
+    "kafka-connector": "workspace:*",
+    "kafkajs": "2.2.4",
+    "pagopa-interop-probing-commons": "workspace:*",
+    "pagopa-interop-probing-api-clients": "workspace:*",
+    "pagopa-interop-probing-models": "workspace:*",
+    "ts-pattern": "5.1.2",
+    "uuid": "14.0.0",
+    "zod": "3.23.8"
+  },
+  "devDependencies": {
+    "@probing/eslint-config": "workspace:*",
+    "@probing/vitest-config": "workspace:*",
+    "@types/dotenv-flow": "3.3.3",
+    "@types/node": "20.10.4",
+    "@types/uuid": "9.0.8",
+    "pagopa-interop-probing-commons-test": "workspace:*",
+    "ts-node": "10.9.2",
+    "typescript": "5.7.3",
+    "tsx": "4.20.5"
+  }
+}

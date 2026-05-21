@@ -8,13 +8,10 @@ import {
 import { config } from "./config.js";
 import { v4 as uuidv4 } from "uuid";
 import { callerConstants } from "./constants.js";
-import { genericLogger } from "pagopa-interop-probing-commons";
 import { buildJWTError } from "../model/domain/errors.js";
 
 interface Claims {
   aud: string[];
-  sub: string;
-  nbf: number;
   iss: string;
   exp: number;
   iat: number;
@@ -44,7 +41,6 @@ export const kmsClientBuilder = () => {
 
         return `${token}.${removePadding(Buffer.from(signedTokenBuffer).toString("base64"))}`;
       } catch (err: unknown) {
-        genericLogger.error(`Error building JWT token: ${err}`);
         throw buildJWTError(`${err}`);
       }
     },
@@ -76,8 +72,6 @@ function createPayload(audience: string[]): string {
 
   const claims: Claims = {
     aud: audience,
-    sub: config.jwtPayloadSubject,
-    nbf: currentTimeInSeconds,
     iss: config.jwtPayloadIssuer,
     exp: currentTimeInSeconds + config.jwtPayloadExpireTimeInSec,
     iat: currentTimeInSeconds,

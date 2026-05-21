@@ -1,0 +1,12 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "noEmit": true
+  },
+  "include": [
+    "src",
+    "test",
+    "drizzle.config.ts",
+    "test/vitest.config.ts"
+  ]
+}

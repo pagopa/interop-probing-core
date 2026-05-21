@@ -3,6 +3,8 @@ import { match } from "ts-pattern";
 export enum TimeFormat {
   YY_MM_DD_HH_MM_SS = "yyyy-MM-dd HH:mm:ss.SSSSSSSSS",
   YY_MM_DD_HH_MM = "yyyy-MM-dd HH:mm",
+  ISO_8601 = "ISO_8601",
+  ISO_8601_LOCAL = "ISO_8601_LOCAL",
 }
 
 export enum DateUnit {
@@ -17,11 +19,13 @@ export enum DateUnit {
 }
 
 export function changeDateFormat(
-  dateString: string,
+  dateInput: string | Date,
   format: TimeFormat,
 ): string {
+  const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
+
   const { year, month, day, hours, minutes, seconds, milliseconds } =
-    getDateComponents(dateString);
+    getDateComponents(date);
 
   return match(format)
     .with(
@@ -33,10 +37,15 @@ export function changeDateFormat(
       () =>
         `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`,
     )
+    .with(TimeFormat.ISO_8601, () => date.toISOString())
+    .with(TimeFormat.ISO_8601_LOCAL, () => {
+      const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+      return local.toISOString().replace("Z", "");
+    })
     .exhaustive();
 }
 
-function getDateComponents(dateString: string): {
+function getDateComponents(dateInput: string | Date): {
   year: string;
   month: string;
   day: string;
@@ -45,13 +54,16 @@ function getDateComponents(dateString: string): {
   seconds: string;
   milliseconds: string;
 } {
-  const date: Date = new Date(dateString);
+  const date: Date =
+    dateInput instanceof Date ? dateInput : new Date(dateInput);
+
   const year = String(date.getFullYear());
   const month = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   const hours = String(date.getHours()).padStart(2, "0");
   const minutes = String(date.getMinutes()).padStart(2, "0");
   const seconds = String(date.getSeconds()).padStart(2, "0");
+
   const milliseconds = String(date.getMilliseconds())
     .padStart(3, "0")
     .padEnd(9, "0");
@@ -94,3 +106,15 @@ export function timeBetween(
     )
     .exhaustive();
 }
+
+export const normalizeDateRange = (startDate?: string, endDate?: string) => {
+  const defaultRangeHours = 24;
+  const currentDate = new Date();
+  const defaultStartDate = new Date(
+    currentDate.getTime() - defaultRangeHours * 3600 * 1000,
+  );
+  return {
+    startIso: startDate ?? defaultStartDate.toISOString(),
+    endIso: endDate ?? currentDate.toISOString(),
+  };
+};

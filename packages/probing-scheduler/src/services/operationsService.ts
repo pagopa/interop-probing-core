@@ -1,54 +1,52 @@
 import { ZodiosInstance } from "@zodios/core";
-import {
-  Api,
-  ApiGetEservicesReadyForPollingQuery,
-  ApiGetEservicesReadyForPollingResponse,
-  ApiUpdateLastRequestParams,
-  ApiUpdateLastRequestPayload,
-  ApiUpdateLastRequestResponse,
-} from "pagopa-interop-probing-eservice-operations-client";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 import {
   apiGetEservicesReadyForPollingError,
   apiUpdateLastRequestError,
-  makeApplicationError,
 } from "../model/domain/errors.js";
+import {
+  WithSQSMessageId,
+  AppContext,
+  logger,
+} from "pagopa-interop-probing-commons";
 
 export const operationsServiceBuilder = (
-  operationsApiClient: ZodiosInstance<Api>,
+  operationsApiClient: ZodiosInstance<probingEserviceOperationsApi.EServiceApi>,
 ) => {
   return {
     async getEservicesReadyForPolling(
-      query: ApiGetEservicesReadyForPollingQuery,
-    ): Promise<ApiGetEservicesReadyForPollingResponse> {
+      headers: probingEserviceOperationsApi.ApiGetEservicesReadyForPollingHeaders,
+      query: probingEserviceOperationsApi.ApiGetEservicesReadyForPollingQuery,
+      ctx: WithSQSMessageId<AppContext>,
+    ): Promise<probingEserviceOperationsApi.ApiGetEservicesReadyForPollingResponse> {
       try {
+        logger(ctx).info(
+          `Performing getEservicesReadyForPolling with query parameters limit ${query.limit} offset ${query.offset}`,
+        );
         return await operationsApiClient.getEservicesReadyForPolling({
           queries: query,
+          headers,
         });
       } catch (error: unknown) {
-        throw makeApplicationError(
-          apiGetEservicesReadyForPollingError(
-            `Error API getEservicesReadyForPolling. Details: ${error}`,
-            error,
-          ),
-        );
+        throw apiGetEservicesReadyForPollingError(error);
       }
     },
-    async updateLastRequest({
-      params,
-      payload,
-    }: {
-      params: ApiUpdateLastRequestParams;
-      payload: ApiUpdateLastRequestPayload;
-    }): Promise<ApiUpdateLastRequestResponse> {
+    async updateLastRequest(
+      headers: probingEserviceOperationsApi.ApiUpdateLastRequestHeaders,
+      params: probingEserviceOperationsApi.ApiUpdateLastRequestParams,
+      payload: probingEserviceOperationsApi.ApiUpdateLastRequestPayload,
+      ctx: WithSQSMessageId<AppContext>,
+    ): Promise<probingEserviceOperationsApi.ApiUpdateLastRequestResponse> {
       try {
-        return await operationsApiClient.updateLastRequest(payload, { params });
-      } catch (error: unknown) {
-        throw makeApplicationError(
-          apiUpdateLastRequestError(
-            `Error API updateLastRequest. Details: ${error}`,
-            error,
-          ),
+        logger(ctx).info(
+          `Performing updateLastRequest with eserviceRecordId ${params.eserviceRecordId}. Payload: ${JSON.stringify(payload)}`,
         );
+        return await operationsApiClient.updateEserviceLastRequest(payload, {
+          params,
+          headers,
+        });
+      } catch (error: unknown) {
+        throw apiUpdateLastRequestError(params.eserviceRecordId, error);
       }
     },
   };

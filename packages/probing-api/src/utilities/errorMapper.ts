@@ -10,6 +10,5 @@ const { HTTP_STATUS_INTERNAL_SERVER_ERROR, HTTP_STATUS_NOT_FOUND } = constants;
 export const errorMapper = (error: ApiError<ErrorCodes>): number =>
   match(error.code)
     .with("eServiceNotFound", () => HTTP_STATUS_NOT_FOUND)
-    .with("eServiceMainDataByRecordIdNotFound", () => HTTP_STATUS_NOT_FOUND)
-    .with("eServiceProbingDataByRecordIdNotFound", () => HTTP_STATUS_NOT_FOUND)
+    .with("eServiceByRecordIdNotFound", () => HTTP_STATUS_NOT_FOUND)
     .otherwise(() => HTTP_STATUS_INTERNAL_SERVER_ERROR);

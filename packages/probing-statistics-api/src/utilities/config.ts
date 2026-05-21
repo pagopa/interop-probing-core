@@ -2,17 +2,17 @@ import {
   HTTPServerConfig,
   LoggerConfig,
   AWSConfig,
+  InfluxDBConfig,
 } from "pagopa-interop-probing-commons";
 import { z } from "zod";
 
 const statisticsApiConfig = HTTPServerConfig.and(LoggerConfig)
   .and(AWSConfig)
+  .and(InfluxDBConfig)
   .and(
     z
       .object({
         INTEROP_PROBING_STATISTICS_APP_NAME: z.string(),
-        TIMESTREAM_DATABASE: z.string(),
-        TIMESTREAM_TABLE: z.string(),
         GRAPH_PERFORMANCE_TOLERANCE: z.coerce.number().min(1),
         GRAPH_FAILURE_TOLERANCE: z.coerce.number().min(1),
         GRAPH_MAX_MONTHS: z.coerce.number().min(1),
@@ -20,8 +20,6 @@ const statisticsApiConfig = HTTPServerConfig.and(LoggerConfig)
       })
       .transform((c) => ({
         applicationName: c.INTEROP_PROBING_STATISTICS_APP_NAME,
-        timestreamDatabase: c.TIMESTREAM_DATABASE,
-        timestreamTable: c.TIMESTREAM_TABLE,
         graphPerformanceTolerance: c.GRAPH_PERFORMANCE_TOLERANCE,
         graphFailureTolerance: c.GRAPH_FAILURE_TOLERANCE,
         graphMaxMonths: c.GRAPH_MAX_MONTHS,

@@ -1,42 +1,42 @@
-import { UpdateResponseReceivedApi } from "../model/models.js";
 import { ZodiosInstance } from "@zodios/core";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 import {
-  Api,
-  ApiUpdateResponseReceivedResponse,
-} from "pagopa-interop-probing-eservice-operations-client";
-import { genericLogger } from "pagopa-interop-probing-commons";
+  AppContext,
+  logger,
+  WithSQSMessageId,
+} from "pagopa-interop-probing-commons";
 import {
-  apiUpdateResponseReceivedError,
-  makeApplicationError,
-} from "../model/domain/errors.js";
+  correlationIdToHeader,
+  UpdateResponseReceivedDto,
+} from "pagopa-interop-probing-models";
+import { apiUpdateResponseReceivedError } from "../model/domain/errors.js";
 
 export const operationsServiceBuilder = (
-  operationsApiClient: ZodiosInstance<Api>,
+  operationsApiClient: ZodiosInstance<probingEserviceOperationsApi.EServiceApi>,
 ) => {
   return {
-    async updateResponseReceived({
-      params,
-      payload,
-    }: UpdateResponseReceivedApi): Promise<ApiUpdateResponseReceivedResponse> {
+    async updateResponseReceived(
+      eserviceRecordId: number,
+      payload: Pick<UpdateResponseReceivedDto, "status" | "responseReceived">,
+      ctx: WithSQSMessageId<AppContext>,
+    ): Promise<probingEserviceOperationsApi.ApiUpdateResponseReceivedResponse> {
       try {
-        await operationsApiClient.updateResponseReceived(
+        logger(ctx).info(
+          `Updating eService response received with eserviceRecordId: ${eserviceRecordId} and responseReceived: ${payload.responseReceived}`,
+        );
+
+        await operationsApiClient.updateEserviceResponseReceived(
           {
             status: payload.status,
             responseReceived: payload.responseReceived,
           },
-          { params: { eserviceRecordId: params.eserviceRecordId } },
-        );
-
-        genericLogger.info(
-          `Updating eService response received with eserviceRecordId: ${params.eserviceRecordId} and responseReceived: ${payload.responseReceived}`,
+          {
+            params: { eserviceRecordId },
+            headers: { ...correlationIdToHeader(ctx.correlationId) },
+          },
         );
       } catch (error: unknown) {
-        throw makeApplicationError(
-          apiUpdateResponseReceivedError(
-            `Error updating eService response received with eserviceRecordId: ${params.eserviceRecordId}. Details: ${error}`,
-            error,
-          ),
-        );
+        throw apiUpdateResponseReceivedError(eserviceRecordId, error);
       }
     },
   };

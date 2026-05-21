@@ -33,16 +33,16 @@
   "footer": {
     "links": {
       "privacy": {
-        "label": "Privacy Policy",
-        "ariaLabel": "Vai al link: privacy policy"
+        "label": "Informativa Privacy",
+        "ariaLabel": "Vai al link: informativa privacy"
       },
       "dataProtection": {
         "label": "Diritto alla protezione dei dati personali",
         "ariaLabel": "Vai al link: diritto alla protezione dei dati personali"
       },
       "terms": {
-        "label": "Termini e condizioni",
-        "ariaLabel": "Vai al link: termini e condizioni"
+        "label": "Note Legali",
+        "ariaLabel": "Vai al link: note legali"
       },
       "a11y": {
         "label": "Accessibilità",
@@ -112,6 +112,20 @@
     "noDataLabel": "La ricerca non ha prodotto risultati",
     "loading": "Operazione in corso..."
   },
+  "state": {
+    "available": {
+      "label": "Disponibile",
+      "tooltip": "L'API di questo e-service risponde correttamente"
+    },
+    "unavailable": {
+      "label": "Non risponde",
+      "tooltip": "L'API di questo e-service non è raggiungibile al momento"
+    },
+    "unverified": {
+      "label": "Verifica non riuscita",
+      "tooltip": "Non siamo mai riusciti a contattare l'API di questo e-service"
+    }
+  },
   "detailsPage": {
     "titleOperativita": "Operatività",
     "historyTitle": "Storico del monitoraggio",
@@ -137,6 +151,8 @@
     "loading": "Operazione in corso...",
     "startDateTime": "Data e ora inizio periodo",
     "endDateTime": "Data e ora fine periodo",
+    "eserviceID": "ID E-SERVICE",
+    "copySuccessFeedbackText": "ID copiato correttamente",
     "alerts": {
       "monitoringSuspended": "Monitoraggio sospeso",
       "versionSuspendedMessage": "L'e-service è offline perché questa versione è attualmente sospesa",

@@ -11,11 +11,12 @@ import { useTranslation } from 'react-i18next'
 import RefreshIcon from '@mui/icons-material/Refresh'
 import { MonitoringTableRow } from './MonitoringTableRow'
 import { MonitoringQueries } from '@/api/monitoring/monitoring.hooks'
-import { Skeleton } from '@mui/material'
+import { Box, Skeleton } from '@mui/material'
 import type { TFunction } from 'i18next'
 import React from 'react'
 import type { EService } from '@/api/monitoring/monitoring.models'
 import { useHandleRefetch } from '@/hooks/useRefetch'
+import { eserviceStateConfig } from '@/types/eservice-state.types'
 
 const headLabels = (t: TFunction<'common', 'table'>): Array<string> => {
   return [
@@ -30,7 +31,8 @@ const headLabels = (t: TFunction<'common', 'table'>): Array<string> => {
 
 export const MonitoringTable: React.FC = () => {
   const { t } = useTranslation('common', { keyPrefix: 'table' })
-  const totalEServicesRef = React.useRef<number | undefined>()
+  const { t: tCommon } = useTranslation('common')
+  const [totalEServices, setTotalEServices] = React.useState<number | undefined>()
   const { paginationParams, paginationProps, getTotalPageCount } = usePagination({ limit: 10 })
   const [producersAutocompleteTextInput, setProducersAutocompleteTextInput] =
     useAutocompleteTextInput()
@@ -58,15 +60,16 @@ export const MonitoringTable: React.FC = () => {
       name: 'versionNumber',
       type: 'numeric',
       label: t('serviceVersionFilter'),
+      min: 1,
     },
     {
       name: 'state',
       type: 'autocomplete-multiple',
       label: t('serviceStateFilter'),
       options: [
-        { value: 'ONLINE', label: 'online' },
-        { value: 'OFFLINE', label: 'offline' },
-        { value: 'N_D', label: 'n/d' },
+        { value: 'ONLINE', label: tCommon(eserviceStateConfig.ONLINE.labelKey) },
+        { value: 'OFFLINE', label: tCommon(eserviceStateConfig.OFFLINE.labelKey) },
+        { value: 'N_D', label: tCommon(eserviceStateConfig.N_D.labelKey) },
       ],
     },
   ])
@@ -77,16 +80,22 @@ export const MonitoringTable: React.FC = () => {
   }
 
   const { data: eservices, refetch, isLoading } = MonitoringQueries.useGetList(params)
+  const scrollRef = React.useRef<HTMLDivElement | null>(null)
 
-  // We want to keep the totalElements in a ref, so that we can use it in the Pagination component even if the eservices data is re-fetched
-  if (!totalEServicesRef.current) {
-    totalEServicesRef.current = eservices?.totalElements
-  }
+  React.useEffect(() => {
+    if (eservices?.totalElements !== undefined) {
+      setTotalEServices(eservices.totalElements)
+    }
+  }, [eservices?.totalElements])
+
+  React.useEffect(() => {
+    scrollRef?.current?.scrollIntoView({ behavior: 'auto' })
+  }, [paginationParams.offset])
 
   const handleRefetch = useHandleRefetch<EService>(refetch)
 
   return (
-    <>
+    <Box ref={scrollRef}>
       <Filters
         {...handlers}
         rightContent={
@@ -115,8 +124,8 @@ export const MonitoringTable: React.FC = () => {
         </Table>
       )}
 
-      <Pagination {...paginationProps} totalPages={getTotalPageCount(totalEServicesRef.current)} />
-    </>
+      <Pagination {...paginationProps} totalPages={getTotalPageCount(totalEServices)} />
+    </Box>
   )
 }
 

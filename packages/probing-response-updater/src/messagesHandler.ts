@@ -1,25 +1,52 @@
-import { SQS } from "pagopa-interop-probing-commons";
-import { OperationsService } from "./services/operationsService.js";
-import { decodeSQSMessage } from "./model/models.js";
 import {
-  ApplicationError,
-  makeApplicationError,
-} from "./model/domain/errors.js";
+  AppContext,
+  decodeSQSMessage,
+  decodeSQSMessageCorrelationId,
+  logger,
+  SQS,
+  WithSQSMessageId,
+} from "pagopa-interop-probing-commons";
+import { OperationsService } from "./services/operationsService.js";
+import { config } from "./utilities/config.js";
+import { UpdateResponseReceivedDto } from "pagopa-interop-probing-models";
+import { errorMapper } from "./utilities/errorMapper.js";
 
-export function processMessage(
+const processMessage = async (
+  message: SQS.Message,
   service: OperationsService,
-): (message: SQS.Message) => Promise<void> {
-  return async (message: SQS.Message): Promise<void> => {
-    try {
-      await service.updateResponseReceived(decodeSQSMessage(message));
-    } catch (e: unknown) {
-      throw makeApplicationError(
-        e instanceof ApplicationError
-          ? e
-          : new Error(
-              `Unexpected error handling message with MessageId: ${message.MessageId}. Details: ${e}`,
-            ),
-      );
-    }
+): Promise<void> => {
+  const { correlationId } = decodeSQSMessageCorrelationId(message);
+  const ctx: WithSQSMessageId<AppContext> = {
+    serviceName: config.applicationName,
+    messageId: message.MessageId,
+    correlationId,
+  };
+
+  try {
+    const decodedMessage = decodeSQSMessage<UpdateResponseReceivedDto>(
+      message,
+      UpdateResponseReceivedDto,
+    );
+
+    await service.updateResponseReceived(
+      decodedMessage.eserviceRecordId,
+      {
+        status: decodedMessage.status,
+        responseReceived: decodedMessage.responseReceived,
+      },
+      ctx,
+    );
+  } catch (error: unknown) {
+    throw errorMapper(error, logger(ctx));
+  }
+};
+
+export function processBatch(
+  service: OperationsService,
+): (messages: SQS.Message[]) => Promise<void> {
+  return async (messages: SQS.Message[]): Promise<void> => {
+    await Promise.all(
+      messages.map((message) => processMessage(message, service)),
+    );
   };
 }

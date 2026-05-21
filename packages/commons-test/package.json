@@ -1,0 +1,33 @@
+{
+  "name": "pagopa-interop-probing-commons-test",
+  "private": true,
+  "version": "1.0.0",
+  "description": "PagoPA Interoperability Probing common test utilities",
+  "main": "dist",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint:autofix": "eslint . --fix",
+    "format:check": "prettier --check src",
+    "format:write": "prettier --write src",
+    "build": "tsc",
+    "check": "tsc --project tsconfig.check.json"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "@probing/eslint-config": "workspace:*",
+    "@types/dotenv-flow": "3.3.3",
+    "pagopa-interop-probing-commons": "workspace:*",
+    "pagopa-interop-probing-models": "workspace:*",
+    "dotenv-flow": "4.1.0",
+    "testcontainers": "11.8.1",
+    "ts-pattern": "5.1.2",
+    "typescript": "5.7.3",
+    "zod": "3.23.8",
+    "axios": "1.15.2"
+  }
+}

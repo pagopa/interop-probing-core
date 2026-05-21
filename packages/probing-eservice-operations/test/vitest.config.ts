@@ -1,15 +1,15 @@
-import { defineConfig } from 'vitest/config';
-import { resolve } from 'path';
+import baseConfig, { mergeConfig } from "@probing/vitest-config";
 
-export default defineConfig({
-  root: '.',
+const overrideConfig = {
+  ...baseConfig,
   test: {
-    clearMocks: true,
-    globals: true,
-    setupFiles: ['dotenv/config'],
-    hookTimeout: 20000
+    ...baseConfig.test,
+    setupFiles: [],
   },
-  resolve: {
-    alias: [{ find: '~', replacement: resolve(__dirname, 'src') }],
+};
+
+export default mergeConfig(overrideConfig, {
+  test: {
+    globalSetup: ["./test/utilsSetupTestContainersGlobal.ts"],
   },
 });

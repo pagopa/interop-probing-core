@@ -41,10 +41,14 @@ function useGetEserviceProbingData(params: { eserviceId: string }) {
   })
 }
 
-function useGetTelemetryData(params: { eserviceId: string; pollingFrequency: number }) {
+function useGetTelemetryData(
+  params: { eserviceId: string; pollingFrequency: number },
+  config?: UseQueryOptions<TelemetryData>
+) {
   return useQuery({
     queryKey: [MonitoringQueryKeys.GetTelemetryData, params],
     queryFn: () => MonitoringServices.getTelemetryData(params),
+    ...config,
   })
 }
 

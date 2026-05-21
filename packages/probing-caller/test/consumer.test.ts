@@ -1,10 +1,20 @@
-import { describe, expect, it, vi, afterAll } from "vitest";
-import { processMessage } from "../src/messagesHandler.js";
-import { AppError } from "../src/model/domain/errors.js";
-import { SQS } from "pagopa-interop-probing-commons";
-import { decodeSQSMessage } from "../src/model/models.js";
+import { describe, expect, it, vi, afterAll, afterEach } from "vitest";
+import { processBatch } from "../src/messagesHandler.js";
+import {
+  AppContext,
+  decodeSQSMessage,
+  decodeSQSMessageCorrelationId,
+  SQS,
+  WithSQSMessageId,
+} from "pagopa-interop-probing-commons";
 import { callerConstants } from "../src/utilities/constants.js";
-import { responseStatus, TelemetryDto } from "pagopa-interop-probing-models";
+import {
+  EserviceContentDto,
+  responseStatus,
+  TelemetryDto,
+} from "pagopa-interop-probing-models";
+import { config } from "../src/utilities/config.js";
+import { v4 as uuidv4 } from "uuid";
 
 describe("Consumer queue test", async () => {
   const telemetryResult: TelemetryDto = {
@@ -13,6 +23,13 @@ describe("Consumer queue test", async () => {
     status: responseStatus.ko,
     koReason: callerConstants.CONNECTION_REFUSED_KO_REASON,
     responseTime: 16,
+  };
+
+  const correlationIdMessageAttribute = {
+    correlationId: {
+      DataType: "String",
+      StringValue: uuidv4(),
+    },
   };
 
   const mockProbingCallerService = {
@@ -24,11 +41,10 @@ describe("Consumer queue test", async () => {
     sendToResponseUpdaterQueue: vi.fn().mockResolvedValue(undefined),
   };
 
-  afterAll(() => {
-    vi.restoreAllMocks();
-  });
+  afterEach(() => vi.restoreAllMocks());
+  afterAll(() => vi.clearAllMocks());
 
-  it("Reads the message from the queue and pushes it to the polling and telemetry queues.", async () => {
+  it("should read a valid message and push telemetry updates to the correct queues", async () => {
     const validMessage: SQS.Message = {
       MessageId: "12345",
       ReceiptHandle: "receipt_handle_id",
@@ -38,39 +54,46 @@ describe("Consumer queue test", async () => {
         basePath: ["path1", "path2"],
         audience: ["aud1", "path2"],
       }),
+      MessageAttributes: correlationIdMessageAttribute,
     };
 
-    await expect(async () => {
-      await processMessage(
+    const { correlationId } = decodeSQSMessageCorrelationId(validMessage);
+    const ctx: WithSQSMessageId<AppContext> = {
+      serviceName: config.applicationName,
+      messageId: validMessage.MessageId,
+      correlationId,
+    };
+
+    await expect(
+      processBatch(
         mockProbingCallerService,
         mockProducerService,
-      )(validMessage);
+      )([validMessage]),
+    ).resolves.not.toThrow();
 
-      await expect(
-        mockProbingCallerService.performRequest,
-      ).toHaveBeenCalledWith(decodeSQSMessage(validMessage));
+    expect(mockProbingCallerService.performRequest).toHaveBeenCalledWith(
+      decodeSQSMessage<EserviceContentDto>(validMessage, EserviceContentDto),
+      ctx,
+    );
 
-      await expect(
-        mockProducerService.sendToTelemetryWriterQueue,
-      ).toHaveBeenCalledWith(telemetryResult);
+    expect(mockProducerService.sendToTelemetryWriterQueue).toHaveBeenCalledWith(
+      telemetryResult,
+      ctx,
+    );
 
-      await expect(
-        mockProducerService.sendToResponseUpdaterQueue,
-      ).toHaveBeenCalled();
-    }).not.toThrowError();
+    expect(mockProducerService.sendToResponseUpdaterQueue).toHaveBeenCalled();
   });
 
-  it("given invalid message, method should throw an error", async () => {
+  it("should throw decodeSQSMessageError when the message is invalid", async () => {
     const invalidMessage = {};
 
-    try {
-      await processMessage(
+    await expect(
+      processBatch(
         mockProbingCallerService,
         mockProducerService,
-      )(invalidMessage);
-    } catch (error) {
-      expect(error).toBeInstanceOf(AppError);
-      expect((error as AppError).code).toBe("0002");
-    }
+      )([invalidMessage as SQS.Message]),
+    ).rejects.toMatchObject({
+      code: "decodeSQSMessageError",
+    });
   });
 });

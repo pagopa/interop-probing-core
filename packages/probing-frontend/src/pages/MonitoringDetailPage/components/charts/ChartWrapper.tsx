@@ -10,23 +10,29 @@ import { Filters, useFilters } from '@pagopa/interop-fe-commons'
 import { useJwt } from '@/hooks/useJwt'
 import { useTranslation } from 'react-i18next'
 import { Skeleton } from '@mui/material'
+import { useSearchParams } from 'react-router-dom'
+import { useEffect } from 'react'
 
 type ChartWrapperProps = {
   eserviceId: string
   pollingFrequency: number
 }
 
+const now = new Date()
 const lastYear = new Date(new Date().setFullYear(new Date().getFullYear() - 1))
+const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000)
 
 export const ChartWrapper: React.FC<ChartWrapperProps> = ({ eserviceId, pollingFrequency }) => {
   const { t } = useTranslation('common', { keyPrefix: 'detailsPage' })
   const jwt = useJwt()
+  const [, setSearchParams] = useSearchParams()
 
   const { data: eservicesTelemetry, isInitialLoading } = MonitoringQueries.useGetTelemetryData({
     eserviceId,
     pollingFrequency,
-  })
-
+    },
+    { enabled: !jwt }
+  )
   const {
     filtersParams: { startDate, endDate },
     ...handlers
@@ -35,25 +41,70 @@ export const ChartWrapper: React.FC<ChartWrapperProps> = ({ eserviceId, pollingF
       name: 'startDate',
       type: 'datepicker',
       label: t('startDateTime'),
-      maxDate: new Date(),
+      maxDate: now,
       minDate: lastYear,
     },
     {
       name: 'endDate',
       type: 'datepicker',
       label: t('endDateTime'),
-      maxDate: new Date(),
+      maxDate: now,
       minDate: lastYear,
     },
   ])
 
+  useEffect(() => {
+    const startMissing = !startDate || startDate === ''
+    const endMissing = !endDate || endDate === ''
+
+    if (startMissing || endMissing) {
+      setSearchParams({ 
+        startDate: last24h.toISOString(),
+        endDate: now.toISOString()
+      }, { replace: true })
+      return
+    }
+
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+
+    const invalid =
+      isNaN(start.getTime()) ||
+      isNaN(end.getTime()) ||
+      start > end ||
+      start < lastYear ||
+      end > now
+
+    if (invalid) {
+      setSearchParams({
+        startDate: last24h.toISOString(),
+        endDate: now.toISOString(),
+      }, { replace: true })
+    }
+  }, [startDate, endDate, setSearchParams])
+
+  const start = startDate ? new Date(startDate) : last24h
+  const end = endDate ? new Date(endDate) : now
+
+  const hasValidFilters = start <= end
+
   const { data: eservicesFilteredTelemetry, isInitialLoading: isLoadingFilteredData } =
     MonitoringQueries.useGetFilteredTelemetryData(
-      { pollingFrequency, startDate, endDate },
-      eserviceId
+      {
+        pollingFrequency,
+        startDate: start.toISOString(),
+        endDate: end.toISOString(),
+      },
+      eserviceId,
+      {
+        enabled: hasValidFilters && !!jwt,
+      }
     )
 
-  const responseTelemetry = eservicesFilteredTelemetry || eservicesTelemetry
+  const responseTelemetry =
+    hasValidFilters && eservicesFilteredTelemetry
+      ? eservicesFilteredTelemetry
+      : eservicesTelemetry
 
   const firstPerformanceTime = new Date(
     getMinTime<ServicePerformance>(responseTelemetry?.performances)

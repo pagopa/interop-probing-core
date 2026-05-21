@@ -1,231 +1,261 @@
 import { Logger } from "pagopa-interop-probing-commons";
 import {
-  ChangeResponseReceived,
-  EserviceProbingUpdateLastRequest,
+  EServiceContent,
+  EServiceMainData,
+  EServiceProbingData,
   EserviceSaveRequest,
+  genericError,
+  PollingResource,
 } from "pagopa-interop-probing-models";
-import { EserviceQuery } from "./db/eserviceQuery.js";
 import {
-  ApiEserviceMainDataResponse,
-  ApiEserviceProbingDataResponse,
-  ApiGetEservicesReadyForPollingQuery,
-  ApiGetEservicesReadyForPollingResponse,
-  ApiGetProducersQuery,
-  ApiGetProducersResponse,
-  ApiSaveEservicePayload,
-  ApiSaveEserviceResponse,
-  ApiSearchEservicesQuery,
-  ApiSearchEservicesResponse,
-  ApiUpdateEserviceFrequencyPayload,
-  ApiUpdateEserviceFrequencyResponse,
-  ApiUpdateEserviceProbingStatePayload,
-  ApiUpdateEserviceProbingStateResponse,
-  ApiUpdateEserviceStatePayload,
-  ApiUpdateEserviceStateResponse,
-  ApiUpdateLastRequestPayload,
-  ApiUpdateLastRequestResponse,
-  ApiUpdateResponseReceivedPayload,
-  ApiUpdateResponseReceivedResponse,
-} from "pagopa-interop-probing-eservice-operations-client";
-import { eServiceNotFound } from "../model/domain/errors.js";
+  eServiceByRecordIdNotFound,
+  eServiceByVersionIdNotFound,
+} from "../model/domain/errors.js";
+import { DBService } from "./dbService.js";
+import { z } from "zod";
+import { safeStringify } from "../utilities/utils.js";
+import { probingEserviceOperationsApi } from "pagopa-interop-probing-api-clients";
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, max-params
-export function eServiceServiceBuilder(eserviceQuery: EserviceQuery) {
+export function eServiceServiceBuilder(dbService: DBService) {
   return {
     async updateEserviceState(
       eserviceId: string,
       versionId: string,
-      payload: ApiUpdateEserviceStatePayload,
-      logger: Logger,
-    ): Promise<ApiUpdateEserviceStateResponse> {
-      const eServiceToBeUpdated = await eserviceQuery.getEServiceByIdAndVersion(
+      payload: probingEserviceOperationsApi.ApiUpdateEserviceStatePayload,
+    ): Promise<probingEserviceOperationsApi.ApiUpdateEserviceStateResponse> {
+      const eServiceToBeUpdated = await dbService.getEserviceByIdAndVersion(
         eserviceId,
         versionId,
-        logger,
       );
 
       if (!eServiceToBeUpdated) {
-        throw eServiceNotFound(eserviceId, versionId);
+        throw eServiceByVersionIdNotFound(eserviceId, versionId);
       }
 
-      eServiceToBeUpdated.state = payload.eServiceState;
-
-      logger.info(
-        `Updating eService State with eserviceId: ${eserviceId}, versionId: ${versionId}`,
-      );
-      await eserviceQuery.updateEserviceState(
-        eserviceId,
-        versionId,
-        eServiceToBeUpdated,
-      );
+      await dbService.updateEserviceState(eserviceId, versionId, {
+        state: payload.eServiceState,
+      });
     },
 
     async updateEserviceProbingState(
       eserviceId: string,
       versionId: string,
-      payload: ApiUpdateEserviceProbingStatePayload,
-      logger: Logger,
-    ): Promise<ApiUpdateEserviceProbingStateResponse> {
-      const eServiceToBeUpdated = await eserviceQuery.getEServiceByIdAndVersion(
+      payload: probingEserviceOperationsApi.ApiUpdateEserviceProbingStatePayload,
+    ): Promise<probingEserviceOperationsApi.ApiUpdateEserviceProbingStateResponse> {
+      const eServiceToBeUpdated = await dbService.getEserviceByIdAndVersion(
         eserviceId,
         versionId,
-        logger,
       );
 
       if (!eServiceToBeUpdated) {
-        throw eServiceNotFound(eserviceId, versionId);
+        throw eServiceByVersionIdNotFound(eserviceId, versionId);
       }
 
-      eServiceToBeUpdated.probingEnabled = payload.probingEnabled;
-
-      logger.info(
-        `Updating eService Probing State with eserviceId: ${eserviceId}, versionId: ${versionId}`,
-      );
-      await eserviceQuery.updateEserviceProbingState(
-        eserviceId,
-        versionId,
-        eServiceToBeUpdated,
-      );
+      await dbService.updateEserviceProbingState(eserviceId, versionId, {
+        probingEnabled: payload.probingEnabled,
+      });
     },
 
     async updateEserviceFrequency(
       eserviceId: string,
       versionId: string,
-      payload: ApiUpdateEserviceFrequencyPayload,
-      logger: Logger,
-    ): Promise<ApiUpdateEserviceFrequencyResponse> {
-      const eServiceToBeUpdated = await eserviceQuery.getEServiceByIdAndVersion(
+      payload: probingEserviceOperationsApi.ApiUpdateEserviceFrequencyPayload,
+    ): Promise<probingEserviceOperationsApi.ApiUpdateEserviceFrequencyResponse> {
+      const eServiceToBeUpdated = await dbService.getEserviceByIdAndVersion(
         eserviceId,
         versionId,
-        logger,
       );
 
       if (!eServiceToBeUpdated) {
-        throw eServiceNotFound(eserviceId, versionId);
+        throw eServiceByVersionIdNotFound(eserviceId, versionId);
       }
 
-      eServiceToBeUpdated.pollingFrequency = payload.frequency;
-      eServiceToBeUpdated.pollingStartTime = payload.startTime;
-      eServiceToBeUpdated.pollingEndTime = payload.endTime;
-
-      logger.info(
-        `Updating eService frequency with eserviceId: ${eserviceId}, versionId: ${versionId}`,
-      );
-      await eserviceQuery.updateEserviceFrequency(
-        eserviceId,
-        versionId,
-        eServiceToBeUpdated,
-      );
+      await dbService.updateEserviceFrequency(eserviceId, versionId, {
+        pollingStartTime: payload.startTime,
+        pollingEndTime: payload.endTime,
+        pollingFrequency: payload.frequency,
+      });
     },
 
     async saveEservice(
       eserviceId: string,
       versionId: string,
-      payload: ApiSaveEservicePayload,
-      logger: Logger,
-    ): Promise<ApiSaveEserviceResponse> {
+      payload: probingEserviceOperationsApi.ApiSaveEservicePayload,
+    ): Promise<probingEserviceOperationsApi.ApiSaveEserviceResponse> {
       const eServiceToBeUpdated: EserviceSaveRequest = {
         state: payload.state,
         eserviceName: payload.name,
-        producerName: payload.producerName,
+        producerId: payload.producerId,
         basePath: payload.basePath,
         technology: payload.technology,
         versionNumber: payload.versionNumber,
         audience: payload.audience,
       };
 
-      logger.info(
-        `Save eService with eserviceId: ${eserviceId}, versionId: ${versionId}`,
-      );
-      return await eserviceQuery.saveEservice(
+      await dbService.saveEservice(eserviceId, versionId, eServiceToBeUpdated);
+    },
+
+    async deleteEservice(
+      eserviceId: string,
+      logger: Logger,
+    ): Promise<probingEserviceOperationsApi.ApiDeleteEserviceResponse> {
+      const deletedEservice = await dbService.deleteEservice(eserviceId);
+      if (!deletedEservice) {
+        logger.error(
+          `EService with eserviceId ${eserviceId} not found during delete operation`,
+        );
+      }
+    },
+
+    async deleteEserviceVersion(
+      eserviceId: string,
+      versionId: string,
+      logger: Logger,
+    ): Promise<probingEserviceOperationsApi.ApiDeleteEserviceVersionResponse> {
+      const deletedEserviceVersion = await dbService.deleteEserviceVersion(
         eserviceId,
         versionId,
-        eServiceToBeUpdated,
       );
+      if (!deletedEserviceVersion) {
+        logger.error(
+          `EService with eserviceId ${eserviceId} and versionId ${versionId} not found during delete version operation`,
+        );
+      }
     },
 
     async updateEserviceLastRequest(
       eserviceRecordId: number,
-      payload: ApiUpdateLastRequestPayload,
-      logger: Logger,
-    ): Promise<ApiUpdateLastRequestResponse> {
-      const eServiceToBeUpdated: EserviceProbingUpdateLastRequest = {
-        lastRequest: payload.lastRequest,
-      };
+      payload: probingEserviceOperationsApi.ApiUpdateLastRequestPayload,
+    ): Promise<probingEserviceOperationsApi.ApiUpdateLastRequestResponse> {
+      const eService = await dbService.getEserviceByRecordId(eserviceRecordId);
 
-      logger.info(
-        `Update eService probing last request with eserviceRecordId: ${eserviceRecordId}`,
-      );
-      await eserviceQuery.updateEserviceLastRequest(
-        eserviceRecordId,
-        eServiceToBeUpdated,
-      );
+      if (!eService) throw eServiceByRecordIdNotFound(eserviceRecordId);
+
+      await dbService.updateEserviceLastRequest(eserviceRecordId, {
+        lastRequest: payload.lastRequest,
+      });
     },
 
     async updateResponseReceived(
       eserviceRecordId: number,
-      payload: ApiUpdateResponseReceivedPayload,
-      logger: Logger,
-    ): Promise<ApiUpdateResponseReceivedResponse> {
-      const eServiceToBeUpdated: ChangeResponseReceived = {
-        responseStatus: payload.status,
-        responseReceived: payload.responseReceived,
-      };
+      payload: probingEserviceOperationsApi.ApiUpdateResponseReceivedPayload,
+    ): Promise<probingEserviceOperationsApi.ApiUpdateResponseReceivedResponse> {
+      const eService = await dbService.getEserviceByRecordId(eserviceRecordId);
 
-      logger.info(
-        `Update eService probing response received with eserviceRecordId: ${eserviceRecordId}`,
-      );
-      await eserviceQuery.updateResponseReceived(
-        eserviceRecordId,
-        eServiceToBeUpdated,
-      );
+      if (!eService) throw eServiceByRecordIdNotFound(eserviceRecordId);
+
+      await dbService.updateResponseReceived(eserviceRecordId, {
+        status: payload.status,
+        responseReceived: payload.responseReceived,
+      });
     },
 
     async searchEservices(
-      filters: ApiSearchEservicesQuery,
+      filters: probingEserviceOperationsApi.ApiSearchEservicesQuery,
       logger: Logger,
-    ): Promise<ApiSearchEservicesResponse> {
-      logger.info("Retrieving eServices");
-      return await eserviceQuery.searchEservices(filters, logger);
+    ): Promise<probingEserviceOperationsApi.ApiSearchEservicesResponse> {
+      const result = await dbService.searchEservices(filters);
+
+      const mappedContent = result.content.map((el) => ({
+        ...el,
+        responseStatus: el.status,
+        eserviceRecordId: String(el.id),
+        technology: el.eserviceTechnology,
+      }));
+
+      const parsed = z.array(EServiceContent).safeParse(mappedContent);
+      if (!parsed.success) {
+        logger.error(
+          `Unable to parse eservices items: parsed ${safeStringify(parsed)} - data ${safeStringify(mappedContent)} `,
+        );
+        throw genericError("Unable to parse eservices items");
+      }
+
+      return {
+        content: parsed.data,
+        limit: result.limit,
+        offset: result.offset,
+        totalElements: result.totalElements,
+      };
     },
 
     async getEserviceMainData(
       eserviceRecordId: number,
       logger: Logger,
-    ): Promise<ApiEserviceMainDataResponse> {
-      logger.info(
-        `Retrieving eService main data with eserviceRecordId: ${eserviceRecordId}`,
-      );
-      return await eserviceQuery.getEserviceMainData(eserviceRecordId, logger);
+    ): Promise<probingEserviceOperationsApi.ApiGetEserviceMainDataResponse> {
+      const result = await dbService.getEserviceMainData(eserviceRecordId);
+      if (!result) throw eServiceByRecordIdNotFound(eserviceRecordId);
+
+      const parsed = EServiceMainData.safeParse(result);
+      if (!parsed.success) {
+        logger.error(
+          `Unable to parse eservice mainData item: parsed ${safeStringify(parsed)} - data ${safeStringify(
+            result,
+          )} `,
+        );
+        throw genericError("Unable to parse eservice mainData item");
+      }
+
+      return parsed.data;
     },
 
     async getEserviceProbingData(
       eserviceRecordId: number,
       logger: Logger,
-    ): Promise<ApiEserviceProbingDataResponse> {
-      logger.info(
-        `Retrieving eService probing data with eserviceRecordId: ${eserviceRecordId}`,
-      );
-      return await eserviceQuery.getEserviceProbingData(
-        eserviceRecordId,
-        logger,
-      );
+    ): Promise<probingEserviceOperationsApi.ApiGetEserviceProbingDataResponse> {
+      const result = await dbService.getEserviceProbingData(eserviceRecordId);
+
+      if (!result) throw eServiceByRecordIdNotFound(eserviceRecordId);
+
+      const parsed = EServiceProbingData.safeParse({
+        ...result,
+        responseStatus: result.status,
+      });
+      if (!parsed.success) {
+        logger.error(
+          `Unable to parse eservice probingData item: parsed ${safeStringify(parsed)} - data ${safeStringify(
+            result,
+          )} `,
+        );
+        throw genericError("Unable to parse eservice probingData item");
+      }
+
+      return parsed.data;
     },
 
     async getEservicesReadyForPolling(
-      filters: ApiGetEservicesReadyForPollingQuery,
+      filters: probingEserviceOperationsApi.ApiGetEservicesReadyForPollingQuery,
       logger: Logger,
-    ): Promise<ApiGetEservicesReadyForPollingResponse> {
-      logger.debug("Retrieving eServices ready for polling");
-      return await eserviceQuery.getEservicesReadyForPolling(filters, logger);
+    ): Promise<probingEserviceOperationsApi.ApiGetEservicesReadyForPollingResponse> {
+      const result = await dbService.getEservicesReadyForPolling(filters);
+
+      const mappedContent = result.content.map((el) => ({
+        ...el,
+        eserviceRecordId: String(el.id),
+        technology: el.eserviceTechnology,
+      }));
+
+      const parsed = z.array(PollingResource).safeParse(mappedContent);
+      if (!parsed.success) {
+        logger.error(
+          `Unable to parse eservices ready for polling items: parsed ${safeStringify(parsed)} - data ${safeStringify(mappedContent)} `,
+        );
+        throw genericError("Unable to parse eservices ready for polling items");
+      }
+
+      return {
+        content: parsed.data,
+        totalElements: result.totalElements,
+      };
     },
 
     async getEservicesProducers(
-      filters: ApiGetProducersQuery,
-      logger: Logger,
-    ): Promise<ApiGetProducersResponse> {
-      logger.info("Retrieving eServices Producers");
-      return await eserviceQuery.getEservicesProducers(filters, logger);
+      filters: probingEserviceOperationsApi.ApiGetProducersQuery,
+    ): Promise<probingEserviceOperationsApi.ApiGetProducersResponse> {
+      const result = await dbService.getEservicesProducers(filters);
+      return {
+        content: result.content.map((el) => el.producerName),
+      };
     },
   };
 }

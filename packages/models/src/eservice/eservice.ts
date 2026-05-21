@@ -9,7 +9,6 @@ export const EserviceStatus = z.enum([
   ...Object.values(responseStatus).slice(1),
 ]);
 export type EserviceStatus = z.infer<typeof EserviceStatus>;
-
 export const eserviceInteropState = {
   active: "ACTIVE",
   inactive: "INACTIVE",
@@ -53,11 +52,26 @@ export type ChangeEserviceStateRequest = z.infer<
   typeof ChangeEserviceStateRequest
 >;
 
-export const ChangeProbingFrequencyRequest = z.object({
-  pollingFrequency: z.number().int().gte(1).default(5).optional(),
-  pollingStartTime: z.string(),
-  pollingEndTime: z.string(),
-});
+export const ChangeProbingFrequencyRequest = z
+  .object({
+    frequency: z.number().int().gte(1),
+    startTime: z
+      .string()
+      .regex(
+        /^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/,
+        "Invalid time format, expected HH:mm:ss",
+      ),
+    endTime: z
+      .string()
+      .regex(
+        /^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/,
+        "Invalid time format, expected HH:mm:ss",
+      ),
+  })
+  .refine((data) => data.startTime < data.endTime, {
+    message: "startTime must be less than endTime",
+    path: ["startTime"],
+  });
 
 export type ChangeProbingFrequencyRequest = z.infer<
   typeof ChangeProbingFrequencyRequest
@@ -78,7 +92,7 @@ export type ChangeResponseReceived = z.infer<typeof ChangeResponseReceived>;
 
 export const EserviceSaveRequest = z.object({
   eserviceName: z.string(),
-  producerName: z.string(),
+  producerId: z.string(),
   basePath: z.array(z.string()),
   technology: EserviceTechnology,
   state: EserviceInteropState,
@@ -86,6 +100,12 @@ export const EserviceSaveRequest = z.object({
   audience: z.array(z.string()),
 });
 export type EserviceSaveRequest = z.infer<typeof EserviceSaveRequest>;
+
+export const TenantSaveRequest = z.object({
+  tenant_id: z.string(),
+  tenant_name: z.string().optional(),
+});
+export type TenantSaveRequest = z.infer<typeof TenantSaveRequest>;
 
 /**
  * Schema for EService.
@@ -148,14 +168,14 @@ export const EServiceContent = z.object({
   producerName: z.string(),
   state: EserviceInteropState,
   responseReceived: z
-    .date()
-    .transform((date) => date.toISOString())
+    .string()
+    .transform((date) => new Date(date).toISOString())
     .nullish()
     .transform((value) => (value === null ? undefined : value))
     .optional(),
   lastRequest: z
-    .date()
-    .transform((date) => date.toISOString())
+    .string()
+    .transform((date) => new Date(date).toISOString())
     .nullish()
     .transform((value) => (value === null ? undefined : value))
     .optional(),
@@ -195,12 +215,12 @@ export const EServiceProbingData = z.object({
   probingEnabled: z.boolean(),
   state: EserviceInteropState,
   responseReceived: z
-    .date()
-    .transform((date) => date.toISOString())
+    .string()
+    .transform((date) => new Date(date).toISOString())
     .nullish(),
   lastRequest: z
-    .date()
-    .transform((date) => date.toISOString())
+    .string()
+    .transform((date) => new Date(date).toISOString())
     .nullish(),
   responseStatus: EserviceStatus.nullish(),
   pollingFrequency: z.number().int(),

@@ -1,26 +1,40 @@
 import axios, { AxiosResponse } from "axios";
 import { createProbingRequestEnvelope } from "./soapEnvelope.js";
+import { AppContext, WithSQSMessageId } from "pagopa-interop-probing-commons";
+import { config } from "./config.js";
 
 export const apiClientBuilder = () => {
   return {
-    async sendREST(baseUrl: string, token: string): Promise<AxiosResponse> {
+    async sendREST(
+      baseUrl: string,
+      token: string,
+      ctx: WithSQSMessageId<AppContext>,
+    ): Promise<AxiosResponse> {
       return await axios({
         method: "GET",
         url: baseUrl,
+        timeout: config.httpRequestTimeoutMs,
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
+          "x-correlation-id": ctx.correlationId,
         },
       });
     },
-    async sendSOAP(baseUrl: string, token: string): Promise<AxiosResponse> {
+    async sendSOAP(
+      baseUrl: string,
+      token: string,
+      ctx: WithSQSMessageId<AppContext>,
+    ): Promise<AxiosResponse> {
       return await axios({
         method: "POST",
         url: baseUrl,
+        timeout: config.httpRequestTimeoutMs,
         headers: {
           "Content-Type": "text/xml;charset=UTF-8",
           Authorization: `Bearer ${token}`,
           SOAPAction: "interop/probing",
+          "x-correlation-id": ctx.correlationId,
         },
         data: createProbingRequestEnvelope(),
       });

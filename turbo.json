@@ -1,19 +1,31 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "pipeline": {
+  "daemon": false,
+  "globalEnv": [
+    "CI"
+  ],
+  "tasks": {
     "start": {
       "persistent": true,
       "cache": false,
       "dependsOn": [
         "^build",
-        "generate-model",
-        "generate-client"
+        "infra:start"
       ]
     },
+    "infra:start": {
+      "cache": false
+    },
+    "infra:stop": {
+      "cache": false
+    },
+    "infra:destroy": {
+      "cache": false
+    },
     "build": {
+      "cache": false,
       "dependsOn": [
         "generate-model",
-        "generate-client",
         "^build"
       ],
       "outputs": [
@@ -21,31 +33,75 @@
       ]
     },
     "generate-model": {
+      "cache": false,
       "dependsOn": [
         "^generate-model"
       ]
     },
     "generate-client": {
+      "cache": false,
       "dependsOn": [
         "^generate-client"
+      ]
+    },
+    "clean-generated": {
+      "dependsOn": [
+        "^clean-generated"
       ]
     },
     "test": {
       "dependsOn": [
         "build",
-        "^test"
+        "^test",
+        "test:integration",
+        "test:api"
       ]
     },
-    "test:it": {
+    "test:integration": {
       "dependsOn": [
         "build",
-        "^test:it"
+        "^test:integration"
+      ],
+      "cache": false
+    },
+    "test:api": {
+      "dependsOn": [
+        "build",
+        "^test:api"
+      ],
+      "cache": false
+    },
+    "check": {
+      "dependsOn": [
+        "generate-client",
+        "generate-model",
+        "^build",
+        "^check"
       ]
     },
-    "lint": {},
-    "lint:autofix": {},
-    "format:check": {},
-    "format:write": {}
+    "lint": {
+      "dependsOn": [
+        "^lint"
+      ],
+      "cache": false
+    },
+    "lint:autofix": {
+      "dependsOn": [
+        "^lint:autofix"
+      ],
+      "cache": false
+    },
+    "format:check": {
+      "dependsOn": [
+        "^format:check"
+      ],
+      "cache": false
+    },
+    "format:write": {
+      "dependsOn": [
+        "^format:write"
+      ]
+    }
   },
   "globalDependencies": [
     "tsconfig.json"
