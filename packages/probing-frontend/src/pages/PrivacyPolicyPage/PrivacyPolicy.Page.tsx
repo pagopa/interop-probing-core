@@ -5,20 +5,19 @@ export const PrivacyPolicyPage: React.FC = () => {
     <div
       dangerouslySetInnerHTML={{
         __html: `<!-- OneTrust Privacy Notice start -->
-        <!-- Container in which the privacy notice will be rendered -->
-        <div id="otnotice-d326585b-be5b-404e-a42b-002e4db30841" class="otnotice"></div>
-        
+        <!-- Container in which the Privacy Notice will be rendered -->
+        <div id="otnotice-673b25bc-120d-4e35-b677-372c40a01a93" class="otnotice"></div>
+
         <script src="https://privacyportalde-cdn.onetrust.com/privacy-notice-scripts/otnotice-1.0.min.js" type="text/javascript" charset="UTF-8" id="otprivacy-notice-script">
-            settings="eyJjYWxsYmFja1VybCI6Imh0dHBzOi8vcHJpdmFjeXBvcnRhbC1kZS5vbmV0cnVzdC5jb20vcmVxdWVzdC92MS9wcml2YWN5Tm90aWNlcy9zdGF0cy92aWV3cyJ9"
-          </script>
-        
+          settings="eyJjYWxsYmFja1VybCI6Imh0dHBzOi8vcHJpdmFjeXBvcnRhbC1kZS5vbmV0cnVzdC5jb20vcmVxdWVzdC92MS9wcml2YWN5Tm90aWNlcy9zdGF0cy92aWV3cyIsImNvbnRlbnRBcGlVcmwiOiJodHRwczovL3ByaXZhY3lwb3J0YWwtZGUub25ldHJ1c3QuY29tL3JlcXVlc3QvdjEvZW50ZXJwcmlzZXBvbGljeS9kaWdpdGFscG9saWN5L2NvbnRlbnQiLCJtZXRhZGF0YUFwaVVybCI6Imh0dHBzOi8vcHJpdmFjeXBvcnRhbC1kZS5vbmV0cnVzdC5jb20vcmVxdWVzdC92MS9lbnRlcnByaXNlcG9saWN5L2RpZ2l0YWxwb2xpY3kvbWV0YS1kYXRhIn0="
+        </script>
+
         <script type="text/javascript" charset="UTF-8">
-            // To ensure external settings are loaded, use the Initialized promise:
-            OneTrust.NoticeApi.Initialized.then(function() {
-              OneTrust.NoticeApi.LoadNotices(["https://privacyportalde-cdn.onetrust.com/77f17844-04c3-4969-a11d-462ee77acbe1/privacy-notices/d326585b-be5b-404e-a42b-002e4db30841.json"]);
-            });
-          </script>
-          
+          // To ensure external settings are loaded, use the Initialized promise:
+          OneTrust.NoticeApi.Initialized.then(function() {
+            OneTrust.NoticeApi.LoadNotices(["https://privacyportalde-cdn.onetrust.com/storage-container/77f17844-04c3-4969-a11d-462ee77acbe1/privacy-notices/673b25bc-120d-4e35-b677-372c40a01a93/published/privacynotice.json"]);
+          });
+        </script>
         <!-- OneTrust Privacy Notice end -->`,
       }}
     ></div>
