@@ -81,6 +81,7 @@ export async function handleMessageV2(
         type: P.union(
           "EServiceDescriptorArchivingScheduled",
           "EServiceDescriptorArchivingCanceled",
+          "MaintenanceEServiceDescriptorUnarchived",
         ),
       },
       async (evt) => {
@@ -290,6 +291,10 @@ export async function handleMessageV2(
           "EServicePersonalDataFlagUpdatedByTemplateUpdate",
           "EServiceInstanceLabelUpdated",
           "MaintenanceEServicePersonalDataFlagReset",
+          "EServiceDescriptorAsyncExchangeCallbackInterfaceAdded",
+          "EServiceDescriptorAsyncExchangeCallbackInterfaceUpdated",
+          "EServiceDescriptorAsyncExchangeCallbackInterfaceDeleted",
+          "EServiceDescriptorAttributeDailyCallsPerConsumerUpdated",
         ),
       },
       async (evt) => {
