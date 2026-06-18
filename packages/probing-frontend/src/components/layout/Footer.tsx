@@ -5,7 +5,7 @@ import type { FooterLinksType } from '@pagopa/mui-italia'
 import { Typography } from '@mui/material'
 import { Footer as MUIItaliaFooter } from '@pagopa/mui-italia'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate } from '@/router'
 import React from 'react'
 
 type FooterLinksTypeMulti = Omit<FooterLinksType, 'label' | 'ariaLabel'> & { labelKey?: string }
@@ -38,6 +38,13 @@ export const Footer: React.FC = () => {
 
   const links: Array<FooterLinksTypeMulti> = [
     {
+      labelKey: 'terms',
+      onClick: () => {
+        navigate('LEGAL_NOTES')
+      },
+      linkType: 'internal',
+    },
+    {
       labelKey: 'privacy',
       onClick: () => {
         navigate('PRIVACY_POLICY')
@@ -50,15 +57,8 @@ export const Footer: React.FC = () => {
       linkType: 'external',
     },
     {
-      labelKey: 'terms',
-      onClick: () => {
-        navigate('TOS')
-      },
-      linkType: 'internal',
-    },
-    {
       labelKey: 'a11y',
-      href: 'https://form.agid.gov.it/view/d96e090e-9d56-4d27-a70c-9a72186305b0/',
+      href: 'https://form.agid.gov.it/5N2TR557/PDND_Interoperabilit%C3%A0_%E2%80%94_Probing/dichiarazione',
       linkType: 'external',
     },
   ]
