@@ -1,6 +1,15 @@
 import React, { useEffect } from 'react'
 
-const extendedWindow: Window & { OneTrust?: any } = window
+type OneTrustWindow = Window & {
+  OneTrust?: {
+    NoticeApi?: {
+      Initialized: Promise<void>
+      LoadNotices: (noticeUrls: Array<string>) => void
+    }
+  }
+}
+
+const extendedWindow = window as OneTrustWindow
 
 export const LegalNotesPage: React.FC = () => {
   useEffect(() => {
@@ -16,9 +25,10 @@ export const LegalNotesPage: React.FC = () => {
     )
 
     script.onload = () => {
-      if (extendedWindow.OneTrust?.NoticeApi) {
-        extendedWindow.OneTrust.NoticeApi.Initialized.then(() => {
-          extendedWindow.OneTrust.NoticeApi.LoadNotices([
+      const noticeApi = extendedWindow.OneTrust?.NoticeApi
+      if (noticeApi) {
+        void noticeApi.Initialized.then(() => {
+          noticeApi.LoadNotices([
             'https://privacyportalde-cdn.onetrust.com/storage-container/77f17844-04c3-4969-a11d-462ee77acbe1/privacy-notices/b7ae8c26-47d4-4859-8c90-098a1123367b/published/privacynotice.json',
           ])
         })
