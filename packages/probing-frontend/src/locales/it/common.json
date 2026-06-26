@@ -33,16 +33,16 @@
   "footer": {
     "links": {
       "privacy": {
-        "label": "Privacy Policy",
-        "ariaLabel": "Vai al link: privacy policy"
+        "label": "Informativa Privacy",
+        "ariaLabel": "Vai al link: informativa privacy"
       },
       "dataProtection": {
         "label": "Diritto alla protezione dei dati personali",
         "ariaLabel": "Vai al link: diritto alla protezione dei dati personali"
       },
       "terms": {
-        "label": "Termini e condizioni",
-        "ariaLabel": "Vai al link: termini e condizioni"
+        "label": "Note Legali",
+        "ariaLabel": "Vai al link: note legali"
       },
       "a11y": {
         "label": "Accessibilità",
