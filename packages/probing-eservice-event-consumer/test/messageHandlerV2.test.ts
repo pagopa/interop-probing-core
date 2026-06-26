@@ -304,6 +304,78 @@ describe("Message handler V2 - EService tests", () => {
         expect.anything(),
       );
     });
+
+    it("should upsert an INACTIVE version when descriptor is ARCHIVING_SUSPENDED", async () => {
+      const eServiceId = uuidv4();
+      const descriptorId = uuidv4();
+      const producerId = "producer-test-idV2";
+
+      const eservice = createV2Event(
+        eServiceId,
+        descriptorId,
+        producerId,
+        EServiceDescriptorStateV2.ARCHIVING_SUSPENDED,
+      );
+
+      const evt = {
+        event_version: 2,
+        version: 1,
+        type: "EServiceDescriptorArchivingScheduled",
+        timestamp: new Date(),
+        stream_id: "1",
+        data: { descriptorId, eservice },
+      } as EServiceEventV2;
+
+      vi.spyOn(apiClient, "saveEservice").mockResolvedValueOnce(undefined);
+
+      await expect(
+        handleMessageV2(evt, operationsService, ctx, genericLogger),
+      ).resolves.not.toThrow();
+
+      expect(apiClient.saveEservice).toHaveBeenCalledTimes(1);
+      expect(apiClient.saveEservice).toHaveBeenCalledWith(
+        expect.objectContaining({
+          state: "INACTIVE",
+        }),
+        expect.anything(),
+      );
+    });
+
+    it("should upsert an INACTIVE version when descriptor archiving is canceled back to SUSPENDED", async () => {
+      const eServiceId = uuidv4();
+      const descriptorId = uuidv4();
+      const producerId = "producer-test-idV2";
+
+      const eservice = createV2Event(
+        eServiceId,
+        descriptorId,
+        producerId,
+        EServiceDescriptorStateV2.SUSPENDED,
+      );
+
+      const evt = {
+        event_version: 2,
+        version: 1,
+        type: "EServiceDescriptorArchivingCanceled",
+        timestamp: new Date(),
+        stream_id: "1",
+        data: { descriptorId, eservice },
+      } as EServiceEventV2;
+
+      vi.spyOn(apiClient, "saveEservice").mockResolvedValueOnce(undefined);
+
+      await expect(
+        handleMessageV2(evt, operationsService, ctx, genericLogger),
+      ).resolves.not.toThrow();
+
+      expect(apiClient.saveEservice).toHaveBeenCalledTimes(1);
+      expect(apiClient.saveEservice).toHaveBeenCalledWith(
+        expect.objectContaining({
+          state: "INACTIVE",
+        }),
+        expect.anything(),
+      );
+    });
   });
 
   describe("MaintenanceEServiceDescriptorUnarchived Event", () => {
