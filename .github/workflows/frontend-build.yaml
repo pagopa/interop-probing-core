@@ -8,6 +8,12 @@ on:
     paths:
       - "packages/probing-frontend/**"
       - ".github/workflows/frontend-build.yaml"
+  pull_request:
+    branches: 
+      - "develop"
+    types: [opened, reopened, synchronize]
+    paths:
+    - ".github/workflows/frontend-build.yaml"
 
 jobs:
   build_frontend_release:
@@ -41,7 +47,24 @@ jobs:
         run: |
           pnpm build --filter probing-frontend
 
-      - name: Publish package to GitHub Packages
+      - name: Create package.json in dist folder
+        run: |
+          VERSION=$(node -p "require('./packages/probing-frontend/package.json').version")
+          cd packages/probing-frontend/dist
+          cat > package.json << EOF
+          {
+            "name": "@pagopa/probing-frontend",
+            "version": "$VERSION",
+            "description": "Probing frontend static assets",
+            "repository": {
+              "type": "git",
+              "url": "https://github.com/pagopa/interop-probing-core.git"
+            },
+            "files": ["**/*"]
+          }
+          EOF
+
+      - name: Publish package to NPM
         env:
             NODE_AUTH_TOKEN: ${{ secrets.NPM_KEY }}
         run: |
