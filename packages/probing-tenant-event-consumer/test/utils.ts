@@ -246,6 +246,7 @@ export const mockTenantUpdateV2 = (tenantId: string): TenantEventV2 => ({
       },
       features: [],
       attributes: [],
+      remoteIds: [],
       createdAt: 1n,
       onboardedAt: 1n,
     },
