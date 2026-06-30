@@ -378,6 +378,44 @@ describe("Message handler V2 - EService tests", () => {
     });
   });
 
+  describe("MaintenanceEServiceDescriptorUnarchived Event", () => {
+    it("should restore an ACTIVE version when descriptor is PUBLISHED", async () => {
+      const eServiceId = uuidv4();
+      const descriptorId = uuidv4();
+      const producerId = "producer-test-idV2";
+
+      const eservice = createV2Event(
+        eServiceId,
+        descriptorId,
+        producerId,
+        EServiceDescriptorStateV2.PUBLISHED,
+      );
+
+      const evt = {
+        event_version: 2,
+        version: 1,
+        type: "MaintenanceEServiceDescriptorUnarchived",
+        timestamp: new Date(),
+        stream_id: "1",
+        data: { descriptorId, eservice },
+      } as EServiceEventV2;
+
+      vi.spyOn(apiClient, "saveEservice").mockResolvedValueOnce(undefined);
+
+      await expect(
+        handleMessageV2(evt, operationsService, ctx, genericLogger),
+      ).resolves.not.toThrow();
+
+      expect(apiClient.saveEservice).toHaveBeenCalledTimes(1);
+      expect(apiClient.saveEservice).toHaveBeenCalledWith(
+        expect.objectContaining({
+          state: "ACTIVE",
+        }),
+        expect.anything(),
+      );
+    });
+  });
+
   describe("EServiceDescriptorArchivingCompleted Event", () => {
     it("should delete a version", async () => {
       const eServiceId = uuidv4();
@@ -496,6 +534,10 @@ describe("Message handler V2 - EService tests", () => {
         { type: "EServicePersonalDataFlagUpdatedAfterPublication" },
         { type: "EServicePersonalDataFlagUpdatedByTemplateUpdate" },
         { type: "EServiceInstanceLabelUpdated" },
+        { type: "EServiceDescriptorAsyncExchangeCallbackInterfaceAdded" },
+        { type: "EServiceDescriptorAsyncExchangeCallbackInterfaceUpdated" },
+        { type: "EServiceDescriptorAsyncExchangeCallbackInterfaceDeleted" },
+        { type: "EServiceDescriptorAttributeDailyCallsPerConsumerUpdated" },
       ];
 
       for (const event of events) {
