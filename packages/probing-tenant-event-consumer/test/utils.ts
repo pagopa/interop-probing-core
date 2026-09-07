@@ -140,6 +140,7 @@ export const getDescriptorV2 = (
   dailyCallsTotal: 100,
   rejectionReasons: [],
   docs: [],
+  delegatedArchivingRequest: [],
   serverUrls: ["http://test.com"],
   state: EServiceDescriptorStateV2.DRAFT,
   version: 1n,
@@ -161,6 +162,7 @@ export const createV2Event = (
   mode: EServiceModeV2.RECEIVE,
   name: "eService test name",
   technology: EServiceTechnologyV2.REST,
+  delegatedArchivingRequest: [],
 
   descriptors: descriptors
     ? descriptors
@@ -246,6 +248,7 @@ export const mockTenantUpdateV2 = (tenantId: string): TenantEventV2 => ({
       },
       features: [],
       attributes: [],
+      remoteIds: [],
       createdAt: 1n,
       onboardedAt: 1n,
     },

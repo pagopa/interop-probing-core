@@ -48,6 +48,7 @@ describe("Message handler V2 - Tenant tests", () => {
         },
         features: [],
         attributes: [],
+        remoteIds: [],
         createdAt: 1n,
         onboardedAt: 1n,
       };
@@ -84,6 +85,7 @@ describe("Message handler V2 - Tenant tests", () => {
         },
         features: [],
         attributes: [],
+        remoteIds: [],
         createdAt: 1n,
         onboardedAt: 1n,
       };
@@ -110,6 +112,7 @@ describe("Message handler V2 - Tenant tests", () => {
         },
         features: undefined as unknown as [],
         attributes: [],
+        remoteIds: [],
         createdAt: 1n,
         onboardedAt: 1n,
       };
@@ -209,6 +212,11 @@ describe("Message handler V2 - Tenant tests", () => {
         { type: "TenantVerifiedAttributeExtensionUpdated" },
         { type: "TenantKindUpdated" },
         { type: "MaintenanceTenantPromotedToCertifier" },
+        { type: "TenantCertifiedDiscreteAttributeAssigned" },
+        { type: "TenantCertifiedDiscreteAttributeRevoked" },
+        { type: "TenantCertifiedDiscreteAttributeUpdated" },
+        { type: "TenantRemoteIdAssigned" },
+        { type: "MaintenanceTenantRemoteIdDeleted" },
       ];
 
       for (const event of events) {
