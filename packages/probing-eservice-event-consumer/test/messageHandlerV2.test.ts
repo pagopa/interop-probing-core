@@ -538,6 +538,18 @@ describe("Message handler V2 - EService tests", () => {
         { type: "EServiceDescriptorAsyncExchangeCallbackInterfaceUpdated" },
         { type: "EServiceDescriptorAsyncExchangeCallbackInterfaceDeleted" },
         { type: "EServiceDescriptorAttributeDailyCallsPerConsumerUpdated" },
+        { type: "EServiceDescriptorArchivingRequestedByDelegate" },
+        { type: "EServiceDescriptorArchivingRequestRejectedByDelegator" },
+        { type: "EServiceDescriptorArchivingRequestApprovedByDelegator" },
+        { type: "EServiceDescriptorArchivingRequestCanceledByDelegate" },
+        {
+          type: "EServiceDescriptorArchivingRequestCanceledByRevokedDelegation",
+        },
+        { type: "EServiceArchivingRequestedByDelegate" },
+        { type: "EServiceArchivingRequestRejectedByDelegator" },
+        { type: "EServiceArchivingRequestApprovedByDelegator" },
+        { type: "EServiceArchivingRequestCanceledByDelegate" },
+        { type: "EServiceArchivingRequestCanceledByRevokedDelegation" },
       ];
 
       for (const event of events) {

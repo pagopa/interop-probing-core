@@ -238,8 +238,8 @@ importers:
         version: 3.23.8
     devDependencies:
       '@pagopa/interop-outbound-models':
-        specifier: 1.8.21
-        version: 1.8.21
+        specifier: 1.8.23
+        version: 1.8.23
       '@probing/eslint-config':
         specifier: workspace:*
         version: link:../../configs/eslint-config
@@ -430,8 +430,8 @@ importers:
   packages/probing-eservice-event-consumer:
     dependencies:
       '@pagopa/interop-outbound-models':
-        specifier: 1.8.21
-        version: 1.8.21
+        specifier: 1.8.23
+        version: 1.8.23
       '@zodios/core':
         specifier: 10.9.6
         version: 10.9.6(axios@1.18.0)(zod@3.23.8)
@@ -959,8 +959,8 @@ importers:
   packages/probing-tenant-event-consumer:
     dependencies:
       '@pagopa/interop-outbound-models':
-        specifier: 1.8.21
-        version: 1.8.21
+        specifier: 1.8.23
+        version: 1.8.23
       '@zodios/core':
         specifier: 10.9.6
         version: 10.9.6(axios@1.18.0)(zod@3.23.8)
@@ -1473,11 +1473,11 @@ packages:
 
   '@esbuild-kit/core-utils@3.3.2':
     resolution: {integrity: sha512-sPRAnw9CdSsRmEtnsl2WXWdyquogVpB3yZ3dgwJfe8zrOzTsV7cJvmwrKVa+0ma5BoiGJ+BoqkMvawbayKUsqQ==}
-    deprecated: 'Merged into tsx: https://tsx.hirok.io'
+    deprecated: 'Merged into tsx: https://tsx.is'
 
   '@esbuild-kit/esm-loader@2.6.5':
     resolution: {integrity: sha512-FxEMIkJKnodyA1OaCUoEvbYRkoZlLZ4d/eXFu9Fh8CbBBgP5EmZxrfTRyN0qpXZ4vOvqnE5YdRdcrmUUXuU+dA==}
-    deprecated: 'Merged into tsx: https://tsx.hirok.io'
+    deprecated: 'Merged into tsx: https://tsx.is'
 
   '@esbuild/aix-ppc64@0.23.1':
     resolution: {integrity: sha512-6VhYk1diRqrhBAqpJEdjASR/+WVRtfjpqKuNw11cLiaWpAT/Uu+nokB+UJnevzy/P9C/ty6AOe0dwueMrGh/iQ==}
@@ -2419,8 +2419,8 @@ packages:
       react-i18next: ^13.2.2
       react-router-dom: ^6.16.0
 
-  '@pagopa/interop-outbound-models@1.8.21':
-    resolution: {integrity: sha512-lm12PsMlznGZoswIuab8cNnHXy6oHamTEPLm5XquT6QVjuuKvxZZOoDC92Lp9e9Y9asX2Oo4TJKKKP3A/pyuEg==}
+  '@pagopa/interop-outbound-models@1.8.23':
+    resolution: {integrity: sha512-PkU54huG3giPE/x+4JtrAMNxEFzX0CUD5V24uRiuzuTA3S5KLBsGd/nWqE0AG4NpTOiTwkQkB7toMZTzKnplCg==}
 
   '@pagopa/mui-italia@1.1.0':
     resolution: {integrity: sha512-j3QjBC0Bermmbzxpr/DdGZ4BBrIRMjHM13Ho0xOFiRPn/PEw/BafsXsQfeedUWrQlYMvX6uEzg4tXOEnx43zHw==}
@@ -7712,7 +7712,7 @@ snapshots:
       react-i18next: 13.5.0(i18next@23.10.0)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       react-router-dom: 6.30.3(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
 
-  '@pagopa/interop-outbound-models@1.8.21':
+  '@pagopa/interop-outbound-models@1.8.23':
     dependencies:
       '@protobuf-ts/runtime': 2.9.4
       ts-pattern: 5.2.0
