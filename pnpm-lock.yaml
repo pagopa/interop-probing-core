@@ -58,10 +58,10 @@ importers:
     dependencies:
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.18.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
       axios:
-        specifier: 1.18.0
-        version: 1.18.0
+        specifier: 1.20.0
+        version: 1.20.0
       ts-pattern:
         specifier: 5.1.2
         version: 5.1.2
@@ -107,13 +107,13 @@ importers:
         version: 9.0.8
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.18.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
       '@zodios/express':
         specifier: 10.6.1
-        version: 10.6.1(@zodios/core@10.9.6(axios@1.18.0)(zod@3.23.8))(express@4.21.2)(zod@3.23.8)
+        version: 10.6.1(@zodios/core@10.9.6(axios@1.20.0)(zod@3.23.8))(express@4.21.2)(zod@3.23.8)
       axios:
-        specifier: 1.18.0
-        version: 1.18.0
+        specifier: 1.20.0
+        version: 1.20.0
       kafkajs:
         specifier: 2.2.4
         version: 2.2.4
@@ -161,8 +161,8 @@ importers:
         specifier: 3.3.3
         version: 3.3.3
       axios:
-        specifier: 1.18.0
-        version: 1.18.0
+        specifier: 1.20.0
+        version: 1.20.0
       dotenv-flow:
         specifier: 4.1.0
         version: 4.1.0
@@ -291,13 +291,13 @@ importers:
     dependencies:
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.18.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
       '@zodios/express':
         specifier: 10.6.1
-        version: 10.6.1(@zodios/core@10.9.6(axios@1.18.0)(zod@3.23.8))(express@4.21.2)(zod@3.23.8)
+        version: 10.6.1(@zodios/core@10.9.6(axios@1.20.0)(zod@3.23.8))(express@4.21.2)(zod@3.23.8)
       axios:
-        specifier: 1.18.0
-        version: 1.18.0
+        specifier: 1.20.0
+        version: 1.20.0
       cors:
         specifier: 2.8.5
         version: 2.8.5
@@ -376,10 +376,10 @@ importers:
         version: 3.988.0
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.18.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
       axios:
-        specifier: 1.18.0
-        version: 1.18.0
+        specifier: 1.20.0
+        version: 1.20.0
       dotenv-flow:
         specifier: 4.1.0
         version: 4.1.0
@@ -434,10 +434,10 @@ importers:
         version: 1.8.23
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.18.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
       axios:
-        specifier: 1.18.0
-        version: 1.18.0
+        specifier: 1.20.0
+        version: 1.20.0
       dotenv-flow:
         specifier: 4.1.0
         version: 4.1.0
@@ -498,13 +498,13 @@ importers:
     dependencies:
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.18.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
       '@zodios/express':
         specifier: 10.6.1
-        version: 10.6.1(@zodios/core@10.9.6(axios@1.18.0)(zod@3.23.8))(express@4.21.2)(zod@3.23.8)
+        version: 10.6.1(@zodios/core@10.9.6(axios@1.20.0)(zod@3.23.8))(express@4.21.2)(zod@3.23.8)
       axios:
-        specifier: 1.18.0
-        version: 1.18.0
+        specifier: 1.20.0
+        version: 1.20.0
       dotenv-flow:
         specifier: 4.1.0
         version: 4.1.0
@@ -627,8 +627,8 @@ importers:
         specifier: 6.16.3
         version: 6.16.3
       axios:
-        specifier: 1.18.0
-        version: 1.18.0
+        specifier: 1.20.0
+        version: 1.20.0
       d3:
         specifier: 7.8.5
         version: 7.8.5
@@ -689,10 +689,10 @@ importers:
     dependencies:
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.18.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
       axios:
-        specifier: 1.18.0
-        version: 1.18.0
+        specifier: 1.20.0
+        version: 1.20.0
       dotenv-flow:
         specifier: 4.1.0
         version: 4.1.0
@@ -750,10 +750,10 @@ importers:
         version: 3.0.11
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.18.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
       axios:
-        specifier: 1.18.0
-        version: 1.18.0
+        specifier: 1.20.0
+        version: 1.20.0
       dotenv-flow:
         specifier: 4.1.0
         version: 4.1.0
@@ -814,13 +814,13 @@ importers:
         version: 1.35.0
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.18.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
       '@zodios/express':
         specifier: 10.6.1
-        version: 10.6.1(@zodios/core@10.9.6(axios@1.18.0)(zod@3.23.8))(express@4.21.2)(zod@3.23.8)
+        version: 10.6.1(@zodios/core@10.9.6(axios@1.20.0)(zod@3.23.8))(express@4.21.2)(zod@3.23.8)
       axios:
-        specifier: 1.18.0
-        version: 1.18.0
+        specifier: 1.20.0
+        version: 1.20.0
       cors:
         specifier: 2.8.5
         version: 2.8.5
@@ -902,10 +902,10 @@ importers:
         version: 3.988.0
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.18.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
       axios:
-        specifier: 1.18.0
-        version: 1.18.0
+        specifier: 1.20.0
+        version: 1.20.0
       dotenv-flow:
         specifier: 4.1.0
         version: 4.1.0
@@ -963,10 +963,10 @@ importers:
         version: 1.8.23
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.18.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
       axios:
-        specifier: 1.18.0
-        version: 1.18.0
+        specifier: 1.20.0
+        version: 1.20.0
       dotenv-flow:
         specifier: 4.1.0
         version: 4.1.0
@@ -3374,8 +3374,8 @@ packages:
     resolution: {integrity: sha512-bQnVEa9bRZI72ZKCaklGnsMnprBP7EFVSx5o8WSkqvS44rnZjp1tiYxhCoEkXZ8QpbSS5sHJnG/FiD1lkYYTtQ==}
     engines: {node: '>=14.x'}
 
-  axios@1.18.0:
-    resolution: {integrity: sha512-E32NzpYKp++W7XRe52rHiXV2ehxmh3wbdgO7MHeFM+vqxLBYHzt0ElkiImtOBxtOmyp0yoC8C6uESVV84Y2/hw==}
+  axios@1.20.0:
+    resolution: {integrity: sha512-r8aOh8j9cGKpgQAqpzrUHnSIc6a59Y3Xf/cv8sy1DrHCkZHzQGEuoq1tARk6qSyDdtQGSDgpb9kFlruzPvrgwg==}
 
   b4a@1.8.1:
     resolution: {integrity: sha512-aiqre1Nr0B/6DgE2N5vwTc+2/oQZ4Wh1t4NznYY4E00y8LCt6NqdRv81so00oo27D8MVKTpUa/MwUUtBLXCoDw==}
@@ -4281,6 +4281,10 @@ packages:
     resolution: {integrity: sha512-8RipRLol37bNs2bhoV67fiTEvdTrbMUYcFTiy3+wuuOnUog2QBHCZWXDRijWQfAkhBj2Uf5UnVaiWwA5vdd82w==}
     engines: {node: '>= 6'}
 
+  form-data@4.0.6:
+    resolution: {integrity: sha512-vKatAh4SlVfgbv+YtmhiRjhEMJsYpsG1Y2rMQtR+SVSbytsSD1YGzDIcrAJmdFec88u/+VoGmxnl+80gL1tRCQ==}
+    engines: {node: '>= 6'}
+
   formidable@3.5.4:
     resolution: {integrity: sha512-YikH+7CUTOtP44ZTnUhR7Ic2UASBPOqmaRkRKxRbywPTe5VxF7RRCck4af9wutiZ/QKM5nME9Bie2fFaPz5Gug==}
     engines: {node: '>=14.0.0'}
@@ -4418,6 +4422,10 @@ packages:
 
   hasown@2.0.3:
     resolution: {integrity: sha512-ej4AhfhfL2Q2zpMmLo7U1Uv9+PyhIZpgQLGT1F9miIGmiCJIoCgSmczFdrc97mWT4kVY72KA+WnnhJ5pghSvSg==}
+    engines: {node: '>= 0.4'}
+
+  hasown@2.0.4:
+    resolution: {integrity: sha512-T2UbfbBEF32wiepXIsMlTW9+dDYC6wMh/t/vYA4tuOMKqWz/n3vr1NFSxQiyP+zk2mXsoMA/i/7qV6LKut1t1A==}
     engines: {node: '>= 0.4'}
 
   helmet@7.1.0:
@@ -8608,14 +8616,14 @@ snapshots:
 
   '@xstate/fsm@1.6.5': {}
 
-  '@zodios/core@10.9.6(axios@1.18.0)(zod@3.23.8)':
+  '@zodios/core@10.9.6(axios@1.20.0)(zod@3.23.8)':
     dependencies:
-      axios: 1.18.0
+      axios: 1.20.0
       zod: 3.23.8
 
-  '@zodios/express@10.6.1(@zodios/core@10.9.6(axios@1.18.0)(zod@3.23.8))(express@4.21.2)(zod@3.23.8)':
+  '@zodios/express@10.6.1(@zodios/core@10.9.6(axios@1.20.0)(zod@3.23.8))(express@4.21.2)(zod@3.23.8)':
     dependencies:
-      '@zodios/core': 10.9.6(axios@1.18.0)(zod@3.23.8)
+      '@zodios/core': 10.9.6(axios@1.20.0)(zod@3.23.8)
       express: 4.21.2
       zod: 3.23.8
 
@@ -8815,10 +8823,10 @@ snapshots:
     transitivePeerDependencies:
       - aws-crt
 
-  axios@1.18.0:
+  axios@1.20.0:
     dependencies:
       follow-redirects: 1.16.0
-      form-data: 4.0.5
+      form-data: 4.0.6
       https-proxy-agent: 5.0.1
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
@@ -9882,6 +9890,14 @@ snapshots:
       hasown: 2.0.3
       mime-types: 2.1.35
 
+  form-data@4.0.6:
+    dependencies:
+      asynckit: 0.4.0
+      combined-stream: 1.0.8
+      es-set-tostringtag: 2.1.0
+      hasown: 2.0.4
+      mime-types: 2.1.35
+
   formidable@3.5.4:
     dependencies:
       '@paralleldrive/cuid2': 2.3.1
@@ -10016,6 +10032,10 @@ snapshots:
       has-symbols: 1.1.0
 
   hasown@2.0.3:
+    dependencies:
+      function-bind: 1.1.2
+
+  hasown@2.0.4:
     dependencies:
       function-bind: 1.1.2
 
@@ -10464,8 +10484,8 @@ snapshots:
     dependencies:
       '@apidevtools/swagger-parser': 10.1.1(openapi-types@12.1.3)
       '@liuli-util/fs-extra': 0.1.0
-      '@zodios/core': 10.9.6(axios@1.18.0)(zod@3.23.8)
-      axios: 1.18.0
+      '@zodios/core': 10.9.6(axios@1.20.0)(zod@3.23.8)
+      axios: 1.20.0
       cac: 6.7.14
       handlebars: 4.7.10
       openapi-types: 12.1.3
@@ -10486,8 +10506,8 @@ snapshots:
     dependencies:
       '@apidevtools/swagger-parser': 10.1.1(openapi-types@12.1.3)
       '@liuli-util/fs-extra': 0.1.0
-      '@zodios/core': 10.9.6(axios@1.18.0)(zod@3.23.8)
-      axios: 1.18.0
+      '@zodios/core': 10.9.6(axios@1.20.0)(zod@3.23.8)
+      axios: 1.20.0
       cac: 6.7.14
       handlebars: 4.7.10
       openapi-types: 12.1.3
