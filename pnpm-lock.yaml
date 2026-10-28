@@ -58,7 +58,7 @@ importers:
     dependencies:
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@4.6.6)
       axios:
         specifier: 1.20.0
         version: 1.20.0
@@ -66,8 +66,8 @@ importers:
         specifier: 5.1.2
         version: 5.1.2
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       '@apidevtools/swagger-parser':
         specifier: 10.1.1
@@ -107,10 +107,10 @@ importers:
         version: 9.0.8
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@4.6.6)
       '@zodios/express':
         specifier: 10.6.1
-        version: 10.6.1(@zodios/core@10.9.6(axios@1.20.0)(zod@3.23.8))(express@4.21.2)(zod@3.23.8)
+        version: 10.6.1(@zodios/core@10.9.6(axios@1.20.0)(zod@4.6.6))(express@4.21.2)(zod@4.6.6)
       axios:
         specifier: 1.20.0
         version: 1.20.0
@@ -133,11 +133,11 @@ importers:
         specifier: 3.11.0
         version: 3.11.0
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 4.6.6
+        version: 4.6.6
       zod-validation-error:
         specifier: 3.3.0
-        version: 3.3.0(zod@3.23.8)
+        version: 3.3.0(zod@4.6.6)
     devDependencies:
       '@probing/eslint-config':
         specifier: workspace:*
@@ -182,8 +182,8 @@ importers:
         specifier: 5.7.3
         version: 5.7.3
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 4.6.6
+        version: 4.6.6
 
   packages/kafka-connector:
     dependencies:
@@ -234,8 +234,8 @@ importers:
         specifier: 5.1.2
         version: 5.1.2
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       '@pagopa/interop-outbound-models':
         specifier: 1.8.23
@@ -274,11 +274,11 @@ importers:
         specifier: 14.0.0
         version: 14.0.0
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 4.6.6
+        version: 4.6.6
       zod-validation-error:
         specifier: 3.3.0
-        version: 3.3.0(zod@3.23.8)
+        version: 3.3.0(zod@4.6.6)
     devDependencies:
       '@probing/eslint-config':
         specifier: workspace:*
@@ -291,10 +291,10 @@ importers:
     dependencies:
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@4.6.6)
       '@zodios/express':
         specifier: 10.6.1
-        version: 10.6.1(@zodios/core@10.9.6(axios@1.20.0)(zod@3.23.8))(express@4.21.2)(zod@3.23.8)
+        version: 10.6.1(@zodios/core@10.9.6(axios@1.20.0)(zod@4.6.6))(express@4.21.2)(zod@4.6.6)
       axios:
         specifier: 1.20.0
         version: 1.20.0
@@ -326,8 +326,8 @@ importers:
         specifier: 14.0.0
         version: 14.0.0
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       '@probing/vitest-config':
         specifier: workspace:*
@@ -376,7 +376,7 @@ importers:
         version: 3.988.0
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@4.6.6)
       axios:
         specifier: 1.20.0
         version: 1.20.0
@@ -396,8 +396,8 @@ importers:
         specifier: 14.0.0
         version: 14.0.0
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       '@probing/eslint-config':
         specifier: workspace:*
@@ -434,7 +434,7 @@ importers:
         version: 1.8.23
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@4.6.6)
       axios:
         specifier: 1.20.0
         version: 1.20.0
@@ -463,8 +463,8 @@ importers:
         specifier: 14.0.0
         version: 14.0.0
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       '@probing/eslint-config':
         specifier: workspace:*
@@ -498,10 +498,10 @@ importers:
     dependencies:
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@4.6.6)
       '@zodios/express':
         specifier: 10.6.1
-        version: 10.6.1(@zodios/core@10.9.6(axios@1.20.0)(zod@3.23.8))(express@4.21.2)(zod@3.23.8)
+        version: 10.6.1(@zodios/core@10.9.6(axios@1.20.0)(zod@4.6.6))(express@4.21.2)(zod@4.6.6)
       axios:
         specifier: 1.20.0
         version: 1.20.0
@@ -533,8 +533,8 @@ importers:
         specifier: 14.0.0
         version: 14.0.0
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       '@probing/eslint-config':
         specifier: workspace:*
@@ -689,7 +689,7 @@ importers:
     dependencies:
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@4.6.6)
       axios:
         specifier: 1.20.0
         version: 1.20.0
@@ -712,8 +712,8 @@ importers:
         specifier: 14.0.0
         version: 14.0.0
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       '@probing/eslint-config':
         specifier: workspace:*
@@ -750,7 +750,7 @@ importers:
         version: 3.0.11
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@4.6.6)
       axios:
         specifier: 1.20.0
         version: 1.20.0
@@ -776,8 +776,8 @@ importers:
         specifier: 14.0.0
         version: 14.0.0
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       '@probing/eslint-config':
         specifier: workspace:*
@@ -814,10 +814,10 @@ importers:
         version: 1.35.0
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@4.6.6)
       '@zodios/express':
         specifier: 10.6.1
-        version: 10.6.1(@zodios/core@10.9.6(axios@1.20.0)(zod@3.23.8))(express@4.21.2)(zod@3.23.8)
+        version: 10.6.1(@zodios/core@10.9.6(axios@1.20.0)(zod@4.6.6))(express@4.21.2)(zod@4.6.6)
       axios:
         specifier: 1.20.0
         version: 1.20.0
@@ -849,8 +849,8 @@ importers:
         specifier: 14.0.0
         version: 14.0.0
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       '@probing/eslint-config':
         specifier: workspace:*
@@ -902,7 +902,7 @@ importers:
         version: 3.988.0
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@4.6.6)
       axios:
         specifier: 1.20.0
         version: 1.20.0
@@ -922,8 +922,8 @@ importers:
         specifier: 14.0.0
         version: 14.0.0
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       '@probing/eslint-config':
         specifier: workspace:*
@@ -963,7 +963,7 @@ importers:
         version: 1.8.23
       '@zodios/core':
         specifier: 10.9.6
-        version: 10.9.6(axios@1.20.0)(zod@3.23.8)
+        version: 10.9.6(axios@1.20.0)(zod@4.6.6)
       axios:
         specifier: 1.20.0
         version: 1.20.0
@@ -992,8 +992,8 @@ importers:
         specifier: 14.0.0
         version: 14.0.0
       zod:
-        specifier: 3.23.8
-        version: 3.23.8
+        specifier: 4.6.6
+        version: 4.6.6
     devDependencies:
       '@probing/eslint-config':
         specifier: workspace:*
@@ -5918,6 +5918,9 @@ packages:
   zod@3.23.8:
     resolution: {integrity: sha512-XBx9AXhXktjUqnepgTiE5flcKIYWi/rme0Eaj+5Y0lftuGBq+jyRu/md4WnuxqgP1ubdpNCsYEYPxrzVHD8d6g==}
 
+  zod@4.6.6:
+    resolution: {integrity: sha512-4UmzQUF5fxvfcYHlbjBmejU+w+hbDnWFx4aS8kBx7nPBHcO2SqPbpAG8snbdg+Xse4pRefR98hgjFgIMCI/UhA==}
+
   zustand@4.5.2:
     resolution: {integrity: sha512-2cN1tPkDVkwCy5ickKrI7vijSjPksFRfqS6237NzT0vqSsztTNnQdHw9mmN7uBdk3gceVXU0a+21jFzFzAc9+g==}
     engines: {node: '>=12.7.0'}
@@ -8621,11 +8624,16 @@ snapshots:
       axios: 1.20.0
       zod: 3.23.8
 
-  '@zodios/express@10.6.1(@zodios/core@10.9.6(axios@1.20.0)(zod@3.23.8))(express@4.21.2)(zod@3.23.8)':
+  '@zodios/core@10.9.6(axios@1.20.0)(zod@4.6.6)':
     dependencies:
-      '@zodios/core': 10.9.6(axios@1.20.0)(zod@3.23.8)
+      axios: 1.20.0
+      zod: 4.6.6
+
+  '@zodios/express@10.6.1(@zodios/core@10.9.6(axios@1.20.0)(zod@4.6.6))(express@4.21.2)(zod@4.6.6)':
+    dependencies:
+      '@zodios/core': 10.9.6(axios@1.20.0)(zod@4.6.6)
       express: 4.21.2
-      zod: 3.23.8
+      zod: 4.6.6
 
   abort-controller@3.0.0:
     dependencies:
@@ -11667,11 +11675,13 @@ snapshots:
       compress-commons: 6.0.2
       readable-stream: 4.7.0
 
-  zod-validation-error@3.3.0(zod@3.23.8):
+  zod-validation-error@3.3.0(zod@4.6.6):
     dependencies:
-      zod: 3.23.8
+      zod: 4.6.6
 
   zod@3.23.8: {}
+
+  zod@4.6.6: {}
 
   zustand@4.5.2(@types/react@18.2.64)(immer@9.0.6)(react@18.2.0):
     dependencies:
