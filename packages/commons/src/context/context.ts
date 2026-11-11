@@ -15,11 +15,27 @@ export const AppContext = z.object({
 });
 export type AppContext = z.infer<typeof AppContext>;
 
+const isStringSchema = (schema: unknown): boolean =>
+  match(schema)
+    .with({ type: "string" }, () => true)
+    .with(
+      P.union(
+        P.instanceOf(z.ZodOptional),
+        P.instanceOf(z.ZodNullable),
+        P.instanceOf(z.ZodDefault),
+        P.instanceOf(z.ZodCatch),
+        P.instanceOf(z.ZodReadonly),
+      ),
+      (wrapped) => isStringSchema(wrapped.unwrap()),
+    )
+    .otherwise(() => false);
+
 const parseJson = (value: string): unknown => {
   try {
     return JSON.parse(value);
-  } catch {
-    return value;
+  } catch (error) {
+    if (error instanceof SyntaxError) return value;
+    throw error;
   }
 };
 
@@ -30,18 +46,20 @@ const withJsonDecodedParams = <Api extends ZodiosEndpointDefinitions>(
     ...endpoint,
     parameters: endpoint.parameters?.map((param) =>
       match(param)
-        .with({ type: P.union("Path", "Query") }, ({ schema }) => ({
-          ...param,
-          schema: z.preprocess(
-            (value) =>
-              match(value)
-                .with(P.string, (raw) =>
-                  schema.safeParse(raw).success ? raw : parseJson(raw),
-                )
-                .otherwise(() => value),
-            schema,
-          ),
-        }))
+        .with({ type: P.union("Path", "Query") }, ({ schema }) =>
+          isStringSchema(schema)
+            ? param
+            : {
+                ...param,
+                schema: z.preprocess(
+                  (value) =>
+                    match(value)
+                      .with(P.string, parseJson)
+                      .otherwise(() => value),
+                  schema,
+                ),
+              },
+        )
         .otherwise(() => param),
     ),
   })) as Api;
