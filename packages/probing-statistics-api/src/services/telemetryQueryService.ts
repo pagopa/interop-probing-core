@@ -96,7 +96,7 @@ const buildFluxQuery = (
       |> map(fn: (r) => ({
           time: r._time,
           response_time: if exists r.${FIELD_RESPONSE_TIME} then r.${FIELD_RESPONSE_TIME} else 0.0,
-          status: if exists r.${FIELD_STATUS} then r.${FIELD_STATUS} else "${TelemetryFailureStatus.Values.N_D}"
+          status: if exists r.${FIELD_STATUS} then r.${FIELD_STATUS} else "${TelemetryFailureStatus.enum.N_D}"
         }))
       |> sort(columns: ["time"])
   `.trim();
@@ -149,7 +149,7 @@ const aggregateIntoTimeWindows = (
         : {
             time: changeDateFormat(windowStartIso, TimeFormat.ISO_8601),
             responseTime: null,
-            status: TelemetryFailureStatus.Values.N_D,
+            status: TelemetryFailureStatus.enum.N_D,
           },
     );
   }
@@ -186,7 +186,7 @@ const createStatisticFromWindow = (
 };
 
 const getDominantStatus = (statuses: TelemetryStatus[]): TelemetryStatus => {
-  if (statuses.length === 0) return TelemetryFailureStatus.Values.N_D;
+  if (statuses.length === 0) return TelemetryFailureStatus.enum.N_D;
 
   const counts: Partial<Record<TelemetryStatus, number>> = {};
   for (const s of statuses) {
@@ -198,8 +198,8 @@ const getDominantStatus = (statuses: TelemetryStatus[]): TelemetryStatus => {
   );
 
   return match(status as TelemetryStatus)
-    .with("OK", () => TelemetrySuccessStatus.Values.OK)
-    .with("KO", () => TelemetryFailureStatus.Values.KO)
-    .with("N_D", () => TelemetryFailureStatus.Values.N_D)
+    .with("OK", () => TelemetrySuccessStatus.enum.OK)
+    .with("KO", () => TelemetryFailureStatus.enum.KO)
+    .with("N_D", () => TelemetryFailureStatus.enum.N_D)
     .exhaustive();
 };

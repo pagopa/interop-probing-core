@@ -15,7 +15,7 @@ describe("get /eservices/probingData/{eserviceRecordId} router test", () => {
   const mockResponse: probingApi.ApiGetEserviceProbingDataResponse = {
     probingEnabled: true,
     eserviceActive: true,
-    state: EserviceMonitorState.Values.ONLINE,
+    state: EserviceMonitorState.enum.ONLINE,
     responseReceived: "2025-11-11T09:30:00Z",
   };
 

@@ -16,7 +16,7 @@ describe("get /eservices router test", () => {
         eserviceName: "eService",
         producerName: "PagoPA",
         responseReceived: "2025-11-11T09:00:00Z",
-        state: EserviceMonitorState.Values.ONLINE,
+        state: EserviceMonitorState.enum.ONLINE,
         versionNumber: 2,
       },
     ],
@@ -31,7 +31,7 @@ describe("get /eservices router test", () => {
     eserviceName: "eService",
     producerName: "PagoPA",
     versionNumber: 2,
-    state: [EserviceMonitorState.Values.ONLINE],
+    state: [EserviceMonitorState.enum.ONLINE],
   };
 
   operationsService.getEservices = vi.fn().mockResolvedValue(mockResponse);
