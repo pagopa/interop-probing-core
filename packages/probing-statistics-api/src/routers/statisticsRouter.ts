@@ -10,6 +10,10 @@ import {
 import { StatisticsService } from "../services/statisticsService.js";
 import { errorMapper } from "../utilities/errorMapper.js";
 import { probingStatisticsApi } from "pagopa-interop-probing-api-clients";
+import {
+  eserviceRecordIdParamHandler,
+  statisticsQueryParamsMiddleware,
+} from "./statisticsParamsMiddleware.js";
 
 const statisticsRouter = (
   ctx: ZodiosContext,
@@ -17,7 +21,11 @@ const statisticsRouter = (
 ): ZodiosRouter<ZodiosEndpointDefinitions, ExpressContext> => {
   const router = ctx.router(probingStatisticsApi.TelemetryApi.api, {
     validationErrorHandler: zodiosValidationErrorToApiProblem,
+    transform: true,
   });
+
+  router.param("eserviceRecordId", eserviceRecordIdParamHandler);
+  router.use(statisticsQueryParamsMiddleware);
 
   router
     .get("/telemetryData/eservices/:eserviceRecordId", async (req, res) => {
