@@ -15,9 +15,18 @@ export const AppContext = z.object({
 });
 export type AppContext = z.infer<typeof AppContext>;
 
+const hasOnlyStringValues = (values: Iterable<unknown>): boolean =>
+  Array.from(values).every((value) => typeof value === "string");
+
 const isStringSchema = (schema: unknown): boolean =>
   match(schema)
     .with({ type: "string" }, () => true)
+    .with(P.instanceOf(z.ZodEnum), ({ options }) =>
+      hasOnlyStringValues(options),
+    )
+    .with(P.instanceOf(z.ZodLiteral), ({ values }) =>
+      hasOnlyStringValues(values),
+    )
     .with(
       P.union(
         P.instanceOf(z.ZodOptional),
