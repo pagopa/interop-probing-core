@@ -28,7 +28,7 @@ export const {{@key}}Endpoints = makeApi([
 		parameters: [
 			{{#each parameters}}
 			{
-				name: "{{name}}",
+				name: "{{name}}" as const,
 				{{#if description}}
 				description: `{{description}}`,
 				{{/if}}

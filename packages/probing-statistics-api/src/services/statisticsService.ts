@@ -244,12 +244,12 @@ function calculateFailures(values: TelemetryPoint[]): FailureContent[] {
       (el) => el.status === status,
     ).length;
 
-    if (status === TelemetryFailureStatus.Values.N_D) {
+    if (status === TelemetryFailureStatus.enum.N_D) {
       // N_D represents missing data. If the time window contains at least one
       // measured status (OK or KO), then N_D must not produce a failure event.
       const containsMeasuredStatus = values.some(
         (point) =>
-          point.status && point.status !== TelemetryFailureStatus.Values.N_D,
+          point.status && point.status !== TelemetryFailureStatus.enum.N_D,
       );
 
       if (containsMeasuredStatus) {

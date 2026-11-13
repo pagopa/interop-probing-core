@@ -14,7 +14,7 @@ describe("post /eservices/{eserviceId}/versions/{versionId}/updateState router t
   const mockVersionId = uuidv4();
 
   const validBody: probingApi.ApiUpdateEserviceStatePayload = {
-    eServiceState: EserviceInteropState.Values.ACTIVE,
+    eServiceState: EserviceInteropState.enum.ACTIVE,
   };
 
   operationsService.updateEserviceState = vi.fn().mockResolvedValue({});

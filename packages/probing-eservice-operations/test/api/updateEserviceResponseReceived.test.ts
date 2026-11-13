@@ -12,7 +12,7 @@ describe("post /eservices/{eserviceRecordId}/updateResponseReceived router test"
   const validBody: probingEserviceOperationsApi.ApiUpdateResponseReceivedPayload =
     {
       responseReceived: "2025-11-11T10:00:00Z",
-      status: EserviceStatus.Values.OK,
+      status: EserviceStatus.enum.OK,
     };
 
   eServiceService.updateResponseReceived = vi.fn().mockResolvedValue({});
@@ -59,7 +59,7 @@ describe("post /eservices/{eserviceRecordId}/updateResponseReceived router test"
     },
     {
       eserviceRecordId: mockEserviceRecordId,
-      body: { responseReceived: "invalid", status: EserviceStatus.Values.OK },
+      body: { responseReceived: "invalid", status: EserviceStatus.enum.OK },
     },
     {
       eserviceRecordId: mockEserviceRecordId,

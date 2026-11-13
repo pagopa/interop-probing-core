@@ -1,7 +1,9 @@
+import { ZodiosEndpointDefinitions } from "@zodios/core";
 import {
   ZodiosRouterContextRequestHandler,
   zodiosContext,
 } from "@zodios/express";
+import { match, P } from "ts-pattern";
 import { v4 as uuidv4 } from "uuid";
 import { z } from "zod";
 import { Logger, logger } from "../logging/index.js";
@@ -13,7 +15,76 @@ export const AppContext = z.object({
 });
 export type AppContext = z.infer<typeof AppContext>;
 
+const hasOnlyStringValues = (values: Iterable<unknown>): boolean =>
+  Array.from(values).every((value) => typeof value === "string");
+
+const isStringSchema = (schema: unknown): boolean =>
+  match(schema)
+    .with({ type: "string" }, () => true)
+    .with(P.instanceOf(z.ZodEnum), ({ options }) =>
+      hasOnlyStringValues(options),
+    )
+    .with(P.instanceOf(z.ZodLiteral), ({ values }) =>
+      hasOnlyStringValues(values),
+    )
+    .with(
+      P.union(
+        P.instanceOf(z.ZodOptional),
+        P.instanceOf(z.ZodNullable),
+        P.instanceOf(z.ZodDefault),
+        P.instanceOf(z.ZodCatch),
+        P.instanceOf(z.ZodReadonly),
+      ),
+      (wrapped) => isStringSchema(wrapped.unwrap()),
+    )
+    .otherwise(() => false);
+
+const parseJson = (value: string): unknown => {
+  try {
+    return JSON.parse(value);
+  } catch (error) {
+    if (error instanceof SyntaxError) return value;
+    throw error;
+  }
+};
+
+const withJsonDecodedParams = <Api extends ZodiosEndpointDefinitions>(
+  api: Api,
+): Api =>
+  api.map((endpoint) => ({
+    ...endpoint,
+    parameters: endpoint.parameters?.map((param) =>
+      match(param)
+        .with({ type: P.union("Path", "Query") }, ({ schema }) =>
+          isStringSchema(schema)
+            ? param
+            : {
+                ...param,
+                schema: z.preprocess(
+                  (value) =>
+                    match(value)
+                      .with(P.string, parseJson)
+                      .otherwise(() => value),
+                  schema,
+                ),
+              },
+        )
+        .otherwise(() => param),
+    ),
+  })) as Api;
+
 export const zodiosCtx = zodiosContext(z.object({ ctx: AppContext }));
+
+// @zodios/express 10 relies on Zod 3 internals: with Zod 4 its default
+// validation (transform: false) throws, and it no longer JSON-decodes path and
+// query params (e.g. "10" -> 10). Validate with transform enabled and decode here.
+const createZodiosRouter = zodiosCtx.router.bind(zodiosCtx);
+zodiosCtx.router = (api, options) =>
+  createZodiosRouter(withJsonDecodedParams(api), {
+    ...options,
+    transform: true,
+  });
+
 export type ZodiosContext = NonNullable<typeof zodiosCtx>;
 export type ExpressContext = NonNullable<typeof zodiosCtx.context>;
 

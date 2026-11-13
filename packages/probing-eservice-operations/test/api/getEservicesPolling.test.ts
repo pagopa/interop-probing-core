@@ -15,13 +15,13 @@ describe("get /eservices/polling router test", () => {
         {
           eserviceRecordId: 1,
           basePath: ["/api/services/1"],
-          technology: EserviceTechnology.Values.REST,
+          technology: EserviceTechnology.enum.REST,
           audience: ["pagopa.it"],
         },
         {
           eserviceRecordId: 2,
           basePath: ["/api/services/2"],
-          technology: EserviceTechnology.Values.SOAP,
+          technology: EserviceTechnology.enum.SOAP,
           audience: ["pagopa.it"],
         },
       ],

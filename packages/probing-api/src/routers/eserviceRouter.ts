@@ -61,7 +61,7 @@ const eServiceRouter = (
         const parsedBody = ChangeProbingFrequencyRequest.safeParse(req.body);
         if (!parsedBody.success) {
           return zodiosValidationErrorToApiProblem(
-            { context: "body", error: parsedBody.error.errors },
+            { context: "body", error: parsedBody.error.issues },
             req,
             res,
             next,

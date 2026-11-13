@@ -18,8 +18,8 @@ describe("post /eservices/{eServiceId}/versions/{versionId}/saveEservice router 
     name: "Test Eservice",
     producerId: uuidv4(),
     basePath: ["/api/v1/test"],
-    technology: EserviceTechnology.Values.REST,
-    state: EserviceInteropState.Values.ACTIVE,
+    technology: EserviceTechnology.enum.REST,
+    state: EserviceInteropState.enum.ACTIVE,
     versionNumber: 1,
     audience: ["pagopa.it"],
   };
